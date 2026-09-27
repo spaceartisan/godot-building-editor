@@ -28,7 +28,7 @@ For a new design, start from `node cli.mjs new --out NEW.json --name NAME` (floo
 | Lights/markers/manual slabs | Web controls or supported JSON fields | No corresponding dedicated transaction commands in this version |
 | Inspect appearance | Web 3D preview; CLI `preview` with floor/roof views, comparisons and overlays | Optional canvas dependency for PNGs; no CLI plan/collision-overlay mode |
 | Generate Godot assets | `export FILE --out NEW_DIR`, `package FILE --out NEW.zip` | Retain relative door dependencies; materials empty by default |
-| Verify exported assets | `godot-check --assets DIR --godot PATH` | Resource checks, not character traversal certification |
+| Verify exported assets | `godot-check --assets DIR --godot PATH`; add `--render --out NEW_DIR` for Godot screenshots | Resource checks, not character traversal certification; rendering needs a display or xvfb-run |
 
 Transactions support `building.update`, `floor.update/add-top/remove-top`, `wall.add/update/move-endpoint/remove`, and `opening`, `roof`, `region`, `stair`, `platform` add/update/remove. Do not extrapolate new operation names from this pattern. Read the operation table for supported `value` fields and removal flags. In particular, retained wall-profile fields do not imply `wall.update` accepts them.
 
@@ -129,7 +129,8 @@ Save JSON reports a download request or a synchronous failure without changing t
 | `validate` / saved checks | Existing schema/authoring rules and warnings | Full geometric correctness or playability |
 | `inspect` | Derived dimensions, coverage, resource counts, shell paths | Watertightness, useful collision everywhere |
 | `validate --reachability` | Floor areas and stairs connected to open ground through doors, passages and stairs, with walker clearance | Headroom, stair comfort, door swing, physics traversal |
-| CLI software PNG | Shared preview geometry and camera framing | Godot lighting or browser layout |
+| CLI software PNG | Shared preview geometry and camera framing (approximation) | Godot lighting or browser layout |
+| `godot-check --assets --render` | How the exported scene renders in Godot with default materials and a neutral sun/sky | Game lighting, materials or post-processing; physics |
 | DOM editor suites | Actual handler behavior, history, modeled focus intent | Real CSS, responsive sizing, browser focus behavior |
 | Playwright browser suite | The executed live interactions and viewport checks | Engine physics |
 | `godot-check --assets` | Supported scene loading/resources and configured checks | Character traversal; it reports zero fixture physics rays |

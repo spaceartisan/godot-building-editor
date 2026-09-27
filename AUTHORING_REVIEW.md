@@ -49,7 +49,7 @@ for floor in 1 2 3 4; do
 done
 ```
 
-Preview commands require the documented canvas dependency. Inspect the resulting images; creating them is not visual review. For another plan, discover the actual floor count and IDs. Use supported transactions and reviewed dry runs for edits, save a separate candidate, and repeat the affected coverage/route checks. Export after review, retaining the editable JSON and relative door assets. Do not hand-edit a TSCN to hide a source-plan problem.
+The CLI `preview` is a quick software approximation. For the delivered look, render the export in Godot: `node cli.mjs godot-check --assets DIR --godot PATH --render --out NEW_DIR` gives exterior, aerial and eye-level region views of the actual `.tscn`. Preview commands require the documented canvas dependency. Inspect the resulting images; creating them is not visual review. For another plan, discover the actual floor count and IDs. Use supported transactions and reviewed dry runs for edits, save a separate candidate, and repeat the affected coverage/route checks. Export after review, retaining the editable JSON and relative door assets. Do not hand-edit a TSCN to hide a source-plan problem.
 
 ## 5. Castle case study: why zero warnings was insufficient
 

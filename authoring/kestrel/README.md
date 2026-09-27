@@ -74,7 +74,7 @@ Environment: Linux, Node 22.22.2, Godot 4.5.1 stable. Checks ran headless; rende
 | Profiles and shaped openings as exported | Verified in Godot renders | The flared hull, hex corridors and every hatch shape render as authored. Hatch reveals follow the corridor bend. Portholes sit in the straight hull band. |
 | Lighting shells | Verified in Godot surface-colour renders | Grey siding outside, pink inside, orange/yellow corridor sides, teal only on reveals and wall tops (`godot-renders/surface-colors/`). This pass found and fixed the z-fighting skirt underside (FINDINGS K0). |
 | Export | Verified | `godot-check --assets --require-collision`: 5 scenes, 0 failures |
-| Ceiling finish | **Known defect** | Deck 1 ceilings step down 0.12 m where Deck 2 does not cover them (FINDINGS K2) |
+| Ceiling finish | Verified in Godot renders | One flat ceiling per deck after the K2 fix; there's no longer a step where Deck 2 ends (`godot-renders/interior-check/ceiling-step-before-after.png`) |
 | Character traversal | Partly verified | Connectivity only. Door swing, stair comfort and headroom along the flight are unverified. |
 | Lights | Verified in Godot renders | 22 exported `OmniLight3D` nodes light every room (`godot-renders/`) |
 | Materials | Intentionally omitted | Empty by default |

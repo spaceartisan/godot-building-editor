@@ -3,7 +3,7 @@ import { roofBoxParts, roofInteriorBlockers, roofAttachmentBlockers, trimRoofBox
 import { boundsOfBuilding, boundsOfStructuralFloor, constrainedOpening, exposedStructuralFloorRectangles, floorElevation, floorView, findWall, manualCeilingRectanglesAtLevel, manualFloorRectanglesAtLevel, pointOnWall, rectValid, roofSectionsForFloor, stairFootprint, storyHeight, structuralFloorRectangles, subtractRectAreas, splitWallIntoSolidSegments, wallLength } from './model.js';
 
 import { stairOpeningFootprint } from './model.js';
-import { buildExteriorMeshData, buildProfileMeshData, hasProfileWalls, openingAnchor, floorRectanglesForView, buildDoorMeshData } from './exporter.js';
+import { buildExteriorMeshData, buildProfileMeshData, hasProfileWalls, openingAnchor, floorRectanglesForView, buildDoorMeshData, storyCeilingRectangles } from './exporter.js';
 import {openingShapeFor} from './opening-shapes.js';
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const sub=(a,b)=>({x:a.x-b.x,y:a.y-b.y,z:a.z-b.z});
@@ -339,7 +339,7 @@ export class Preview3D{
     for(let i=0;i<b.floors.length;i++){
       const sections=b.roof?.type!=='none'?roofSectionsForFloor(b,i):[];
       const view=floorView(b,b.floors[i],sections.length>0); view.roofSections=sections;
-      const e=floorElevation(b,i), ceilingRects=exposedStructuralFloorRectangles(b,i);
+      const e=floorElevation(b,i), ceilingRects=storyCeilingRectangles(b,i);
       objs.push(...this.floorObjects(view,e,i===this.activeFloor,i?b.floors[i-1].stairs:[],ceilingRects,i).map(o=>({...o,category:o.category||'story',floorIndex:i})));
       const roofStart=objs.length;
       if(sections.length){

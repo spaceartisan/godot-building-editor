@@ -1,4 +1,4 @@
-[gd_scene load_steps=52 format=3]
+[gd_scene load_steps=49 format=3]
 
 [sub_resource type="ArrayMesh" id="F01_ExteriorOutsideMesh"]
 _surfaces = [{
@@ -90,47 +90,38 @@ size = Vector3(12, 0.18, 10)
 [sub_resource type="ArrayMesh" id="F01_CeilingMesh"]
 _surfaces = [{
 "aabb": AABB(-6, 3.08, -5, 12, 0, 10),
-"attribute_data": PackedByteArray("AADAwAAAIMAAAADAAAAgQAAAAMAAACDAAADAwAAAIMAAAMDAAAAgQAAAAMAAACBAAADAwAAAoMAAAMBAAAAgwAAAwEAAAKDAAADAwAAAoMAAAMDAAAAgwAAAwEAAACDAAADAwAAAIEAAAMBAAACgQAAAwEAAACBAAADAwAAAIEAAAMDAAACgQAAAwEAAAKBAAACAQAAAIMAAAMBAAAAgQAAAwEAAACDAAACAQAAAIMAAAIBAAAAgQAAAwEAAACBA"),
+"attribute_data": PackedByteArray("AADAwAAAoMAAAMBAAACgQAAAwEAAAKDAAADAwAAAoMAAAMDAAACgQAAAwEAAAKBA"),
 "format": 34359738387,
 "name": "RoomFaces",
 "primitive": 3,
 "uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 24,
-"vertex_data": PackedByteArray("AADAwLgeRUAAACDAAAAAwLgeRUAAACBAAAAAwLgeRUAAACDAAADAwLgeRUAAACDAAADAwLgeRUAAACBAAAAAwLgeRUAAACBAAADAwLgeRUAAAKDAAADAQLgeRUAAACDAAADAQLgeRUAAAKDAAADAwLgeRUAAAKDAAADAwLgeRUAAACDAAADAQLgeRUAAACDAAADAwLgeRUAAACBAAADAQLgeRUAAAKBAAADAQLgeRUAAACBAAADAwLgeRUAAACBAAADAwLgeRUAAAKBAAADAQLgeRUAAAKBAAACAQLgeRUAAACDAAADAQLgeRUAAACBAAADAQLgeRUAAACDAAACAQLgeRUAAACDAAACAQLgeRUAAACBAAADAQLgeRUAAACBA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA")
+"vertex_count": 6,
+"vertex_data": PackedByteArray("AADAwLgeRUAAAKDAAADAQLgeRUAAAKBAAADAQLgeRUAAAKDAAADAwLgeRUAAAKDAAADAwLgeRUAAAKBAAADAQLgeRUAAAKBA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA")
 },
 {
 "aabb": AABB(-6, 3.2, -5, 12, 0, 10),
-"attribute_data": PackedByteArray("AADAwAAAIMAAAADAAAAgQAAAwMAAACBAAADAwAAAIMAAAADAAAAgwAAAAMAAACBAAADAwAAAoMAAAMBAAAAgwAAAwMAAACDAAADAwAAAoMAAAMBAAACgwAAAwEAAACDAAADAwAAAIEAAAMBAAACgQAAAwMAAAKBAAADAwAAAIEAAAMBAAAAgQAAAwEAAAKBAAACAQAAAIMAAAMBAAAAgQAAAgEAAACBAAACAQAAAIMAAAMBAAAAgwAAAwEAAACBA"),
+"attribute_data": PackedByteArray("AADAwAAAoMAAAMBAAACgQAAAwMAAAKBAAADAwAAAoMAAAMBAAACgwAAAwEAAAKBA"),
 "format": 34359738387,
 "name": "RoofSideFaces",
 "primitive": 3,
 "uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 24,
-"vertex_data": PackedByteArray("AADAwM3MTEAAACDAAAAAwM3MTEAAACBAAADAwM3MTEAAACBAAADAwM3MTEAAACDAAAAAwM3MTEAAACDAAAAAwM3MTEAAACBAAADAwM3MTEAAAKDAAADAQM3MTEAAACDAAADAwM3MTEAAACDAAADAwM3MTEAAAKDAAADAQM3MTEAAAKDAAADAQM3MTEAAACDAAADAwM3MTEAAACBAAADAQM3MTEAAAKBAAADAwM3MTEAAAKBAAADAwM3MTEAAACBAAADAQM3MTEAAACBAAADAQM3MTEAAAKBAAACAQM3MTEAAACDAAADAQM3MTEAAACBAAACAQM3MTEAAACBAAACAQM3MTEAAACDAAADAQM3MTEAAACDAAADAQM3MTEAAACBA/3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f///")
+"vertex_count": 6,
+"vertex_data": PackedByteArray("AADAwM3MTEAAAKDAAADAQM3MTEAAAKBAAADAwM3MTEAAAKBAAADAwM3MTEAAAKDAAADAQM3MTEAAAKDAAADAQM3MTEAAAKBA/3////9/////f////3////9/////f///")
 },
 {
 "aabb": AABB(-6, 3.08, -5, 12, 0.12, 10),
-"attribute_data": PackedByteArray("AAAgwLgeRUAAACBAzcxMQAAAIEC4HkVAAAAgwLgeRUAAACDAzcxMQAAAIEDNzExAAAAgwLgeRUAAACBAzcxMQAAAIMDNzExAAAAgwLgeRUAAACBAuB5FQAAAIEDNzExAAADAwLgeRUAAAMBAzcxMQAAAwMDNzExAAADAwLgeRUAAAMBAuB5FQAAAwEDNzExAAAAAwLgeRUAAAIBAzcxMQAAAgEC4HkVAAAAAwLgeRUAAAADAzcxMQAAAgEDNzExAAACgwLgeRUAAACDAzcxMQAAAIMC4HkVAAACgwLgeRUAAAKDAzcxMQAAAIMDNzExAAACgwLgeRUAAACDAzcxMQAAAoMDNzExAAACgwLgeRUAAACDAuB5FQAAAIMDNzExAAAAAwLgeRUAAAIBAzcxMQAAAAMDNzExAAAAAwLgeRUAAAIBAuB5FQAAAgEDNzExAAADAwLgeRUAAAMBAzcxMQAAAwEC4HkVAAADAwLgeRUAAAMDAzcxMQAAAwEDNzExAAAAgQLgeRUAAAKBAzcxMQAAAoEC4HkVAAAAgQLgeRUAAACBAzcxMQAAAoEDNzExAAAAgQLgeRUAAAKBAzcxMQAAAIEDNzExAAAAgQLgeRUAAAKBAuB5FQAAAoEDNzExAAAAgwLgeRUAAACBAzcxMQAAAIEC4HkVAAAAgwLgeRUAAACDAzcxMQAAAIEDNzExAAAAgwLgeRUAAACBAzcxMQAAAIMDNzExAAAAgwLgeRUAAACBAuB5FQAAAIEDNzExA"),
+"attribute_data": PackedByteArray("AADAwLgeRUAAAMBAzcxMQAAAwMDNzExAAADAwLgeRUAAAMBAuB5FQAAAwEDNzExAAADAwLgeRUAAAMBAzcxMQAAAwEC4HkVAAADAwLgeRUAAAMDAzcxMQAAAwEDNzExAAACgwLgeRUAAAKBAzcxMQAAAoEC4HkVAAACgwLgeRUAAAKDAzcxMQAAAoEDNzExAAACgwLgeRUAAAKBAzcxMQAAAoMDNzExAAACgwLgeRUAAAKBAuB5FQAAAoEDNzExA"),
 "format": 34359738387,
 "name": "EdgeFaces",
 "primitive": 3,
 "uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 72,
-"vertex_data": PackedByteArray("AADAwLgeRUAAACDAAADAwM3MTEAAACBAAADAwLgeRUAAACBAAADAwLgeRUAAACDAAADAwM3MTEAAACDAAADAwM3MTEAAACBAAAAAwLgeRUAAACDAAAAAwM3MTEAAACBAAAAAwM3MTEAAACDAAAAAwLgeRUAAACDAAAAAwLgeRUAAACBAAAAAwM3MTEAAACBAAADAwLgeRUAAAKDAAADAQM3MTEAAAKDAAADAwM3MTEAAAKDAAADAwLgeRUAAAKDAAADAQLgeRUAAAKDAAADAQM3MTEAAAKDAAAAAwLgeRUAAACDAAACAQM3MTEAAACDAAACAQLgeRUAAACDAAAAAwLgeRUAAACDAAAAAwM3MTEAAACDAAACAQM3MTEAAACDAAADAwLgeRUAAAKDAAADAwM3MTEAAACDAAADAwLgeRUAAACDAAADAwLgeRUAAAKDAAADAwM3MTEAAAKDAAADAwM3MTEAAACDAAADAQLgeRUAAAKDAAADAQM3MTEAAACDAAADAQM3MTEAAAKDAAADAQLgeRUAAAKDAAADAQLgeRUAAACDAAADAQM3MTEAAACDAAAAAwLgeRUAAACBAAACAQM3MTEAAACBAAAAAwM3MTEAAACBAAAAAwLgeRUAAACBAAACAQLgeRUAAACBAAACAQM3MTEAAACBAAADAwLgeRUAAAKBAAADAQM3MTEAAAKBAAADAQLgeRUAAAKBAAADAwLgeRUAAAKBAAADAwM3MTEAAAKBAAADAQM3MTEAAAKBAAADAwLgeRUAAACBAAADAwM3MTEAAAKBAAADAwLgeRUAAAKBAAADAwLgeRUAAACBAAADAwM3MTEAAACBAAADAwM3MTEAAAKBAAADAQLgeRUAAACBAAADAQM3MTEAAAKBAAADAQM3MTEAAACBAAADAQLgeRUAAACBAAADAQLgeRUAAAKBAAADAQM3MTEAAAKBAAACAQLgeRUAAACDAAACAQM3MTEAAACBAAACAQLgeRUAAACBAAACAQLgeRUAAACDAAACAQM3MTEAAACDAAACAQM3MTEAAACBAAADAQLgeRUAAACDAAADAQM3MTEAAACBAAADAQM3MTEAAACDAAADAQLgeRUAAACDAAADAQLgeRUAAACBAAADAQM3MTEAAACBAAAD/fwAA/38AAP9/AAD/fwAA/38AAP9/////f////3////9/////f////3////9//////////////////////////////////3//f/9//3//f/9//3//f/9//3//f/9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/////f////3////9/////f////3////9//////////////////////////////////3//f/9//3//f/9//3//f/9//3//f/9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/////f////3////9/////f////3////9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/////f////3////9/////f////3////9/")
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AADAwLgeRUAAAKDAAADAQM3MTEAAAKDAAADAwM3MTEAAAKDAAADAwLgeRUAAAKDAAADAQLgeRUAAAKDAAADAQM3MTEAAAKDAAADAwLgeRUAAAKBAAADAQM3MTEAAAKBAAADAQLgeRUAAAKBAAADAwLgeRUAAAKBAAADAwM3MTEAAAKBAAADAQM3MTEAAAKBAAADAwLgeRUAAAKDAAADAwM3MTEAAAKBAAADAwLgeRUAAAKBAAADAwLgeRUAAAKDAAADAwM3MTEAAAKDAAADAwM3MTEAAAKBAAADAQLgeRUAAAKDAAADAQM3MTEAAAKBAAADAQM3MTEAAAKDAAADAQLgeRUAAAKDAAADAQLgeRUAAAKBAAADAQM3MTEAAAKBA/////////////////////////////////3//f/9//3//f/9//3//f/9//3//f/9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/////f////3////9/////f////3////9/")
 } ]
 blend_shape_mode = 0
 
 [sub_resource type="BoxShape3D" id="CeilingShape_6"]
-size = Vector3(4, 0.12, 5)
-
-[sub_resource type="BoxShape3D" id="CeilingShape_7"]
-size = Vector3(12, 0.12, 2.5)
-
-[sub_resource type="BoxShape3D" id="CeilingShape_8"]
-size = Vector3(12, 0.12, 2.5)
-
-[sub_resource type="BoxShape3D" id="CeilingShape_9"]
-size = Vector3(2, 0.12, 5)
+size = Vector3(12, 0.12, 10)
 
 [sub_resource type="ArrayMesh" id="F02_ExteriorOutsideMesh"]
 _surfaces = [{
@@ -171,28 +162,28 @@ _surfaces = [{
 } ]
 blend_shape_mode = 0
 
-[sub_resource type="BoxShape3D" id="BoxShape_10"]
+[sub_resource type="BoxShape3D" id="BoxShape_7"]
 size = Vector3(6.18, 3.2, 0.18)
 
-[sub_resource type="BoxShape3D" id="BoxShape_11"]
+[sub_resource type="BoxShape3D" id="BoxShape_8"]
 size = Vector3(6.18, 0.18, 0.18)
 
-[sub_resource type="BoxShape3D" id="BoxShape_12"]
+[sub_resource type="BoxShape3D" id="BoxShape_9"]
 size = Vector3(5.18, 3.2, 0.18)
 
-[sub_resource type="BoxShape3D" id="BoxShape_13"]
+[sub_resource type="BoxShape3D" id="BoxShape_10"]
 size = Vector3(5.18, 0.18, 0.18)
 
-[sub_resource type="BoxShape3D" id="BoxShape_14"]
+[sub_resource type="BoxShape3D" id="BoxShape_11"]
 size = Vector3(6.18, 3.2, 0.18)
 
-[sub_resource type="BoxShape3D" id="BoxShape_15"]
+[sub_resource type="BoxShape3D" id="BoxShape_12"]
 size = Vector3(6.18, 0.18, 0.18)
 
-[sub_resource type="BoxShape3D" id="BoxShape_16"]
+[sub_resource type="BoxShape3D" id="BoxShape_13"]
 size = Vector3(5.18, 3.2, 0.18)
 
-[sub_resource type="BoxShape3D" id="BoxShape_17"]
+[sub_resource type="BoxShape3D" id="BoxShape_14"]
 size = Vector3(5.18, 0.18, 0.18)
 
 [sub_resource type="ArrayMesh" id="F02_FloorMesh"]
@@ -228,7 +219,7 @@ _surfaces = [{
 } ]
 blend_shape_mode = 0
 
-[sub_resource type="BoxShape3D" id="FloorShape_18"]
+[sub_resource type="BoxShape3D" id="FloorShape_15"]
 size = Vector3(6, 0.18, 5)
 
 [sub_resource type="ArrayMesh" id="F02_CeilingMesh"]
@@ -264,16 +255,16 @@ _surfaces = [{
 } ]
 blend_shape_mode = 0
 
-[sub_resource type="BoxShape3D" id="CeilingShape_19"]
+[sub_resource type="BoxShape3D" id="CeilingShape_16"]
 size = Vector3(6, 0.12, 5)
 
-[sub_resource type="BoxMesh" id="BoxMesh_20"]
+[sub_resource type="BoxMesh" id="BoxMesh_17"]
 size = Vector3(3.19909, 0.12, 10.9)
 
-[sub_resource type="BoxShape3D" id="BoxShape_21"]
+[sub_resource type="BoxShape3D" id="BoxShape_18"]
 size = Vector3(3.19909, 0.12, 10.9)
 
-[sub_resource type="ArrayMesh" id="RoofMesh_22"]
+[sub_resource type="ArrayMesh" id="RoofMesh_19"]
 _surfaces = [{
 "aabb": AABB(-4.0724, 2.77344, -5.45, 2.5948, 2.06412, 10.9),
 "attribute_data": PackedByteArray("j8J1vWZmrkCPwnU9ZmauwI/CdT1mZq5Aj8J1vWZmrkCPwnW9ZmauwI/CdT1mZq7Aj8J1vWZmrsCPwnU95dCiwI/CdT1mZq7Aj8J1vWZmrsCPwnW95dCiwI/CdT3l0KLAj8J1PeXQokCPwnW9ZmauQI/CdT1mZq5Aj8J1PeXQokCPwnW95dCiQI/Cdb1mZq5AZmauQHEvaz9mZq7A973Mv2ZmrkD3vcy/ZmauQHEvaz9mZq7AcS9rP2ZmrsD3vcy/ZmauwPe9zD/l0KLAcS9rP+XQosD3vcw/ZmauwPe9zD9mZq7AcS9rP+XQosBxL2s/5dCiQPe9zD9mZq5AcS9rP2ZmrkD3vcw/5dCiQPe9zD/l0KJAcS9rP2ZmrkBxL2s/ZmauwPe9zL9mZq5AKS9TP2ZmrkD3vcy/ZmauwPe9zL9mZq7AKS9TP2ZmrkApL1M/y6ElwHC3hz9mZq7AKS9TP2ZmrsBwt4c/y6ElwHC3hz/LoSXAKS9TP2ZmrsApL1M/ZmauQCkvUz/LoSVAcLeHP2ZmrkBwt4c/ZmauQCkvUz/LoSVAKS9TP8uhJUBwt4c/5dCiwPe9zD9mZq7AcLeHP2ZmrsD3vcw/5dCiwPe9zD/l0KLAcLeHP2ZmrsBwt4c/ZmauQHC3hz/l0KJA973MP2ZmrkD3vcw/ZmauQHC3hz/l0KJAcLeHP+XQokD3vcw/973Mv4/CdT33vcw/j8J1vfe9zD+PwnU9973Mv4/CdT33vcy/j8J1vfe9zD+PwnW9973Mv4/Cdb33vcw/j8J1Pfe9zD+PwnW9973Mv4/Cdb33vcy/j8J1Pfe9zD+PwnU91V/XP+XQosDsUdg/5dCiQOxR2D/l0KLA1V/XP+XQosDVX9c/5dCiQOxR2D/l0KJA5dCiwEfDecDLoSXA5dCCwMuhJcBHw3nA5dCiwEfDecDl0KLA5dCCwMuhJcDl0ILAy6ElQEfDecDl0KJA5dCCwOXQokBHw3nAy6ElQEfDecDLoSVA5dCCwOXQokDl0ILA5dCCwNVf1z//kF7A29KtP29LY8BGuKE/5dCCwNVf1z9Hw3nA7FHYP/+QXsDb0q0/5dCCwNVf1z/l0ILA7FHYP0fDecDsUdg//5BewNvSrT/l0ILA1V/XP29LY8BGuKE//5BewNvSrT/l0ILA7FHYP+XQgsDVX9c//5BewNvSrT9Hw3nA7FHYP+XQgsDsUdg/7FHYv8uhJcAHxsW/y6ElQAfGxb/LoSXA7FHYv8uhJcDsUdi/y6ElQAfGxb/LoSVAR8M5wOxR2L/LoUXA7FHYv8uhRcAHxsW/y6FFwOxR2L9HwznA7FHYv8uhRcAHxsW/"),
@@ -286,20 +277,20 @@ _surfaces = [{
 } ]
 blend_shape_mode = 0
 
-[sub_resource type="ConcavePolygonShape3D" id="RoofShape_23"]
+[sub_resource type="ConcavePolygonShape3D" id="RoofShape_20"]
 data = PackedVector3Array(-4.0724, 4.743, 5.45, -3.99852, 4.83756, -5.45, -3.99852, 4.83756, 5.45, -4.0724, 4.743, 5.45, -4.0724, 4.743, -5.45, -3.99852, 4.83756, -5.45, -1.55148, 2.77344, -5.45, -1.4776, 2.868, -5.088, -1.4776, 2.868, -5.45, -1.55148, 2.77344, -5.45, -1.55148, 2.77344, -5.088, -1.4776, 2.868, -5.088, -1.4776, 2.868, 5.088, -1.55148, 2.77344, 5.45, -1.4776, 2.868, 5.45, -1.4776, 2.868, 5.088, -1.55148, 2.77344, 5.088, -1.55148, 2.77344, 5.45, -2.088, 3.19261, 5.45, -4.0724, 4.743, -5.45, -4.0724, 4.743, 5.45, -2.088, 3.19261, 5.45, -2.088, 3.19261, -5.45, -4.0724, 4.743, -5.45, -1.55148, 2.77344, -5.45, -2.088, 3.19261, -5.088, -1.55148, 2.77344, -5.088, -1.55148, 2.77344, -5.45, -2.088, 3.19261, -5.45, -2.088, 3.19261, -5.088, -1.55148, 2.77344, 5.088, -2.088, 3.19261, 5.45, -1.55148, 2.77344, 5.45, -1.55148, 2.77344, 5.088, -2.088, 3.19261, 5.088, -2.088, 3.19261, 5.45, -3.99852, 4.83756, -5.45, -2.088, 3.34489, 5.45, -3.99852, 4.83756, 5.45, -3.99852, 4.83756, -5.45, -2.088, 3.34489, -5.45, -2.088, 3.34489, 5.45, -1.90254, 3.2, -2.588, -2.088, 3.34489, -5.45, -1.90254, 3.2, -5.45, -1.90254, 3.2, -2.588, -2.088, 3.34489, -2.588, -2.088, 3.34489, -5.45, -2.088, 3.34489, 5.45, -1.90254, 3.2, 2.588, -1.90254, 3.2, 5.45, -2.088, 3.34489, 5.45, -2.088, 3.34489, 2.588, -1.90254, 3.2, 2.588, -1.4776, 2.868, -5.088, -1.90254, 3.2, -5.45, -1.4776, 2.868, -5.45, -1.4776, 2.868, -5.088, -1.90254, 3.2, -5.088, -1.90254, 3.2, -5.45, -1.90254, 3.2, 5.45, -1.4776, 2.868, 5.088, -1.4776, 2.868, 5.45, -1.90254, 3.2, 5.45, -1.90254, 3.2, 5.088, -1.4776, 2.868, 5.088, -3.99852, 4.83756, -5.45, -1.55148, 2.77344, -5.45, -1.4776, 2.868, -5.45, -3.99852, 4.83756, -5.45, -4.0724, 4.743, -5.45, -1.55148, 2.77344, -5.45, -4.0724, 4.743, 5.45, -1.4776, 2.868, 5.45, -1.55148, 2.77344, 5.45, -4.0724, 4.743, 5.45, -3.99852, 4.83756, 5.45, -1.4776, 2.868, 5.45, -2.088, 3.19261, -5.088, -2.088, 3.2, 5.088, -2.088, 3.2, -5.088, -2.088, 3.19261, -5.088, -2.088, 3.19261, 5.088, -2.088, 3.2, 5.088, -1.90254, 3.2, -5.088, -2.088, 3.2, -2.588, -1.90254, 3.2, -2.588, -1.90254, 3.2, -5.088, -2.088, 3.2, -5.088, -2.088, 3.2, -2.588, -1.90254, 3.2, 2.588, -2.088, 3.2, 5.088, -1.90254, 3.2, 5.088, -1.90254, 3.2, 2.588, -2.088, 3.2, 2.588, -2.088, 3.2, 5.088, -2.088, 3.19261, -5.088, -1.4776, 2.868, -5.088, -1.55148, 2.77344, -5.088, -2.088, 3.19261, -5.088, -1.90254, 3.2, -5.088, -1.4776, 2.868, -5.088, -2.088, 3.19261, -5.088, -2.088, 3.2, -5.088, -1.90254, 3.2, -5.088, -1.4776, 2.868, 5.088, -2.088, 3.19261, 5.088, -1.55148, 2.77344, 5.088, -1.4776, 2.868, 5.088, -2.088, 3.2, 5.088, -2.088, 3.19261, 5.088, -1.4776, 2.868, 5.088, -1.90254, 3.2, 5.088, -2.088, 3.2, 5.088, -2.088, 3.2, -2.588, -2.088, 3.34489, 2.588, -2.088, 3.34489, -2.588, -2.088, 3.2, -2.588, -2.088, 3.2, 2.588, -2.088, 3.34489, 2.588, -1.90254, 3.2, -2.588, -2.088, 3.2, -2.588, -2.088, 3.34489, -2.588, -2.088, 3.2, 2.588, -1.90254, 3.2, 2.588, -2.088, 3.34489, 2.588)
 backface_collision = true
 
-[sub_resource type="BoxMesh" id="BoxMesh_24"]
+[sub_resource type="BoxMesh" id="BoxMesh_21"]
 size = Vector3(0.192, 0.102, 10.98)
 
-[sub_resource type="BoxShape3D" id="BoxShape_25"]
+[sub_resource type="BoxShape3D" id="BoxShape_22"]
 size = Vector3(0.192, 0.102, 10.98)
 
-[sub_resource type="ConvexPolygonShape3D" id="ConvexShape_26"]
+[sub_resource type="ConvexPolygonShape3D" id="ConvexShape_23"]
 points = PackedVector3Array(-2, -0.78129, -0.09, 2, -0.78129, -0.09, 0, 0.78129, -0.09, -2, -0.78129, 0.09, 2, -0.78129, 0.09, 0, 0.78129, 0.09)
 
-[sub_resource type="ConvexPolygonShape3D" id="ConvexShape_27"]
+[sub_resource type="ConvexPolygonShape3D" id="ConvexShape_24"]
 points = PackedVector3Array(-2, -0.78129, -0.09, 2, -0.78129, -0.09, 0, 0.78129, -0.09, -2, -0.78129, 0.09, 2, -0.78129, 0.09, 0, 0.78129, 0.09)
 
 [sub_resource type="ArrayMesh" id="ManualRoofGableMesh_001_OutsideFaces"]
@@ -341,28 +332,28 @@ _surfaces = [{
 } ]
 blend_shape_mode = 0
 
-[sub_resource type="BoxMesh" id="BoxMesh_28"]
+[sub_resource type="BoxMesh" id="BoxMesh_25"]
 size = Vector3(6.7, 0.12, 3.92505)
 
-[sub_resource type="BoxShape3D" id="BoxShape_29"]
+[sub_resource type="BoxShape3D" id="BoxShape_26"]
 size = Vector3(6.7, 0.12, 3.92505)
 
-[sub_resource type="BoxMesh" id="BoxMesh_30"]
+[sub_resource type="BoxMesh" id="BoxMesh_27"]
 size = Vector3(6.7, 0.12, 3.92505)
 
-[sub_resource type="BoxShape3D" id="BoxShape_31"]
+[sub_resource type="BoxShape3D" id="BoxShape_28"]
 size = Vector3(6.7, 0.12, 3.92505)
 
-[sub_resource type="BoxMesh" id="BoxMesh_32"]
+[sub_resource type="BoxMesh" id="BoxMesh_29"]
 size = Vector3(6.78, 0.102, 0.192)
 
-[sub_resource type="BoxShape3D" id="BoxShape_33"]
+[sub_resource type="BoxShape3D" id="BoxShape_30"]
 size = Vector3(6.78, 0.102, 0.192)
 
-[sub_resource type="ConvexPolygonShape3D" id="ConvexShape_34"]
+[sub_resource type="ConvexPolygonShape3D" id="ConvexShape_31"]
 points = PackedVector3Array(-2.5, -1.12551, -0.09, 2.5, -1.12551, -0.09, 0, 1.12551, -0.09, -2.5, -1.12551, 0.09, 2.5, -1.12551, 0.09, 0, 1.12551, 0.09)
 
-[sub_resource type="ConvexPolygonShape3D" id="ConvexShape_35"]
+[sub_resource type="ConvexPolygonShape3D" id="ConvexShape_32"]
 points = PackedVector3Array(-2.5, -1.12551, -0.09, 2.5, -1.12551, -0.09, 0, 1.12551, -0.09, -2.5, -1.12551, 0.09, 2.5, -1.12551, 0.09, 0, 1.12551, 0.09)
 
 [sub_resource type="ArrayMesh" id="ManualRoofGableMesh_002_OutsideFaces"]
@@ -464,20 +455,8 @@ mesh = SubResource("F01_CeilingMesh")
 editor_description = "Automatic ceiling mesh after independent manual-ceiling overrides. Surfaces: RoomFaces, RoofSideFaces, EdgeFaces."
 
 [node name="CeilingCollision_001" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(-4, 3.14, 0)
+position = Vector3(0, 3.14, 0)
 shape = SubResource("CeilingShape_6")
-
-[node name="CeilingCollision_002" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(0, 3.14, -3.75)
-shape = SubResource("CeilingShape_7")
-
-[node name="CeilingCollision_003" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(0, 3.14, 3.75)
-shape = SubResource("CeilingShape_8")
-
-[node name="CeilingCollision_004" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(5, 3.14, 0)
-shape = SubResource("CeilingShape_9")
 
 [node name="Floor_02" type="Node3D" parent="."]
 position = Vector3(0, 3.38, 0)
@@ -508,42 +487,42 @@ editor_description = "Window/door reveals and wall-thickness faces."
 [node name="ExteriorCollision_001" type="CollisionShape3D" parent="Floor_02/Collision"]
 position = Vector3(1, 1.6, -2.5)
 rotation = Vector3(0, 0, 0)
-shape = SubResource("BoxShape_10")
+shape = SubResource("BoxShape_7")
 
 [node name="ExteriorCollision_002" type="CollisionShape3D" parent="Floor_02/Collision"]
 position = Vector3(1, -0.09, -2.5)
 rotation = Vector3(0, 0, 0)
-shape = SubResource("BoxShape_11")
+shape = SubResource("BoxShape_8")
 
 [node name="ExteriorCollision_003" type="CollisionShape3D" parent="Floor_02/Collision"]
 position = Vector3(4, 1.6, 0)
 rotation = Vector3(0, -1.5708, 0)
-shape = SubResource("BoxShape_12")
+shape = SubResource("BoxShape_9")
 
 [node name="ExteriorCollision_004" type="CollisionShape3D" parent="Floor_02/Collision"]
 position = Vector3(4, -0.09, 0)
 rotation = Vector3(0, -1.5708, 0)
-shape = SubResource("BoxShape_13")
+shape = SubResource("BoxShape_10")
 
 [node name="ExteriorCollision_005" type="CollisionShape3D" parent="Floor_02/Collision"]
 position = Vector3(1, 1.6, 2.5)
 rotation = Vector3(0, 0, 0)
-shape = SubResource("BoxShape_14")
+shape = SubResource("BoxShape_11")
 
 [node name="ExteriorCollision_006" type="CollisionShape3D" parent="Floor_02/Collision"]
 position = Vector3(1, -0.09, 2.5)
 rotation = Vector3(0, 0, 0)
-shape = SubResource("BoxShape_15")
+shape = SubResource("BoxShape_12")
 
 [node name="ExteriorCollision_007" type="CollisionShape3D" parent="Floor_02/Collision"]
 position = Vector3(-2, 1.6, 0)
 rotation = Vector3(0, -1.5708, 0)
-shape = SubResource("BoxShape_16")
+shape = SubResource("BoxShape_13")
 
 [node name="ExteriorCollision_008" type="CollisionShape3D" parent="Floor_02/Collision"]
 position = Vector3(-2, -0.09, 0)
 rotation = Vector3(0, -1.5708, 0)
-shape = SubResource("BoxShape_17")
+shape = SubResource("BoxShape_14")
 
 [node name="FloorSlab" type="MeshInstance3D" parent="Floor_02/Geometry"]
 mesh = SubResource("F02_FloorMesh")
@@ -551,7 +530,7 @@ editor_description = "Automatic floor mesh after independent manual-floor overri
 
 [node name="FloorCollision_001" type="CollisionShape3D" parent="Floor_02/Collision"]
 position = Vector3(1, -0.09, 0)
-shape = SubResource("FloorShape_18")
+shape = SubResource("FloorShape_15")
 
 [node name="Ceiling" type="MeshInstance3D" parent="Floor_02/Geometry"]
 mesh = SubResource("F02_CeilingMesh")
@@ -559,7 +538,7 @@ editor_description = "Automatic ceiling mesh after independent manual-ceiling ov
 
 [node name="CeilingCollision_001" type="CollisionShape3D" parent="Floor_02/Collision"]
 position = Vector3(1, 3.14, 0)
-shape = SubResource("CeilingShape_19")
+shape = SubResource("CeilingShape_16")
 
 [node name="ManualRoofs" type="Node3D" parent="."]
 editor_description = "Independent roof footprints with absolute base heights; not owned by floors."
@@ -569,38 +548,38 @@ editor_description = "Independent roof footprints with absolute base heights; no
 [node name="ManualRoof_001_West" type="MeshInstance3D" parent="ManualRoofs"]
 position = Vector3(-5.225, 3.8055, 0)
 rotation = Vector3(0, 0, 0.66323)
-mesh = SubResource("BoxMesh_20")
+mesh = SubResource("BoxMesh_17")
 
 [node name="ManualRoof_001_West_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
 position = Vector3(-5.225, 3.8055, 0)
 rotation = Vector3(0, 0, 0.66323)
-shape = SubResource("BoxShape_21")
+shape = SubResource("BoxShape_18")
 
 [node name="ManualRoof_001_East" type="MeshInstance3D" parent="ManualRoofs"]
-mesh = SubResource("RoofMesh_22")
+mesh = SubResource("RoofMesh_19")
 
 [node name="ManualRoof_001_East_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
-shape = SubResource("RoofShape_23")
+shape = SubResource("RoofShape_20")
 
 [node name="ManualRoof_001_Ridge" type="MeshInstance3D" parent="ManualRoofs"]
 position = Vector3(-4, 4.79257, 0)
 rotation = Vector3(0, 0, 0)
-mesh = SubResource("BoxMesh_24")
+mesh = SubResource("BoxMesh_21")
 
 [node name="ManualRoof_001_Ridge_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
 position = Vector3(-4, 4.79257, 0)
 rotation = Vector3(0, 0, 0)
-shape = SubResource("BoxShape_25")
+shape = SubResource("BoxShape_22")
 
 [node name="ManualGableCollision_001_min" type="CollisionShape3D" parent="ManualRoofCollision"]
 position = Vector3(-4, 3.98129, -5)
 rotation = Vector3(0, 0, 0)
-shape = SubResource("ConvexShape_26")
+shape = SubResource("ConvexShape_23")
 
 [node name="ManualGableCollision_001_max" type="CollisionShape3D" parent="ManualRoofCollision"]
 position = Vector3(-4, 3.98129, 5)
 rotation = Vector3(0, 0, 0)
-shape = SubResource("ConvexShape_27")
+shape = SubResource("ConvexShape_24")
 
 [node name="ManualRoof_001_GableFill" type="Node3D" parent="ManualRoofs"]
 
@@ -616,42 +595,42 @@ mesh = SubResource("ManualRoofGableMesh_001_EdgeFaces")
 [node name="ManualRoof_002_North" type="MeshInstance3D" parent="ManualRoofs"]
 position = Vector3(1, 7.54793, -1.425)
 rotation = Vector3(-0.73304, 0, 0)
-mesh = SubResource("BoxMesh_28")
+mesh = SubResource("BoxMesh_25")
 
 [node name="ManualRoof_002_North_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
 position = Vector3(1, 7.54793, -1.425)
 rotation = Vector3(-0.73304, 0, 0)
-shape = SubResource("BoxShape_29")
+shape = SubResource("BoxShape_26")
 
 [node name="ManualRoof_002_South" type="MeshInstance3D" parent="ManualRoofs"]
 position = Vector3(1, 7.54793, 1.425)
 rotation = Vector3(0.73304, 0, 0)
-mesh = SubResource("BoxMesh_30")
+mesh = SubResource("BoxMesh_27")
 
 [node name="ManualRoof_002_South_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
 position = Vector3(1, 7.54793, 1.425)
 rotation = Vector3(0.73304, 0, 0)
-shape = SubResource("BoxShape_31")
+shape = SubResource("BoxShape_28")
 
 [node name="ManualRoof_002_Ridge" type="MeshInstance3D" parent="ManualRoofs"]
 position = Vector3(1, 8.86101, 0)
 rotation = Vector3(0, 0, 0)
-mesh = SubResource("BoxMesh_32")
+mesh = SubResource("BoxMesh_29")
 
 [node name="ManualRoof_002_Ridge_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
 position = Vector3(1, 8.86101, 0)
 rotation = Vector3(0, 0, 0)
-shape = SubResource("BoxShape_33")
+shape = SubResource("BoxShape_30")
 
 [node name="ManualGableCollision_002_min" type="CollisionShape3D" parent="ManualRoofCollision"]
 position = Vector3(-2, 7.70551, 0)
 rotation = Vector3(0, 1.5708, 0)
-shape = SubResource("ConvexShape_34")
+shape = SubResource("ConvexShape_31")
 
 [node name="ManualGableCollision_002_max" type="CollisionShape3D" parent="ManualRoofCollision"]
 position = Vector3(4, 7.70551, 0)
 rotation = Vector3(0, 1.5708, 0)
-shape = SubResource("ConvexShape_35")
+shape = SubResource("ConvexShape_32")
 
 [node name="ManualRoof_002_GableFill" type="Node3D" parent="ManualRoofs"]
 

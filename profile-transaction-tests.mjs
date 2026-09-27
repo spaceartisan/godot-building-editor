@@ -76,3 +76,22 @@ const room=[[-4,-3],[4,-3],[4,3],[-4,3]].map((p,i,a)=>({op:'wall.add',floorId:'f
   assert.ok(Array.isArray(e.floors[0].lights)&&Array.isArray(e.floors[1].railings));
   console.log('PASS inspect --entities: wall types, doorway shapes, lights and resolved profile inward directions');
 }
+{
+  // K11: station thickness is metres; stations at the building wall thickness
+  // follow it when building.update changes wallThickness. Deliberate
+  // thicker/thinner stations keep their metres. Heights stay fractions.
+  const flare={label:'Flare',stations:[st(0,0),st(.2,-.3),st(.8,-.3,.3),st(1,0)]};
+  const b=ok([{op:'wallType.add',id:'flare',value:flare},{op:'building.update',value:{wallThickness:.25}}]);
+  assert.deepEqual(b.wallTypes[0].stations.map(q=>q.thickness),[.25,.25,.3,.25]);
+  assert.deepEqual(b.wallTypes[0].stations.map(q=>[q.height,q.offset]),flare.stations.map(q=>[q.height,q.offset]),'heights and offsets are unchanged');
+  // No floor/top-edge review warning after the change (end stations still match).
+  const r=run([...room,{op:'wall.update',floorId:'floor_1',id:'w0',value:{wallTypeId:'flare'}}],b);
+  assert.equal(r.ok,true);assert.equal(r.warnings.some(w=>/changes the floor\/top edge/.test(w.message)),false);
+  // The web setting uses the same rule.
+  const {createEditorHarness}=await import('./qa/editor-harness.mjs');
+  const e=await createEditorHarness();await e.loadBuildingData(ok([{op:'wallType.add',id:'flare',value:flare}]));
+  const field=e.$('#wall-thickness');field.value='0.25';await field.dispatch('change');
+  assert.deepEqual(e.snapshot().wallTypes,b.wallTypes,'web wall thickness equals building.update');
+  assert.deepEqual(e.errors,[]);
+  console.log('PASS wall thickness: profile stations at the building thickness follow it (CLI and web); others keep their metres');
+}

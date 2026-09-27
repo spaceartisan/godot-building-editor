@@ -5,7 +5,7 @@ import { makeOmniLight, floorView, makeRegion, makeRoofSection, makeStair, makeP
 import { proposeEndpointMove } from './wall-edit.js';
 import { wallSegmentProblem, proposePlatformUpdate, proposeCrenellation } from './authoring.js';
 import {proposeFloorStackEdit} from './floor-stack.js';
-import {wallTypeProblem} from './wall-types.js';
+import {wallTypeProblem,followWallThickness} from './wall-types.js';
 import {openingShapeProblem} from './opening-shapes.js';
 
 // Versioned authoring commands, not arbitrary JSON patches. All work is done on
@@ -196,7 +196,11 @@ function applyOperation(building,op,index){
     // final validation (opening fit, stair rise, junction clearance).
     for(const [key,value] of Object.entries(op.value)){
       if(key==='roof'||key==='ceiling')building[key]={...(building[key]||{}),...value};
-      else building[key]=value;
+      else{
+        // Profile stations at the old wall thickness follow the new one (shared with the web setting).
+        if(key==='wallThickness')followWallThickness(building,building.wallThickness,value);
+        building[key]=value;
+      }
     }
     return;
   }

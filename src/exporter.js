@@ -4,7 +4,7 @@ import { profileWallState, profileWallSolids } from './wall-profile-geometry.js'
 import { polygonSlabFaces } from './polygon-geometry.js';
 import { areaPoints, unionPolygonAreas, subtractPolygonAreas } from './polygon-areas.js';
 import { roofBoxParts, roofInteriorBlockers, roofAttachmentBlockers, trimRoofBox, trimmedGableEnds } from './roof-geometry.js';
-import { automaticRoofRectangles, automaticRoofSections, boundsOfAutomaticRoof, boundsOfBuilding, boundsOfStructuralFloor, constrainedOpening, exposedStructuralFloorRectangles, floorElevation, floorView, findWall, manualCeilingRectanglesAtLevel, manualFloorRectanglesAtLevel, pointOnWall, rectValid, roofSectionsForFloor, stairFootprint, storyHeight, structuralFloorRectangles, subtractRectAreas, splitWallIntoSolidSegments, validateOpeningLayout, wallLength } from './model.js';
+import { higherFloorBlockerRectangles, unionRectAreas, automaticRoofRectangles, automaticRoofSections, boundsOfAutomaticRoof, boundsOfBuilding, boundsOfStructuralFloor, constrainedOpening, exposedStructuralFloorRectangles, floorElevation, floorView, findWall, manualCeilingRectanglesAtLevel, manualFloorRectanglesAtLevel, pointOnWall, rectValid, roofSectionsForFloor, stairFootprint, storyHeight, structuralFloorRectangles, subtractRectAreas, splitWallIntoSolidSegments, validateOpeningLayout, wallLength } from './model.js';
 import { wallSolidPlanes, unionFaceWriter, junctionMiters } from './wall-union.js';
 import { stairOpeningFootprint } from './model.js';
 import { assertValidBuilding } from './validation.js';
@@ -1351,6 +1351,28 @@ function slabRectanglesForBases(bases, holes = []) {
   return out;
 }
 
+// The automatic ceiling hangs inside the story (wall top − ceiling thickness …
+// wall top) over the whole story footprint, including where the next floor's
+// slab covers it, so a room's ceiling height is the same everywhere. It stays
+// open only where something higher covers the story without a slab directly
+// above: stair openings and upper floors with autoFloor off. (A void region
+// upstairs is not a blocker, so the story below closes it as an exposed area,
+// as before.)
+export function storyCeilingRectangles(building, fi) {
+  const floors=building.floors||[],floor=floors[fi];if(!floor)return [];
+  const view=floorView(building,floor,fi===floors.length-1),structural=structuralFloorRectangles(view);
+  const blockers=higherFloorBlockerRectangles(building,fi);
+  const upper=floors[fi+1],cover=[];
+  if(upper){
+    const upperView=floorView(building,upper,fi+1===floors.length-1),upperY=floorElevation(building,fi+1);
+    if(upperView.autoFloor!==false)cover.push(...floorRectanglesForView(upperView,floor.stairs||[]));
+    for(const p of upperView.platforms||[])if(rectValid(p))cover.push({minX:p.minX,maxX:p.maxX,minZ:p.minZ,maxZ:p.maxZ});
+    cover.push(...manualFloorRectanglesAtLevel(building,upperY,Math.max(.05,(Number(upperView.floorThickness)||.18)*.6)));
+  }
+  const openAbove=cover.length?subtractRectAreas(blockers,unionRectAreas(cover)):blockers;
+  return subtractRectAreas(structural,openAbove);
+}
+
 export function floorRectanglesForView(view, belowStairs=[]) {
   const structureBounds=boundsOfStructuralFloor(view);
   if(structureBounds.width<=EPS||structureBounds.depth<=EPS)return [];
@@ -1665,7 +1687,7 @@ export function exportGodotTscn(building, options={collision:true, markers:true}
     view.storyFloorSkirt=fi>0?Math.max(Number(view.floorThickness)||.18,automaticStoryFloorThickness,manualStoryFloorThickness):0;
     // Keep the old name as a compatibility alias for older helper code/tests.
     view.exteriorFloorSkirt=view.storyFloorSkirt;
-    const exposedCeilingRects=exposedStructuralFloorRectangles(building,fi);
+    const exposedCeilingRects=storyCeilingRectangles(building,fi);
     const fn=String(fi+1).padStart(2,'0');
     const prefix=`F${fn}_`;
     const floorName=`Floor_${fn}`;

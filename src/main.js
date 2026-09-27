@@ -2,7 +2,7 @@ import {createOpeningShapeEditor} from './opening-shape-editor.js';
 import {diagnosticTargets,resolveDiagnosticTarget} from './diagnostic-targets.js';
 import {profileWallState} from './wall-profile-geometry.js';
 import {createWallTypeEditor} from './wall-type-editor.js';
-import {wallTypeFor,wallTypeOpeningProblem} from './wall-types.js';
+import {wallTypeFor,wallTypeOpeningProblem,followWallThickness} from './wall-types.js';
 import { polygonRegion, regionPolygonProblem, regionBounds, regionLabelPoint, regionInteriorClearance, pointInRegion, wallOutlinePoints } from './regions.js';
 import { areaPoints, areaSize } from './polygon-areas.js';
 import { areaSelectionCandidates, stairPickDistance } from './selection.js';
@@ -759,7 +759,7 @@ function bindNum(id,set){$(id).addEventListener('change',e=>{
 });}
 
 $('#building-name').addEventListener('change',e=>{building.name=e.target.value||'Building';commit('Building renamed');});
-bindNum('#wall-height',v=>{building.wallHeight=Math.max(.2,v);newRoofBaseY=defaultRoofBaseY();syncManualSurfaceDefaults();$('#new-roof-base-y').value=newRoofBaseY;$('#new-manual-floor-y').value=newManualFloorY;$('#new-manual-ceiling-y').value=newManualCeilingY;});bindNum('#wall-thickness',v=>building.wallThickness=Math.max(.02,v));bindNum('#floor-thickness',v=>{building.floorThickness=Math.max(.02,v);syncManualSurfaceDefaults();newRoofBaseY=defaultRoofBaseY();$('#new-roof-base-y').value=newRoofBaseY;$('#new-manual-floor-y').value=newManualFloorY;$('#new-manual-floor-thickness').value=newManualFloorThickness;$('#new-manual-ceiling-y').value=newManualCeilingY;});bindNum('#grid-size',v=>building.gridSize=Math.max(.1,v));
+bindNum('#wall-height',v=>{building.wallHeight=Math.max(.2,v);newRoofBaseY=defaultRoofBaseY();syncManualSurfaceDefaults();$('#new-roof-base-y').value=newRoofBaseY;$('#new-manual-floor-y').value=newManualFloorY;$('#new-manual-ceiling-y').value=newManualCeilingY;});bindNum('#wall-thickness',v=>{const next=Math.max(.02,v);followWallThickness(building,building.wallThickness,next);building.wallThickness=next;});bindNum('#floor-thickness',v=>{building.floorThickness=Math.max(.02,v);syncManualSurfaceDefaults();newRoofBaseY=defaultRoofBaseY();$('#new-roof-base-y').value=newRoofBaseY;$('#new-manual-floor-y').value=newManualFloorY;$('#new-manual-floor-thickness').value=newManualFloorThickness;$('#new-manual-ceiling-y').value=newManualCeilingY;});bindNum('#grid-size',v=>building.gridSize=Math.max(.1,v));
 $('#new-region-shape').addEventListener('change',e=>{cancelDrawing();newRegionShape=e.target.value;syncRegionDraft();drawPlan();});
 $('#finish-region-btn').addEventListener('click',finishPolygonRegion);
 $('#undo-region-corner-btn').addEventListener('click',undoRegionCorner);

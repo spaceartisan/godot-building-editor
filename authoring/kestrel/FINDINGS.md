@@ -5,16 +5,16 @@ These findings come from authoring the [Kestrel](README.md) with the CLI workflo
 | Finding | Status |
 | --- | --- |
 | K1 CLI wall types, doorway shapes, assignment | **Fixed:** `wallType.*`, `openingShape.*`, `wall.add/update` `wallTypeId`/`inwardSide`/`inwardToward`; the Kestrel is now built with CLI commands only |
-| K2 Ceiling step under setbacks | Open: changes exported scenes for setback buildings, so it needs a decision |
+| K2 Ceiling step under setbacks | **Fixed:** the ceiling hangs over the whole story |
 | K3 Lights from the CLI | **Fixed:** `light.add/update/remove`; the Kestrel now has 22 lights |
 | K4 Route check inside sealed vessels | **Fixed:** `--from` and the web **Route start** field |
 | K5 Route check ignores profiles | **Fixed:** shaped walls block by their profile's reach up to body height |
-| K6 Shaped wall ends need Standard stubs | Open |
-| K7 Doorway shapes door-only | Open |
-| K8 No ladders/lifts | Open |
+| K6 Shaped wall ends need Standard stubs | Open (deferred) |
+| K7 Doorway shapes door-only | Accepted limit |
+| K8 No ladders/lifts | Accepted limit |
 | K9 `inwardSide` hard to author | **Fixed:** `inwardToward` and `inspect --entities` `profileInward` |
 | K10 Eye-level views inside objects | **Fixed:** cameras use the first collision-free candidate point |
-| K11 Absolute profile station thickness | Open |
+| K11 Absolute profile station thickness | **Fixed:** stations at the building thickness follow it |
 | K12 Probe snap distances | **Fixed:** the probe fails starts and targets more than 0.6 m from the navmesh |
 
 **What worked well:**
@@ -112,6 +112,19 @@ The automatic ceiling in exposed areas spans `wallHeight − ceiling.thickness �
 
 **Next step:** make exposed ceilings flush with the slab underside, for example by keeping the ceiling bottom at wall top. This changes exported scenes for setback buildings, so it needs a deliberate decision and fixture review.
 
+**Status: fixed.** The cause was the floor/ceiling distinction:
+
+- Floor slabs sit on top of the walls; Deck 2's slab spans 3.20–3.38 m.
+- Automatic ceilings hang inside the story; Deck 1's spans 3.08–3.20 m.
+- Only exposed areas got a ceiling.
+
+`storyCeilingRectangles` (shared by the exporter and the CLI and web previews) now hangs the ceiling over the whole story footprint. It stays open only where something higher covers the story without a slab directly above: stair openings, and upper floors with `autoFloor:false`. A void region upstairs still gets a ceiling below it, as before.
+
+- **Kestrel:** Deck 1 has one ceiling of 484.31 m², the 492 m² deck minus the stair opening.
+- **Examples:** the `twostory`, `basement_markers` and `roof_junctions` scenes changed. The rest have automatic ceilings off.
+- **Tests:** `ceiling-tests.mjs`.
+- **Evidence:** `godot-renders/interior-check/ceiling-step-before-after.png`.
+
 ### K3. Lights cannot be authored from the CLI (parity gap)
 
 Floors carry `lights`, which the web editor places and the exporter writes, but no transaction adds or edits them. A sealed interior is dark in a game without lights, so an AI author can't finish a usable ship, bunker or basement through the CLI.
@@ -180,6 +193,13 @@ The automatic cargo-bay view placed its camera inside the stair flight. Views ar
 To avoid the warning that a profile "changes the floor/top edge", end stations need offset 0 and the building's exact wall thickness. Station thickness is stored in metres, so changing `wallThickness` after defining profiles makes every existing profile warn. The web presets take the building thickness at the time they are applied, so this happens after any later thickness change.
 
 **Next step:** support thickness relative to the building wall, or rescale profiles on `building.update`.
+
+**Status: fixed.** The units are mixed by design, one per axis:
+
+- **Height** is a fraction of each wall's height, so the Kestrel's single hull profile fits both its 3.2 m and its 3.0 m decks.
+- **Offset and thickness** are metres.
+
+The hazard was the duplicated thickness. Now a station whose thickness equals the building wall thickness follows it when the web setting or `building.update` changes it (shared `followWallThickness`). Deliberately thicker or thinner stations keep their metres, and no schema change was needed. Tested in `profile-transaction-tests.mjs`, CLI and web.
 
 ### K12. Navmesh probe path lengths can mislead near the hull
 

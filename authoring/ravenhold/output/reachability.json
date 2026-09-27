@@ -1,0 +1,927 @@
+{
+  "engine": "4.5.1.stable.official.f62fdbde1",
+  "agent": {
+    "height": 1.8,
+    "max_climb": 0.3,
+    "max_slope": 46,
+    "radius": 0.3
+  },
+  "doorPanelsRemoved": 33,
+  "iteration": 2,
+  "mapRegions": 1,
+  "navBounds": [
+    -17.3500156402588,
+    0.0699999928474426,
+    -17.3500022888184,
+    17.449987411499,
+    11.6199998855591,
+    19.7499961853027
+  ],
+  "navPolygons": 805,
+  "results": [
+    {
+      "end": [
+        1.19209289550781e-7,
+        0.0699999928474426,
+        6.00000095367432
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Courtyard",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 10.9999990463257,
+      "snap": [
+        0,
+        0.0699999928474426,
+        6
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -2.16066837310791e-7,
+        0.0699999928474426,
+        -13
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Great hall",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 34.0607503138017,
+      "snap": [
+        0,
+        0.0699999928474426,
+        -13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        13.0000009536743,
+        0.0699999928474426,
+        -5
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Barracks north",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 27.4892545293551,
+      "snap": [
+        13,
+        0.0699999928474426,
+        -5
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        13,
+        0.0699999928474426,
+        5
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Barracks south",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 21.6326810733881,
+      "snap": [
+        13,
+        0.0699999928474426,
+        5
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -13,
+        0.0699999928474426,
+        -5
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Storehouse",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 27.4199327360839,
+      "snap": [
+        -13,
+        0.0699999928474426,
+        -5
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -13,
+        0.0699999928474426,
+        4.99999952316284
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Stables",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 21.4827672550455,
+      "snap": [
+        -13,
+        0.0699999928474426,
+        5
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -3.99999976158142,
+        0.0699999928474426,
+        15
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "West guard room",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 4.81983068585396,
+      "snap": [
+        -4,
+        0.0699999928474426,
+        15
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        3.99999952316284,
+        0.0699999928474426,
+        15
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "East guard room",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 4.7848087400198,
+      "snap": [
+        4,
+        0.0699999928474426,
+        15
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -8,
+        0.0699999928474426,
+        12.9999990463257
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "South-west store",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 9.29196778684855,
+      "snap": [
+        -8,
+        0.0699999928474426,
+        13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        8,
+        0.0699999928474426,
+        13
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "South-east store",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 9.25694604218006,
+      "snap": [
+        8,
+        0.0699999928474426,
+        13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        1.00000071525574,
+        0.0699999928474426,
+        -1.99999940395355
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Keep undercroft",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 19.0439472477883,
+      "snap": [
+        1,
+        0.0699999928474426,
+        -2
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -13,
+        0.0699999928474426,
+        -13
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "NW tower ground",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 33.3731560502201,
+      "snap": [
+        -13,
+        0.0699999928474426,
+        -13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        13,
+        0.0699999928474426,
+        -13
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "NE tower ground",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 33.4196405455004,
+      "snap": [
+        13,
+        0.0699999928474426,
+        -13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        13,
+        0.0699999928474426,
+        13
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "SE tower ground",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 27.5579961889889,
+      "snap": [
+        13,
+        0.0699999928474426,
+        13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -13,
+        0.0699999928474426,
+        13
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "SW tower ground",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 27.4004852818325,
+      "snap": [
+        -13,
+        0.0699999928474426,
+        13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -0.00000131130218505859,
+        4.26999998092651,
+        -14.75
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "North wall walk",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 61.8854054219555,
+      "snap": [
+        0,
+        4.26999998092651,
+        -14.75
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        14.75,
+        4.26999998092651,
+        0.00000104308128356934
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "East wall walk",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 41.8447827503551,
+      "snap": [
+        14.75,
+        4.26999998092651,
+        0
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -14.7500066757202,
+        4.26999998092651,
+        -0.0000517368316650391
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "West wall walk",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 41.9057221165858,
+      "snap": [
+        -14.75,
+        4.26999998092651,
+        0
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -8,
+        4.26999998092651,
+        13
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "South-west walk",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 25.788094044663,
+      "snap": [
+        -8,
+        4.26999998092651,
+        13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        8,
+        4.26999998092651,
+        13
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "South-east walk",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 25.7811326214578,
+      "snap": [
+        8,
+        4.26999998092651,
+        13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -5.00000381469727,
+        4.26999998092651,
+        -11.75
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Guest chambers",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 58.8678961675614,
+      "snap": [
+        -5,
+        4.26999998092651,
+        -11.75
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        5.00000143051147,
+        4.26999998092651,
+        -11.7499990463257
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Chapel",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 58.9014630846214,
+      "snap": [
+        5,
+        4.26999998092651,
+        -11.75
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        11.7500057220459,
+        4.26999998092651,
+        -0.0000281333923339844
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Armory",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 42.7029674442019,
+      "snap": [
+        11.75,
+        4.26999998092651,
+        0
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -11.75,
+        4.26999998092651,
+        8.94069671630859e-7
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Garrison hall",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 42.6961581977084,
+      "snap": [
+        -11.75,
+        4.26999998092651,
+        0
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        3,
+        4.26999998092651,
+        14
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Winch room",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 29.4810304881539,
+      "snap": [
+        3,
+        4.26999998092651,
+        14
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        1,
+        4.26999998092651,
+        -2
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Keep great chamber",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 30.5323493778706,
+      "snap": [
+        1,
+        4.26999998092651,
+        -2
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -13,
+        4.26999998092651,
+        -13
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "NW tower rampart room",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 48.4777541290969,
+      "snap": [
+        -13,
+        4.26999998092651,
+        -13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        12.9999990463257,
+        4.26999998092651,
+        -13.0000009536743
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "NE tower rampart room",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 48.4965317330789,
+      "snap": [
+        13,
+        4.26999998092651,
+        -13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        13,
+        4.26999998092651,
+        13
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "SE tower rampart room",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 29.2757616953459,
+      "snap": [
+        13,
+        4.26999998092651,
+        13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -13,
+        4.26999998092651,
+        13
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "SW tower rampart room",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 29.3482609363273,
+      "snap": [
+        -13,
+        4.26999998092651,
+        13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -14,
+        7.92000007629395,
+        -12.9999990463257
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "NW tower top",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 62.9172847177833,
+      "snap": [
+        -14,
+        7.92000007629395,
+        -13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        14,
+        7.92000007629395,
+        -13.0000009536743
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "NE tower top",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 62.3012851036619,
+      "snap": [
+        14,
+        7.92000007629395,
+        -13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        14,
+        7.92000007629395,
+        13.0000009536743
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "SE tower top",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 40.6295455789659,
+      "snap": [
+        14,
+        7.92000007629395,
+        13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -13.9999990463257,
+        7.92000007629395,
+        13
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "SW tower top",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 40.5344722317532,
+      "snap": [
+        -14,
+        7.92000007629395,
+        13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -2.98023223876953e-7,
+        7.92000007629395,
+        14
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Gatehouse top",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 44.347115023993,
+      "snap": [
+        0,
+        7.92000007629395,
+        14
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -4.76837158203125e-7,
+        7.92000007629395,
+        -1.99999952316284
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Keep lord's chamber",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 42.397322922945,
+      "snap": [
+        0,
+        7.92000007629395,
+        -2
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        1.00000023841858,
+        11.6199998855591,
+        -2
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Keep roof",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 56.6062771379948,
+      "snap": [
+        1,
+        11.6199998855591,
+        -2
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -14,
+        7.92000007629395,
+        -12.9999990463257
+      ],
+      "floorCovered": true,
+      "maxLength": 20,
+      "name": "NW rampart room -> NW tower top",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 14.6647258251905,
+      "snap": [
+        -14,
+        7.92000007629395,
+        -13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -13,
+        0.0699999928474426,
+        -13
+      ],
+      "floorCovered": true,
+      "maxLength": 20,
+      "name": "NW rampart room -> NW tower ground",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 15.5314110219479,
+      "snap": [
+        -13,
+        0.0699999928474426,
+        -13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        14,
+        7.92000007629395,
+        -13.0000009536743
+      ],
+      "floorCovered": true,
+      "maxLength": 20,
+      "name": "NE rampart room -> NE tower top",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 14.038417192176,
+      "snap": [
+        14,
+        7.92000007629395,
+        -13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        13,
+        0.0699999928474426,
+        -13
+      ],
+      "floorCovered": true,
+      "maxLength": 20,
+      "name": "NE rampart room -> NE tower ground",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 15.503685593605,
+      "snap": [
+        13,
+        0.0699999928474426,
+        -13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        14,
+        7.92000007629395,
+        13.0000009536743
+      ],
+      "floorCovered": true,
+      "maxLength": 20,
+      "name": "SE rampart room -> SE tower top",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 14.0273585151881,
+      "snap": [
+        14,
+        7.92000007629395,
+        13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        13,
+        0.0699999928474426,
+        13
+      ],
+      "floorCovered": true,
+      "maxLength": 20,
+      "name": "SE rampart room -> SE tower ground",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 15.5307264924049,
+      "snap": [
+        13,
+        0.0699999928474426,
+        13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -13.9999990463257,
+        7.92000007629395,
+        13
+      ],
+      "floorCovered": true,
+      "maxLength": 20,
+      "name": "SW rampart room -> SW tower top",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 13.9319262690842,
+      "snap": [
+        -14,
+        7.92000007629395,
+        13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -13,
+        0.0699999928474426,
+        13
+      ],
+      "floorCovered": true,
+      "maxLength": 20,
+      "name": "SW rampart room -> SW tower ground",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 15.5307725518942,
+      "snap": [
+        -13,
+        0.0699999928474426,
+        13
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -2.98023223876953e-7,
+        7.92000007629395,
+        14
+      ],
+      "floorCovered": true,
+      "maxLength": 20,
+      "name": "Winch room -> gatehouse top",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 18.1228449493647,
+      "snap": [
+        0,
+        7.92000007629395,
+        14
+      ],
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        1.00000023841858,
+        11.6199998855591,
+        -2
+      ],
+      "floorCovered": true,
+      "maxLength": 50,
+      "name": "Keep undercroft -> keep roof",
+      "ok": true,
+      "pathArrives": true,
+      "pathLength": 43.3034848123789,
+      "snap": [
+        1,
+        11.6199998855591,
+        -2
+      ],
+      "withinMaxLength": true
+    }
+  ],
+  "start": [
+    0,
+    0,
+    17
+  ],
+  "startSnap": [
+    0,
+    0.0699999928474426,
+    17
+  ],
+  "unreachable": 0
+}

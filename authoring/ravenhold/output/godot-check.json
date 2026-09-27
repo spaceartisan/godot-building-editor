@@ -1,0 +1,33 @@
+{
+  "command": "godot-check",
+  "ok": true,
+  "engineVersion": "4.5.1.stable.official.f62fdbde1",
+  "checks": {
+    "collisionShapes": 873,
+    "failures": 0,
+    "materialSurfaces": 0,
+    "meshInstances": 221,
+    "physicsRays": 0,
+    "scenes": 34,
+    "trimmedMeshComparisons": 9
+  },
+  "mode": "assets",
+  "scope": "Exported asset resource checks only; no building-specific walking/headroom probes",
+  "preflight": {
+    "root": "/home/user/godot-building-editor/authoring/ravenhold/output/assets",
+    "scenes": 34,
+    "dependencies": 33,
+    "bytes": 2608900
+  },
+  "results": [
+    {
+      "name": "godot-tests.mjs",
+      "ok": true,
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "Godot Engine v4.5.1.stable.official.f62fdbde1 - https://godotengine.org\n\nASSET PASS res://assets/ravenhold_castle.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f01_door_001_west_guard_room_door.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f01_door_002_east_guard_room_door.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f01_door_003_south_west_store_door.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f01_door_004_south_east_store_door.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f01_door_005_great_hall_door.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f01_door_006_barracks_north_door.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f01_door_007_barracks_south_door.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f01_door_008_barracks_connecting_door.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f01_door_009_storehouse_door.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f01_door_010_stables_storehouse_door.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f01_door_011_hall_to_nw_tower.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f01_door_012_hall_to_ne_tower.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f01_door_013_storehouse_to_nw_tower.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f01_door_014_barracks_to_ne_tower.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f01_door_015_barracks_to_se_tower.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f01_door_016_stables_to_sw_tower.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f01_door_017_keep_door.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f02_door_001_nw_tower_to_side_walk.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f02_door_002_nw_tower_to_north_walk.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f02_door_003_ne_tower_to_side_walk.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f02_door_004_ne_tower_to_north_walk.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f02_door_005_se_tower_to_side_walk.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f02_door_006_se_tower_to_south_walk.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f02_door_007_sw_tower_to_side_walk.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f02_door_008_sw_tower_to_south_walk.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f02_door_009_guest_chambers_door.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f02_door_010_chapel_door.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f02_door_011_armory_door.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f02_door_012_garrison_hall_door.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f02_door_013_armory_door.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f02_door_014_garrison_hall_door.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f02_door_015_winch_room_west_door.tscn\nASSET PASS res://assets/doors/ravenhold_castle_f02_door_016_winch_room_east_door.tscn\nASSET_RESULT: {\"collisionShapes\":873,\"failures\":0,\"materialSurfaces\":0,\"meshInstances\":221,\"physicsRays\":0,\"scenes\":34,\"trimmedMeshComparisons\":9}\n",
+      "stderr": ""
+    }
+  ],
+  "exitCode": 0
+}

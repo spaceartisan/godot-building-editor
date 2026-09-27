@@ -1,0 +1,215 @@
+{
+  "version": 1,
+  "operations": [
+    {
+      "op": "stair.add",
+      "floorId": "floor_1",
+      "id": "st_nw_1",
+      "value": {
+        "label": "NW tower stair (ground)",
+        "x": -16.9,
+        "z": -14,
+        "width": 1.2,
+        "run": 5,
+        "direction": "north",
+        "style": "steps",
+        "steps": 24
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "f2_ramparts",
+      "id": "st_nw_2",
+      "value": {
+        "label": "NW tower stair (roof)",
+        "x": -13.75,
+        "z": -16.9,
+        "width": 1.2,
+        "run": 4.5,
+        "direction": "east",
+        "style": "steps",
+        "steps": 21
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "floor_1",
+      "id": "st_ne_1",
+      "value": {
+        "label": "NE tower stair (ground)",
+        "x": 16.9,
+        "z": -14,
+        "width": 1.2,
+        "run": 5,
+        "direction": "north",
+        "style": "steps",
+        "steps": 24
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "f2_ramparts",
+      "id": "st_ne_2",
+      "value": {
+        "label": "NE tower stair (roof)",
+        "x": 13.75,
+        "z": -16.9,
+        "width": 1.2,
+        "run": 4.5,
+        "direction": "west",
+        "style": "steps",
+        "steps": 21
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "floor_1",
+      "id": "st_se_1",
+      "value": {
+        "label": "SE tower stair (ground)",
+        "x": 16.9,
+        "z": 14,
+        "width": 1.2,
+        "run": 5,
+        "direction": "south",
+        "style": "steps",
+        "steps": 24
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "f2_ramparts",
+      "id": "st_se_2",
+      "value": {
+        "label": "SE tower stair (roof)",
+        "x": 13.75,
+        "z": 16.9,
+        "width": 1.2,
+        "run": 4.5,
+        "direction": "west",
+        "style": "steps",
+        "steps": 21
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "floor_1",
+      "id": "st_sw_1",
+      "value": {
+        "label": "SW tower stair (ground)",
+        "x": -16.9,
+        "z": 14,
+        "width": 1.2,
+        "run": 5,
+        "direction": "south",
+        "style": "steps",
+        "steps": 24
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "f2_ramparts",
+      "id": "st_sw_2",
+      "value": {
+        "label": "SW tower stair (roof)",
+        "x": -13.75,
+        "z": 16.9,
+        "width": 1.2,
+        "run": 4.5,
+        "direction": "east",
+        "style": "steps",
+        "steps": 21
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "floor_1",
+      "id": "st_court_w",
+      "value": {
+        "label": "Courtyard stair west",
+        "x": -8,
+        "z": 7,
+        "width": 1.6,
+        "run": 6,
+        "direction": "south",
+        "style": "steps",
+        "steps": 24
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "floor_1",
+      "id": "st_court_e",
+      "value": {
+        "label": "Courtyard stair east",
+        "x": 8,
+        "z": 7,
+        "width": 1.6,
+        "run": 6,
+        "direction": "south",
+        "style": "steps",
+        "steps": 24
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "f2_ramparts",
+      "id": "st_gate",
+      "value": {
+        "label": "Gatehouse stair",
+        "x": 0,
+        "z": 18.9,
+        "width": 1.2,
+        "run": 4.5,
+        "direction": "east",
+        "style": "steps",
+        "steps": 21
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "floor_1",
+      "id": "st_keep_1",
+      "value": {
+        "label": "Keep stair (undercroft)",
+        "x": -4,
+        "z": -1.75,
+        "width": 1.2,
+        "run": 5,
+        "direction": "north",
+        "style": "steps",
+        "steps": 24
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "f2_ramparts",
+      "id": "st_keep_2",
+      "value": {
+        "label": "Keep stair (great chamber)",
+        "x": 4,
+        "z": -2.75,
+        "width": 1.2,
+        "run": 4.5,
+        "direction": "south",
+        "style": "steps",
+        "steps": 21
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "f3_towertops",
+      "id": "st_keep_3",
+      "value": {
+        "label": "Keep stair (lord's chamber)",
+        "x": -4,
+        "z": -2,
+        "width": 1.2,
+        "run": 4.5,
+        "direction": "north",
+        "style": "steps",
+        "steps": 21
+      }
+    }
+  ]
+}

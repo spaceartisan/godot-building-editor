@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "operations": [
+    {
+      "op": "roof.add",
+      "id": "roof_north",
+      "value": {
+        "minX": -10,
+        "maxX": 10,
+        "minZ": -13.5,
+        "maxZ": -10
+      }
+    },
+    {
+      "op": "roof.update",
+      "id": "roof_north",
+      "value": {
+        "label": "Guest chambers & chapel roof",
+        "type": "gable",
+        "direction": "x",
+        "baseY": 7.68,
+        "pitch": 30,
+        "overhang": 0.4,
+        "gableEnds": "none",
+        "edgeModes": {
+          "minX": "flush",
+          "maxX": "flush"
+        }
+      }
+    },
+    {
+      "op": "roof.add",
+      "id": "roof_east",
+      "value": {
+        "minX": 10,
+        "maxX": 13.5,
+        "minZ": -10,
+        "maxZ": 10
+      }
+    },
+    {
+      "op": "roof.update",
+      "id": "roof_east",
+      "value": {
+        "label": "Armory roof",
+        "type": "gable",
+        "direction": "z",
+        "baseY": 7.68,
+        "pitch": 30,
+        "overhang": 0.4,
+        "gableEnds": "none",
+        "edgeModes": {
+          "minZ": "flush",
+          "maxZ": "flush"
+        }
+      }
+    },
+    {
+      "op": "roof.add",
+      "id": "roof_west",
+      "value": {
+        "minX": -13.5,
+        "maxX": -10,
+        "minZ": -10,
+        "maxZ": 10
+      }
+    },
+    {
+      "op": "roof.update",
+      "id": "roof_west",
+      "value": {
+        "label": "Garrison hall roof",
+        "type": "gable",
+        "direction": "z",
+        "baseY": 7.68,
+        "pitch": 30,
+        "overhang": 0.4,
+        "gableEnds": "none",
+        "edgeModes": {
+          "minZ": "flush",
+          "maxZ": "flush"
+        }
+      }
+    }
+  ]
+}

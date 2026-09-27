@@ -1,0 +1,1334 @@
+{
+  "version": 1,
+  "operations": [
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_gate_outer",
+      "value": {
+        "type": "door",
+        "wallId": "g_outer15",
+        "t": 0.5,
+        "width": 3,
+        "height": 3.6,
+        "doorStyle": "empty",
+        "label": "Outer gate"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_gate_inner",
+      "value": {
+        "type": "door",
+        "wallId": "g_court_s",
+        "t": 0.5,
+        "width": 3,
+        "height": 3.6,
+        "doorStyle": "empty",
+        "label": "Inner gate"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_guard_w",
+      "value": {
+        "type": "door",
+        "wallId": "g_gate_w",
+        "t": 0.5,
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "room",
+        "label": "West guard room door"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_guard_e",
+      "value": {
+        "type": "door",
+        "wallId": "g_gate_e",
+        "t": 0.5,
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "room",
+        "label": "East guard room door"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_store_w",
+      "value": {
+        "type": "door",
+        "wallId": "g_guard_w",
+        "t": 0.5,
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "room",
+        "label": "South-west store door"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_store_e",
+      "value": {
+        "type": "door",
+        "wallId": "g_guard_e",
+        "t": 0.5,
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "room",
+        "label": "South-east store door"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_slit_gw",
+      "value": {
+        "type": "window",
+        "wallId": "g_outer15",
+        "t": 0.833,
+        "width": 0.3,
+        "height": 1.2,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "Guard slit W"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_slit_ge",
+      "value": {
+        "type": "window",
+        "wallId": "g_outer15",
+        "t": 0.167,
+        "width": 0.3,
+        "height": 1.2,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "Guard slit E"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_hall",
+      "value": {
+        "type": "door",
+        "wallId": "g_court_n",
+        "t": 0.5,
+        "width": 2,
+        "height": 3,
+        "doorStyle": "exterior",
+        "label": "Great hall door"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_hall_win_w7",
+      "value": {
+        "type": "window",
+        "wallId": "g_court_n",
+        "t": 0.15,
+        "width": 1.1,
+        "height": 2,
+        "windowStyle": "four_pane",
+        "sill": 1.2,
+        "label": "Hall window"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_hall_win_w3_5",
+      "value": {
+        "type": "window",
+        "wallId": "g_court_n",
+        "t": 0.325,
+        "width": 1.1,
+        "height": 2,
+        "windowStyle": "four_pane",
+        "sill": 1.2,
+        "label": "Hall window"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_hall_win_e3_5",
+      "value": {
+        "type": "window",
+        "wallId": "g_court_n",
+        "t": 0.675,
+        "width": 1.1,
+        "height": 2,
+        "windowStyle": "four_pane",
+        "sill": 1.2,
+        "label": "Hall window"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_hall_win_e7",
+      "value": {
+        "type": "window",
+        "wallId": "g_court_n",
+        "t": 0.85,
+        "width": 1.1,
+        "height": 2,
+        "windowStyle": "four_pane",
+        "sill": 1.2,
+        "label": "Hall window"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_hall_slit_w6",
+      "value": {
+        "type": "window",
+        "wallId": "g_outer03",
+        "t": 0.2,
+        "width": 0.3,
+        "height": 1.4,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "Hall arrow slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_hall_slit_w2",
+      "value": {
+        "type": "window",
+        "wallId": "g_outer03",
+        "t": 0.4,
+        "width": 0.3,
+        "height": 1.4,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "Hall arrow slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_hall_slit_e2",
+      "value": {
+        "type": "window",
+        "wallId": "g_outer03",
+        "t": 0.6,
+        "width": 0.3,
+        "height": 1.4,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "Hall arrow slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_hall_slit_e6",
+      "value": {
+        "type": "window",
+        "wallId": "g_outer03",
+        "t": 0.8,
+        "width": 0.3,
+        "height": 1.4,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "Hall arrow slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_barr_n",
+      "value": {
+        "type": "door",
+        "wallId": "g_court_e",
+        "t": 0.25,
+        "width": 1.2,
+        "height": 2.4,
+        "doorStyle": "exterior",
+        "label": "Barracks north door"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_barr_s",
+      "value": {
+        "type": "door",
+        "wallId": "g_court_e",
+        "t": 0.75,
+        "width": 1.2,
+        "height": 2.4,
+        "doorStyle": "exterior",
+        "label": "Barracks south door"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_barr_mid",
+      "value": {
+        "type": "door",
+        "wallId": "g_east_part",
+        "t": 0.5,
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "room",
+        "label": "Barracks connecting door"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_barr_slit_n",
+      "value": {
+        "type": "window",
+        "wallId": "g_outer08",
+        "t": 0.25,
+        "width": 0.3,
+        "height": 1.4,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "Barracks slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_barr_slit_s",
+      "value": {
+        "type": "window",
+        "wallId": "g_outer08",
+        "t": 0.75,
+        "width": 0.3,
+        "height": 1.4,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "Barracks slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_stables",
+      "value": {
+        "type": "door",
+        "wallId": "g_court_w",
+        "t": 0.25,
+        "width": 2.4,
+        "height": 3,
+        "doorStyle": "empty",
+        "label": "Stable doorway"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_storehouse",
+      "value": {
+        "type": "door",
+        "wallId": "g_court_w",
+        "t": 0.75,
+        "width": 1.4,
+        "height": 2.6,
+        "doorStyle": "exterior",
+        "label": "Storehouse door"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_stables_mid",
+      "value": {
+        "type": "door",
+        "wallId": "g_west_part",
+        "t": 0.5,
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "room",
+        "label": "Stables/storehouse door"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_west_slit_n",
+      "value": {
+        "type": "window",
+        "wallId": "g_outer22",
+        "t": 0.75,
+        "width": 0.3,
+        "height": 1.4,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "West range slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_west_slit_s",
+      "value": {
+        "type": "window",
+        "wallId": "g_outer22",
+        "t": 0.25,
+        "width": 0.3,
+        "height": 1.4,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "West range slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_nw_hall",
+      "value": {
+        "type": "door",
+        "wallId": "g_nw_e",
+        "t": 0.5,
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "room",
+        "label": "Hall to NW tower"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_ne_hall",
+      "value": {
+        "type": "door",
+        "wallId": "g_ne_w",
+        "t": 0.5,
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "room",
+        "label": "Hall to NE tower"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_nw_store",
+      "value": {
+        "type": "door",
+        "wallId": "g_nw_s",
+        "t": 0.5,
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "room",
+        "label": "Storehouse to NW tower"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_ne_barr",
+      "value": {
+        "type": "door",
+        "wallId": "g_ne_s",
+        "t": 0.5,
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "room",
+        "label": "Barracks to NE tower"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_se_barr",
+      "value": {
+        "type": "door",
+        "wallId": "g_se_n",
+        "t": 0.5,
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "room",
+        "label": "Barracks to SE tower"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_sw_stab",
+      "value": {
+        "type": "door",
+        "wallId": "g_sw_n",
+        "t": 0.5,
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "room",
+        "label": "Stables to SW tower"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_keep_door",
+      "value": {
+        "type": "door",
+        "wallId": "g_keep_s",
+        "t": 0.5,
+        "width": 1.6,
+        "height": 2.6,
+        "doorStyle": "exterior",
+        "label": "Keep door"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_keep_slit_n",
+      "value": {
+        "type": "window",
+        "wallId": "g_keep_n",
+        "t": 0.5,
+        "width": 0.3,
+        "height": 1.2,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "Undercroft slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_keep_slit_e",
+      "value": {
+        "type": "window",
+        "wallId": "g_keep_e",
+        "t": 0.5,
+        "width": 0.3,
+        "height": 1.2,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "Undercroft slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_keep_slit_w",
+      "value": {
+        "type": "window",
+        "wallId": "g_keep_w",
+        "t": 0.125,
+        "width": 0.3,
+        "height": 1.2,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "Undercroft slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_nw_slit_01",
+      "value": {
+        "type": "window",
+        "wallId": "g_outer01",
+        "t": 0.5,
+        "width": 0.3,
+        "height": 1.4,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "NW tower slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_nw_slit_24",
+      "value": {
+        "type": "window",
+        "wallId": "g_outer24",
+        "t": 0.5,
+        "width": 0.3,
+        "height": 1.4,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "NW tower slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_ne_slit_05",
+      "value": {
+        "type": "window",
+        "wallId": "g_outer05",
+        "t": 0.5,
+        "width": 0.3,
+        "height": 1.4,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "NE tower slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_ne_slit_06",
+      "value": {
+        "type": "window",
+        "wallId": "g_outer06",
+        "t": 0.5,
+        "width": 0.3,
+        "height": 1.4,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "NE tower slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_se_slit_10",
+      "value": {
+        "type": "window",
+        "wallId": "g_outer10",
+        "t": 0.5,
+        "width": 0.3,
+        "height": 1.4,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "SE tower slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_se_slit_11",
+      "value": {
+        "type": "window",
+        "wallId": "g_outer11",
+        "t": 0.5,
+        "width": 0.3,
+        "height": 1.4,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "SE tower slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_sw_slit_19",
+      "value": {
+        "type": "window",
+        "wallId": "g_outer19",
+        "t": 0.5,
+        "width": 0.3,
+        "height": 1.4,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "SW tower slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "o_sw_slit_20",
+      "value": {
+        "type": "window",
+        "wallId": "g_outer20",
+        "t": 0.5,
+        "width": 0.3,
+        "height": 1.4,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "SW tower slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_nw_walk_ew",
+      "value": {
+        "type": "door",
+        "wallId": "r_nw_iz_ext",
+        "t": 0.278,
+        "width": 1.1,
+        "height": 2.2,
+        "doorStyle": "exterior",
+        "label": "NW tower to side walk"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_nw_walk_ns",
+      "value": {
+        "type": "door",
+        "wallId": "r_nw_ix_ext",
+        "t": 0.722,
+        "width": 1.1,
+        "height": 2.2,
+        "doorStyle": "exterior",
+        "label": "NW tower to north walk"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_nw_slit2_ox",
+      "value": {
+        "type": "window",
+        "wallId": "r_nw_ox",
+        "t": 0.5,
+        "width": 0.3,
+        "height": 1.4,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "NW tower slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_nw_slit2_oz",
+      "value": {
+        "type": "window",
+        "wallId": "r_nw_oz",
+        "t": 0.5,
+        "width": 0.3,
+        "height": 1.4,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "NW tower slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_ne_walk_ew",
+      "value": {
+        "type": "door",
+        "wallId": "r_ne_iz_ext",
+        "t": 0.278,
+        "width": 1.1,
+        "height": 2.2,
+        "doorStyle": "exterior",
+        "label": "NE tower to side walk"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_ne_walk_ns",
+      "value": {
+        "type": "door",
+        "wallId": "r_ne_ix_ext",
+        "t": 0.722,
+        "width": 1.1,
+        "height": 2.2,
+        "doorStyle": "exterior",
+        "label": "NE tower to north walk"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_ne_slit2_ox",
+      "value": {
+        "type": "window",
+        "wallId": "r_ne_ox",
+        "t": 0.5,
+        "width": 0.3,
+        "height": 1.4,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "NE tower slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_ne_slit2_oz",
+      "value": {
+        "type": "window",
+        "wallId": "r_ne_oz",
+        "t": 0.5,
+        "width": 0.3,
+        "height": 1.4,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "NE tower slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_se_walk_ew",
+      "value": {
+        "type": "door",
+        "wallId": "r_se_iz_ext",
+        "t": 0.278,
+        "width": 1.1,
+        "height": 2.2,
+        "doorStyle": "exterior",
+        "label": "SE tower to side walk"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_se_walk_ns",
+      "value": {
+        "type": "door",
+        "wallId": "r_se_ix_ext",
+        "t": 0.625,
+        "width": 1.1,
+        "height": 2.2,
+        "doorStyle": "exterior",
+        "label": "SE tower to south walk"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_se_slit2_ox",
+      "value": {
+        "type": "window",
+        "wallId": "r_se_ox",
+        "t": 0.5,
+        "width": 0.3,
+        "height": 1.4,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "SE tower slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_se_slit2_oz",
+      "value": {
+        "type": "window",
+        "wallId": "r_se_oz",
+        "t": 0.5,
+        "width": 0.3,
+        "height": 1.4,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "SE tower slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_sw_walk_ew",
+      "value": {
+        "type": "door",
+        "wallId": "r_sw_iz_ext",
+        "t": 0.278,
+        "width": 1.1,
+        "height": 2.2,
+        "doorStyle": "exterior",
+        "label": "SW tower to side walk"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_sw_walk_ns",
+      "value": {
+        "type": "door",
+        "wallId": "r_sw_ix_ext",
+        "t": 0.625,
+        "width": 1.1,
+        "height": 2.2,
+        "doorStyle": "exterior",
+        "label": "SW tower to south walk"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_sw_slit2_ox",
+      "value": {
+        "type": "window",
+        "wallId": "r_sw_ox",
+        "t": 0.5,
+        "width": 0.3,
+        "height": 1.4,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "SW tower slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_sw_slit2_oz",
+      "value": {
+        "type": "window",
+        "wallId": "r_sw_oz",
+        "t": 0.5,
+        "width": 0.3,
+        "height": 1.4,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "SW tower slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_guest_door",
+      "value": {
+        "type": "door",
+        "wallId": "r_north_walk",
+        "t": 0.25,
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "exterior",
+        "label": "Guest chambers door"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_chapel_door",
+      "value": {
+        "type": "door",
+        "wallId": "r_north_walk",
+        "t": 0.75,
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "exterior",
+        "label": "Chapel door"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_guest_win7",
+      "value": {
+        "type": "window",
+        "wallId": "r_north_court",
+        "t": 0.85,
+        "width": 1,
+        "height": 1.4,
+        "windowStyle": "double_hung",
+        "sill": 1,
+        "label": "Guest chamber window"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_guest_win3",
+      "value": {
+        "type": "window",
+        "wallId": "r_north_court",
+        "t": 0.65,
+        "width": 1,
+        "height": 1.4,
+        "windowStyle": "double_hung",
+        "sill": 1,
+        "label": "Guest chamber window"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_chapel_win3",
+      "value": {
+        "type": "window",
+        "wallId": "r_north_court",
+        "t": 0.35,
+        "width": 0.8,
+        "height": 2.2,
+        "windowStyle": "four_pane",
+        "sill": 0.8,
+        "label": "Chapel window"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_chapel_win5",
+      "value": {
+        "type": "window",
+        "wallId": "r_north_court",
+        "t": 0.25,
+        "width": 0.8,
+        "height": 2.2,
+        "windowStyle": "four_pane",
+        "sill": 0.8,
+        "label": "Chapel window"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_chapel_win7",
+      "value": {
+        "type": "window",
+        "wallId": "r_north_court",
+        "t": 0.15,
+        "width": 0.8,
+        "height": 2.2,
+        "windowStyle": "four_pane",
+        "sill": 0.8,
+        "label": "Chapel window"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_armory_door_n",
+      "value": {
+        "type": "door",
+        "wallId": "r_east_walk",
+        "t": 0.25,
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "exterior",
+        "label": "Armory door"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_garrison_door_n",
+      "value": {
+        "type": "door",
+        "wallId": "r_west_walk",
+        "t": 0.75,
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "exterior",
+        "label": "Garrison hall door"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_armory_door_s",
+      "value": {
+        "type": "door",
+        "wallId": "r_east_walk",
+        "t": 0.75,
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "exterior",
+        "label": "Armory door"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_garrison_door_s",
+      "value": {
+        "type": "door",
+        "wallId": "r_west_walk",
+        "t": 0.25,
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "exterior",
+        "label": "Garrison hall door"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_armory_win_n",
+      "value": {
+        "type": "window",
+        "wallId": "r_east_court",
+        "t": 0.8,
+        "width": 1,
+        "height": 1.4,
+        "windowStyle": "double_hung",
+        "sill": 1,
+        "label": "Armory window"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_garrison_win_n",
+      "value": {
+        "type": "window",
+        "wallId": "r_west_court",
+        "t": 0.2,
+        "width": 1,
+        "height": 1.4,
+        "windowStyle": "double_hung",
+        "sill": 1,
+        "label": "Garrison window"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_armory_win_c",
+      "value": {
+        "type": "window",
+        "wallId": "r_east_court",
+        "t": 0.5,
+        "width": 1,
+        "height": 1.4,
+        "windowStyle": "double_hung",
+        "sill": 1,
+        "label": "Armory window"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_garrison_win_c",
+      "value": {
+        "type": "window",
+        "wallId": "r_west_court",
+        "t": 0.5,
+        "width": 1,
+        "height": 1.4,
+        "windowStyle": "double_hung",
+        "sill": 1,
+        "label": "Garrison window"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_armory_win_s",
+      "value": {
+        "type": "window",
+        "wallId": "r_east_court",
+        "t": 0.2,
+        "width": 1,
+        "height": 1.4,
+        "windowStyle": "double_hung",
+        "sill": 1,
+        "label": "Armory window"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_garrison_win_s",
+      "value": {
+        "type": "window",
+        "wallId": "r_west_court",
+        "t": 0.8,
+        "width": 1,
+        "height": 1.4,
+        "windowStyle": "double_hung",
+        "sill": 1,
+        "label": "Garrison window"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_winch_w",
+      "value": {
+        "type": "door",
+        "wallId": "r_gh_w",
+        "t": 0.7,
+        "width": 1.1,
+        "height": 2.2,
+        "doorStyle": "exterior",
+        "label": "Winch room west door"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_winch_e",
+      "value": {
+        "type": "door",
+        "wallId": "r_gh_e",
+        "t": 0.3,
+        "width": 1.1,
+        "height": 2.2,
+        "doorStyle": "exterior",
+        "label": "Winch room east door"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_winch_slit_w",
+      "value": {
+        "type": "window",
+        "wallId": "r_gh_s",
+        "t": 0.875,
+        "width": 0.3,
+        "height": 1.2,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "Winch room slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_winch_slit_e",
+      "value": {
+        "type": "window",
+        "wallId": "r_gh_s",
+        "t": 0.125,
+        "width": 0.3,
+        "height": 1.2,
+        "windowStyle": "empty",
+        "sill": 1.3,
+        "label": "Winch room slit"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_winch_court",
+      "value": {
+        "type": "window",
+        "wallId": "r_gh_n",
+        "t": 0.5,
+        "width": 1.2,
+        "height": 1.2,
+        "windowStyle": "four_pane",
+        "sill": 1,
+        "label": "Winch room courtyard window"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_keep2_win_n",
+      "value": {
+        "type": "window",
+        "wallId": "r_keep_n",
+        "t": 0.4,
+        "width": 0.9,
+        "height": 1.6,
+        "windowStyle": "four_pane",
+        "sill": 1,
+        "label": "Great chamber window"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_keep2_win_e",
+      "value": {
+        "type": "window",
+        "wallId": "r_keep_e",
+        "t": 0.813,
+        "width": 0.9,
+        "height": 1.6,
+        "windowStyle": "four_pane",
+        "sill": 1,
+        "label": "Great chamber window"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_keep2_win_s",
+      "value": {
+        "type": "window",
+        "wallId": "r_keep_s",
+        "t": 0.5,
+        "width": 0.9,
+        "height": 1.6,
+        "windowStyle": "four_pane",
+        "sill": 1,
+        "label": "Great chamber window"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f2_ramparts",
+      "id": "o_keep2_win_w",
+      "value": {
+        "type": "window",
+        "wallId": "r_keep_w",
+        "t": 0.125,
+        "width": 0.9,
+        "height": 1.6,
+        "windowStyle": "four_pane",
+        "sill": 1,
+        "label": "Great chamber window"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f3_towertops",
+      "id": "o_keep3_win_n",
+      "value": {
+        "type": "window",
+        "wallId": "t_keep_n",
+        "t": 0.6,
+        "width": 0.9,
+        "height": 1.6,
+        "windowStyle": "four_pane",
+        "sill": 1,
+        "label": "Lord's chamber window"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f3_towertops",
+      "id": "o_keep3_win_e",
+      "value": {
+        "type": "window",
+        "wallId": "t_keep_e",
+        "t": 0.75,
+        "width": 0.9,
+        "height": 1.6,
+        "windowStyle": "four_pane",
+        "sill": 1,
+        "label": "Lord's chamber window"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f3_towertops",
+      "id": "o_keep3_win_s",
+      "value": {
+        "type": "window",
+        "wallId": "t_keep_s",
+        "t": 0.5,
+        "width": 0.9,
+        "height": 1.6,
+        "windowStyle": "four_pane",
+        "sill": 1,
+        "label": "Lord's chamber window"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "f3_towertops",
+      "id": "o_keep3_win_w",
+      "value": {
+        "type": "window",
+        "wallId": "t_keep_w",
+        "t": 0.125,
+        "width": 0.9,
+        "height": 1.6,
+        "windowStyle": "four_pane",
+        "sill": 1,
+        "label": "Lord's chamber window"
+      }
+    }
+  ]
+}

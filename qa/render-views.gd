@@ -2,7 +2,7 @@ extends SceneTree
 # Renders screenshots of exported building scenes in Godot itself.
 # Scenes are loaded unmodified (empty material slots render as Godot's default
 # grey); only a camera, sky, sun and ambient light are added for viewing.
-# res://render.json: {"scenes": ["assets/x.tscn"], "views": [...] | null,
+# res://render.json: {"scenes": ["assets/x.tscn"], "views": [...] | null, "extraViews": [...],
 #   "width": 1280, "height": 800, "maxRegionViews": 64}
 # Without explicit views, each scene gets four exterior diagonals, an aerial
 # view and one eye-level view per labelled region (from the exporter's
@@ -105,7 +105,7 @@ func _load_job() -> void:
 	current = (load("res://" + job["scene"]) as PackedScene).instantiate()
 	get_root().add_child(current)
 	current_path = job["scene"]
-	job["views"] = cfg["views"] if cfg["views"] != null else _auto_views(current)
+	job["views"] = (cfg["views"] if cfg["views"] != null else _auto_views(current)) + cfg.get("extraViews", [])
 	job["view"] = 0
 
 func _aim(view) -> void:

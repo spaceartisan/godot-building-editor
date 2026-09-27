@@ -15,7 +15,7 @@ AUTHORING_REVIEW asks for route evidence, but the tool provides no way to produc
 - **Cheap version:** a shared-model connectivity graph. Nodes are floor coverage pieces split by walls. Edges are doors, empty passages and stair landings. Report any occupied region or labelled room with no path to an exterior opening. This would be a `validate` warning or an `inspect` report.
 - **Stronger version:** adopt the `probe/` approach as `godot-check --reachability TARGETS.json`. It bakes a navmesh from exported collision with door panels removed and paths to named points. Targets could default to region label centres.
 
-**Status: fixed (cheap version).** `validate`/`inspect --reachability` rasterizes each floor's walkable surface with walker clearance, opens doors and passages, links stairs and floods from open ground (`src/reachability.js`). Unreachable areas of 1 m² or more, named by the regions they cover, and blocked stair ends become warnings. It flags every upper level of the no-ground-stairs control and of the supplied stairless castle fixture. It is opt-in, because most catalog examples are doorless geometry demos. The Godot navmesh probe stays in `probe/` as a second, collision-based check; it was not promoted into `godot-check`.
+**Status: fixed (cheap version).** `validate`/`inspect --reachability` rasterizes each floor's walkable surface with walker clearance, opens doors and passages, links stairs and floods from open ground (`src/reachability.js`). Unreachable areas of 1 m² or more, named by the regions they cover, and blocked stair ends become warnings. It flags every upper level of the no-ground-stairs control and of the supplied stairless castle fixture. It is opt-in, because most catalog examples are doorless geometry demos. The Godot navmesh probe stays in `probe/` as a second, collision-based check; it was not promoted into `godot-check`. In the web editor, **Include route check** shows the same warnings with navigation targets and outlines unreachable areas on the plan.
 
 ### F2. Floor and building settings that AI authoring needs are not transaction-editable
 
@@ -86,7 +86,7 @@ Because `wallThickness` is building-wide, 1 m stair guards are as thick as the 0
 **Status: mostly fixed.**
 
 - `railing.add/update/remove` exist, and railings count as barriers in the route check.
-- `wall.crenellate` lays out crenels on one wall as ordinary empty window openings; Godot renders confirm clean notches with collision. The rebuilt castle has 116 walls instead of 362, and its structure recipe 162 operations instead of 411.
+- `wall.crenellate` (and **Add crenels** in the web wall panel) lays out crenels on one wall as ordinary empty window openings; Godot renders confirm clean notches with collision. The rebuilt castle has 116 walls instead of 362, and its structure recipe 162 operations instead of 411.
 - Per-wall thickness is **not** added: it would touch junction fitting, openings, roofs and profiles across the exporter, so it is deferred.
 
 ### F7. Placing an opening needs hand-computed `t` fractions
@@ -113,7 +113,7 @@ For this review, a one-off render script rendered the unmodified export in Godot
 
 **Suggested fix:** add a Godot render mode, for example `godot-check --assets DIR --render VIEWS.json --out NEW_DIR`. Views could default to opposite exteriors plus one eye-level shot per labelled region. Point AUTHORING_REVIEW at those images rather than the software preview. Keep `preview` as a quick approximation. Its gaps, such as no way to focus on part of a building and no orthographic plan view, matter less once Godot renders are available.
 
-**Status: fixed.** `godot-check --assets DIR --render --out NEW_DIR [--views FILE]` renders the checked scenes in Godot (`DISPLAY` or `xvfb-run`). By default it takes four exterior diagonals, an aerial view and eye-level views per labelled region. AUTHORING_REVIEW, LLM_GUIDE and PREVIEWS now point at Godot renders; the software preview is described as an approximation.
+**Status: fixed.** `godot-check --assets DIR --render --out NEW_DIR [--views FILE]` renders the checked scenes in Godot (`DISPLAY` or `xvfb-run`). By default it takes four exterior diagonals, an aerial view and eye-level views per labelled region. The web editor's **Render in Godot** does the same through `server.mjs` started with `GODOT_BIN`, optionally adding the current 3D preview camera. AUTHORING_REVIEW, LLM_GUIDE and PREVIEWS now point at Godot renders; the software preview is described as an approximation.
 
 ## Low impact and papercuts
 

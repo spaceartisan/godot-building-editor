@@ -27,4 +27,20 @@ try{
   assert.deepEqual(custom.render.files,['gate.png']);
   run(['godot-check','--assets','assets','--render','--out','custom'],3);
   console.log(`PASS render engine: ${names.length} automatic views and 1 custom view rendered by ${auto.engineVersion}`);
+  // Web editor route: the local server renders the web export with the same views.
+  const { spawn } = await import('node:child_process');
+  const { createEditorHarness } = await import('./qa/editor-harness.mjs');
+  const server=spawn(process.execPath,[path.join(root,'server.mjs')],{env:{...process.env,PORT:'0'},stdio:['ignore','pipe','pipe']});
+  try{
+    const base=await new Promise((resolve,reject)=>{let out='';server.stdout.on('data',d=>{out+=d;const m=/http:\/\/\S+/.exec(out);if(m)resolve(m[0]);});server.on('exit',c=>reject(new Error(`server exited ${c}`)));setTimeout(()=>reject(new Error('server start timeout')),10000);});
+    const e=await createEditorHarness({fetch:(url,init)=>fetch(base+url,init)});
+    await e.loadBuildingData(JSON.parse(fs.readFileSync(path.join(root,'examples/courtyard_regions.building.json'),'utf8')));
+    await e.$('#godot-render-btn').click();
+    const gallery=e.$('#godot-render-results').children.map(f=>f.children[1].textContent+'.png');
+    assert.deepEqual(gallery,[...names,'current-view.png'],'web renders the godot-check --render views plus the current 3D preview camera');
+    if(process.env.RENDER_SAMPLE_OUT){fs.writeFileSync(process.env.RENDER_SAMPLE_OUT,Buffer.from(e.$('#godot-render-results').children.at(-1).children[0].src.split(',')[1],'base64'));}
+    assert.match(e.$('#godot-render-status').textContent,new RegExp(`${names.length+1} views rendered by Godot 4\\.`));
+    assert.deepEqual(e.errors,[]);
+    console.log(`PASS web render: ${gallery.length} views through the local server match the CLI`);
+  }finally{server.kill();}
 }finally{fs.rmSync(temp,{recursive:true,force:true});}

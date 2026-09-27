@@ -16,9 +16,10 @@ import {
   floorElevation, floorWallHeight, floorSlabThickness, structuralEditImpact, removeTopFloor, floorView, makeEmptyBuilding, makeFarmhousePreset, makeFloor, makeManualSurface, makeOmniLight, makePlatform, makeRectArea, makeRailing, makeRoofSection, makeStair, openingsForWall,
   pointOnWall, projectToWall, rectValid, roofSectionsForFloor, stairFootprint, structuralFloorRectangles, splitWallIntoSolidSegments, uid, validateOpeningLayout, wallHeightFor, wallLength
 } from './model.js';
-import { downloadGodotTscn, downloadText, isExteriorWall, exteriorWallOutsideSign } from './exporter.js';
+import { downloadGodotTscn, downloadText, downloadBinary, makeStoredZip, exportGodotFiles, isExteriorWall, exteriorWallOutsideSign } from './exporter.js';
 import { createCheckReport, checkReportFilename } from './check-report.js';
-import { snapPlanPoint, samePoint, wallSegmentProblem, wallJunctions, proposePlatformUpdate } from './authoring.js';
+import { reachabilityWarnings } from './reachability.js';
+import { snapPlanPoint, samePoint, wallSegmentProblem, wallJunctions, proposePlatformUpdate, proposeCrenellation, CRENELLATION_DEFAULTS } from './authoring.js';
 import { endpointMoveTargets, proposeEndpointMove } from './wall-edit.js';
 import { WebPreview3D as Preview3D, webReviewDescription } from './preview-web.js';
 import { createHistory } from './history.js';
@@ -49,6 +50,8 @@ let showFloorBelow=true;
 let newMarkerHeight=0;
 let newWallTypeId='',wallTypeEditor=null;
 let newOpeningShapeId='',openingShapeEditor=null;
+let crenelDraft={...CRENELLATION_DEFAULTS};
+let routeResult=null,lastRenders=null;
 
 const $=s=>document.querySelector(s);
 const canvas=$('#plan-canvas'),ctx=canvas.getContext('2d');
@@ -325,6 +328,7 @@ function drawPlan(){
   drawRegionDraft();
   if(regionStart&&regionCurrent)drawRegion(makeRegion(regionStart,regionCurrent,'New region',newRegionKind,newRegionEffect),true);
   drawPlanMarkers();
+  drawRouteOverlay();
   drawSelectedArea();
   drawAuthoringGuides();
 }
@@ -484,6 +488,17 @@ $('#apply-group-offset').addEventListener('click',()=>{
 function nearestMarker(screen){
   let found=null,distance=12;for(const marker of floor().markers||[]){const p=worldToScreen(marker.position),d=Math.hypot(p.x-screen.x,p.y-screen.y);if(d<=distance){found=marker;distance=d;}}return found;
 }
+// Outline floor areas the route check could not reach on the active floor.
+function drawRouteOverlay(){
+  if(!routeResult||!$('#route-check-toggle').checked)return;
+  const id=floor().id;ctx.save();ctx.setLineDash([6,4]);ctx.lineWidth=2;ctx.font='11px ui-monospace, monospace';
+  for(const u of routeResult.unreachable.filter(q=>q.floorId===id)){
+    const a=worldToScreen({x:u.bounds.minX,z:u.bounds.minZ}),c=worldToScreen({x:u.bounds.maxX,z:u.bounds.maxZ});
+    ctx.fillStyle='rgba(255,107,107,.14)';ctx.fillRect(a.x,a.y,c.x-a.x,c.y-a.y);ctx.strokeStyle='#ff6b6b';ctx.strokeRect(a.x,a.y,c.x-a.x,c.y-a.y);
+    ctx.fillStyle='#ff8f8f';ctx.fillText(`Unreachable ${u.area.toFixed(1)} m²`,a.x+4,a.y+13);
+  }
+  ctx.restore();
+}
 function drawPlanMarkers(){
   ctx.save();ctx.setLineDash([]);ctx.font='12px sans-serif';
   for(const marker of floor().markers||[]){
@@ -591,6 +606,18 @@ function refreshSelection(){
   if(selected.type==='wall'){const w=findWall(b,selected.id);if(!w){selected=null;return refreshSelection();}form.append(selectInput('Wall type',w.wallTypeId||'',[['','Standard'],...(building.wallTypes||[]).map(t=>[t.id,t.label])],v=>applyWallType([w.id],v)),selectInput('Inward direction',w.inwardSide||'auto',[['auto','Auto (outside loop / interior Side A)'],['left','Left of A → B in plan'],['right','Right of A → B in plan']],v=>applyWallType([w.id],w.wallTypeId||'',v)));
     const editType=document.createElement('button');editType.type='button';editType.textContent=w.wallTypeId?'Edit shared wall type…':'Create wall type…';editType.addEventListener('click',()=>wallTypeEditor.open(w.wallTypeId||'',[w.id]));form.append(editType);
     const revalidateWallOpenings=()=>{for(const o of openingsForWall(b,w.id))applyOpeningConstraints(b,o);};form.append(textInput('Label',w.label,v=>{w.label=v;commit('Wall updated');}),selectInput('Wall role',isExteriorWall(b,w)?'exterior':'interior',[["exterior","Exterior"],["interior","Interior"]],v=>{w.role=v;commit('Wall role updated');}),checkboxInput('Full story height',w.height==null,v=>{w.height=v?null:b.wallHeight/2;revalidateWallOpenings();commit(v?'Wall set to full story':'Wall set to half height');}));if(w.height!=null)form.append(numInput('Wall height',wallHeightFor(b,w),v=>{w.height=Math.max(.1,Math.min(b.wallHeight,v));revalidateWallOpenings();commit('Wall height updated');}));form.append(checkboxInput('Move connected endpoints',moveConnected,v=>{moveConnected=v;setStatus(v?'Connected endpoints move together':'Selected endpoint only — moving may open a wall loop');}),numInput('Start X',w.a.x,v=>editWallCoordinate(w,'a','x',v)),numInput('Start Z',w.a.z,v=>editWallCoordinate(w,'a','z',v)),numInput('End X',w.b.x,v=>editWallCoordinate(w,'b','x',v)),numInput('End Z',w.b.z,v=>editWallCoordinate(w,'b','z',v)));const small=document.createElement('div');small.className='muted';small.textContent=`Drag handles A / B in Select mode. Length: ${wallLength(w).toFixed(2)} m · Height: ${wallHeightFor(b,w).toFixed(2)} m · Openings: ${openingsForWall(b,w.id).length}`;form.append(small);
+    // Crenellation shares wall.crenellate's layout: empty top-open window openings.
+    const crenelHelp=document.createElement('div');crenelHelp.className='muted';crenelHelp.textContent='Crenellation: evenly spaced top-open notches (empty windows), merlons at both ends.';
+    const addCrenels=document.createElement('button');addCrenels.type='button';addCrenels.id='add-crenels-btn';addCrenels.textContent='Add crenels';
+    addCrenels.addEventListener('click',()=>{
+      const result=proposeCrenellation(w,wallHeightFor(b,w),f.openings,crenelDraft);
+      if(!result.ok){setStatus(`Crenels not added: ${result.reason}`);return;}
+      f.openings.push(...result.openings);
+      const problem=validateBuilding(building).errors[0];
+      if(problem){f.openings.splice(f.openings.length-result.openings.length);setStatus(`Crenels not added: ${problem.message}`);return;}
+      commit(`Added ${result.openings.length} crenels`);
+    });
+    form.append(crenelHelp,numInput('Crenel width',crenelDraft.crenelWidth,v=>{crenelDraft.crenelWidth=v;}),numInput('Merlon width',crenelDraft.merlonWidth,v=>{crenelDraft.merlonWidth=v;}),numInput('Crenel depth',crenelDraft.depth,v=>{crenelDraft.depth=v;}),addCrenels);
   }else if(selected.type==='region'){
     const r=f.regions.find(x=>x.id===selected.id);if(!r){selected=null;return refreshSelection();}
     const update=(key,value)=>{const old=r[key];r[key]=value;if(!rectValid(r)){r[key]=old;setStatus('Region must have positive width and depth');refreshSelection();return;}commit('Region updated');};
@@ -834,6 +861,9 @@ document.addEventListener('pointerdown',e=>{const menu=$('.file-menu');if(menu.o
 $('#export-profile').addEventListener('change',e=>{building.exportProfile=e.target.value;commit('Export profile changed');});
 function showValidation(){
   const r=validateBuilding(building,{roofDiagnostics:true}),list=$('#validation-results'),summary=$('#validation-summary'),review=$('#review-checks-btn');
+  // Opt-in route check shared with the CLI (validate --reachability).
+  routeResult=null;
+  if($('#route-check-toggle').checked&&!r.errors.length){const route=reachabilityWarnings(building);routeResult=route.result;r.warnings=[...r.warnings,...route.warnings];}
   list.replaceChildren();
   for(const issue of [...r.errors,...r.warnings]){
     const li=document.createElement('li'),message=document.createElement('span');message.className='validation-message';message.textContent=issue.message;li.append(message);li.className=r.errors.includes(issue)?'validation-error':'validation-warning';
@@ -869,6 +899,10 @@ function visitDiagnosticTarget(reference){
   setStatus(`${target.label.replace(/^Show /,'Reviewing ')}. Inspection only; no geometry changed.`);
 }
 function revealValidation(){const summary=$('#validation-summary');summary.focus({preventScroll:true});summary.scrollIntoView({block:'nearest'});}
+$('#route-check-toggle').addEventListener('change',e=>{
+  const r=showValidation();drawPlan();
+  setStatus(e.target.checked?`Route check on: ${routeResult?`${routeResult.unreachable.length} unreachable areas, ${routeResult.stairIssues.length} stair issues`:'resolve errors first'}. Inspection only; no geometry changed.`:'Route check off');
+});
 for(const id of ['#validate-btn','#review-checks-btn'])$(id).addEventListener('click',()=>{const r=showValidation();revealValidation();setStatus(`${r.errors.length} errors, ${r.warnings.length} warnings`);});
 $('#download-check-report-btn').addEventListener('click',()=>{
   try{
@@ -876,6 +910,47 @@ $('#download-check-report-btn').addEventListener('click',()=>{
     downloadText(checkReportFilename(building.name),JSON.stringify(report,null,2)+'\n','application/json');
     setStatus(`Check report downloaded: ${report.counts.errors} errors, ${report.counts.warnings} warnings. Save the building JSON separately.`);
   }catch(err){setStatus(`Check report download failed: ${err.message}`);}
+});
+// Godot renders go through the local server (server.mjs with GODOT_BIN), which
+// applies the CLI's asset checks and godot-check --render views to this export.
+async function renderInGodot(){
+  const button=$('#godot-render-btn'),status=$('#godot-render-status'),report=text=>{status.textContent=text;setStatus(text);};
+  const result=showValidation();
+  if(result.errors.length){revealValidation();report(`Render blocked: ${result.errors[0].message}`);return;}
+  const f=exportGodotFiles(building,{collision:$('#collision-toggle').checked,markers:$('#markers-toggle').checked,placeholderMaterials:$('#placeholder-materials-toggle').checked});
+  const files=[{name:f.tscnName,text:f.tscn},...f.doors.map(d=>({name:d.filename,text:d.tscn}))];
+  // The preview's projection uses focal = 0.78 × min(width, height): about a
+  // 65° vertical field of view, which is also Godot's Camera3D convention.
+  const extraViews=[];
+  if($('#render-current-view-toggle').checked){const cam=preview.camera();extraViews.push({name:'current-view',eye:[cam.pos.x,cam.pos.y,cam.pos.z],look:[cam.pos.x+cam.forward.x*10,cam.pos.y+cam.forward.y*10,cam.pos.z+cam.forward.z*10],fov:65});}
+  button.disabled=true;report('Rendering the current export in Godot…');
+  let response,body;
+  try{
+    response=await fetch('/api/godot-render',{method:'POST',headers:{'Content-Type':'application/json','X-Building-Editor':'1'},body:JSON.stringify({files,extraViews})});
+    body=await response.json();
+  }catch{
+    report('Godot rendering needs the local editor server: start it with GODOT_BIN=/path/to/godot node server.mjs and open the editor from that address.');return;
+  }finally{button.disabled=false;}
+  if(!response.ok||!body?.ok){report(`Godot render failed: ${body?.error||`HTTP ${response.status}`}`);return;}
+  lastRenders={base:f.base,engineVersion:body.engineVersion,renderer:body.renderer,views:body.views,images:body.images};
+  const gallery=$('#godot-render-results');gallery.replaceChildren();
+  for(const image of body.images){
+    const figure=document.createElement('figure'),img=document.createElement('img'),caption=document.createElement('figcaption');
+    img.src=`data:image/png;base64,${image.png}`;img.alt=`Godot render: ${image.file}`;caption.textContent=image.file.replace(/\.png$/,'');
+    figure.append(img,caption);gallery.append(figure);
+  }
+  $('#download-renders-btn').hidden=false;
+  report(`${body.images.length} views rendered by Godot ${body.engineVersion}. Scenes are unmodified: empty materials render grey; only camera, sky, sun and ambient light were added.`);
+}
+$('#godot-render-btn').addEventListener('click',()=>renderInGodot());
+$('#download-renders-btn').addEventListener('click',()=>{
+  if(!lastRenders)return;
+  try{
+    const decode=b64=>Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
+    const manifest={engineVersion:lastRenders.engineVersion,renderer:lastRenders.renderer,views:lastRenders.views,note:'Scenes loaded unmodified (empty materials render as default grey); only camera, sky, sun and ambient light were added.'};
+    downloadBinary(`${lastRenders.base}_godot_renders.zip`,makeStoredZip([...lastRenders.images.map(i=>({name:i.file,data:decode(i.png)})),{name:'renders.json',data:JSON.stringify(manifest,null,2)+'\n'}]));
+    setStatus('Godot renders download requested.');
+  }catch(err){setStatus(`Render download failed: ${err.message}`);}
 });
 $('#export-btn').addEventListener('click',()=>{
   try{

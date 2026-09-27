@@ -13,6 +13,7 @@ import * as polygonAreas from '../src/polygon-areas.js';
 import * as model from '../src/model.js';
 import * as exporter from '../src/exporter.js';
 import * as authoring from '../src/authoring.js';
+import * as reachability from '../src/reachability.js';
 import * as wallEdit from '../src/wall-edit.js';
 import * as selection from '../src/selection.js';
 import * as groupEdit from '../src/group-edit.js';
@@ -23,7 +24,7 @@ import * as buildingDocument from '../src/document.js';
 import * as examples from '../src/examples.js';
 import { createHistory } from '../src/history.js';
 import { WebPreview3D, webReviewDescription } from '../src/preview-web.js';
-export async function createEditorHarness(){
+export async function createEditorHarness(options={}){
   const require=createRequire(import.meta.url);
   const createCanvas=process.env.CANVAS_MODULE?require(process.env.CANVAS_MODULE).createCanvas:null;
   const noop=()=>{};
@@ -105,7 +106,7 @@ export async function createEditorHarness(){
     draw(){if(createCanvas)super.draw();}
     resize(){}
   }
-  const imported={...checkReport,...diagnosticTargets,...openingShapeEditor,...profileGeometry,...wallTypeEditor,...wallTypes,...regions,...polygonAreas,...model,...exporter,...authoring,...wallEdit,...selection,...groupEdit,...floorStack,...markers,...validation,...buildingDocument,...examples,createHistory,Preview3D,webReviewDescription,document,window,localStorage,ResizeObserver,devicePixelRatio:1,console:consoleProxy};
+  const imported={...checkReport,...diagnosticTargets,...openingShapeEditor,...profileGeometry,...wallTypeEditor,...wallTypes,...regions,...polygonAreas,...model,...exporter,...authoring,...reachability,...wallEdit,...selection,...groupEdit,...floorStack,...markers,...validation,...buildingDocument,...examples,fetch:options.fetch??((...args)=>globalThis.fetch(...args)),createHistory,Preview3D,webReviewDescription,document,window,localStorage,ResizeObserver,devicePixelRatio:1,console:consoleProxy};
   const source=fs.readFileSync(new URL('../src/main.js',import.meta.url),'utf8').replace(/^import\s+[\s\S]*?from\s+['"][^'"]+['"];\s*/gm,'');
   const api=new Function(...Object.keys(imported),'"use strict";\n'+source+'\nreturn {snapshot:()=>structuredClone(building),coordinates:worldToScreen,loadBuildingData,chooseSelection,selection:()=>structuredClone(selected),selections:()=>structuredClone(selectionItems()),pending:()=>({regionPoints:structuredClone(regionPoints),wallStart,wallOrigin,regionStart,endpointDrag,groupDrag,selectionBox}),drawPlan,preview};')(...Object.values(imported));
   return {...api,document,window,errors,$:s=>document.querySelector(s)};

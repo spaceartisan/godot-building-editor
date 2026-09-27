@@ -159,7 +159,7 @@ export function reachabilityWarnings(building,options){
   const result=analyzeReachability(building,options),warnings=[];
   for(const u of result.unreachable){
     const where=u.regionLabels.length?` (${u.regionLabels.join(', ')})`:'';
-    warnings.push({path:`Floor ${u.floorIndex}`,message:`Floor ${u.floorIndex}: ${u.area.toFixed(1)} m² of floor near (${u.centroid.x}, ${u.centroid.z})${where} cannot be reached from outside through doors, passages and stairs`,targets:[{type:'floor',id:u.floorId}]});
+    warnings.push({path:`Floor ${u.floorIndex}`,message:`Floor ${u.floorIndex}: ${u.area.toFixed(1)} m² of floor near (${u.centroid.x}, ${u.centroid.z})${where} cannot be reached from outside through doors, passages and stairs`,targets:[{type:'floor',floorId:u.floorId}]});
   }
   for(const s of result.stairIssues){
     const text={'no-upper-floor':'has no upper floor','lower-entrance-blocked':'lower entrance is blocked or has no floor','upper-arrival-blocked':'upper arrival is blocked or has no floor'}[s.issue];

@@ -65,7 +65,10 @@ const sealed=build(room('floor_1','w'));
     const fixture=path.join(root,'qa/fixtures/castle-review-source.building.json');
     assert.equal(run(['validate',fixture,'--warnings-as-errors'],0).results[0].warnings.length,0,'without the flag the route check does not run');
     const strict=run(['validate',fixture,'--reachability','--warnings-as-errors'],1);
-    assert.ok(strict.results[0].warnings.some(w=>/cannot be reached/.test(w.message)&&w.targets[0].type==='floor'));
+    assert.ok(strict.results[0].warnings.some(w=>/cannot be reached/.test(w.message)&&w.targets[0].type==='floor'&&typeof w.targets[0].floorId==='string'));
+    // Saved reports resolve the floor target (same format as other floor diagnostics).
+    run(['validate',fixture,'--reachability','--out','targets.json'],0);
+    assert.ok(JSON.parse(fs.readFileSync(path.join(temp,'targets.json'),'utf8')).results[0].warnings.some(w=>/cannot be reached/.test(w.message)&&w.targets?.[0]?.type==='floor'&&w.targets[0].floorId));
     assert.equal(strict.results[0].reachability.ok,false);
     run(['validate',fixture,'--reachability','--out','report.json'],0);
     assert.match(fs.readFileSync(path.join(temp,'report.json'),'utf8'),/cannot be reached/);

@@ -35,7 +35,7 @@ function displayCommand(executable,args){
   return ['xvfb-run',['-a','-s','-screen 0 1280x800x24',executable,...args]];
 }
 
-export function renderPreparedScenes({executable,prepared,views=null,timeoutSeconds=300}){
+export function renderPreparedScenes({executable,prepared,views=null,extraViews=[],timeoutSeconds=300}){
   const dependencies=new Set([...prepared.scenes].flatMap(s=>s.dependencies));
   const roots=prepared.scenes.filter(s=>!dependencies.has(s.name)).map(s=>s.name);
   const temp=fs.mkdtempSync(path.join(os.tmpdir(),'building-render-'));
@@ -43,7 +43,7 @@ export function renderPreparedScenes({executable,prepared,views=null,timeoutSeco
     for(const scene of prepared.scenes){const target=path.join(temp,'assets',scene.name);fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,scene.text);}
     fs.mkdirSync(path.join(temp,'out'));
     fs.copyFileSync(path.join(source,'qa/render-views.gd'),path.join(temp,'render.gd'));
-    fs.writeFileSync(path.join(temp,'render.json'),JSON.stringify({scenes:roots.map(n=>`assets/${n}`),views,width:1280,height:800,maxRegionViews:64}));
+    fs.writeFileSync(path.join(temp,'render.json'),JSON.stringify({scenes:roots.map(n=>`assets/${n}`),views,extraViews,width:1280,height:800,maxRegionViews:64}));
     fs.writeFileSync(path.join(temp,'project.godot'),'config_version=5\n[application]\nconfig/name="Building render"\n[display]\nwindow/size/viewport_width=1280\nwindow/size/viewport_height=800\n[rendering]\nrenderer/rendering_method="gl_compatibility"\n');
     const [command,args]=displayCommand(executable,['--rendering-driver','opengl3','--audio-driver','Dummy','--path',temp,'--script','render.gd']);
     const result=spawnSync(command,args,{encoding:'utf8',timeout:timeoutSeconds*1000,maxBuffer:64*1024*1024});
@@ -54,4 +54,36 @@ export function renderPreparedScenes({executable,prepared,views=null,timeoutSeco
     const rendererLine=/OpenGL API ([^\n]+)/.exec(result.stdout||'')?.[1]?.trim()||null;
     return {roots,manifest,entries,renderer:rendererLine,virtualDisplay:command==='xvfb-run'};
   }finally{fs.rmSync(temp,{recursive:true,force:true});}
+}
+
+// Web editor route: render exported scene texts (as produced by the web export)
+// after the same asset safety checks the CLI applies to --assets directories.
+export async function renderSceneFiles({executable,files,views=null,extraViews=[],timeoutSeconds=300}){
+  const { prepareAssetDirectory } = await import('./asset-check.mjs');
+  if(!Array.isArray(files)||!files.length||files.length>1000)throw new RenderError('Expected 1–1000 scene files',2);
+  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'building-render-input-'));
+  try{
+    for(const f of files){
+      if(!f||typeof f.name!=='string'||typeof f.text!=='string')throw new RenderError('Each file needs a name and text',2);
+      const name=f.name.replace(/\\/g,'/');
+      if(!name.endsWith('.tscn')||name.startsWith('/')||name.split('/').some(s=>!s||s==='.'||s==='..'))throw new RenderError(`Unsafe scene path: ${f.name}`,2);
+      const target=path.join(temp,...name.split('/'));fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,f.text,{flag:'wx'});
+    }
+    let prepared;
+    try{prepared=prepareAssetDirectory(temp);}catch(e){throw new RenderError(e.message,2);}
+    const extra=extraViews?.length?parseViews(JSON.stringify({views:extraViews})):[];
+    if(views===null&&extra.some(v=>/^(exterior-|aerial$|floor-)/.test(v.name)))throw new RenderError('Extra view names must not collide with automatic view names',2);
+    return renderPreparedScenes({executable,prepared,views:views===null?null:parseViews(JSON.stringify({views})),extraViews:extra,timeoutSeconds});
+  }finally{fs.rmSync(temp,{recursive:true,force:true});}
+}
+
+// Probe once per process: a usable Godot 4 executable and a display route.
+export function godotRenderAvailability(executable){
+  if(!executable)return {available:false,reason:'Start the local server with GODOT_BIN=/path/to/godot to render in Godot.'};
+  const probe=spawnSync(executable,['--headless','--version'],{encoding:'utf8',timeout:15000});
+  const engineVersion=(probe.stdout||'').trim();
+  if(probe.error||probe.status!==0||!/^4\./.test(engineVersion))return {available:false,reason:`GODOT_BIN is not a runnable Godot 4 executable (${probe.error?.message||engineVersion||probe.status}).`};
+  const display=!!process.env.DISPLAY||!spawnSync('xvfb-run',['--help']).error;
+  if(!display)return {available:false,engineVersion,reason:'Rendering needs a display: set DISPLAY or install xvfb-run on the server machine.'};
+  return {available:true,engineVersion};
 }

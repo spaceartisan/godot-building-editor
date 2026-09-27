@@ -1,4 +1,4 @@
-import { rectValid } from './model.js';
+import { rectValid, wallLength } from './model.js';
 
 // Shared by explicit platform edits in the web editor and CLI. Never mutate a
 // live entity before validating: normalization discards invalid rectangles.
@@ -80,4 +80,28 @@ export function wallJunctions(walls=[]) {
     }
     return {point,degree,kind:degree===1?'open':degree===2?'joined':'junction'};
   });
+}
+
+// Shared by wall.crenellate and the web wall panel: evenly spaced top-open
+// crenels as ordinary empty window openings, centred along the wall with
+// merlons of at least merlonWidth at both ends. Returns new openings only;
+// callers append them and run the shared opening validation.
+export const CRENELLATION_DEFAULTS={crenelWidth:.8,merlonWidth:1,depth:.7};
+export function proposeCrenellation(wall,wallHeight,openings=[],{crenelWidth,merlonWidth,depth,idPrefix}={}){
+  const finite=(v,min,max)=>typeof v==='number'&&Number.isFinite(v)&&v>=min&&v<=max;
+  if(!finite(crenelWidth,.2,1000))return {ok:false,reason:'Crenel width must be from 0.2 to 1000 m'};
+  if(!finite(merlonWidth,.2,1000))return {ok:false,reason:'Merlon width must be from 0.2 to 1000 m'};
+  if(!finite(depth,.1,100))return {ok:false,reason:'Crenel depth must be from 0.1 to 100 m'};
+  if(idPrefix!==undefined&&(typeof idPrefix!=='string'||!/^[A-Za-z0-9_-]{1,48}$/.test(idPrefix)))return {ok:false,reason:'idPrefix must be 1–48 letters, digits, - or _'};
+  if(depth>=wallHeight)return {ok:false,reason:`Crenel depth ${depth} m must be less than the wall height ${Number(wallHeight.toFixed(3))} m`};
+  const length=wallLength(wall),count=Math.floor((length-merlonWidth)/(crenelWidth+merlonWidth));
+  if(count<1)return {ok:false,reason:`Wall ${wall.id} (${Number(length.toFixed(3))} m) is too short for one ${crenelWidth} m crenel between ${merlonWidth} m merlons`};
+  const prefix=idPrefix??`${wall.id}-crenel`,margin=(length-count*crenelWidth-(count-1)*merlonWidth)/2,created=[];
+  for(let i=0;i<count;i++){
+    const id=`${prefix}-${i+1}`;
+    if(openings.some(o=>o.id===id))return {ok:false,reason:`ID already exists: ${id}`};
+    const t=Math.round((margin+crenelWidth/2+i*(crenelWidth+merlonWidth))/length*1e9)/1e9;
+    created.push({label:'Crenel',sill:wallHeight-depth,windowStyle:'empty',type:'window',wallId:wall.id,t,width:crenelWidth,height:depth,id});
+  }
+  return {ok:true,openings:created};
 }

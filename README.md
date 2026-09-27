@@ -23,7 +23,26 @@ An AI built a four-level castle through the CLI ([authoring/ravenhold](authoring
   - The docs cover an open-deck recipe, floor spacing and canvas installation.
   - TRANSACTIONS.md now states that `roof.add` accepts every roof field.
 
-Default validation, example expectations and existing scene exports are unchanged. Per-wall thickness and a per-region "open to sky" flag remain deferred. The rebuilt castle uses only CLI commands, with no JSON edits. `release-check --canvas required --engine required` passed all 7 gates on Linux with Node 22.22.2 and Godot 4.5.1. The report was not packaged with the source, and browser layout, other platforms and archive comparison remain unchecked.
+Every addition is available in both the web editor and the CLI, through the same shared code:
+
+| Capability | CLI | Web editor |
+| --- | --- | --- |
+| Blank building | `new` | **New** |
+| Building and floor settings | `building.update`, `floor.update` | Building and Floors panels |
+| Route check | `validate`/`inspect --reachability` | **Include route check** under Godot Export: warnings with **Show floor**/**Show stair**, a red plan outline of unreachable areas, and inclusion in the check report |
+| Godot renders | `godot-check --assets DIR --render --out NEW_DIR [--views FILE]` | **Render in Godot**: gallery, ZIP download and optional current 3D view. Uses the local server started with `GODOT_BIN`. |
+| Crenellation | `wall.crenellate` | Wall panel: crenel/merlon width, depth, **Add crenels** |
+| Railings | `railing.add/update/remove` | Railing tool and railing panel |
+| Opening placement | `opening.add` with `t` or `at` | Click placement on a wall |
+
+Default validation, example expectations and existing scene exports are unchanged.
+
+Web verification:
+
+- The editor-handler suite (`web-parity-tests.mjs`) checks that web crenels equal the `wall.crenellate` result, that route warnings match `--reachability`, and that the render request carries exactly the web export.
+- The engine suite renders through the local server and gets the same views as `godot-check --render`.
+- `npm run test:browser-parity` passed in Chromium 141 (Playwright 1.56) at 1440 px and 390 px: route check and overlay, a 47-view Godot render of Ravenhold, and **Add crenels** on a wall selected in the plan.
+- The older `npm run test:browser` suite stops at a pre-existing ambiguous `.advanced-options` locator; this also fails on the 1.2.5 commit and was not changed. Per-wall thickness and a per-region "open to sky" flag remain deferred. The rebuilt castle uses only CLI commands, with no JSON edits. `release-check --canvas required --engine required` passed all 7 gates on Linux with Node 22.22.2 and Godot 4.5.1. The report was not packaged with the source, and browser layout, other platforms and archive comparison remain unchecked.
 
 ## Cleanup in 1.2.5: AI authoring review
 
@@ -77,7 +96,7 @@ The quickstart and current CLI/preview guides now distinguish shipped features, 
 npm run dev
 ```
 
-Open `http://localhost:5173`.
+Open `http://localhost:5173`. To render exports in Godot from the web editor (**Render in Godot**), start the server with a Godot 4 executable: `GODOT_BIN=/path/to/godot node server.mjs`. Rendering also needs a display (`DISPLAY`) or `xvfb-run`.
 
 ## New in 0.33: CLI top-floor creation and removal
 

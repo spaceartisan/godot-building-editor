@@ -3,7 +3,7 @@ import { prepareDocument, resolvedFloorDimensions, inspectStair, inspectPlatform
 import { validateBuilding } from './validation.js';
 import { floorView, makeRegion, makeRoofSection, makeStair, makePlatform, makeRailing, wallLength, rectValid, REGION_KINDS, REGION_EFFECTS, validateOpeningLayout } from './model.js';
 import { proposeEndpointMove } from './wall-edit.js';
-import { wallSegmentProblem, proposePlatformUpdate } from './authoring.js';
+import { wallSegmentProblem, proposePlatformUpdate, proposeCrenellation } from './authoring.js';
 import {proposeFloorStackEdit} from './floor-stack.js';
 
 // Versioned authoring commands, not arbitrary JSON patches. All work is done on
@@ -228,21 +228,9 @@ function applyOperation(building,op,index){
   if(kind==='stair'&&action!=='remove'&&!building.floors[fi+1])fail('Stair add/update requires an adjacent upper floor',p);
   if(action==='remove'){list.splice(list.indexOf(item),1);return;}
   if(action==='crenellate'){
-    // Evenly spaced top-open crenels as ordinary empty window openings, with
-    // merlons at both ends. Openings keep deterministic IDs and stay editable.
-    const {crenelWidth,merlonWidth,depth}=op.value,prefix=op.value.idPrefix??`${item.id}-crenel`,length=wallLength(item);
-    const height=item.height??floorView(building,fi).wallHeight;
-    if(depth>=height)fail(`Crenel depth ${depth} m must be less than the wall height ${height} m`,`${p}/value/depth`);
-    const count=Math.floor((length-merlonWidth)/(crenelWidth+merlonWidth));
-    if(count<1)fail(`Wall ${item.id} (${Number(length.toFixed(3))} m) is too short for one ${crenelWidth} m crenel between ${merlonWidth} m merlons`,`${p}/value`);
-    const margin=(length-count*crenelWidth-(count-1)*merlonWidth)/2;
-    for(let i=0;i<count;i++){
-      const id=`${prefix}-${i+1}`;
-      if(floor.openings.some(o=>o.id===id))fail(`ID already exists: ${id}`,p);
-      const t=Math.round((margin+crenelWidth/2+i*(crenelWidth+merlonWidth))/length*1e9)/1e9;
-      floor.openings.push({label:'Crenel',sill:height-depth,windowStyle:'empty',type:'window',wallId:item.id,t,width:crenelWidth,height:depth,id});
-    }
-    return;
+    const result=proposeCrenellation(item,item.height??floorView(building,fi).wallHeight,floor.openings,op.value);
+    if(!result.ok)fail(result.reason,`${p}/value`);
+    floor.openings.push(...result.openings);return;
   }
   if(action==='move-endpoint'){
     const result=proposeEndpointMove(building,fi,op.id,op.end,op.point,{connected:op.connected!==false});

@@ -17,7 +17,7 @@
     11.6199998855591,
     19.7499961853027
   ],
-  "navPolygons": 805,
+  "navPolygons": 837,
   "results": [
     {
       "end": [
@@ -315,7 +315,7 @@
       "name": "North wall walk",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 61.8854054219555,
+      "pathLength": 61.8613361425232,
       "snap": [
         0,
         4.26999998092651,
@@ -334,7 +334,7 @@
       "name": "East wall walk",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 41.8447827503551,
+      "pathLength": 41.8521246251184,
       "snap": [
         14.75,
         4.26999998092651,
@@ -353,7 +353,7 @@
       "name": "West wall walk",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 41.9057221165858,
+      "pathLength": 41.8982494189404,
       "snap": [
         -14.75,
         4.26999998092651,
@@ -363,7 +363,7 @@
     },
     {
       "end": [
-        -8,
+        -7.99999952316284,
         4.26999998092651,
         13
       ],
@@ -372,7 +372,7 @@
       "name": "South-west walk",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 25.788094044663,
+      "pathLength": 25.7914519654587,
       "snap": [
         -8,
         4.26999998092651,
@@ -391,7 +391,7 @@
       "name": "South-east walk",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 25.7811326214578,
+      "pathLength": 25.788746552309,
       "snap": [
         8,
         4.26999998092651,
@@ -410,7 +410,7 @@
       "name": "Guest chambers",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 58.8678961675614,
+      "pathLength": 58.8452515881509,
       "snap": [
         -5,
         4.26999998092651,
@@ -429,7 +429,7 @@
       "name": "Chapel",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 58.9014630846214,
+      "pathLength": 58.8773938051891,
       "snap": [
         5,
         4.26999998092651,
@@ -448,7 +448,7 @@
       "name": "Armory",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 42.7029674442019,
+      "pathLength": 42.7103093189653,
       "snap": [
         11.75,
         4.26999998092651,
@@ -467,7 +467,7 @@
       "name": "Garrison hall",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 42.6961581977084,
+      "pathLength": 42.688685500063,
       "snap": [
         -11.75,
         4.26999998092651,
@@ -486,7 +486,7 @@
       "name": "Winch room",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 29.4810304881539,
+      "pathLength": 29.4606715494301,
       "snap": [
         3,
         4.26999998092651,
@@ -498,14 +498,14 @@
       "end": [
         1,
         4.26999998092651,
-        -2
+        -2.00000047683716
       ],
       "floorCovered": true,
       "maxLength": null,
       "name": "Keep great chamber",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 30.5323493778706,
+      "pathLength": 30.5043366253376,
       "snap": [
         1,
         4.26999998092651,
@@ -524,7 +524,7 @@
       "name": "NW tower rampart room",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 48.4777541290969,
+      "pathLength": 48.4488613139838,
       "snap": [
         -13,
         4.26999998092651,
@@ -543,7 +543,7 @@
       "name": "NE tower rampart room",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 48.4965317330789,
+      "pathLength": 48.467638292117,
       "snap": [
         13,
         4.26999998092651,
@@ -562,7 +562,7 @@
       "name": "SE tower rampart room",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 29.2757616953459,
+      "pathLength": 29.2831033912953,
       "snap": [
         13,
         4.26999998092651,
@@ -581,7 +581,7 @@
       "name": "SW tower rampart room",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 29.3482609363273,
+      "pathLength": 29.3407881194726,
       "snap": [
         -13,
         4.26999998092651,
@@ -593,14 +593,14 @@
       "end": [
         -14,
         7.92000007629395,
-        -12.9999990463257
+        -13
       ],
       "floorCovered": true,
       "maxLength": null,
       "name": "NW tower top",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 62.9172847177833,
+      "pathLength": 62.0435557886958,
       "snap": [
         -14,
         7.92000007629395,
@@ -612,14 +612,14 @@
       "end": [
         14,
         7.92000007629395,
-        -13.0000009536743
+        -13
       ],
       "floorCovered": true,
       "maxLength": null,
       "name": "NE tower top",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 62.3012851036619,
+      "pathLength": 62.1378334767651,
       "snap": [
         14,
         7.92000007629395,
@@ -631,14 +631,14 @@
       "end": [
         14,
         7.92000007629395,
-        13.0000009536743
+        13
       ],
       "floorCovered": true,
       "maxLength": null,
       "name": "SE tower top",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 40.6295455789659,
+      "pathLength": 40.5630934594665,
       "snap": [
         14,
         7.92000007629395,
@@ -648,7 +648,7 @@
     },
     {
       "end": [
-        -13.9999990463257,
+        -14,
         7.92000007629395,
         13
       ],
@@ -657,7 +657,7 @@
       "name": "SW tower top",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 40.5344722317532,
+      "pathLength": 40.4751727292314,
       "snap": [
         -14,
         7.92000007629395,
@@ -667,7 +667,7 @@
     },
     {
       "end": [
-        -2.98023223876953e-7,
+        -2.38418579101562e-7,
         7.92000007629395,
         14
       ],
@@ -676,7 +676,7 @@
       "name": "Gatehouse top",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 44.347115023993,
+      "pathLength": 44.2984302127734,
       "snap": [
         0,
         7.92000007629395,
@@ -686,16 +686,16 @@
     },
     {
       "end": [
-        -4.76837158203125e-7,
+        2.38418579101562e-7,
         7.92000007629395,
-        -1.99999952316284
+        -2
       ],
       "floorCovered": true,
       "maxLength": null,
       "name": "Keep lord's chamber",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 42.397322922945,
+      "pathLength": 42.3057550340891,
       "snap": [
         0,
         7.92000007629395,
@@ -705,16 +705,16 @@
     },
     {
       "end": [
-        1.00000023841858,
+        0.999999761581421,
         11.6199998855591,
-        -2
+        -2.00000023841858
       ],
       "floorCovered": true,
       "maxLength": null,
       "name": "Keep roof",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 56.6062771379948,
+      "pathLength": 56.5919024050236,
       "snap": [
         1,
         11.6199998855591,
@@ -726,14 +726,14 @@
       "end": [
         -14,
         7.92000007629395,
-        -12.9999990463257
+        -13
       ],
       "floorCovered": true,
       "maxLength": 20,
       "name": "NW rampart room -> NW tower top",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 14.6647258251905,
+      "pathLength": 14.6128995269537,
       "snap": [
         -14,
         7.92000007629395,
@@ -752,7 +752,7 @@
       "name": "NW rampart room -> NW tower ground",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 15.5314110219479,
+      "pathLength": 15.5025182068348,
       "snap": [
         -13,
         0.0699999928474426,
@@ -764,14 +764,14 @@
       "end": [
         14,
         7.92000007629395,
-        -13.0000009536743
+        -13
       ],
       "floorCovered": true,
       "maxLength": 20,
       "name": "NE rampart room -> NE tower top",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 14.038417192176,
+      "pathLength": 13.9646242726594,
       "snap": [
         14,
         7.92000007629395,
@@ -790,7 +790,7 @@
       "name": "NE rampart room -> NE tower ground",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 15.503685593605,
+      "pathLength": 15.4747921526432,
       "snap": [
         13,
         0.0699999928474426,
@@ -802,14 +802,14 @@
       "end": [
         14,
         7.92000007629395,
-        13.0000009536743
+        13
       ],
       "floorCovered": true,
       "maxLength": 20,
       "name": "SE rampart room -> SE tower top",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 14.0273585151881,
+      "pathLength": 13.9535646997392,
       "snap": [
         14,
         7.92000007629395,
@@ -828,7 +828,7 @@
       "name": "SE rampart room -> SE tower ground",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 15.5307264924049,
+      "pathLength": 15.7100991308689,
       "snap": [
         13,
         0.0699999928474426,
@@ -838,7 +838,7 @@
     },
     {
       "end": [
-        -13.9999990463257,
+        -14,
         7.92000007629395,
         13
       ],
@@ -847,7 +847,7 @@
       "name": "SW rampart room -> SW tower top",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 13.9319262690842,
+      "pathLength": 13.8800995834172,
       "snap": [
         -14,
         7.92000007629395,
@@ -866,7 +866,7 @@
       "name": "SW rampart room -> SW tower ground",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 15.5307725518942,
+      "pathLength": 15.5018794983625,
       "snap": [
         -13,
         0.0699999928474426,
@@ -876,7 +876,7 @@
     },
     {
       "end": [
-        -2.98023223876953e-7,
+        -2.38418579101562e-7,
         7.92000007629395,
         14
       ],
@@ -885,7 +885,7 @@
       "name": "Winch room -> gatehouse top",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 18.1228449493647,
+      "pathLength": 18.0666973292828,
       "snap": [
         0,
         7.92000007629395,
@@ -895,16 +895,16 @@
     },
     {
       "end": [
-        1.00000023841858,
+        0.999999761581421,
         11.6199998855591,
-        -2
+        -2.00000023841858
       ],
       "floorCovered": true,
       "maxLength": 50,
       "name": "Keep undercroft -> keep roof",
       "ok": true,
       "pathArrives": true,
-      "pathLength": 43.3034848123789,
+      "pathLength": 43.2891100794077,
       "snap": [
         1,
         11.6199998855591,

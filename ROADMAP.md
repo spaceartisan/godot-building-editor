@@ -2,6 +2,8 @@
 
 ## Current direction: cleanup
 
+- [x] 1.3.0: fix the AI-authoring findings from the Ravenhold castle exercise: `new`, `building.update`, floor surface/boundary fields, opt-in `--reachability`, `godot-check --render`, `wall.crenellate`, railing transactions, world-point openings, per-ID diffs, coverage-aware boundary warnings. Per-wall thickness and per-region open-to-sky remain open.
+
 - [x] 1.2.5: add evidence-based AI building review and a castle void/keep regression case; distinguish valid data from a complete accessible design.
 
 - [x] 1.2.4: validate local server port configuration and explain occupied-port startup failures.

@@ -1,4 +1,4 @@
-# Building Studio CLI 1.2.5
+# Building Studio CLI 1.3.0
 
 Version 1.2.3 rejects empty or whitespace-only preview numeric arguments with exit code 2 before loading the optional canvas backend. Explicit `--yaw 0` remains valid.
 

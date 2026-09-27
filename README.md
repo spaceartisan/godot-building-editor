@@ -1,4 +1,4 @@
-# Building Studio — Building Editor 1.2.5
+# Building Studio — Building Editor 1.3.0
 
 For LLMs and coding agents, start with [AGENTS.md](AGENTS.md) and [LLM_GUIDE.md](LLM_GUIDE.md): supported capabilities, an executable workflow, geometry conventions, source map and verification limits. Current development is focused on web/CLI cleanup; architectural expansion is deferred.
 
@@ -7,6 +7,23 @@ A lightweight web editor for quickly authoring reusable Godot 4 building scenes:
 The deliverable is a building `.tscn` with its door `.tscn` dependencies. No game project or runtime generator is exported. Separate outward/inward shell meshes, interior wall side meshes, and per-story mesh organization are intentional for material and per-mesh lighting control; updates preserve these boundaries.
 
 Start with [QUICKSTART.md](QUICKSTART.md) for the web workflow, Godot import steps and all 11 CLI recipes. Detailed operation fields live in [TRANSACTIONS.md](TRANSACTIONS.md).
+
+## Added in 1.3.0: AI authoring fixes from the Ravenhold castle exercise
+
+An AI built a four-level castle through the CLI ([authoring/ravenhold](authoring/ravenhold/README.md)) and recorded where the workflow failed ([FINDINGS.md](authoring/ravenhold/FINDINGS.md)). This release addresses those findings:
+
+- **Starting and settings.** `node cli.mjs new --out NEW.json` writes a deterministic blank building. `building.update` edits name, default dimensions, wall thickness, automatic roof and ceiling. `floor.update` and `floor.add-top` accept `autoFloor`, `autoCeiling` and `boundaryMode`.
+- **Route evidence.** `validate`/`inspect --reachability` is an opt-in static check from open ground through doors, empty passages and stairs, with walker clearance. It warns about unreachable floor areas and blocked stair ends.
+- **Godot renders.** `godot-check --assets DIR --render --out NEW_DIR` renders the exported scenes in Godot: exteriors, aerial and eye-level region views, or custom `--views`. It needs `DISPLAY` or `xvfb-run`.
+- **Parapets, guards and openings.** `wall.crenellate` adds crenels to a wall as empty window openings, `railing.add/update/remove` edit railings, and `opening.add/update` accept a world point `at: {x, z}` instead of `t`.
+- **Reviewable diffs.** Adding or removing ID'd objects reports per-ID `add`/`remove` entries instead of restating whole arrays.
+- **Fewer false warnings.** On floors with solid regions or Floor Footprints, only free-standing exterior wall ends warn, with wall targets.
+- **Docs and papercuts.**
+  - Saved check reports use relative paths.
+  - The docs cover an open-deck recipe, floor spacing and canvas installation.
+  - TRANSACTIONS.md now states that `roof.add` accepts every roof field.
+
+Default validation, example expectations and existing scene exports are unchanged. Per-wall thickness and a per-region "open to sky" flag remain deferred. The rebuilt castle uses only CLI commands, with no JSON edits. `release-check --canvas required --engine required` passed all 7 gates on Linux with Node 22.22.2 and Godot 4.5.1. The report was not packaged with the source, and browser layout, other platforms and archive comparison remain unchecked.
 
 ## Cleanup in 1.2.5: AI authoring review
 

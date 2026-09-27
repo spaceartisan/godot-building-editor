@@ -8,13 +8,7 @@
         "minX": -10,
         "maxX": 10,
         "minZ": -13.5,
-        "maxZ": -10
-      }
-    },
-    {
-      "op": "roof.update",
-      "id": "roof_north",
-      "value": {
+        "maxZ": -10,
         "label": "Guest chambers & chapel roof",
         "type": "gable",
         "direction": "x",
@@ -35,13 +29,7 @@
         "minX": 10,
         "maxX": 13.5,
         "minZ": -10,
-        "maxZ": 10
-      }
-    },
-    {
-      "op": "roof.update",
-      "id": "roof_east",
-      "value": {
+        "maxZ": 10,
         "label": "Armory roof",
         "type": "gable",
         "direction": "z",
@@ -62,13 +50,7 @@
         "minX": -13.5,
         "maxX": -10,
         "minZ": -10,
-        "maxZ": 10
-      }
-    },
-    {
-      "op": "roof.update",
-      "id": "roof_west",
-      "value": {
+        "maxZ": 10,
         "label": "Garrison hall roof",
         "type": "gable",
         "direction": "z",

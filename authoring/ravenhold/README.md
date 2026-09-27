@@ -1,10 +1,10 @@
 # Ravenhold Castle: an AI-authored building made with the CLI workflow
 
-An enterable four-level castle blockout, built only from the documented CLI workflow ([LLM_GUIDE.md](../../LLM_GUIDE.md) and [AUTHORING_REVIEW.md](../../AUTHORING_REVIEW.md)) plus two small, scoped JSON edits for settings that no transaction can change. This is a test of the workflow. It is **not** added to the example catalog or the regression fixtures. Tool issues found along the way are listed in [FINDINGS.md](FINDINGS.md).
+An enterable four-level castle blockout, built entirely through the CLI: `node cli.mjs new` followed by four version-1 transaction recipes, with no hand-written JSON edits. It began as a test of the authoring workflow ([LLM_GUIDE.md](../../LLM_GUIDE.md), [AUTHORING_REVIEW.md](../../AUTHORING_REVIEW.md)). The tool issues it exposed are listed, with their fixes, in [FINDINGS.md](FINDINGS.md). It is **not** added to the example catalog. The reachability regression test (`reachability-tests.mjs`) does read its building JSON.
 
 ![South-east exterior rendered by Godot 4.5.1](godot-renders/exterior-se.png)
 
-The images in `godot-renders/` come from Godot rendering the exported `.tscn` unmodified: empty materials show as Godot's default grey, and only a camera, sun and ambient light were added. They are the primary visual evidence. The `previews/` images come from the CLI's software preview, which is only an approximation; they were used for plan-style floor checks.
+The images in `godot-renders/` are Godot 4.5.1 renders of the exported `.tscn`, made with `godot-check --render`. The scene is unmodified: empty materials show as Godot's default grey, and only a camera, sky, sun and ambient light were added.
 
 ## Brief and assumptions
 
@@ -13,7 +13,7 @@ The images in `godot-renders/` come from Godot rendering the exported `.tscn` un
 - An enterable, walkable blockout: a square curtain wall with four corner towers, a gatehouse and a free-standing keep inside an open courtyard.
 - Towers stand taller than the curtain wall, and the keep is taller than the towers.
 - The wall walks are open to the sky, with crenellated parapets.
-- There are furnished-scale rooms on every enclosed level. Furniture and gameplay are out of scope.
+- Every enclosed level has rooms. Furniture and gameplay are out of scope.
 - Materials are left empty, as the exporter intends.
 
 | Level | Elevation | Contents |
@@ -23,15 +23,15 @@ The images in `godot-renders/` come from Godot rendering the exported `.tscn` un
 | Tower tops (3.5 m) | 7.86 m | Four crenellated tower roofs, the gatehouse roof and the keep's lord's chamber |
 | Keep roof (3.0 m) | 11.54 m | Crenellated keep roof terrace |
 
-Circulation, reserved before any detailing:
+Circulation:
 
 - **Courtyard to walls:** two courtyard stairs climb to the south wall walks.
 - **Towers:** each tower has a stair from the ground to the ramparts and another from the ramparts to the roof. The wall walks pass through the tower rooms.
 - **Gatehouse:** a stair runs from the winch room to the gatehouse top.
 - **Keep:** three stacked flights connect all four levels.
-- **Guarding:** every stair opening is guarded by 1 m walls where it would otherwise leave a drop.
+- **Guarding:** picket railings surround every stair opening and line the south walks' courtyard edge.
 
-The final model has 362 walls, 91 openings (33 of them doors), 14 stairs, 3 independent gable roofs and 41 regions.
+The model has 116 walls, 91 doors and windows (36 door openings: 33 with door scenes, plus two gates and a stable doorway left as empty passages), 118 crenels on 29 parapet walls, 14 stairs, 24 railings, 3 independent gable roofs and 41 regions.
 
 ## Files
 
@@ -39,62 +39,58 @@ The final model has 362 walls, 91 openings (33 of them doors), 14 stairs, 3 inde
 | --- | --- |
 | `output/ravenhold_castle.building.json` | **The editable building.** Load it in the web editor to continue by hand. |
 | `output/assets/` | Exported `ravenhold_castle.tscn` and 33 relative door scenes |
-| `output/checks.json`, `output/godot-check.json`, `output/reachability*.json` | Evidence reports: see the review below |
-| `generate-transactions.mjs` | Generates the five transaction recipes from one layout description |
-| `tx-1-levels` … `tx-5-circulation.edit.json` | The version-1 transaction recipes actually applied, in order |
-| `prepare-base.mjs`, `mark-open-boundary.mjs` | The two scoped JSON edits (see FINDINGS F2/F3) |
-| `probe/` | Godot navmesh reachability probe (see FINDINGS F1) and the Godot render script |
-| `build.sh` | Rebuilds everything above from `examples/courtyard_regions.building.json` |
-| `godot-renders/` | 17 Godot renders of the exported scene: exteriors, the gate approach, eye-level interiors, walks and roofs |
-| `previews/` | CLI software-preview approximations used for plan-style floor checks (v1 = before the circulation fix) |
+| `output/checks.json`, `output/reachability-checks.json` | Saved check reports: strict validation, and the `--reachability` route check |
+| `output/navmesh-reachability.json` | Godot navmesh traversal probe results (47 targets) |
+| `output/history-v2/` | Probe results from the earlier hand-edited version, cited in FINDINGS F1 |
+| `generate-transactions.mjs` | Generates the four transaction recipes from one layout description |
+| `tx-1-structure` … `tx-4-roofs.edit.json` | The recipes, applied in order to `node cli.mjs new` |
+| `probe/` | Godot navmesh reachability probe: an independent check alongside the built-in static one |
+| `build.sh` | Rebuilds everything from a blank building |
+| `godot-renders/` | Curated Godot renders; `renders.json` gives each camera |
 
 To reproduce everything from the editor root, pass a new work directory:
 
 ```bash
-CANVAS_MODULE=/path/to/@napi-rs/canvas/index.js authoring/ravenhold/build.sh ../ravenhold-work /path/to/godot
+authoring/ravenhold/build.sh ../ravenhold-work /path/to/godot
 ```
 
-A clean rebuild reproduced the committed building JSON and every scene byte-for-byte.
+`build.sh` output matched a manual step-by-step application of the same recipes byte-for-byte.
 
 ## Authoring sequence
 
-1. **Base.** Start from a copy of `courtyard_regions`. A scoped JSON edit sets the name, 0.5 m walls, `roof.type: none` and `autoCeiling: false` on floor 1.
-2. **tx-1.** Remove the example's contents, set the story heights, add three top floors (no automatic ceilings), 41 regions and 354 walls. The dry run left one warning: Floor 2's parapets have open ends.
-3. **Scoped JSON edit.** Set `boundaryMode: intentional_open` on the Ramparts floor. That resolves the warning.
-4. **tx-2 to tx-4.** Add the openings, stairs and roofs. Each was dry-run with `--warnings-as-errors`, reviewed, then saved to a new path.
-5. **Review of v1.** The plan renders suggested that each tower's ground stair arrived in a pocket boxed in by its own opening and the upper flight. The rampart-level stair openings were also unguarded.
-6. **tx-5.** Reverse the eight tower flights so each arrives in the open room, move the tower-top guards, add guards around the rampart-level and keep stair openings, and move one keep window clear of a new guard.
+1. **`new`:** a blank one-floor building (floor ID `floor_1`).
+2. **`tx-1-structure`** (162 operations):
+   - `building.update` sets 0.5 m walls and `roof.type: none`.
+   - Floor updates set story heights, and every floor gets `autoCeiling: false`, so the walks and tops stay open.
+   - Three top floors, 41 regions and 116 walls are added.
+3. **`tx-2-openings`** (120 operations): 91 doors and windows placed by world point (`at`), plus 29 `wall.crenellate` operations.
+4. **`tx-3-circulation`** (38 operations): 14 stairs and 24 railings.
+5. **`tx-4-roofs`** (3 operations): fully specified `roof.add` gables over the upper range rooms.
+
+Every recipe passed its dry run and save with `--warnings-as-errors`.
 
 ## Review evidence (AUTHORING_REVIEW §2)
 
-Environment: Linux, Node 22.22.2, @napi-rs/canvas (software previews), Godot 4.5.1 stable (headless for checks; Compatibility/OpenGL 3 through Mesa under Xvfb for renders). Godot 4.7 was not available. A live browser was not run; the web-load check used the DOM harness.
+Environment: Linux, Node 22.22.2, Godot 4.5.1 stable (headless for checks; Compatibility/OpenGL through Mesa llvmpipe under Xvfb for renders). Godot 4.7 was not available.
 
 | Review item | Status | Evidence |
 | --- | --- | --- |
 | Schema and authoring validation | Verified | `validate --warnings-as-errors`: 0 errors, 0 warnings (`output/checks.json`) |
-| Entrance to usable interior | Verified | Empty 3 × 3.6 m gate openings at z = 20 and z = 10. The gate tunnel reaches the courtyard in 11 m on the navmesh. |
-| Every ground room | Verified | 15 ground-floor targets reachable from the gate tunnel (`output/reachability.json`) |
-| Each occupied upper level | Verified | All 22 upper targets reachable, including every tower top and the keep roof. Keep undercroft to keep roof is 43 m. |
-| Towers, gatehouse and keep connections | Verified | Each tower's rampart room reaches its roof in 14 m or less and its ground room in 15.5 m. Each tower has doors to two wall walks. |
-| Intended floors | Verified | `inspect` coverage is 1184, 831, 420 and 74 m², matching the authored regions minus the stair openings. Plan renders show no holes except the stair openings. |
-| Courtyard | Verified | Ground slab (floor 1 solid region). No ceiling or roof above it: floor 1 `autoCeiling` is false and the roof type is `none`. |
-| Walks and parapets | Verified in geometry | Continuous walks, passing through the tower rooms. Crenellated parapets (1.7 m merlons, 1.0 m crenels) on outer edges. 1.0 m guards on the south walks' courtyard edge, left open where the stairs arrive. |
-| Architectural brief | Verified in Godot renders | Opposite exterior views, the gate approach and an aerial view of the courtyard (`godot-renders/`) show the gatehouse, towers, keep, crenellations and roofs |
-| Interiors as exported | Verified in Godot renders | 11 eye-level views: gate tunnel, courtyard, great hall, barracks, tower rooms with stairs and guards, walks, chapel, keep chamber, tower top and keep roof. No gaps, z-fighting or missing surfaces were seen. The floor "bumps" at doorways are the 0.5 m wall reveals under the door frames. |
-| Export | Verified | `export`: 34 scenes. `godot-check --require-collision` (Godot 4.5.1): 873 collision shapes, 0 failures, 0 material surfaces. |
-| Web editor round trip | Verified (DOM harness) | Loaded through the web handlers with 0 errors. Web export is byte-identical to the CLI scene and all 33 door scenes. |
-| Character traversal | Partly verified | A navmesh approximation (0.3 m radius, 1.8 m height, 0.3 m step, 46° slope, door panels treated as open) was run in Godot 4.5.1. This is **not** a CharacterBody3D walk test: door swing, stair step collision feel and headroom along each flight remain unverified. |
+| Routes (static check) | Verified, with 4 small exceptions | `validate --reachability`: every labelled room, walk and roof on all four floors connects to open ground. It reports four dead corners of 1.3–1.4 m², one per tower on the rampart floor, behind the top of the tower's roof stair and beside the ground-stair opening. They are unused corners, not rooms (`output/reachability-checks.json`). |
+| Routes (Godot navmesh) | Verified | All 47 probe checks pass: 37 destinations and 10 route legs, including each tower's rampart room to its roof in 14 m or less, and keep undercroft to keep roof in 43 m (`output/navmesh-reachability.json`). |
+| Intended floors | Verified | `inspect` coverage matches the authored regions minus stair openings |
+| Courtyard and open walks | Verified | Ground slab under the courtyard. No ceilings or roofs over the courtyard, walks or tops: `roof.type none` and `autoCeiling: false`. The Godot renders confirm this. |
+| Parapets and guards | Verified in Godot renders | 118 crenels (0.8 m wide, 0.7 m deep) between merlons of at least 1 m on the 1.7 m parapets. Picket railings at every stair opening. |
+| Architectural brief | Verified in Godot renders | Four exterior diagonals and an aerial view (`godot-renders/`) show the gatehouse, towers, keep, crenellations and roofs |
+| Interiors as exported | Verified in Godot renders | Eye-level views of the gate tunnel, courtyard, great hall, tower rooms, wall walks, chapel, great chamber, tower tops and keep roof |
+| Export | Verified | `godot-check --assets --require-collision` (Godot 4.5.1): 34 scenes, 865 collision shapes, 239 mesh instances, 0 material surfaces, 0 failures |
+| Character traversal | Partly verified | The static route check and the navmesh probe are connectivity checks. Door swing, stair comfort and headroom along each flight are unverified. |
 | Materials | Intentionally omitted | Empty by default |
-
-### Probe controls
-
-- **v1 (before tx-5):** all 47 checks passed. The tower "pocket" seen in the renders was not a hard block: the navmesh steps across the top of the flush ground flight. tx-5 still improves the arrival, since it no longer needs a sideways step across a stair. But the v1 problem was a quality issue, not a broken route (`output/reachability-v1.json`).
-- **Negative control:** a copy with all seven ground-floor stairs removed passes `validate --warnings-as-errors` with **zero warnings**, yet 27 of 47 probe checks fail, and nothing above ground can be reached (`output/reachability-control-no-ground-stairs.json`). So the probe can detect unreachable levels, and the built-in checks cannot.
 
 ## Known limits of this blockout
 
-- All walls share the building's single 0.5 m thickness, so parapets and stair guards are as thick as the curtain wall (FINDINGS F6).
-- The upper-range roofs are simple gables with no gable fill (`gableEnds: none`). They rely on the abutting tower walls and parapets, which rise above the ridge, to close their ends.
+- Wall thickness is building-wide (0.5 m), so interior partitions are as thick as the curtain wall (FINDINGS F6).
+- The upper-range roofs are simple gables with no gable fill (`gableEnds: none`). They rely on the abutting tower walls, which rise above the ridge, to close their ends.
 - There is no terrain outside the walls. The gate opens onto nothing until the scene is placed on game terrain.
-- The Godot renders use a software rasterizer with an added sun and ambient light. Lighting in a game scene will differ.
 - Stair flights are fairly steep (about 40°, 0.175 m risers on 0.21 m treads) to fit inside 8 m towers.
+- The Godot renders use a software rasterizer with an added sun and ambient light. Lighting in a game scene will differ.

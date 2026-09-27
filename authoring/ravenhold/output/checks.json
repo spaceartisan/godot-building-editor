@@ -12,7 +12,7 @@
   },
   "results": [
     {
-      "file": "/home/user/godot-building-editor/authoring/ravenhold/output/ravenhold_castle.building.json",
+      "file": "ravenhold_castle.building.json",
       "building": {
         "name": "Ravenhold Castle",
         "schemaVersion": 9

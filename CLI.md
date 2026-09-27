@@ -74,6 +74,7 @@ Input/output paths are relative to your current working directory. Calling `/abs
 
 | Command | Behavior |
 | --- | --- |
+| `new --out NEW.json [--name TEXT]` | Writes a deterministic blank one-floor building (the web New building, floor ID `floor_1`) to a new file as a transaction starting point. |
 | `validate FILE...` | Validates original JSON, applies shared normalization to an in-memory clone, then validates again. Reports errors and warnings without changing input. |
 | `inspect FILE...` | Adds per-floor counts/elevations, footprint source/area, manual roof relationships, exported resource counts and separate shell node paths. |
 | `inspect FILE... --entities` | Also lists normalized floor IDs/overrides, walls, openings, stairs, platforms, markers, regions and manual roofs for transaction targeting. |

@@ -10,7 +10,7 @@ Keep the original blueprint. TSCNs are generated assets and cannot be reimported
 
 Use `examples --json` to find a suitable starting plan, its actual path, purpose and expected warnings. Use [QUICKSTART.md](QUICKSTART.md) for the source-to-recipe table: removal recipes require the result of their matching addition. Do not blindly apply an example recipe to another plan with different IDs.
 
-For a new design, choose the closest existing example, save a separate copy and edit it. There is no CLI `new`, arbitrary-property patch command or TSCN import. If the requested design needs fields outside supported transactions, use the web controls or a carefully scoped JSON edit based on the shared model and validator; preserve unrelated fields and validate the candidate before export.
+For a new design, start from `node cli.mjs new --out NEW.json --name NAME` (floor ID `floor_1`) or from a copy of the closest existing example. Use `building.update` for building settings. There is no arbitrary-property patch command or TSCN import. If the requested design needs fields outside supported transactions, use the web controls or a carefully scoped JSON edit based on the shared model and validator; preserve unrelated fields and validate the candidate before export.
 
 ## 2. Discover capabilities instead of inventing commands
 
@@ -21,7 +21,8 @@ For a new design, choose the closest existing example, save a separate copy and 
 | Discover editable IDs | `inspect FILE --entities --json` | Lists normalized floor IDs and supported entity inventories; inspect JSON for fields not included |
 | Repeatable building edit | `edit FILE --ops RECIPE --dry-run` then `--out NEW.json` | Version-1 operations only; exact fields in TRANSACTIONS.md |
 | Walls/openings/regions/manual roofs | Add, update, remove transactions; wall endpoint moves | Wall property updates do not move endpoints; manual roofs are building-level objects |
-| Floors | Existing dimensions/labels, add/remove top floor | Basement/middle insertion, duplication and reordering are web controls |
+| Building settings | `building.update` (name, default dimensions, wall thickness, automatic roof, ceiling, profile) | Window/door mesh settings remain web/JSON fields |
+| Floors | Existing dimensions/labels/surface switches/boundary mode, add/remove top floor | Basement/middle insertion, duplication and reordering are web controls |
 | Stairs/platforms | Add, update, remove transactions | Stairs connect adjacent floors; independent pieces do not automatically follow platform edits |
 | Wall/door shapes | Web dialogs or authored JSON; transactions assign an existing door `shapeId` | No dedicated shared-shape-library transaction operations |
 | Lights/markers/manual slabs | Web controls or supported JSON fields | No corresponding dedicated transaction commands in this version |
@@ -29,7 +30,7 @@ For a new design, choose the closest existing example, save a separate copy and 
 | Generate Godot assets | `export FILE --out NEW_DIR`, `package FILE --out NEW.zip` | Retain relative door dependencies; materials empty by default |
 | Verify exported assets | `godot-check --assets DIR --godot PATH` | Resource checks, not character traversal certification |
 
-Transactions support `floor.update/add-top/remove-top`, `wall.add/update/move-endpoint/remove`, and `opening`, `roof`, `region`, `stair`, `platform` add/update/remove. Do not extrapolate new operation names from this pattern. Read the operation table for supported `value` fields and removal flags. In particular, retained wall-profile fields do not imply `wall.update` accepts them.
+Transactions support `building.update`, `floor.update/add-top/remove-top`, `wall.add/update/move-endpoint/remove`, and `opening`, `roof`, `region`, `stair`, `platform` add/update/remove. Do not extrapolate new operation names from this pattern. Read the operation table for supported `value` fields and removal flags. In particular, retained wall-profile fields do not imply `wall.update` accepts them.
 
 Core CLI and web serving need Node 20+ and no npm install. Linux is the tested platform. `CANVAS_MODULE` can name an installed canvas module; `GODOT_BIN` or `--godot` supplies an existing Godot executable. Browser tests additionally need Playwright and its Chromium binary. Do not infer availability from the module alone.
 

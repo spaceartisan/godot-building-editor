@@ -23,7 +23,8 @@ function choice(value,allowed,where){if(!allowed.includes(value))fail(`Expected 
 function point(value,where){keys(value,['x','z'],where);number(value.x,`${where}/x`);number(value.z,`${where}/z`);}
 const rectKeys=['minX','maxX','minZ','maxZ'];
 const fields={
-  floor:['label','elevation','wallHeight','floorThickness'],
+  building:['name','exportProfile','wallHeight','wallThickness','floorThickness','gridSize','roof','ceiling'],
+  floor:['label','elevation','wallHeight','floorThickness','autoFloor','autoCeiling','boundaryMode'],
   platform:['label',...rectKeys,'kind','height','covered'],
   stair:['label','x','z','width','run','direction','style','steps','blockBelow'],
   wall:['label','role','height','a','b'],
@@ -33,7 +34,6 @@ const fields={
 };
 function checkValue(kind,value,action,where){
   let allowed=fields[kind];
-  if(kind==='floor'&&action==='add-top')allowed=[...allowed,'autoFloor','autoCeiling'];
   if(action==='update')allowed=allowed.filter(k=>!(kind==='wall'&&['a','b'].includes(k))&&!(kind==='opening'&&k==='type'));
   keys(value,allowed,where);
   if(!Object.keys(value).length&&action!=='add-top')fail('Provide at least one field',where);
@@ -52,8 +52,21 @@ function checkValue(kind,value,action,where){
       else if(key==='steps'){number(v,p,2,512);if(!Number.isInteger(v))fail('Step count must be an integer',p);}
       else number(v,p,key==='width'?.5:key==='run'?1:-1e6,['width','run'].includes(key)?10000:1e6);
     }
+    else if(kind==='building'){
+      // Ranges match the web building settings and the shared validator.
+      if(key==='name')text(v,p);
+      else if(key==='exportProfile')choice(v,['generic','get_probed'],p);
+      else if(key==='roof'){
+        keys(v,['type','pitch','overhang'],p);if(!Object.keys(v).length)fail('Provide at least one roof field',p);
+        if(v.type!==undefined)choice(v.type,['gable','hip','flat','none'],`${p}/type`);
+        if(v.pitch!==undefined)number(v.pitch,`${p}/pitch`,5,70);
+        if(v.overhang!==undefined)number(v.overhang,`${p}/overhang`,0,100);
+      }else if(key==='ceiling'){keys(v,['thickness'],p);if(v.thickness===undefined)fail('Provide ceiling thickness',p);number(v.thickness,`${p}/thickness`,.02,100);}
+      else number(v,p,key==='wallHeight'?.2:key==='wallThickness'?.02:.001,key==='wallHeight'||key==='gridSize'?1000:100);
+    }
     else if(kind==='floor'){
       if(['autoFloor','autoCeiling'].includes(key)){if(typeof v!=='boolean')fail('Expected a boolean',p);}
+      else if(key==='boundaryMode')choice(v,['closed','intentional_open'],p);
       else if(v!==null)number(v,p,key==='elevation'?-1e6:key==='wallHeight'?.2:.001,key==='elevation'?1e6:key==='wallHeight'?1000:100);
     }
     else if(key==='polygon'){const problem=regionPolygonProblem(v);if(problem)fail(problem,p);}
@@ -91,7 +104,8 @@ export function validateTransaction(transaction){
     const p=`operations/${index}`;
     if(!object(op)||typeof op.op!=='string')fail('Expected an operation object with an op name',p);
     const [kind,action,...extra]=op.op.split('.');
-    if(extra.length||!Object.hasOwn(fields,kind)||!(kind==='floor'?['update','add-top','remove-top']:['add','update','remove',...(kind==='wall'?['move-endpoint']:[])]).includes(action))fail(`Unknown operation: ${op.op}`,p);
+    if(extra.length||!Object.hasOwn(fields,kind)||!(kind==='floor'?['update','add-top','remove-top']:kind==='building'?['update']:['add','update','remove',...(kind==='wall'?['move-endpoint']:[])]).includes(action))fail(`Unknown operation: ${op.op}`,p);
+    if(kind==='building'){keys(op,['op','value'],p);checkValue(kind,op.value,action,`${p}/value`);return;}
     if(kind==='floor'&&action!=='update'){
       keys(op,['op','id',...(action==='add-top'?['aboveFloorId','value']:['removeContents','removeAffectedStairs'])],p);text(op.id,`${p}/id`);
       if(action==='add-top'){text(op.aboveFloorId,`${p}/aboveFloorId`);if(op.value!==undefined)checkValue(kind,op.value,action,`${p}/value`);}
@@ -128,6 +142,15 @@ export function documentDiff(before,after,path=''){
 
 function applyOperation(building,op,index){
   const p=`operations/${index}`,[kind,action]=op.op.split('.');
+  if(kind==='building'){
+    // Nested settings merge field by field; numeric changes are checked by
+    // final validation (opening fit, stair rise, junction clearance).
+    for(const [key,value] of Object.entries(op.value)){
+      if(key==='roof'||key==='ceiling')building[key]={...(building[key]||{}),...value};
+      else building[key]=value;
+    }
+    return;
+  }
   if(kind==='floor'){
     if(action==='add-top'||action==='remove-top'){
       const top=building.floors.at(-1),topIndex=building.floors.length-1;
@@ -137,6 +160,7 @@ function applyOperation(building,op,index){
         const result=proposeFloorStackEdit(building,topIndex,'above',{validateResult:false});if(!result.ok)fail(result.reason,p);
         const added=result.building.floors.at(-1);added.id=op.id;
         for(const [key,value] of Object.entries(op.value||{}))if(value!==null)added[key]=value;
+        if(added.boundaryMode==='closed')delete added.boundaryMode;
         building.floors=result.building.floors;
         return {action:'added',floorId:op.id,aboveFloorId:top.id,removedEntities:[],removedIncomingStairs:[]};
       }
@@ -153,7 +177,8 @@ function applyOperation(building,op,index){
     const floor=building.floors.find(f=>f.id===op.id);
     if(!floor)fail(`Unknown floor ID: ${op.id}`,p);
     for(const [key,value] of Object.entries(op.value)){
-      if(value===null)delete floor[key];else floor[key]=value;
+      if(['autoFloor','autoCeiling','boundaryMode'].includes(key)&&value===null)fail(`${key} does not accept null`,`${p}/value/${key}`);
+      if(value===null||(key==='boundaryMode'&&value==='closed'))delete floor[key];else floor[key]=value;
     }
     return;
   }

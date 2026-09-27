@@ -13,6 +13,7 @@ import { prepareAssetDirectory, AssetCheckError } from './asset-check.mjs';
 import { EXAMPLE_CATALOG } from './src/examples.js';
 import { checkExampleExpectation } from './src/example-check.js';
 import { applyTransaction } from './src/transactions.js';
+import { makeEmptyBuilding } from './src/model.js';
 import { attachmentSummary } from './src/roof-diagnostics.js';
 import { runReleaseCheck, assertExternalReport } from './release-check.mjs';
 import { suites } from './test-suites.mjs';
@@ -20,12 +21,13 @@ import { suites } from './test-suites.mjs';
 const root=path.dirname(fileURLToPath(import.meta.url));
 const version=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8')).version;
 const common=['json','quiet','verbose','help'];
-const specs={edit:['ops','out','dry-run','warnings-as-errors'],validate:['warnings-as-errors','out'],inspect:['warnings-as-errors','entities'],export:['out','profile','no-collision','no-markers','placeholders','warnings-as-errors'],package:['out','profile','no-collision','no-markers','placeholders','warnings-as-errors','include-json'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof']};
-const values=new Set(['ops','out','profile','suite','godot','assets','yaw','pitch','distance','floor','view','compare','overlay','roof','canvas','engine','timeout']);
+const specs={new:['out','name'],edit:['ops','out','dry-run','warnings-as-errors'],validate:['warnings-as-errors','out'],inspect:['warnings-as-errors','entities'],export:['out','profile','no-collision','no-markers','placeholders','warnings-as-errors'],package:['out','profile','no-collision','no-markers','placeholders','warnings-as-errors','include-json'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof']};
+const values=new Set(['name','ops','out','profile','suite','godot','assets','yaw','pitch','distance','floor','view','compare','overlay','roof','canvas','engine','timeout']);
 class CliError extends Error{constructor(message,code=2){super(message);this.code=code;}}
 const help=`Building Studio ${version}
 Usage: node cli.mjs COMMAND [FILES...] [OPTIONS]
 
+  new --out NEW.json [--name TEXT]   Create a blank one-floor building (floor ID floor_1)
   validate FILE... [--out NEW.json]   Validate; optionally save a check report
   inspect FILE... [--entities]   Inventory; optionally list authoring IDs/fields
   edit FILE --ops JSON --dry-run   Validate a transaction and show its diff
@@ -82,7 +84,7 @@ function parse(args){
   const needsFiles=['validate','inspect','export','package','preview','edit'].includes(command);
   if(needsFiles&&!files.length)throw new CliError(`${command} requires an input file`);
   if(!needsFiles&&files.length)throw new CliError(`${command} does not accept input files`);
-  if(['export','package','preview'].includes(command)&&!options.out)throw new CliError(`${command} requires --out`);
+  if(['new','export','package','preview'].includes(command)&&!options.out)throw new CliError(`${command} requires --out`);
   if(command==='preview'&&files.length!==1)throw new CliError('preview accepts exactly one input');
   if(options.view&&!['building','floor','roofs'].includes(options.view))throw new CliError('Unknown preview view; use building, floor or roofs');
   if(options.overlay&&!['none','footprint','attachments'].includes(options.overlay))throw new CliError('Unknown preview overlay; use none, footprint or attachments');
@@ -218,6 +220,17 @@ async function execute({command,options,files}){
       if(out){result.output=out;writeNewFile(out,JSON.stringify(result,null,2)+'\n');}
       return result;
     }finally{process.removeListener('SIGINT',interrupt);process.removeListener('SIGTERM',terminate);}
+  }
+  if(command==='new'){
+    // Deterministic blank document: the web editor's New building with a
+    // stable floor ID, so a first transaction can reference it immediately.
+    const blank=makeEmptyBuilding();blank.floors[0].id='floor_1';
+    if(options.name!==undefined){if(!options.name.trim()||options.name.length>1024)throw new CliError('--name must be nonempty text of at most 1024 characters');blank.name=options.name;}
+    const prepared=prepareDocument(blank);
+    if(prepared.errors.length)throw new CliError(prepared.errors[0].message,1);
+    const output=JSON.stringify(prepared.building,null,2)+'\n',out=destination(options.out);
+    writeEditFile(out,output);
+    return {command,ok:true,output:out,floorId:'floor_1',resultSha256:createHash('sha256').update(output).digest('hex'),warnings:prepared.warnings,exitCode:0};
   }
   if(command==='edit'){
     const input=load(files[0]),transaction=load(path.resolve(options.ops));

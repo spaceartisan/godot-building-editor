@@ -210,7 +210,7 @@ async function preview(docs,options,out){
   if(!Number.isInteger(floor))throw new CliError('--floor must be an integer');
   if(options.roof)for(const doc of docs)if(!doc.building.roofSections.some(r=>r.id===options.roof))throw new CliError(`${doc.file}: unknown manual roof ID ${options.roof}`);
   const require=createRequire(import.meta.url);let createCanvas;
-  try{({createCanvas}=require(process.env.CANVAS_MODULE||'@napi-rs/canvas'));}catch{throw new CliError('Preview needs @napi-rs/canvas. Install it locally or set CANVAS_MODULE to its installed path.',3);}
+  try{({createCanvas}=require(process.env.CANVAS_MODULE||'@napi-rs/canvas'));}catch{throw new CliError('Preview needs @napi-rs/canvas. Install it (for example: npm install --prefix ../canvas-backend @napi-rs/canvas) and set CANVAS_MODULE to the installed package directory (../canvas-backend/node_modules/@napi-rs/canvas).',3);}
   const {renderReview}=await import('./src/preview-review.js');
   const {canvas,report}=renderReview(docs.map(d=>d.building),createCanvas,{view:options.view||'building',floor,yaw,pitch,distance,overlay:options.overlay||'none',roof:options.roof});
   writeNewFile(out,canvas.toBuffer('image/png'));
@@ -316,7 +316,8 @@ async function execute({command,options,files}){
     if(options.out){
       const out=destination(options.out);
       if(files.some(file=>canonicalLocation(file)===canonicalLocation(out)))throw new CliError('Report destination must differ from every input path',3);
-      const report=createCheckReport(loaded.map(d=>({...d,building:d.building||d.rawBuilding,validationStage:d.building?'prepared-document':d.rawBuilding!==undefined?'raw-document':'unreadable-input'})),{warningsAsErrors:!!options['warnings-as-errors']});
+      // Portable report: input paths relative to the report's own directory.
+      const report=createCheckReport(loaded.map(d=>({...d,file:path.relative(path.dirname(out),d.file).split(path.sep).join('/')||path.basename(d.file),building:d.building||d.rawBuilding,validationStage:d.building?'prepared-document':d.rawBuilding!==undefined?'raw-document':'unreadable-input'})),{warningsAsErrors:!!options['warnings-as-errors']});
       writeNewFile(out,JSON.stringify(report,null,2)+'\n');response.output=out;
     }
     return response;

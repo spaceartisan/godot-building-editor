@@ -28,7 +28,7 @@ const fields={
   platform:['label',...rectKeys,'kind','height','covered'],
   stair:['label','x','z','width','run','direction','style','steps','blockBelow'],
   wall:['label','role','height','a','b'],
-  opening:['label','type','wallId','t','width','height','sill','doorStyle','windowStyle','shapeId'],
+  opening:['label','type','wallId','t','at','width','height','sill','doorStyle','windowStyle','shapeId'],
   roof:['label',...rectKeys,'type','direction','baseY','pitch','overhang','gableEnds','hostRoofId','edgeModes'],
   region:['label',...rectKeys,'kind','effect','polygon']
 };
@@ -70,7 +70,7 @@ function checkValue(kind,value,action,where){
       else if(v!==null)number(v,p,key==='elevation'?-1e6:key==='wallHeight'?.2:.001,key==='elevation'?1e6:key==='wallHeight'?1000:100);
     }
     else if(key==='polygon'){const problem=regionPolygonProblem(v);if(problem)fail(problem,p);}
-    else if(key==='a'||key==='b')point(v,p);
+    else if(key==='a'||key==='b'||key==='at')point(v,p);
     else if(key==='role')choice(v,['exterior','interior'],p);
     else if(key==='type')choice(v,kind==='roof'?['gable','shed','flat']:['door','window'],p);
     else if(key==='direction')choice(v,['x','z'],p);
@@ -91,7 +91,8 @@ function checkValue(kind,value,action,where){
     else if(key==='overhang')number(v,p,0,100);
     else number(v,p);
   }
-  if(action==='add')for(const required of kind==='stair'?['x','z','width','run','direction']:kind==='wall'?['a','b']:kind==='opening'?['type','wallId','t','width','height']:kind==='region'&&value.polygon?['polygon']:rectKeys)
+  if(kind==='opening'&&Object.hasOwn(value,'t')&&Object.hasOwn(value,'at'))fail('Use either t or at, not both',where);
+  if(action==='add')for(const required of kind==='stair'?['x','z','width','run','direction']:kind==='wall'?['a','b']:kind==='opening'?['type','wallId',Object.hasOwn(value,'at')?'at':'t','width','height']:kind==='region'&&value.polygon?['polygon']:rectKeys)
     if(!Object.hasOwn(value,required))fail(`Missing required field: ${required}`,where);
 }
 
@@ -204,6 +205,19 @@ function applyOperation(building,op,index){
     if(!result.ok)fail(result.reason,p);building.floors[fi]=result.floor;return;
   }
   const value=structuredClone(op.value);
+  if(kind==='opening'&&value.at){
+    // World-point placement: project onto the host wall centreline. Points on
+    // either wall face are accepted; anything farther away is rejected.
+    const host=floor.walls.find(w=>w.id===(value.wallId??item?.wallId));
+    if(!host)fail(`Unknown host wall: ${value.wallId??item?.wallId}`,`${p}/value/wallId`);
+    const dx=host.b.x-host.a.x,dz=host.b.z-host.a.z,length=Math.hypot(dx,dz);
+    const t=((value.at.x-host.a.x)*dx+(value.at.z-host.a.z)*dz)/(length*length);
+    const offset=Math.abs((value.at.z-host.a.z)*dx-(value.at.x-host.a.x)*dz)/length;
+    const tolerance=floorView(building,fi).wallThickness/2+1e-6;
+    if(offset>tolerance)fail(`Point is ${Number(offset.toFixed(4))} m from wall ${host.id}; place it within ${Number(tolerance.toFixed(4))} m of the centreline`,`${p}/value/at`);
+    if(t<=0||t>=1)fail(`Point projects outside wall ${host.id} (t = ${Number(t.toFixed(4))})`,`${p}/value/at`);
+    value.t=Math.round(t*1e9)/1e9;delete value.at;
+  }
   if(kind==='region'&&item?.polygon&&!value.polygon&&rectKeys.some(k=>Object.hasOwn(value,k)))fail('Edit polygon corners instead of rectangular bounds.',p);
   if(action==='add'){
     let defaults;

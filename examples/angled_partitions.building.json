@@ -1,0 +1,220 @@
+{
+  "version": 9,
+  "name": "Angled partitions and split hosts",
+  "exportProfile": "generic",
+  "wallHeight": 2.8,
+  "wallThickness": 0.18,
+  "floorThickness": 0.18,
+  "gridSize": 0.5,
+  "roof": {
+    "type": "none",
+    "pitch": 35,
+    "overhang": 0
+  },
+  "roofSections": [],
+  "manualFloors": [],
+  "manualCeilings": [],
+  "ceiling": {
+    "thickness": 0.12
+  },
+  "windowMesh": {
+    "enabled": true,
+    "frameWidth": 0.08,
+    "frameDepth": 0.12,
+    "glassThickness": 0.018
+  },
+  "doorMesh": {
+    "enabled": true,
+    "frameWidth": 0.09,
+    "frameDepth": 0.14,
+    "panelThickness": 0.045,
+    "detailDepth": 0.018
+  },
+  "floors": [
+    {
+      "id": "floor_1",
+      "label": "Workshop",
+      "walls": [
+        {
+          "id": "wall_0",
+          "label": "Hull wall 1",
+          "a": {
+            "x": -3,
+            "z": -9
+          },
+          "b": {
+            "x": 3,
+            "z": -9
+          },
+          "role": "exterior",
+          "height": null,
+          "wallTypeId": "hull"
+        },
+        {
+          "id": "wall_1",
+          "label": "Hull wall 2",
+          "a": {
+            "x": 3,
+            "z": -9
+          },
+          "b": {
+            "x": 3,
+            "z": 1.7320508075688779
+          },
+          "role": "exterior",
+          "height": null,
+          "wallTypeId": "hull"
+        },
+        {
+          "id": "wall_1_tail",
+          "label": "Hull wall 2",
+          "a": {
+            "x": 3,
+            "z": 1.7320508075688779
+          },
+          "b": {
+            "x": 3,
+            "z": 9
+          },
+          "role": "exterior",
+          "height": null,
+          "wallTypeId": "hull"
+        },
+        {
+          "id": "wall_2",
+          "label": "Hull wall 3",
+          "a": {
+            "x": 3,
+            "z": 9
+          },
+          "b": {
+            "x": -3,
+            "z": 9
+          },
+          "role": "exterior",
+          "height": null,
+          "wallTypeId": "hull"
+        },
+        {
+          "id": "wall_3",
+          "label": "Hull wall 4",
+          "a": {
+            "x": -3,
+            "z": 9
+          },
+          "b": {
+            "x": -3,
+            "z": -1.7320508075688779
+          },
+          "role": "exterior",
+          "height": null,
+          "wallTypeId": "flare"
+        },
+        {
+          "id": "wall_3_tail",
+          "label": "Hull wall 4",
+          "a": {
+            "x": -3,
+            "z": -1.7320508075688779
+          },
+          "b": {
+            "x": -3,
+            "z": -9
+          },
+          "role": "exterior",
+          "height": null,
+          "wallTypeId": "flare"
+        },
+        {
+          "id": "partition",
+          "label": "Standard partition",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": -3,
+            "z": -1.7320508075688779
+          },
+          "b": {
+            "x": 3,
+            "z": 1.7320508075688779
+          }
+        }
+      ],
+      "openings": [
+        {
+          "id": "passage",
+          "label": "Open passage",
+          "wallId": "partition",
+          "type": "door",
+          "t": 0.5,
+          "width": 1.2,
+          "height": 2.1,
+          "doorStyle": "empty"
+        }
+      ],
+      "lights": [],
+      "stairs": [],
+      "slabs": [],
+      "regions": [],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": false
+    }
+  ],
+  "wallTypes": [
+    {
+      "id": "hull",
+      "label": "Hull · recessed middle",
+      "stations": [
+        {
+          "height": 0,
+          "offset": 0,
+          "thickness": 0.18
+        },
+        {
+          "height": 0.16,
+          "offset": 0.35,
+          "thickness": 0.18
+        },
+        {
+          "height": 0.8,
+          "offset": 0.35,
+          "thickness": 0.18
+        },
+        {
+          "height": 1,
+          "offset": 0,
+          "thickness": 0.18
+        }
+      ]
+    },
+    {
+      "id": "flare",
+      "label": "Outward flare",
+      "stations": [
+        {
+          "height": 0,
+          "offset": 0,
+          "thickness": 0.18
+        },
+        {
+          "height": 0.2,
+          "offset": -0.35,
+          "thickness": 0.18
+        },
+        {
+          "height": 0.8,
+          "offset": -0.35,
+          "thickness": 0.18
+        },
+        {
+          "height": 1,
+          "offset": 0,
+          "thickness": 0.18
+        }
+      ]
+    }
+  ]
+}

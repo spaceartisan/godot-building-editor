@@ -1,0 +1,204 @@
+{
+  "version": 9,
+  "name": "Courtyard regions",
+  "exportProfile": "generic",
+  "wallHeight": 2.8,
+  "wallThickness": 0.18,
+  "floorThickness": 0.18,
+  "gridSize": 0.5,
+  "roof": {
+    "type": "flat",
+    "pitch": 35,
+    "overhang": 0
+  },
+  "roofSections": [],
+  "manualFloors": [],
+  "manualCeilings": [],
+  "ceiling": {
+    "thickness": 0.12
+  },
+  "windowMesh": {
+    "enabled": true,
+    "frameWidth": 0.08,
+    "frameDepth": 0.12,
+    "glassThickness": 0.018
+  },
+  "doorMesh": {
+    "enabled": true,
+    "frameWidth": 0.09,
+    "frameDepth": 0.14,
+    "panelThickness": 0.045,
+    "detailDepth": 0.018
+  },
+  "floors": [
+    {
+      "id": "floor_1",
+      "label": "Courtyard level",
+      "walls": [
+        {
+          "id": "wall_2",
+          "a": {
+            "x": -7,
+            "z": -6
+          },
+          "b": {
+            "x": 7,
+            "z": -6
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_3",
+          "a": {
+            "x": 7,
+            "z": -6
+          },
+          "b": {
+            "x": 7,
+            "z": 6
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_4",
+          "a": {
+            "x": 7,
+            "z": 6
+          },
+          "b": {
+            "x": -7,
+            "z": 6
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_5",
+          "a": {
+            "x": -7,
+            "z": 6
+          },
+          "b": {
+            "x": -7,
+            "z": -6
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_6",
+          "a": {
+            "x": -2,
+            "z": -2
+          },
+          "b": {
+            "x": 2,
+            "z": -2
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_7",
+          "a": {
+            "x": 2,
+            "z": -2
+          },
+          "b": {
+            "x": 2,
+            "z": 2
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_8",
+          "a": {
+            "x": 2,
+            "z": 2
+          },
+          "b": {
+            "x": -2,
+            "z": 2
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_9",
+          "a": {
+            "x": -2,
+            "z": 2
+          },
+          "b": {
+            "x": -2,
+            "z": -2
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        }
+      ],
+      "openings": [],
+      "lights": [],
+      "stairs": [],
+      "slabs": [],
+      "regions": [
+        {
+          "id": "regions_10",
+          "label": "Building envelope",
+          "minX": -7,
+          "maxX": 7,
+          "minZ": -6,
+          "maxZ": 6,
+          "kind": "wing",
+          "effect": "solid"
+        },
+        {
+          "id": "regions_11",
+          "label": "Open courtyard",
+          "minX": -2,
+          "maxX": 2,
+          "minZ": -2,
+          "maxZ": 2,
+          "kind": "courtyard",
+          "effect": "void"
+        },
+        {
+          "id": "regions_12",
+          "label": "West workshop",
+          "minX": -7,
+          "maxX": -2,
+          "minZ": -6,
+          "maxZ": 6,
+          "kind": "bay",
+          "effect": "label"
+        },
+        {
+          "id": "regions_13",
+          "label": "East rooms",
+          "minX": 2,
+          "maxX": 7,
+          "minZ": -6,
+          "maxZ": 6,
+          "kind": "wing",
+          "effect": "label"
+        }
+      ],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": true
+    }
+  ]
+}

@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Building Editor</title>
+  <link rel="stylesheet" href="/src/style.css" />
+  <script type="module" src="/src/main.js"></script>
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand">
+        <strong>BUILDING STUDIO</strong>
+        <span>v1.2.4</span>
+      </div>
+      <div class="top-actions" aria-label="Project actions">
+        <button id="new-btn" title="Start a new empty building">New</button>
+        <select id="example-select" aria-label="Load example"><option value="">Examples…</option></select>
+
+        <button id="undo-btn" title="Undo (Ctrl/Cmd+Z)" disabled>Undo</button>
+        <button id="redo-btn" title="Redo (Ctrl/Cmd+Y or Ctrl/Cmd+Shift+Z)" disabled>Redo</button>
+        <details class="file-menu"><summary>Project files</summary><div class="file-menu-body">
+        <button id="farmhouse-btn" title="Load the built-in farmhouse blueprint">Built-in farmhouse</button>
+        <button id="save-json-btn" title="Save the editor building data as JSON">Save JSON</button>
+        <label class="file-button" title="Load a previously saved building JSON file">Load JSON<input id="load-json-input" type="file" accept="application/json,.json" /></label>
+        </div></details>
+        <button id="review-checks-btn" type="button" aria-controls="validation-results" title="Review building errors and authoring warnings">Checks</button>
+        <button id="export-btn" class="primary" title="Export a Godot package ZIP with the building scene and door scenes">Export .tscn ZIP</button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <aside class="panel tools-panel">
+        <section class="collapsible-section">
+          <details class="collapsible" data-section="tools" open>
+            <summary><h2>Tools</h2></summary>
+            <div class="section-body">
+              <div class="tool-grid" id="tool-grid">
+                <span class="tool-category">Layout</span>
+                <button data-tool="select" class="active" title="Select a wall, then drag endpoint A or B. Connected endpoints move together by default. Press Delete to remove the selection.">Select</button>
+                <button data-tool="wall" title="Draw connected wall segments. Click points; press Esc when finished.">Wall</button>
+                <button data-tool="room" title="Drag a rectangular room outline using four walls.">Room outline</button>
+                <button data-tool="region" title="Name a rectangular or polygon room, bay or wing; optionally define or cut the automatic footprint.">Region</button>
+                <span class="tool-category">Openings &amp; light</span>
+                <button data-tool="door" title="Place a door opening on a wall.">Door</button>
+                <button data-tool="window" title="Place a window opening on a wall.">Window</button>
+                <button data-tool="light" title="Place an OmniLight3D reference point on the active floor.">Light</button>
+                <button data-tool="marker" title="Place a named Marker3D reference. Notes stay in the building JSON.">Marker</button>
+                <span class="tool-category">Structure</span>
+                <button data-tool="stair" title="Drag a smooth ramp from its lower end toward the upper landing.">Ramp</button>
+                <button data-tool="slab" title="Override the automatic floor footprint for the active story. This remains tied to the active floor level.">Floor Footprint</button>
+                <button data-tool="manual-floor" title="Draw an independent floor slab with its own absolute height and thickness.">Manual Floor</button>
+                <button data-tool="manual-ceiling" title="Draw an independent ceiling slab with its own absolute height and thickness.">Manual Ceiling</button>
+                <button data-tool="platform" title="Drag an outdoor porch or deck platform.">Porch/Deck</button>
+                <button data-tool="railing" title="Drag a railing segment.">Railing</button>
+                <button data-tool="roof" title="Draw an independent four-corner roof footprint. Its height is independent of the active floor.">Manual Roof</button>
+              </div>
+              <p class="muted compact-help">Select an item and press <b>Delete</b> to remove it. Undo remains available with Ctrl/Cmd+Z.</p>
+            </div>
+          </details>
+        </section>
+
+        <section class="collapsible-section" id="tool-defaults-section" hidden>
+          <details class="collapsible" data-section="wall-types" open><summary><h2>Wall types</h2></summary><div class="section-body">
+            <label>New wall type<select id="new-wall-type"><option value="">Standard</option></select></label>
+            <button id="wall-types-btn" type="button">Edit wall types…</button>
+            <button id="apply-wall-type-btn" type="button">Apply type to selected walls</button>
+            <p class="muted compact-help">New walls and rooms use this type. Existing walls can mix types. Positive profile offsets point inward.</p>
+            <p class="muted compact-help">Standard wall ends fit shaped hosts at angles of 30° or more, including matching split hosts. Angled joins need extra clearance from corners and openings.</p>
+          </div></details>
+          <details class="collapsible" data-section="tool-defaults" open>
+            <summary><h2>Tool Options <span id="tool-defaults-tool"></span></h2></summary>
+            <div class="section-body">
+              <div class="tool-default-group" data-tools="region">
+                <label>Shape<select id="new-region-shape"><option value="rectangle">Rectangle</option><option value="polygon">Polygon</option></select></label>
+                <button id="region-from-walls-btn" type="button" title="Copy a single closed exterior wall loop into an independent region.">From wall outline</button>
+                <div class="button-row"><button id="finish-region-btn" type="button" disabled>Finish polygon</button><button id="undo-region-corner-btn" type="button" disabled>Undo corner</button></div>
+                <p id="region-draft-status" class="muted compact-help" aria-live="polite"></p>
+                <label>Purpose<select id="new-region-kind"><option value="room">Room</option><option value="bay">Bay</option><option value="wing">Wing</option><option value="garage">Garage</option><option value="porch">Porch</option><option value="courtyard">Courtyard</option></select></label>
+                <label>Footprint effect<select id="new-region-effect"><option value="label">Label only</option><option value="solid">Define footprint</option><option value="void">Cut automatic surfaces</option></select></label>
+                <p class="muted compact-help">Drag a rectangle or click polygon corners, then name it in Selection. Polygon corners can be edited numerically. Labels never change geometry. Cuts affect this story's automatic floor, ceiling and roof footprint, not walls or independent pieces.</p>
+              </div>
+              <div class="tool-default-group" data-tools="wall room">
+                <label>Wall role
+                  <select id="new-wall-role" title="Role assigned to newly drawn walls or room outlines.">
+                    <option value="exterior">Exterior</option>
+                    <option value="interior">Interior</option>
+                  </select>
+                </label>
+                <label>Wall height
+                  <select id="new-wall-height" title="Height assigned to newly drawn walls. Custom heights can be entered after selection.">
+                    <option value="full" selected>Full story</option>
+                    <option value="half">Half wall</option>
+                  </select>
+                </label>
+              </div>
+              <div class="tool-default-group" data-tools="door">
+                <label>Door type
+                  <select id="new-door-style" title="Door style assigned to newly placed doors. Empty creates only the wall opening with no frame, leaf, or collision.">
+                    <option value="exterior">Exterior door</option>
+                    <option value="room" selected>Room door</option>
+                    <option value="closet">Closet door</option>
+                    <option value="empty">Empty opening</option>
+                  </select>
+                </label>
+              </div>
+              <div class="tool-default-group" data-tools="door">
+                <label>Doorway shape<select id="new-opening-shape"><option value="">Rectangle</option></select></label>
+                <button id="opening-shapes-btn" type="button">Edit doorway shapes…</button>
+              </div>
+              <div class="tool-default-group" data-tools="window">
+                <label>Window style
+                  <select id="new-window-style" title="Style assigned to newly placed windows. Empty creates only the wall opening with no frame, glass, or collision.">
+                    <option value="plain" selected>Plain</option>
+                    <option value="double_hung">Double-hung</option>
+                    <option value="four_pane">Four-pane</option>
+                    <option value="empty">Empty opening</option>
+                  </select>
+                </label>
+              </div>
+              <div class="tool-default-group" data-tools="light">
+                <label>Placement height <input id="new-light-height" type="number" min="0" step="0.1" value="2.2" title="Height above the active floor for newly placed lights." /></label>
+              </div>
+              <div class="tool-default-group" data-tools="marker">
+                <label>Height above floor (m) <input id="new-marker-height" type="number" step="0.1" value="0" /></label>
+                <p class="muted compact-help">Click to place, then edit the name and notes in Selection. Exports as Marker3D; notes remain in JSON.</p>
+              </div>
+              <div class="tool-default-group" data-tools="stair">
+                <label>Stair style
+                  <select id="new-stair-style" title="Ramp creates one smooth solid incline. Steps creates visible treads with a smooth walkable ramp collision underneath.">
+                    <option value="ramp" selected>Ramp</option>
+                    <option value="steps">Steps</option>
+                  </select>
+                </label>
+                <label>Width <input id="new-stair-width" type="number" min="0.5" step="0.1" value="2.4" title="Overall width of the staircase or ramp." /></label>
+                <label id="new-stair-steps-row">Step count <input id="new-stair-steps" type="number" min="2" step="1" value="12" title="Number of visible treads when Stair style is Steps." /></label>
+                <label class="checkbox"><input id="new-stair-block-below" type="checkbox" checked /> Block space below</label>
+                <p class="muted compact-help">Adds a visible solid fill beneath the stairs/ramp and a matching collision blocker. Turn off to leave the underside open.</p>
+              </div>
+              <div class="tool-default-group" data-tools="manual-floor">
+                <label>Top height Y <input id="new-manual-floor-y" type="number" step="0.1" value="0" title="Absolute height of the finished top surface. The slab thickness extends downward." /></label>
+                <label>Thickness <input id="new-manual-floor-thickness" type="number" min="0.01" step="0.01" value="0.18" /></label>
+                <p class="muted compact-help">Independent building-level slab. Use several rectangles for L/T-shaped floors. A same-height manual floor replaces overlapping automatic floor geometry.</p>
+              </div>
+              <div class="tool-default-group" data-tools="manual-ceiling">
+                <label>Top height Y <input id="new-manual-ceiling-y" type="number" step="0.1" value="2.8" title="Absolute height of the ceiling slab's top surface. Thickness extends downward into the room, matching automatic ceilings." /></label>
+                <label>Thickness <input id="new-manual-ceiling-thickness" type="number" min="0.01" step="0.01" value="0.12" /></label>
+                <p class="muted compact-help">Independent building-level ceiling. A same-height manual ceiling replaces overlapping automatic ceiling geometry.</p>
+              </div>
+              <div class="tool-default-group" data-tools="platform">
+                <label>Platform type
+                  <select id="new-platform-type" title="Porches are covered by the automatic roof by default; decks are not.">
+                    <option value="porch">Porch</option>
+                    <option value="deck">Deck</option>
+                  </select>
+                </label>
+                <label>Height offset <input id="new-platform-height" type="number" step="0.1" value="0" title="Vertical offset from the active floor elevation." /></label>
+              </div>
+              <div class="tool-default-group" data-tools="railing">
+                <label>Railing style
+                  <select id="new-railing-style" title="Style assigned to newly drawn railings.">
+                    <option value="two_rail" selected>Two rail</option>
+                    <option value="picket">Picket</option>
+                    <option value="cross_brace">Cross brace</option>
+                  </select>
+                </label>
+                <label>Railing height <input id="new-railing-height" type="number" min="0.4" step="0.1" value="1" /></label>
+              </div>
+              <div class="tool-default-group" data-tools="roof">
+                <label>Section type
+                  <select id="new-roof-section-type">
+                    <option value="gable">Gable</option>
+                    <option value="shed">Shed / Lean-to</option>
+                    <option value="flat">Flat</option>
+                  </select>
+                </label>
+                <label>Ridge / slope axis
+                  <select id="new-roof-direction" title="For a gable this is the ridge axis; for a shed roof it is the slope axis.">
+                    <option value="x">X axis</option>
+                    <option value="z">Z axis</option>
+                  </select>
+                </label>
+                <label>Base height Y <input id="new-roof-base-y" type="number" step="0.1" value="2.8" title="Absolute height of the roof eaves/base. Defaults to the top of the active story but is not tied to it." /></label>
+                <label>Pitch ° <input id="new-roof-pitch" type="number" min="5" max="70" step="1" value="35" /></label>
+                <label>Overhang <input id="new-roof-overhang" type="number" min="0" step="0.1" value="0.35" /></label>
+                <label>Gable end fill
+                  <select id="new-roof-gable-ends" title="Controls which triangular gable ends are filled beneath a manual gable roof.">
+                    <option value="both" selected>Both ends</option>
+                    <option value="min">Min-axis end only</option>
+                    <option value="max">Max-axis end only</option>
+                    <option value="none">No gable fill</option>
+                  </select>
+                </label>
+                <p class="muted compact-help">Drag the diagonal of the roof footprint. The four roof corners and its absolute height are independent of every floor.</p>
+              </div>
+            </div>
+          </details>
+        </section>
+
+        <section class="collapsible-section">
+          <details class="collapsible" data-section="floors" open>
+            <summary><h2>Floors</h2></summary>
+            <div class="section-body">
+              <label>Active floor <select id="floor-select"></select></label>
+              <label>Floor name <input id="floor-label" value="Floor 1" /></label>
+              <details class="advanced-options"><summary>Level dimensions</summary>
+              <label>Floor elevation Y <input id="floor-elevation" type="number" step="0.1" placeholder="Automatic" /></label>
+              <label>Wall height override <input id="floor-wall-height" type="number" min="0.2" step="0.1" placeholder="Building default" /></label>
+              <label>Slab thickness override <input id="floor-slab-thickness" type="number" min="0.01" step="0.01" placeholder="Building default" /></label>
+              </details>
+              <p id="floor-level-summary" class="muted compact-help"></p>
+              <label class="checkbox"><input id="intentional-open-toggle" type="checkbox" /> Intentional exterior openings</label>
+              <p class="muted compact-help">For wall gaps such as a large barn entrance. Use Floor Footprint to define the slab outline. No wall or collision is added across the gap.</p>
+              <label class="checkbox"><input id="show-floor-below" type="checkbox" checked /> Ghost floor below</label>
+              <label class="checkbox" title="Generate the active story floor from its wall-derived or Floor Footprint area. Manual Floors at the same height replace overlapping portions."><input id="auto-floor-toggle" type="checkbox" checked /> Generate floor automatically</label>
+              <label class="checkbox" title="Generate ceilings over exposed active-story regions. Manual Ceilings at the same height replace overlapping portions."><input id="auto-ceiling-toggle" type="checkbox" checked /> Generate ceiling automatically</label>
+              <div class="button-row">
+                <button id="add-floor-btn" title="Insert a blank floor immediately above the active floor, shifting higher levels upward.">Add above</button>
+                <button id="add-floor-below-btn" title="Insert below the active floor. A new lowest floor becomes a basement without moving the existing building.">Add below</button>
+              </div>
+              <div class="button-row">
+                <button id="move-floor-up-btn" title="Swap this floor with the one above; contents and dimensions move together.">Move up</button>
+                <button id="move-floor-down-btn" title="Swap this floor with the one below; contents and dimensions move together.">Move down</button>
+              </div>
+              <button id="duplicate-floor-btn" title="Insert a copy immediately above this floor, with fresh object IDs. Stairs and independent roofs/slabs are omitted.">Duplicate above</button>
+              <button id="delete-floor-btn" class="danger" title="Delete the active floor and its contents. Deleting the top also removes its incoming stairs.">Delete active floor</button>
+              <label class="checkbox"><input id="floor-remove-stairs" type="checkbox" /> Remove affected stairs</label>
+              <p class="muted compact-help">An edit is blocked if stairs would connect different floors. Enable the option above to remove those flights. Undo restores the complete edit. Reordering recalculates level heights; independent roofs and manual slabs keep their absolute heights.</p>
+              <p class="muted compact-help">Each story generates its floor and exposed ceiling by default. Turn either off on this floor when you want to construct that surface entirely with Manual Floor / Manual Ceiling objects. Manual roofs and manual surfaces are building-level objects with absolute heights.</p>
+            </div>
+          </details>
+        </section>
+
+        <section class="collapsible-section">
+          <details class="collapsible" data-section="structure">
+            <summary><h2>Structure</h2></summary>
+            <div class="section-body">
+              <label>Building name <input id="building-name" value="Miller Farmhouse" /></label>
+              <label>Default wall height <input id="wall-height" type="number" min="1" step="0.1" value="2.8" title="Full wall height. Automatic upper elevations add the upper slab thickness." /></label>
+              <label>Wall thickness <input id="wall-thickness" type="number" min="0.05" step="0.05" value="0.18" /></label>
+              <label>Floor / platform thickness <input id="floor-thickness" type="number" min="0.05" step="0.05" value="0.18" title="Used by building floor slabs and porch/deck slabs." /></label>
+              <div class="option-group">
+                <h3>Automatic surface defaults</h3>
+                <label>Ceiling thickness <input id="ceiling-thickness" type="number" min="0.02" step="0.01" value="0.12" title="Default thickness for automatically generated ceilings and newly drawn manual ceilings." /></label>
+                <p class="muted compact-help">Automatic floor thickness uses the Floor / platform thickness above. Automatic floor and ceiling generation can be enabled/disabled per story in the Floors section.</p>
+              </div>
+            </div>
+          </details>
+        </section>
+
+        <section class="collapsible-section">
+          <details class="collapsible" data-section="roof">
+            <summary><h2>Automatic Roof</h2></summary>
+            <div class="section-body">
+              <label>Default roof type
+                <select id="roof-type" title="Used only for automatically generated roof regions. Manual Roof objects have their own type, height, pitch and overhang.">
+                  <option value="gable">Gable</option>
+                  <option value="hip">Hip / polygon</option>
+                  <option value="flat">Flat</option>
+                  <option value="none">None</option>
+                </select>
+              </label>
+              <label>Pitch ° <input id="roof-pitch" type="number" min="5" max="70" step="1" value="35" title="Default pitch for gable, hip and shed roof sections." /></label>
+              <label>Overhang <input id="roof-overhang" type="number" min="0" step="0.1" value="0.35" title="Horizontal roof extension beyond exposed roof-region edges." /></label>
+              <p class="muted compact-help">Hip / polygon follows convex outlines, including round buildings made from angled walls. Concave outlines use separate convex roof sections. Automatic roofs remain tied to exposed floors. Manual Roof objects are independent and replace the automatic roof only where they overlap at the same height.</p>
+            </div>
+          </details>
+        </section>
+
+        <section class="collapsible-section">
+          <details class="collapsible" data-section="openings">
+            <summary><h2>Doors & Windows</h2></summary>
+            <div class="section-body">
+              <div class="option-group">
+                <h3>Windows</h3>
+                <label class="checkbox"><input id="window-mesh-toggle" type="checkbox" checked /> Generate window meshes</label>
+                <label>Frame width <input id="window-frame-width" type="number" min="0.02" step="0.01" value="0.08" /></label>
+                <label>Frame depth <input id="window-frame-depth" type="number" min="0.02" step="0.01" value="0.12" /></label>
+                <label>Glass thickness <input id="window-glass-thickness" type="number" min="0.005" step="0.005" value="0.018" /></label>
+              </div>
+              <div class="option-group">
+                <h3>Doors</h3>
+                <label class="checkbox"><input id="door-mesh-toggle" type="checkbox" checked /> Generate door scenes</label>
+                <label>Frame width <input id="door-frame-width" type="number" min="0.03" step="0.01" value="0.09" /></label>
+                <label>Frame depth <input id="door-frame-depth" type="number" min="0.03" step="0.01" value="0.14" /></label>
+                <label>Door thickness <input id="door-panel-thickness" type="number" min="0.02" step="0.005" value="0.045" /></label>
+                <label>Detail depth <input id="door-detail-depth" type="number" min="0.005" step="0.005" value="0.018" title="Depth of the baked decorative door-panel and hardware details." /></label>
+                <p class="muted compact-help">Door scenes export without scripts so your gameplay script can be attached in Godot.</p>
+              </div>
+            </div>
+          </details>
+        </section>
+
+        <section class="collapsible-section">
+          <details class="collapsible" data-section="plan" open>
+            <summary><h2>Plan View</h2></summary>
+            <div class="section-body">
+              <label class="checkbox"><input id="snap-toggle" type="checkbox" checked /> Snap: endpoints, walls &amp; grid</label>
+              <label class="checkbox"><input id="junctions-toggle" type="checkbox" checked /> Show wall connections</label>
+              <p class="muted compact-help">Hold Alt to bypass snapping. Amber dots are open ends; mint dots are connections, not a validation guarantee.</p>
+              <label>Grid spacing <input id="grid-size" type="number" min="0.1" step="0.1" value="0.5" /></label>
+            </div>
+          </details>
+        </section>
+
+        <section class="collapsible-section hint-box">
+          <details class="collapsible" data-section="controls">
+            <summary><h2>Controls</h2></summary>
+            <div class="section-body">
+              <p><b>Wall:</b> click points; snap to the first point to close a loop. Esc finishes the run.</p>
+              <p><b>Room / Floor Footprint / Manual Floor / Manual Ceiling / Porch / Roof:</b> drag a rectangle.</p>
+              <p><b>Door / Window:</b> click a wall.</p>
+              <p><b>Ramp:</b> drag from bottom toward the upper landing. The ramp rises smoothly to the next story.</p>
+              <p><b>Railing:</b> drag a line.</p>
+              <p><b>Select:</b> click a wall, then drag its A / B handles. Move connected endpoints is on by default; turn it off in Selection to detach just one endpoint. Green previews are valid, red previews are blocked. Release to apply; Esc cancels. Press <b>Delete</b> to remove the selection.</p>
+              <p><b>Move a group:</b> Shift-click objects or drag a box from empty space. Drag a selected object, or arm Move selection and drag anywhere. Yellow dashed outlines preview the move; red means blocked. Keep wall joints moves neighboring endpoints too. Doors/windows follow their walls. Alt bypasses grid snapping.</p>
+              <p><b>2D:</b> wheel zoom · middle-drag pan.</p>
+              <p><b>3D:</b> left-drag orbit · wheel zoom.</p>
+              <p><b>Escape:</b> finish/cancel the current drawing operation and return to Select.</p>
+              <p><b>Undo/Redo:</b> Ctrl/Cmd+Z · Ctrl/Cmd+Y or Shift+Ctrl/Cmd+Z.</p>
+            </div>
+          </details>
+        </section>
+      </aside>
+
+      <section class="viewport-shell">
+        <div class="viewport-tabs">
+          <button data-view="plan" class="active">PLAN</button>
+          <button data-view="preview" title="LMB orbit · MMB/RMB or Shift+LMB pan · wheel zoom · double-click to frame">3D PREVIEW</button>
+          <span id="status-text" role="status" aria-live="polite">Farmhouse preset loaded</span>
+        </div>
+        <div id="plan-view" class="viewport active"><canvas id="plan-canvas" aria-label="Building floor plan"></canvas><div class="canvas-key">Wheel zoom · Middle-drag pan · Alt unsnaps</div></div>
+        <div id="preview-view" class="viewport">
+          <div class="preview-controls" aria-label="Preview inspection controls">
+            <label>View<select id="preview-mode"><option value="building">Whole building</option><option value="floor">Active floor cutaway</option><option value="roofs">Roofs and gables</option></select></label>
+            <label id="preview-floor-field" hidden>Floor<select id="preview-floor"></select></label>
+            <label>Guides<select id="preview-overlay"><option value="none">None</option><option value="footprint">Floor footprint</option><option value="attachments">Roof attachments</option></select></label>
+            <label id="preview-roof-field" hidden>Manual roof<select id="preview-roof"><option value="">All constrained roofs</option></select></label>
+            <button id="preview-frame" title="Fit visible geometry and guides to the camera">Frame view</button>
+          </div>
+          <div class="preview-stage"><canvas id="preview-canvas" aria-label="Building 3D preview" aria-describedby="preview-status"></canvas></div>
+          <div class="preview-info">
+            <p id="preview-status" role="status" aria-live="polite"></p>
+            <div id="preview-legend" class="preview-legend" hidden></div>
+            <p id="preview-guide-scope" hidden>Guides drawn through surfaces · not collision geometry</p>
+            <details id="preview-details"><summary>View details and controls</summary><div id="preview-notes"></div><p>Drag to orbit · Shift+drag to pan · wheel to zoom · double-click to frame. The Floor selector also changes the active floor in the editor.</p></details>
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel properties-panel">
+        <section>
+          <h2>Selection</h2>
+          <label>Pick objects<select id="selection-filter"><option value="all">All objects</option><option value="areas">All areas</option><option value="roofSection">Manual roofs</option><option value="platform">Porches / decks</option><option value="slab">Floor footprints</option><option value="manualFloor">Manual floors</option><option value="manualCeiling">Manual ceilings</option><option value="region">Regions</option><option value="wall">Walls</option><option value="opening">Doors / windows</option><option value="stair">Stairs / ramps</option><option value="light">Lights</option><option value="marker">Markers</option><option value="railing">Railings</option></select></label>
+          <p class="muted compact-help">Closed exterior outlines, including angled walls, define automatic floors and ceilings. Floor Footprints override that outline with rectangles.</p>
+          <p id="footprint-status" class="muted compact-help" aria-live="polite"></p>
+          <div id="selection-candidates" class="selection-candidates" aria-label="Overlapping areas at the picked point" hidden></div>
+          <div id="selection-empty" class="muted selection-empty">Select a wall, opening or region to edit its properties.</div>
+          <div class="selection-actions"><button id="select-all-btn" type="button">Select all</button><button id="clear-selection-btn" type="button">Clear</button></div>
+          <p class="muted compact-help">Shift-click to add/remove. Drag empty space to box-select. Drag selected objects to move.</p>
+          <p class="muted compact-help">Uses the pick filter above: active-floor objects and independent roofs/floors/ceilings at any height.</p>
+          <div id="group-controls" hidden>
+            <div class="selection-actions"><strong id="group-count"></strong><button id="move-selection-btn" type="button" aria-pressed="false">Move selection</button></div>
+              <label class="checkbox" title="Move connected wall endpoints too. Adjacent walls can stretch."><input id="group-keep-joints" type="checkbox" checked /> Keep wall joints</label>
+              <button id="delete-group-btn" class="danger" type="button">Delete selected objects</button>
+            <details class="advanced-options"><summary>Move by distance</summary>
+              <label>Offset X (m) <input id="group-dx" type="number" step="0.1" value="0" /></label>
+              <label>Offset Z (m) <input id="group-dz" type="number" step="0.1" value="0" /></label>
+              <button id="apply-group-offset" type="button">Apply move</button>
+            </details>
+          </div>
+          <div id="selection-form" tabindex="-1" aria-label="Selected object properties" hidden></div>
+        </section>
+        <section class="collapsible-section">
+          <details class="collapsible" data-section="regions" open><summary><h2>Regions · active floor</h2></summary><div class="section-body">
+            <p id="region-empty" class="muted compact-help">Use Region to name rooms and building areas.</p>
+            <div id="region-list" class="region-list" aria-label="Regions on active floor"></div>
+          </div></details>
+        </section>
+        <section class="collapsible-section">
+          <details class="collapsible" data-section="markers" open><summary><h2>Markers · active floor</h2></summary><div class="section-body">
+            <p id="marker-empty" class="muted compact-help">Place named reference points with the Marker tool. Notes stay in JSON.</p>
+            <div id="marker-list" class="region-list" aria-label="Markers on active floor"></div>
+          </div></details>
+        </section>
+        <section class="collapsible-section">
+          <details class="collapsible" data-section="scene-summary"><summary><h2>Scene summary</h2></summary><div class="section-body"><dl class="summary" id="scene-summary"></dl></div></details>
+        </section>
+        <section>
+          <h2>Godot Export</h2>
+          <label>Export profile<select id="export-profile"><option value="generic">Generic Godot</option><option value="get_probed">GET PROBED compatibility</option></select></label>
+          <button id="validate-btn">Check building</button>
+          <button id="download-check-report-btn" type="button" title="Download current errors, warnings and object references as JSON">Download check report</button>
+          <p class="muted compact-help">Reports describe the current checks. Save the building JSON separately for editing.</p>
+          <p id="validation-summary" class="muted compact-help" role="status" aria-live="polite" aria-atomic="true" tabindex="-1"></p>
+          <ul id="validation-results" class="muted"></ul>
+          <label class="checkbox" title="Export collision bodies and shapes for walls, floors, roofs, stairs, windows, platforms, railings, and supports."><input id="collision-toggle" type="checkbox" checked /> Include collision</label>
+          <label class="checkbox"><input id="placeholder-materials-toggle" type="checkbox" /> Include placeholder colors</label>
+          <p class="muted compact-help">Off by default: named material slots remain empty for authoring in Godot. Preview colors are only an editor aid.</p>
+          <label class="checkbox" title="Add Marker3D helper nodes at door and window openings for gameplay/reference use."><input id="markers-toggle" type="checkbox" /> Opening Marker3D helpers</label>
+          <p class="muted">Exports a building <code>.tscn</code> plus separate door scenes. Floors, ceilings and roofs can be generated automatically or supplemented/replaced with independent absolute-height manual surfaces. Walls, stairs, platforms and supports are baked for Godot while material-facing surfaces remain independently assignable where appropriate.</p>
+        </section>
+      </aside>
+    </main>
+  </div>
+<dialog id="wall-type-dialog" class="wall-type-dialog" hidden aria-labelledby="wall-type-title">
+  <h2 id="wall-type-title">Wall profile editor</h2>
+  <p class="muted">A side-on section repeated along each wall. Height levels scale with wall height; offset and horizontal thickness are metres. Standard remains the default.</p>
+  <div class="wall-profile-layout"><div>
+    <label>Saved type<select id="wall-type-choice"></select></label>
+    <label>Type name<input id="wall-type-name" maxlength="120" /></label>
+    <label>Start from preset<select id="wall-type-preset"><option value="">Choose a preset…</option><option value="standard">Straight</option><option value="hull">Hull · recessed middle</option><option value="flare">Flared middle</option><option value="taper">Thick base</option></select></label>
+    <canvas id="wall-type-preview" width="600" height="380" aria-label="Wall cross-section preview with draggable profile levels"></canvas>
+    <p id="wall-type-usage" class="muted compact-help"></p>
+  </div><div><div id="wall-type-levels"></div><button id="wall-type-add-level" type="button">Add profile level</button></div></div>
+  <p id="wall-type-message" role="status" aria-live="polite"></p>
+  <div class="wall-profile-actions"><button id="wall-type-cancel" type="button">Cancel</button><button id="wall-type-delete" type="button">Delete type · reset its walls</button><button id="wall-type-save" type="button">Save wall type</button></div>
+</dialog>
+<dialog id="opening-shape-dialog" class="wall-type-dialog" hidden aria-labelledby="opening-shape-title">
+  <h2 id="opening-shape-title">Doorway shape editor</h2>
+  <p class="muted">Draw the front outline of a doorway. Use it for an empty passage or a matching framed panel. Each doorway keeps its own width and height. Shapes may have clipped corners, arches, or concave notches. Use Undo/Redo for draft edits, or Ctrl/Cmd+Z while the canvas is focused.</p>
+  <div class="wall-profile-layout"><div>
+    <label>Saved shape<select id="opening-shape-choice"></select></label>
+    <label>Shape name<input id="opening-shape-name" maxlength="120" /></label>
+    <label>Start from preset<select id="opening-shape-preset"><option value="">Choose a preset…</option><option value="rectangle">Rectangle</option><option value="clipped">Clipped corners · airlock</option><option value="arch">Faceted arch</option></select></label>
+    <div class="opening-preview-size"><label>Preview width (m)<input id="opening-preview-width" type="number" min="0.1" step="0.1" value="3" /></label><label>Preview height (m)<input id="opening-preview-height" type="number" min="0.1" step="0.1" value="2.4" /></label></div>
+    <canvas id="opening-shape-preview" tabindex="0" width="600" height="380" aria-label="Front doorway outline with draggable corners"></canvas>
+    <div class="wall-profile-actions"><button id="opening-shape-undo" type="button">Undo shape edit</button><button id="opening-shape-redo" type="button">Redo shape edit</button></div>
+    <label class="checkbox"><input id="opening-shape-frame-preview" type="checkbox" checked /> Preview frame and panel at this size</label>
+    <p id="opening-shape-frame-status" class="muted" role="status" aria-live="polite"></p>
+    <label class="checkbox"><input id="opening-shape-snap" type="checkbox" checked /> Snap corners to 1%</label>
+    <div class="wall-profile-actions"><button id="opening-shape-draw" type="button">Draw new outline</button><button id="opening-shape-back" type="button" hidden>Undo last corner</button><button id="opening-shape-finish" type="button" hidden>Finish drawing</button><button id="opening-shape-fit" type="button">Fit to bounds</button></div>
+    <p id="opening-shape-usage" class="muted"></p>
+    <p class="muted">Keep a flat edge at floor level. Framed panels need room for the frame inset; use an empty opening for very narrow notches. Custom panels export a movable Panel node; configure movement in Godot.</p>
+  </div><div><div id="opening-shape-points"></div><div class="wall-profile-actions"><button id="opening-shape-add" type="button">Add corner</button><button id="opening-shape-remove" type="button">Remove selected corner</button></div></div></div>
+  <p id="opening-shape-message" role="status" aria-live="polite"></p>
+  <div class="wall-profile-actions"><button id="opening-shape-cancel" type="button">Cancel</button><button id="opening-shape-delete" type="button">Delete shape · reset its openings</button><button id="opening-shape-copy" type="button">Save as new shape</button><button id="opening-shape-save" type="button">Save doorway shape</button></div>
+</dialog>
+</body>
+</html>

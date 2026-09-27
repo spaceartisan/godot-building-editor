@@ -1,0 +1,238 @@
+{
+  "version": 9,
+  "name": "Concave shaped roof junctions",
+  "exportProfile": "generic",
+  "wallHeight": 2.8,
+  "wallThickness": 0.18,
+  "floorThickness": 0.18,
+  "gridSize": 0.5,
+  "roof": {
+    "type": "none",
+    "pitch": 35,
+    "overhang": 0
+  },
+  "roofSections": [
+    {
+      "id": "canopy",
+      "label": "Recess canopy",
+      "type": "flat",
+      "direction": "x",
+      "minX": 0,
+      "maxX": 2.6,
+      "minZ": 0.2,
+      "maxZ": 1.4,
+      "baseY": 1.4,
+      "pitch": 35,
+      "overhang": 0,
+      "gableEnds": "both"
+    },
+    {
+      "id": "west",
+      "label": "West recessed gable",
+      "type": "gable",
+      "direction": "x",
+      "minX": -2.6,
+      "maxX": 0,
+      "minZ": 2.8,
+      "maxZ": 4.2,
+      "baseY": 1.4,
+      "pitch": 35,
+      "overhang": 0,
+      "gableEnds": "both"
+    }
+  ],
+  "manualFloors": [],
+  "manualCeilings": [],
+  "ceiling": {
+    "thickness": 0.12
+  },
+  "windowMesh": {
+    "enabled": true,
+    "frameWidth": 0.08,
+    "frameDepth": 0.12,
+    "glassThickness": 0.018
+  },
+  "doorMesh": {
+    "enabled": true,
+    "frameWidth": 0.09,
+    "frameDepth": 0.14,
+    "panelThickness": 0.045,
+    "detailDepth": 0.018
+  },
+  "floors": [
+    {
+      "id": "floor_1",
+      "label": "Workshop",
+      "walls": [
+        {
+          "id": "wall_0",
+          "role": "exterior",
+          "a": {
+            "x": -6,
+            "z": -5
+          },
+          "b": {
+            "x": 6,
+            "z": -5
+          },
+          "wallTypeId": "hull"
+        },
+        {
+          "id": "wall_1",
+          "role": "exterior",
+          "a": {
+            "x": 6,
+            "z": -5
+          },
+          "b": {
+            "x": 6,
+            "z": 5
+          },
+          "wallTypeId": "hull"
+        },
+        {
+          "id": "wall_2",
+          "role": "exterior",
+          "a": {
+            "x": 6,
+            "z": 5
+          },
+          "b": {
+            "x": 2,
+            "z": 5
+          },
+          "wallTypeId": "hull"
+        },
+        {
+          "id": "wall_3",
+          "role": "exterior",
+          "a": {
+            "x": 2,
+            "z": 5
+          },
+          "b": {
+            "x": 2,
+            "z": -1
+          },
+          "wallTypeId": "hull"
+        },
+        {
+          "id": "wall_4",
+          "role": "exterior",
+          "a": {
+            "x": 2,
+            "z": -1
+          },
+          "b": {
+            "x": -2,
+            "z": -1
+          },
+          "wallTypeId": "hull"
+        },
+        {
+          "id": "wall_5",
+          "role": "exterior",
+          "a": {
+            "x": -2,
+            "z": -1
+          },
+          "b": {
+            "x": -2,
+            "z": 5
+          },
+          "wallTypeId": "hull"
+        },
+        {
+          "id": "wall_6",
+          "role": "exterior",
+          "a": {
+            "x": -2,
+            "z": 5
+          },
+          "b": {
+            "x": -6,
+            "z": 5
+          },
+          "wallTypeId": "hull"
+        },
+        {
+          "id": "wall_7",
+          "role": "exterior",
+          "a": {
+            "x": -6,
+            "z": 5
+          },
+          "b": {
+            "x": -6,
+            "z": -5
+          },
+          "wallTypeId": "hull"
+        }
+      ],
+      "openings": [],
+      "lights": [],
+      "stairs": [],
+      "slabs": [],
+      "regions": [],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": false
+    }
+  ],
+  "wallTypes": [
+    {
+      "id": "hull",
+      "label": "Hull · recessed middle",
+      "stations": [
+        {
+          "height": 0,
+          "offset": 0,
+          "thickness": 0.18
+        },
+        {
+          "height": 0.16,
+          "offset": 0.35,
+          "thickness": 0.18
+        },
+        {
+          "height": 0.8,
+          "offset": 0.35,
+          "thickness": 0.18
+        },
+        {
+          "height": 1,
+          "offset": 0,
+          "thickness": 0.18
+        }
+      ]
+    },
+    {
+      "id": "flare",
+      "label": "Outward flare",
+      "stations": [
+        {
+          "height": 0,
+          "offset": 0,
+          "thickness": 0.18
+        },
+        {
+          "height": 0.2,
+          "offset": -0.35,
+          "thickness": 0.18
+        },
+        {
+          "height": 0.8,
+          "offset": -0.35,
+          "thickness": 0.18
+        },
+        {
+          "height": 1,
+          "offset": 0,
+          "thickness": 0.18
+        }
+      ]
+    }
+  ]
+}

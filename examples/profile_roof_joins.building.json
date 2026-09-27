@@ -1,0 +1,207 @@
+{
+  "version": 9,
+  "name": "Shaped roof junctions",
+  "exportProfile": "generic",
+  "wallHeight": 2.8,
+  "wallThickness": 0.18,
+  "floorThickness": 0.18,
+  "gridSize": 0.5,
+  "roof": {
+    "type": "none",
+    "pitch": 35,
+    "overhang": 0
+  },
+  "roofSections": [
+    {
+      "id": "canopy",
+      "label": "Recessed wall canopy",
+      "type": "flat",
+      "direction": "x",
+      "minX": 2.5,
+      "maxX": 5,
+      "minZ": -1,
+      "maxZ": 1,
+      "baseY": 1.4,
+      "pitch": 35,
+      "overhang": 0,
+      "gableEnds": "both"
+    },
+    {
+      "id": "west",
+      "label": "Flared wall gable",
+      "type": "gable",
+      "direction": "x",
+      "minX": -5,
+      "maxX": -2.5,
+      "minZ": -1,
+      "maxZ": 1,
+      "baseY": 1.4,
+      "pitch": 35,
+      "overhang": 0,
+      "gableEnds": "both"
+    },
+    {
+      "id": "north",
+      "label": "Standard wall gable",
+      "type": "gable",
+      "direction": "z",
+      "minX": -1,
+      "maxX": 1,
+      "minZ": -5,
+      "maxZ": -2.5,
+      "baseY": 1.4,
+      "pitch": 35,
+      "overhang": 0,
+      "gableEnds": "both"
+    }
+  ],
+  "manualFloors": [],
+  "manualCeilings": [],
+  "ceiling": {
+    "thickness": 0.12
+  },
+  "windowMesh": {
+    "enabled": true,
+    "frameWidth": 0.08,
+    "frameDepth": 0.12,
+    "glassThickness": 0.018
+  },
+  "doorMesh": {
+    "enabled": true,
+    "frameWidth": 0.09,
+    "frameDepth": 0.14,
+    "panelThickness": 0.045,
+    "detailDepth": 0.018
+  },
+  "floors": [
+    {
+      "id": "floor_1",
+      "label": "Workshop",
+      "walls": [
+        {
+          "id": "wall_0",
+          "label": "Hull wall 1",
+          "a": {
+            "x": -3,
+            "z": -3
+          },
+          "b": {
+            "x": 3,
+            "z": -3
+          },
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_1",
+          "label": "Hull wall 2",
+          "a": {
+            "x": 3,
+            "z": -3
+          },
+          "b": {
+            "x": 3,
+            "z": 3
+          },
+          "role": "exterior",
+          "height": null,
+          "wallTypeId": "hull"
+        },
+        {
+          "id": "wall_2",
+          "label": "Hull wall 3",
+          "a": {
+            "x": 3,
+            "z": 3
+          },
+          "b": {
+            "x": -3,
+            "z": 3
+          },
+          "role": "exterior",
+          "height": null,
+          "wallTypeId": "hull"
+        },
+        {
+          "id": "wall_3",
+          "label": "Hull wall 4",
+          "a": {
+            "x": -3,
+            "z": 3
+          },
+          "b": {
+            "x": -3,
+            "z": -3
+          },
+          "role": "exterior",
+          "height": null,
+          "wallTypeId": "flare"
+        }
+      ],
+      "openings": [],
+      "lights": [],
+      "stairs": [],
+      "slabs": [],
+      "regions": [],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": false
+    }
+  ],
+  "wallTypes": [
+    {
+      "id": "hull",
+      "label": "Hull · recessed middle",
+      "stations": [
+        {
+          "height": 0,
+          "offset": 0,
+          "thickness": 0.18
+        },
+        {
+          "height": 0.16,
+          "offset": 0.35,
+          "thickness": 0.18
+        },
+        {
+          "height": 0.8,
+          "offset": 0.35,
+          "thickness": 0.18
+        },
+        {
+          "height": 1,
+          "offset": 0,
+          "thickness": 0.18
+        }
+      ]
+    },
+    {
+      "id": "flare",
+      "label": "Outward flare",
+      "stations": [
+        {
+          "height": 0,
+          "offset": 0,
+          "thickness": 0.18
+        },
+        {
+          "height": 0.2,
+          "offset": -0.35,
+          "thickness": 0.18
+        },
+        {
+          "height": 0.8,
+          "offset": -0.35,
+          "thickness": 0.18
+        },
+        {
+          "height": 1,
+          "offset": 0,
+          "thickness": 0.18
+        }
+      ]
+    }
+  ]
+}

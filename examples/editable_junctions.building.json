@@ -1,0 +1,298 @@
+{
+  "version": 9,
+  "name": "Editable wall junctions",
+  "exportProfile": "generic",
+  "wallHeight": 2.8,
+  "wallThickness": 0.18,
+  "floorThickness": 0.18,
+  "gridSize": 0.5,
+  "roof": {
+    "type": "none",
+    "pitch": 35,
+    "overhang": 0.35
+  },
+  "roofSections": [],
+  "manualFloors": [],
+  "manualCeilings": [],
+  "ceiling": {
+    "thickness": 0.12
+  },
+  "windowMesh": {
+    "enabled": true,
+    "frameWidth": 0.08,
+    "frameDepth": 0.12,
+    "glassThickness": 0.018
+  },
+  "doorMesh": {
+    "enabled": true,
+    "frameWidth": 0.09,
+    "frameDepth": 0.14,
+    "panelThickness": 0.045,
+    "detailDepth": 0.018
+  },
+  "floors": [
+    {
+      "id": "floor_1",
+      "label": "Floor 1",
+      "walls": [
+        {
+          "id": "wall_2",
+          "a": {
+            "x": -5,
+            "z": -5
+          },
+          "b": {
+            "x": 5,
+            "z": -5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_3",
+          "a": {
+            "x": 5,
+            "z": -5
+          },
+          "b": {
+            "x": 5,
+            "z": 5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_4",
+          "a": {
+            "x": 5,
+            "z": 5
+          },
+          "b": {
+            "x": -5,
+            "z": 5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_5",
+          "a": {
+            "x": -5,
+            "z": 5
+          },
+          "b": {
+            "x": -5,
+            "z": -5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_6",
+          "label": "Editable west arm",
+          "role": "interior",
+          "a": {
+            "x": -4,
+            "z": 0
+          },
+          "b": {
+            "x": 1,
+            "z": 0
+          },
+          "height": null
+        },
+        {
+          "id": "wall_7",
+          "label": "South arm",
+          "role": "interior",
+          "a": {
+            "x": 1,
+            "z": 0
+          },
+          "b": {
+            "x": 0,
+            "z": 4
+          },
+          "height": null
+        },
+        {
+          "id": "wall_8",
+          "label": "North arm",
+          "role": "interior",
+          "a": {
+            "x": 1,
+            "z": 0
+          },
+          "b": {
+            "x": 0,
+            "z": -3
+          },
+          "height": null
+        }
+      ],
+      "openings": [
+        {
+          "id": "openings_9",
+          "label": "West passage",
+          "type": "door",
+          "wallId": "wall_6",
+          "t": 0.35,
+          "width": 1,
+          "height": 2.1,
+          "doorStyle": "empty"
+        }
+      ],
+      "lights": [],
+      "stairs": [
+        {
+          "id": "stairs_10",
+          "label": "East stair",
+          "x": 3,
+          "z": 0,
+          "width": 1.2,
+          "run": 6,
+          "direction": "north",
+          "style": "steps",
+          "steps": 16,
+          "blockBelow": true
+        }
+      ],
+      "slabs": [],
+      "regions": [],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": false
+    },
+    {
+      "id": "floor_11",
+      "label": "Upper",
+      "walls": [
+        {
+          "id": "wall_12",
+          "a": {
+            "x": -5,
+            "z": -5
+          },
+          "b": {
+            "x": 5,
+            "z": -5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_13",
+          "a": {
+            "x": 5,
+            "z": -5
+          },
+          "b": {
+            "x": 5,
+            "z": 5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_14",
+          "a": {
+            "x": 5,
+            "z": 5
+          },
+          "b": {
+            "x": -5,
+            "z": 5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_15",
+          "a": {
+            "x": -5,
+            "z": 5
+          },
+          "b": {
+            "x": -5,
+            "z": -5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_16",
+          "label": "Editable west arm",
+          "role": "interior",
+          "a": {
+            "x": -4,
+            "z": 0
+          },
+          "b": {
+            "x": 1,
+            "z": 0
+          },
+          "height": null
+        },
+        {
+          "id": "wall_17",
+          "label": "South arm",
+          "role": "interior",
+          "a": {
+            "x": 1,
+            "z": 0
+          },
+          "b": {
+            "x": 0,
+            "z": 4
+          },
+          "height": null
+        },
+        {
+          "id": "wall_18",
+          "label": "North arm",
+          "role": "interior",
+          "a": {
+            "x": 1,
+            "z": 0
+          },
+          "b": {
+            "x": 0,
+            "z": -3
+          },
+          "height": null
+        }
+      ],
+      "openings": [
+        {
+          "id": "openings_19",
+          "label": "West passage",
+          "type": "door",
+          "wallId": "wall_16",
+          "t": 0.35,
+          "width": 1,
+          "height": 2.1,
+          "doorStyle": "empty"
+        }
+      ],
+      "lights": [],
+      "stairs": [],
+      "slabs": [],
+      "regions": [],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": false
+    }
+  ]
+}

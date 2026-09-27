@@ -1,0 +1,253 @@
+{
+  "version": 9,
+  "name": "Roof wall junctions",
+  "exportProfile": "generic",
+  "wallHeight": 3,
+  "wallThickness": 0.18,
+  "floorThickness": 0.18,
+  "gridSize": 0.5,
+  "roof": {
+    "type": "gable",
+    "pitch": 35,
+    "overhang": 0.35
+  },
+  "roofSections": [
+    {
+      "id": "roofSections_15",
+      "label": "East shed canopy",
+      "minX": 5,
+      "maxX": 7,
+      "minZ": -2,
+      "maxZ": 2,
+      "type": "shed",
+      "direction": "x",
+      "baseY": 3,
+      "pitch": 20,
+      "overhang": 0.35,
+      "gableEnds": "none"
+    },
+    {
+      "id": "roofSections_16",
+      "label": "West flat canopy",
+      "minX": -7,
+      "maxX": -5,
+      "minZ": -2,
+      "maxZ": 2,
+      "type": "flat",
+      "direction": "x",
+      "baseY": 3,
+      "pitch": 35,
+      "overhang": 0.35,
+      "gableEnds": "none"
+    }
+  ],
+  "manualFloors": [],
+  "manualCeilings": [],
+  "ceiling": {
+    "thickness": 0.12
+  },
+  "windowMesh": {
+    "enabled": true,
+    "frameWidth": 0.08,
+    "frameDepth": 0.12,
+    "glassThickness": 0.018
+  },
+  "doorMesh": {
+    "enabled": true,
+    "frameWidth": 0.09,
+    "frameDepth": 0.14,
+    "panelThickness": 0.045,
+    "detailDepth": 0.018
+  },
+  "floors": [
+    {
+      "id": "floor_1",
+      "label": "Floor 1",
+      "walls": [
+        {
+          "id": "wall_2",
+          "a": {
+            "x": -5,
+            "z": -4
+          },
+          "b": {
+            "x": 5,
+            "z": -4
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_3",
+          "a": {
+            "x": 5,
+            "z": -4
+          },
+          "b": {
+            "x": 5,
+            "z": 4
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_4",
+          "a": {
+            "x": 5,
+            "z": 4
+          },
+          "b": {
+            "x": -5,
+            "z": 4
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_5",
+          "a": {
+            "x": -5,
+            "z": 4
+          },
+          "b": {
+            "x": -5,
+            "z": -4
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        }
+      ],
+      "openings": [],
+      "lights": [],
+      "stairs": [],
+      "slabs": [],
+      "regions": [],
+      "platforms": [
+        {
+          "id": "platforms_6",
+          "label": "North porch",
+          "kind": "porch",
+          "minX": -3,
+          "maxX": 3,
+          "minZ": -6,
+          "maxZ": -4,
+          "height": 0,
+          "covered": true
+        },
+        {
+          "id": "platforms_7",
+          "label": "South porch",
+          "kind": "porch",
+          "minX": -3,
+          "maxX": 6,
+          "minZ": 4,
+          "maxZ": 6,
+          "height": 0,
+          "covered": true
+        },
+        {
+          "id": "platforms_8",
+          "label": "East porch",
+          "kind": "porch",
+          "minX": 5,
+          "maxX": 7,
+          "minZ": -2,
+          "maxZ": 2,
+          "height": 0,
+          "covered": false
+        },
+        {
+          "id": "platforms_9",
+          "label": "West porch",
+          "kind": "porch",
+          "minX": -7,
+          "maxX": -5,
+          "minZ": -2,
+          "maxZ": 2,
+          "height": 0,
+          "covered": false
+        }
+      ],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": true
+    },
+    {
+      "id": "floor_10",
+      "label": "Upper",
+      "walls": [
+        {
+          "id": "wall_11",
+          "a": {
+            "x": -5,
+            "z": -4
+          },
+          "b": {
+            "x": 5,
+            "z": -4
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_12",
+          "a": {
+            "x": 5,
+            "z": -4
+          },
+          "b": {
+            "x": 5,
+            "z": 4
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_13",
+          "a": {
+            "x": 5,
+            "z": 4
+          },
+          "b": {
+            "x": -5,
+            "z": 4
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_14",
+          "a": {
+            "x": -5,
+            "z": 4
+          },
+          "b": {
+            "x": -5,
+            "z": -4
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        }
+      ],
+      "openings": [],
+      "lights": [],
+      "stairs": [],
+      "slabs": [],
+      "regions": [],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": true
+    }
+  ]
+}

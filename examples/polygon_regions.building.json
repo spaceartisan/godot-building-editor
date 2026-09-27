@@ -1,0 +1,355 @@
+{
+  "version": 9,
+  "name": "Polygon regions",
+  "exportProfile": "generic",
+  "wallHeight": 2.8,
+  "wallThickness": 0.18,
+  "floorThickness": 0.18,
+  "gridSize": 0.5,
+  "roof": {
+    "type": "hip",
+    "pitch": 35,
+    "overhang": 0
+  },
+  "roofSections": [],
+  "manualFloors": [],
+  "manualCeilings": [],
+  "ceiling": {
+    "thickness": 0.12
+  },
+  "windowMesh": {
+    "enabled": true,
+    "frameWidth": 0.08,
+    "frameDepth": 0.12,
+    "glassThickness": 0.018
+  },
+  "doorMesh": {
+    "enabled": true,
+    "frameWidth": 0.09,
+    "frameDepth": 0.14,
+    "panelThickness": 0.045,
+    "detailDepth": 0.018
+  },
+  "floors": [
+    {
+      "id": "floor_5mhckc",
+      "label": "Floor 1",
+      "walls": [
+        {
+          "id": "wall_ow54hz",
+          "a": {
+            "x": -4,
+            "z": 1
+          },
+          "b": {
+            "x": -4,
+            "z": -1
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_mgg20u",
+          "a": {
+            "x": -4,
+            "z": -1
+          },
+          "b": {
+            "x": -3,
+            "z": -3
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_9vm5se",
+          "a": {
+            "x": -3,
+            "z": -3
+          },
+          "b": {
+            "x": -1,
+            "z": -4
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_50318k",
+          "a": {
+            "x": -1,
+            "z": -4
+          },
+          "b": {
+            "x": 1,
+            "z": -4
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_8e0o6q",
+          "a": {
+            "x": 1,
+            "z": -4
+          },
+          "b": {
+            "x": 3,
+            "z": -3
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_4sgsja",
+          "a": {
+            "x": 3,
+            "z": -3
+          },
+          "b": {
+            "x": 4,
+            "z": -1
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_khbyj3",
+          "a": {
+            "x": 4,
+            "z": -1
+          },
+          "b": {
+            "x": 4,
+            "z": 1
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_mosat7",
+          "a": {
+            "x": 4,
+            "z": 1
+          },
+          "b": {
+            "x": 3,
+            "z": 3
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_ausk26",
+          "a": {
+            "x": 3,
+            "z": 3
+          },
+          "b": {
+            "x": 1,
+            "z": 4
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_5esyne",
+          "a": {
+            "x": 1,
+            "z": 4
+          },
+          "b": {
+            "x": -1,
+            "z": 4
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_zo16xl",
+          "a": {
+            "x": -1,
+            "z": 4
+          },
+          "b": {
+            "x": -3,
+            "z": 3
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_copl8j",
+          "a": {
+            "x": -3,
+            "z": 3
+          },
+          "b": {
+            "x": -4,
+            "z": 1
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        }
+      ],
+      "openings": [
+        {
+          "id": "door_hh3e3c",
+          "type": "door",
+          "wallId": "wall_mgg20u",
+          "t": 0.5058999221195117,
+          "width": 1,
+          "height": 2.1,
+          "label": "Door",
+          "doorStyle": "room"
+        }
+      ],
+      "lights": [],
+      "stairs": [],
+      "slabs": [],
+      "regions": [
+        {
+          "id": "region_round",
+          "label": "Round hall",
+          "kind": "room",
+          "effect": "solid",
+          "minX": -4,
+          "maxX": 4,
+          "minZ": -4,
+          "maxZ": 4,
+          "polygon": [
+            {
+              "x": -4,
+              "z": 1
+            },
+            {
+              "x": -4,
+              "z": -1
+            },
+            {
+              "x": -3,
+              "z": -3
+            },
+            {
+              "x": -1,
+              "z": -4
+            },
+            {
+              "x": 1,
+              "z": -4
+            },
+            {
+              "x": 3,
+              "z": -3
+            },
+            {
+              "x": 4,
+              "z": -1
+            },
+            {
+              "x": 4,
+              "z": 1
+            },
+            {
+              "x": 3,
+              "z": 3
+            },
+            {
+              "x": 1,
+              "z": 4
+            },
+            {
+              "x": -1,
+              "z": 4
+            },
+            {
+              "x": -3,
+              "z": 3
+            }
+          ]
+        },
+        {
+          "id": "region_void",
+          "label": "Open shaft",
+          "kind": "courtyard",
+          "effect": "void",
+          "minX": 0,
+          "maxX": 2,
+          "minZ": 0,
+          "maxZ": 2,
+          "polygon": [
+            {
+              "x": 1,
+              "z": 0
+            },
+            {
+              "x": 2,
+              "z": 1
+            },
+            {
+              "x": 1,
+              "z": 2
+            },
+            {
+              "x": 0,
+              "z": 1
+            }
+          ]
+        },
+        {
+          "id": "region_label",
+          "label": "Side bay",
+          "kind": "bay",
+          "effect": "label",
+          "minX": -3,
+          "maxX": -1,
+          "minZ": -2,
+          "maxZ": 1,
+          "polygon": [
+            {
+              "x": -3,
+              "z": -1
+            },
+            {
+              "x": -1,
+              "z": -2
+            },
+            {
+              "x": -1,
+              "z": -1
+            },
+            {
+              "x": -2,
+              "z": -1
+            },
+            {
+              "x": -2,
+              "z": 1
+            },
+            {
+              "x": -3,
+              "z": 1
+            }
+          ]
+        }
+      ],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": true
+    }
+  ]
+}

@@ -1,0 +1,152 @@
+{
+  "version": 9,
+  "name": "Explicit roof attachment",
+  "exportProfile": "generic",
+  "wallHeight": 3,
+  "wallThickness": 0.18,
+  "floorThickness": 0.18,
+  "gridSize": 0.5,
+  "roof": {
+    "type": "none",
+    "pitch": 35,
+    "overhang": 0.35
+  },
+  "roofSections": [
+    {
+      "id": "roofSections_7",
+      "label": "Main host roof",
+      "minX": -6,
+      "maxX": 6,
+      "minZ": -4,
+      "maxZ": 4,
+      "type": "gable",
+      "direction": "x",
+      "baseY": 3,
+      "pitch": 35,
+      "overhang": 0.3,
+      "gableEnds": "both"
+    },
+    {
+      "id": "roofSections_8",
+      "label": "Attached canopy",
+      "minX": -2,
+      "maxX": 2,
+      "minZ": -1,
+      "maxZ": 7,
+      "type": "gable",
+      "direction": "z",
+      "baseY": 3,
+      "pitch": 35,
+      "overhang": 0.3,
+      "gableEnds": "none",
+      "hostRoofId": "roofSections_7",
+      "edgeModes": {
+        "maxZ": "flush"
+      }
+    }
+  ],
+  "manualFloors": [],
+  "manualCeilings": [],
+  "ceiling": {
+    "thickness": 0.12
+  },
+  "windowMesh": {
+    "enabled": true,
+    "frameWidth": 0.08,
+    "frameDepth": 0.12,
+    "glassThickness": 0.018
+  },
+  "doorMesh": {
+    "enabled": true,
+    "frameWidth": 0.09,
+    "frameDepth": 0.14,
+    "panelThickness": 0.045,
+    "detailDepth": 0.018
+  },
+  "floors": [
+    {
+      "id": "floor_1",
+      "label": "Floor 1",
+      "walls": [
+        {
+          "id": "wall_2",
+          "a": {
+            "x": -6,
+            "z": -4
+          },
+          "b": {
+            "x": 6,
+            "z": -4
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_3",
+          "a": {
+            "x": 6,
+            "z": -4
+          },
+          "b": {
+            "x": 6,
+            "z": 4
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_4",
+          "a": {
+            "x": 6,
+            "z": 4
+          },
+          "b": {
+            "x": -6,
+            "z": 4
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_5",
+          "a": {
+            "x": -6,
+            "z": 4
+          },
+          "b": {
+            "x": -6,
+            "z": -4
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        }
+      ],
+      "openings": [],
+      "lights": [],
+      "stairs": [],
+      "slabs": [],
+      "regions": [],
+      "platforms": [
+        {
+          "id": "platforms_6",
+          "label": "Porch",
+          "minX": -2,
+          "maxX": 2,
+          "minZ": 4,
+          "maxZ": 7,
+          "kind": "porch",
+          "height": 0,
+          "covered": true
+        }
+      ],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": true
+    }
+  ]
+}

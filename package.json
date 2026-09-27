@@ -1,0 +1,18 @@
+{
+  "name": "building-studio",
+  "version": "1.2.4",
+  "private": true,
+  "type": "module",
+  "bin": { "building-studio": "./cli.mjs" },
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "dev": "node server.mjs",
+    "test": "node cli.mjs test",
+    "cli": "node cli.mjs",
+    "examples": "node generate-examples.mjs",
+    "test:godot": "node godot-tests.mjs",
+    "test:infra": "node infrastructure-tests.mjs",
+    "check:release": "node cli.mjs release-check",
+    "test:browser": "node browser-tests.mjs"
+  }
+}

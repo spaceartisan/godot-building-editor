@@ -1,0 +1,385 @@
+{
+  "version": 9,
+  "name": "Barn_v2",
+  "wallHeight": 2.8,
+  "wallThickness": 0.18,
+  "floorThickness": 0.18,
+  "gridSize": 0.5,
+  "roof": {
+    "type": "none",
+    "pitch": 35,
+    "overhang": 0.35
+  },
+  "roofSections": [
+    {
+      "id": "rect_3agn6e",
+      "label": "Roof 1",
+      "minX": -9,
+      "maxX": 9,
+      "minZ": -10,
+      "maxZ": 10,
+      "type": "gable",
+      "direction": "z",
+      "baseY": 5.779999999999999,
+      "pitch": 35,
+      "overhang": 0.35,
+      "gableEnds": "both"
+    }
+  ],
+  "ceiling": {
+    "thickness": 0.12
+  },
+  "windowMesh": {
+    "enabled": true,
+    "frameWidth": 0.08,
+    "frameDepth": 0.12,
+    "glassThickness": 0.018
+  },
+  "doorMesh": {
+    "enabled": true,
+    "frameWidth": 0.09,
+    "frameDepth": 0.14,
+    "panelThickness": 0.045,
+    "detailDepth": 0.018
+  },
+  "floors": [
+    {
+      "id": "floor_hk7xti",
+      "label": "Floor 1",
+      "walls": [
+        {
+          "id": "wall_zfrilw",
+          "a": {
+            "x": -9,
+            "z": -10
+          },
+          "b": {
+            "x": 9,
+            "z": -10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_n2fsd5",
+          "a": {
+            "x": 9,
+            "z": -10
+          },
+          "b": {
+            "x": 9,
+            "z": 10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_h7xqjz",
+          "a": {
+            "x": 9,
+            "z": 10
+          },
+          "b": {
+            "x": 3,
+            "z": 10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_bmjrd1",
+          "a": {
+            "x": -9,
+            "z": -10
+          },
+          "b": {
+            "x": -9,
+            "z": 10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_tmoos6",
+          "a": {
+            "x": -9,
+            "z": 10
+          },
+          "b": {
+            "x": -3,
+            "z": 10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_mf0k2y",
+          "a": {
+            "x": -9,
+            "z": 4
+          },
+          "b": {
+            "x": -4,
+            "z": 4
+          },
+          "label": "",
+          "role": "interior",
+          "height": null
+        },
+        {
+          "id": "wall_d04ead",
+          "a": {
+            "x": 9,
+            "z": 4
+          },
+          "b": {
+            "x": 4,
+            "z": 4
+          },
+          "label": "",
+          "role": "interior",
+          "height": null
+        },
+        {
+          "id": "wall_9ckb5q",
+          "a": {
+            "x": -9,
+            "z": 0
+          },
+          "b": {
+            "x": -4,
+            "z": 0
+          },
+          "label": "",
+          "role": "interior",
+          "height": null
+        },
+        {
+          "id": "wall_i9pnmr",
+          "a": {
+            "x": -9,
+            "z": -4
+          },
+          "b": {
+            "x": -4,
+            "z": -4
+          },
+          "label": "",
+          "role": "interior",
+          "height": null
+        }
+      ],
+      "openings": [
+        {
+          "id": "window_7u27go",
+          "type": "window",
+          "wallId": "wall_bmjrd1",
+          "t": 0.79981401847963,
+          "width": 1.3,
+          "height": 1.05,
+          "label": "Window",
+          "sill": 0.9,
+          "windowStyle": "double_hung"
+        },
+        {
+          "id": "window_4eevnp",
+          "type": "window",
+          "wallId": "wall_bmjrd1",
+          "t": 0.20027418443809406,
+          "width": 1.3,
+          "height": 1.05,
+          "label": "Window",
+          "sill": 0.9,
+          "windowStyle": "double_hung"
+        },
+        {
+          "id": "window_2u4ku6",
+          "type": "window",
+          "wallId": "wall_n2fsd5",
+          "t": 0.19970002990337865,
+          "width": 1.3,
+          "height": 1.05,
+          "label": "Window",
+          "sill": 0.9,
+          "windowStyle": "double_hung"
+        },
+        {
+          "id": "window_gek4mn",
+          "type": "window",
+          "wallId": "wall_n2fsd5",
+          "t": 0.8007250378017459,
+          "width": 1.3,
+          "height": 1.05,
+          "label": "Window",
+          "sill": 0.9,
+          "windowStyle": "double_hung"
+        },
+        {
+          "id": "window_n8fyup",
+          "type": "window",
+          "wallId": "wall_n2fsd5",
+          "t": 0.5998710719413498,
+          "width": 1.3,
+          "height": 1.05,
+          "label": "Window",
+          "sill": 0.9,
+          "windowStyle": "double_hung"
+        },
+        {
+          "id": "window_1ocddb",
+          "type": "window",
+          "wallId": "wall_n2fsd5",
+          "t": 0.4003242921529047,
+          "width": 1.3,
+          "height": 1.05,
+          "label": "Window",
+          "sill": 0.9,
+          "windowStyle": "double_hung"
+        },
+        {
+          "id": "window_e9u9ud",
+          "type": "window",
+          "wallId": "wall_bmjrd1",
+          "t": 0.5999510610544821,
+          "width": 1.3,
+          "height": 1.05,
+          "label": "Window",
+          "sill": 0.9,
+          "windowStyle": "double_hung"
+        },
+        {
+          "id": "window_abq8k0",
+          "type": "window",
+          "wallId": "wall_bmjrd1",
+          "t": 0.4000687584203746,
+          "width": 1.3,
+          "height": 1.05,
+          "label": "Window",
+          "sill": 0.9,
+          "windowStyle": "double_hung"
+        }
+      ],
+      "lights": [],
+      "stairs": [
+        {
+          "id": "stair_2tag53",
+          "label": "Staircase 1",
+          "x": 6,
+          "z": -2,
+          "width": 2.4,
+          "run": 8,
+          "direction": "north",
+          "steps": 12
+        }
+      ],
+      "slabs": [
+        {
+          "id": "barn_entrance_footprint",
+          "label": "Barn footprint with open entrance",
+          "minX": -9,
+          "maxX": 9,
+          "minZ": -10,
+          "maxZ": 10
+        }
+      ],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": false,
+      "boundaryMode": "intentional_open",
+      "regions": []
+    },
+    {
+      "id": "floor_b6fr9l",
+      "label": "Floor 2",
+      "walls": [
+        {
+          "id": "wall_cr6rup",
+          "a": {
+            "x": -9,
+            "z": -10
+          },
+          "b": {
+            "x": 9,
+            "z": -10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_z98dac",
+          "a": {
+            "x": 9,
+            "z": -10
+          },
+          "b": {
+            "x": 9,
+            "z": 10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_keuhzt",
+          "a": {
+            "x": -9,
+            "z": -10
+          },
+          "b": {
+            "x": -9,
+            "z": 10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_0o131f",
+          "a": {
+            "x": -9,
+            "z": 10
+          },
+          "b": {
+            "x": 9,
+            "z": 10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        }
+      ],
+      "openings": [],
+      "lights": [],
+      "stairs": [],
+      "slabs": [],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": false,
+      "autoCeiling": false,
+      "regions": []
+    }
+  ],
+  "manualFloors": [
+    {
+      "id": "mfloor_q7z7zf",
+      "label": "Manual Floor 1",
+      "minX": -9,
+      "maxX": 9,
+      "minZ": -10,
+      "maxZ": -6,
+      "kind": "floor",
+      "topY": 2.98,
+      "thickness": 0.18
+    }
+  ],
+  "manualCeilings": []
+}

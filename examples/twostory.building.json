@@ -1,0 +1,808 @@
+{
+  "version": 9,
+  "name": "Twostory",
+  "wallHeight": 4,
+  "wallThickness": 0.18,
+  "floorThickness": 0.18,
+  "gridSize": 0.5,
+  "roof": {
+    "type": "gable",
+    "pitch": 35,
+    "overhang": 0.35
+  },
+  "ceiling": {
+    "enabled": true,
+    "thickness": 0.12
+  },
+  "windowMesh": {
+    "enabled": true,
+    "frameWidth": 0.08,
+    "frameDepth": 0.12,
+    "glassThickness": 0.018
+  },
+  "doorMesh": {
+    "enabled": true,
+    "frameWidth": 0.09,
+    "frameDepth": 0.14,
+    "panelThickness": 0.045,
+    "detailDepth": 0.018
+  },
+  "floors": [
+    {
+      "id": "floor_2obiv6",
+      "label": "Floor 1",
+      "walls": [
+        {
+          "id": "wall_vbgmn1",
+          "a": {
+            "x": -9,
+            "z": 7
+          },
+          "b": {
+            "x": 9,
+            "z": 7
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_dj72yb",
+          "a": {
+            "x": 9,
+            "z": 7
+          },
+          "b": {
+            "x": 9,
+            "z": -7
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_j6w0su",
+          "a": {
+            "x": 9,
+            "z": -7
+          },
+          "b": {
+            "x": -9,
+            "z": -7
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_3bgln0",
+          "a": {
+            "x": -9,
+            "z": -7
+          },
+          "b": {
+            "x": -9,
+            "z": 7
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_caal8i",
+          "a": {
+            "x": -2,
+            "z": 7
+          },
+          "b": {
+            "x": -2,
+            "z": -2
+          },
+          "label": "",
+          "role": "interior",
+          "height": null
+        },
+        {
+          "id": "wall_3mhugu",
+          "a": {
+            "x": -2,
+            "z": -2
+          },
+          "b": {
+            "x": -9,
+            "z": -2
+          },
+          "label": "",
+          "role": "interior",
+          "height": null
+        },
+        {
+          "id": "wall_4kx31t",
+          "a": {
+            "x": 2,
+            "z": -2
+          },
+          "b": {
+            "x": 9,
+            "z": -2
+          },
+          "label": "",
+          "role": "interior",
+          "height": null
+        },
+        {
+          "id": "wall_4ts74x",
+          "a": {
+            "x": 2,
+            "z": 7
+          },
+          "b": {
+            "x": 2,
+            "z": -2
+          },
+          "label": "",
+          "role": "interior",
+          "height": null
+        },
+        {
+          "id": "wall_4i18dw",
+          "a": {
+            "x": -2,
+            "z": 0.5
+          },
+          "b": {
+            "x": -9,
+            "z": 0.5
+          },
+          "label": "",
+          "role": "interior",
+          "height": null
+        },
+        {
+          "id": "wall_nz6qae",
+          "a": {
+            "x": -4,
+            "z": -2
+          },
+          "b": {
+            "x": -4,
+            "z": 0.5
+          },
+          "label": "",
+          "role": "interior",
+          "height": null
+        },
+        {
+          "id": "wall_dqk6vv",
+          "a": {
+            "x": 4.5,
+            "z": 3.5
+          },
+          "b": {
+            "x": 4.5,
+            "z": -2
+          },
+          "label": "",
+          "role": "interior",
+          "height": null
+        }
+      ],
+      "openings": [
+        {
+          "id": "door_umeslj",
+          "type": "door",
+          "wallId": "wall_vbgmn1",
+          "t": 0.49963769704557165,
+          "width": 1,
+          "height": 2.1,
+          "label": "Door",
+          "doorStyle": "exterior"
+        },
+        {
+          "id": "window_shcxhh",
+          "type": "window",
+          "wallId": "wall_vbgmn1",
+          "t": 0.8611192459119548,
+          "width": 1.3,
+          "height": 1.05,
+          "label": "Window",
+          "sill": 0.9,
+          "windowStyle": "plain"
+        },
+        {
+          "id": "window_7jiwlw",
+          "type": "window",
+          "wallId": "wall_dj72yb",
+          "t": 0.17903439286246728,
+          "width": 1.3,
+          "height": 1.05,
+          "label": "Window",
+          "sill": 0.9,
+          "windowStyle": "plain"
+        },
+        {
+          "id": "window_uws8va",
+          "type": "window",
+          "wallId": "wall_vbgmn1",
+          "t": 0.138875925785962,
+          "width": 1.3,
+          "height": 1.05,
+          "label": "Window",
+          "sill": 0.9,
+          "windowStyle": "plain"
+        },
+        {
+          "id": "window_c7p5hy",
+          "type": "window",
+          "wallId": "wall_3bgln0",
+          "t": 0.8219862897255875,
+          "width": 1.3,
+          "height": 1.05,
+          "label": "Window",
+          "sill": 0.9,
+          "windowStyle": "plain"
+        },
+        {
+          "id": "window_19prtn",
+          "type": "window",
+          "wallId": "wall_j6w0su",
+          "t": 0.13894195490403127,
+          "width": 1.3,
+          "height": 1.05,
+          "label": "Window",
+          "sill": 0.9,
+          "windowStyle": "plain"
+        },
+        {
+          "id": "window_m30f38",
+          "type": "window",
+          "wallId": "wall_dj72yb",
+          "t": 0.8207042336370435,
+          "width": 1.3,
+          "height": 1.05,
+          "label": "Window",
+          "sill": 0.9,
+          "windowStyle": "plain"
+        },
+        {
+          "id": "window_krv35q",
+          "type": "window",
+          "wallId": "wall_3bgln0",
+          "t": 0.17831791588364895,
+          "width": 1.3,
+          "height": 1.05,
+          "label": "Window",
+          "sill": 0.9,
+          "windowStyle": "plain"
+        },
+        {
+          "id": "window_yk9rul",
+          "type": "window",
+          "wallId": "wall_j6w0su",
+          "t": 0.8606400784355757,
+          "width": 1.3,
+          "height": 1.05,
+          "label": "Window",
+          "sill": 0.9,
+          "windowStyle": "plain"
+        },
+        {
+          "id": "door_bub2io",
+          "type": "door",
+          "wallId": "wall_j6w0su",
+          "t": 0.2503949706301586,
+          "width": 1,
+          "height": 2.1,
+          "label": "Door",
+          "doorStyle": "exterior"
+        },
+        {
+          "id": "door_8ssrz4",
+          "type": "door",
+          "wallId": "wall_4ts74x",
+          "t": 0.22345310343558852,
+          "width": 1,
+          "height": 2.1,
+          "label": "Door",
+          "doorStyle": "room"
+        },
+        {
+          "id": "door_nrvl19",
+          "type": "door",
+          "wallId": "wall_4kx31t",
+          "t": 0.7178425820999189,
+          "width": 1,
+          "height": 2.1,
+          "label": "Door",
+          "doorStyle": "room"
+        },
+        {
+          "id": "door_wt0p9j",
+          "type": "door",
+          "wallId": "wall_caal8i",
+          "t": 0.220623503605868,
+          "width": 1,
+          "height": 2.1,
+          "label": "Door",
+          "doorStyle": "room"
+        },
+        {
+          "id": "door_reii29",
+          "type": "door",
+          "wallId": "wall_caal8i",
+          "t": 0.8579463555840211,
+          "width": 1,
+          "height": 2.1,
+          "label": "Door",
+          "doorStyle": "closet"
+        },
+        {
+          "id": "door_4tr8tv",
+          "type": "door",
+          "wallId": "wall_3mhugu",
+          "t": 0.71867979573588,
+          "width": 1,
+          "height": 2.1,
+          "label": "Door",
+          "doorStyle": "room"
+        }
+      ],
+      "lights": [],
+      "stairs": [
+        {
+          "id": "stair_s8ejk5",
+          "label": "Staircase 1",
+          "x": 3.25,
+          "z": 0.75,
+          "width": 2.4,
+          "run": 5.5,
+          "direction": "north",
+          "steps": 12
+        }
+      ],
+      "slabs": [],
+      "platforms": [
+        {
+          "id": "rect_37w6qo",
+          "label": "Porch 1",
+          "minX": -5,
+          "maxX": 5,
+          "minZ": 7,
+          "maxZ": 9,
+          "kind": "porch",
+          "height": 0,
+          "covered": true
+        }
+      ],
+      "railings": [
+        {
+          "id": "rail_9824j5",
+          "label": "Railing 1",
+          "a": {
+            "x": -5,
+            "z": 7
+          },
+          "b": {
+            "x": -5,
+            "z": 9
+          },
+          "height": 1,
+          "style": "two_rail"
+        },
+        {
+          "id": "rail_fcqos3",
+          "label": "Railing 2",
+          "a": {
+            "x": -5,
+            "z": 9
+          },
+          "b": {
+            "x": -1,
+            "z": 9
+          },
+          "height": 1,
+          "style": "two_rail"
+        },
+        {
+          "id": "rail_t8592u",
+          "label": "Railing 3",
+          "a": {
+            "x": 5,
+            "z": 7
+          },
+          "b": {
+            "x": 5,
+            "z": 9
+          },
+          "height": 1,
+          "style": "two_rail"
+        },
+        {
+          "id": "rail_kaqhw2",
+          "label": "Railing 4",
+          "a": {
+            "x": 5,
+            "z": 9
+          },
+          "b": {
+            "x": 1,
+            "z": 9
+          },
+          "height": 1,
+          "style": "two_rail"
+        }
+      ],
+      "roofSections": [],
+      "regions": []
+    },
+    {
+      "id": "floor_bx8d8g",
+      "label": "Floor 2",
+      "walls": [
+        {
+          "id": "wall_thtl9b",
+          "a": {
+            "x": -9,
+            "z": 7
+          },
+          "b": {
+            "x": 9,
+            "z": 7
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_kkczow",
+          "a": {
+            "x": 9,
+            "z": 7
+          },
+          "b": {
+            "x": 9,
+            "z": -7
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_xoqldj",
+          "a": {
+            "x": 9,
+            "z": -7
+          },
+          "b": {
+            "x": -9,
+            "z": -7
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_xolzdb",
+          "a": {
+            "x": -9,
+            "z": -7
+          },
+          "b": {
+            "x": -9,
+            "z": 7
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_93hg3f",
+          "a": {
+            "x": 2,
+            "z": 7
+          },
+          "b": {
+            "x": 2,
+            "z": -2
+          },
+          "label": "",
+          "role": "interior",
+          "height": null
+        },
+        {
+          "id": "wall_e5d4ir",
+          "a": {
+            "x": 4.5,
+            "z": 7
+          },
+          "b": {
+            "x": 4.5,
+            "z": -2
+          },
+          "label": "",
+          "role": "interior",
+          "height": null
+        },
+        {
+          "id": "wall_5c3btb",
+          "a": {
+            "x": 4.5,
+            "z": -2
+          },
+          "b": {
+            "x": 9,
+            "z": -2
+          },
+          "label": "",
+          "role": "interior",
+          "height": null
+        },
+        {
+          "id": "wall_z6yiuk",
+          "a": {
+            "x": 4.5,
+            "z": 3.5
+          },
+          "b": {
+            "x": 2,
+            "z": 3.5
+          },
+          "label": "",
+          "role": "interior",
+          "height": null
+        },
+        {
+          "id": "wall_9kuotl",
+          "a": {
+            "x": 2,
+            "z": 3.5
+          },
+          "b": {
+            "x": -2,
+            "z": 3.5
+          },
+          "label": "",
+          "role": "interior",
+          "height": null
+        },
+        {
+          "id": "wall_ay3lvc",
+          "a": {
+            "x": -2,
+            "z": 7
+          },
+          "b": {
+            "x": -2,
+            "z": -7
+          },
+          "label": "",
+          "role": "interior",
+          "height": null
+        },
+        {
+          "id": "wall_fuqcl9",
+          "a": {
+            "x": -2,
+            "z": 0
+          },
+          "b": {
+            "x": -9,
+            "z": 0
+          },
+          "label": "",
+          "role": "interior",
+          "height": null
+        },
+        {
+          "id": "wall_jaigd0",
+          "a": {
+            "x": -5,
+            "z": -2
+          },
+          "b": {
+            "x": -5,
+            "z": 2
+          },
+          "label": "",
+          "role": "interior",
+          "height": null
+        },
+        {
+          "id": "wall_e8ff0v",
+          "a": {
+            "x": -5,
+            "z": 2
+          },
+          "b": {
+            "x": -9,
+            "z": 2
+          },
+          "label": "",
+          "role": "interior",
+          "height": null
+        },
+        {
+          "id": "wall_qp65nt",
+          "a": {
+            "x": -5,
+            "z": -2
+          },
+          "b": {
+            "x": -9,
+            "z": -2
+          },
+          "label": "",
+          "role": "interior",
+          "height": null
+        }
+      ],
+      "openings": [
+        {
+          "id": "window_x6eu5w",
+          "type": "window",
+          "wallId": "wall_thtl9b",
+          "t": 0.8611192459119548,
+          "width": 1.3,
+          "height": 1.05,
+          "label": "Window",
+          "sill": 0.9,
+          "windowStyle": "plain"
+        },
+        {
+          "id": "window_86vgvk",
+          "type": "window",
+          "wallId": "wall_kkczow",
+          "t": 0.17903439286246728,
+          "width": 1.3,
+          "height": 1.05,
+          "label": "Window",
+          "sill": 0.9,
+          "windowStyle": "plain"
+        },
+        {
+          "id": "window_hzfx8b",
+          "type": "window",
+          "wallId": "wall_thtl9b",
+          "t": 0.138875925785962,
+          "width": 1.3,
+          "height": 1.05,
+          "label": "Window",
+          "sill": 0.9,
+          "windowStyle": "plain"
+        },
+        {
+          "id": "window_0dfceq",
+          "type": "window",
+          "wallId": "wall_xolzdb",
+          "t": 0.8219862897255875,
+          "width": 1.3,
+          "height": 1.05,
+          "label": "Window",
+          "sill": 0.9,
+          "windowStyle": "plain"
+        },
+        {
+          "id": "window_96s64m",
+          "type": "window",
+          "wallId": "wall_xoqldj",
+          "t": 0.13894195490403127,
+          "width": 1.3,
+          "height": 1.05,
+          "label": "Window",
+          "sill": 0.9,
+          "windowStyle": "plain"
+        },
+        {
+          "id": "window_tqn1he",
+          "type": "window",
+          "wallId": "wall_kkczow",
+          "t": 0.8207042336370435,
+          "width": 1.3,
+          "height": 1.05,
+          "label": "Window",
+          "sill": 0.9,
+          "windowStyle": "plain"
+        },
+        {
+          "id": "window_mjcj7x",
+          "type": "window",
+          "wallId": "wall_xolzdb",
+          "t": 0.17831791588364895,
+          "width": 1.3,
+          "height": 1.05,
+          "label": "Window",
+          "sill": 0.9,
+          "windowStyle": "plain"
+        },
+        {
+          "id": "window_a5zsgz",
+          "type": "window",
+          "wallId": "wall_xoqldj",
+          "t": 0.8606400784355757,
+          "width": 1.3,
+          "height": 1.05,
+          "label": "Window",
+          "sill": 0.9,
+          "windowStyle": "plain"
+        },
+        {
+          "id": "door_okrv0o",
+          "type": "door",
+          "wallId": "wall_5c3btb",
+          "t": 0.5552102937281612,
+          "width": 1,
+          "height": 2.1,
+          "label": "Door",
+          "doorStyle": "room"
+        },
+        {
+          "id": "door_7q4jnm",
+          "type": "door",
+          "wallId": "wall_e5d4ir",
+          "t": 0.2195985947927248,
+          "width": 1,
+          "height": 2.1,
+          "label": "Door",
+          "doorStyle": "closet"
+        },
+        {
+          "id": "door_rgx8zr",
+          "type": "door",
+          "wallId": "wall_9kuotl",
+          "t": 0.5013484295684902,
+          "width": 1,
+          "height": 2.1,
+          "label": "Door",
+          "doorStyle": "room"
+        },
+        {
+          "id": "door_ds33wq",
+          "type": "door",
+          "wallId": "wall_qp65nt",
+          "t": 0.5023084395811621,
+          "width": 1,
+          "height": 2.1,
+          "label": "Door",
+          "doorStyle": "closet"
+        },
+        {
+          "id": "door_g0rzbn",
+          "type": "door",
+          "wallId": "wall_e8ff0v",
+          "t": 0.5023084395811621,
+          "width": 1,
+          "height": 2.1,
+          "label": "Door",
+          "doorStyle": "closet"
+        },
+        {
+          "id": "door_4flc7b",
+          "type": "door",
+          "wallId": "wall_ay3lvc",
+          "t": 0.39390467112019306,
+          "width": 1,
+          "height": 2.1,
+          "label": "Door",
+          "doorStyle": "room"
+        },
+        {
+          "id": "door_e9ikl9",
+          "type": "door",
+          "wallId": "wall_ay3lvc",
+          "t": 0.8571397999817391,
+          "width": 1,
+          "height": 2.1,
+          "label": "Door",
+          "doorStyle": "room"
+        }
+      ],
+      "lights": [],
+      "stairs": [],
+      "slabs": [],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "regions": []
+    }
+  ]
+}

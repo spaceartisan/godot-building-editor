@@ -1,0 +1,202 @@
+{
+  "version": 9,
+  "name": "Independent Roof Demo",
+  "wallHeight": 3.2,
+  "wallThickness": 0.18,
+  "floorThickness": 0.18,
+  "gridSize": 0.5,
+  "roof": {
+    "type": "none",
+    "pitch": 35,
+    "overhang": 0.35
+  },
+  "roofSections": [
+    {
+      "id": "rect_as5tui",
+      "label": "Lower Wing Roof",
+      "minX": -6,
+      "maxX": -2,
+      "minZ": -5,
+      "maxZ": 5,
+      "type": "gable",
+      "direction": "z",
+      "baseY": 3.2,
+      "pitch": 38,
+      "overhang": 0.45,
+      "gableEnds": "both"
+    },
+    {
+      "id": "rect_83s7em",
+      "label": "Upper Roof",
+      "minX": -2,
+      "maxX": 4,
+      "minZ": -2.5,
+      "maxZ": 2.5,
+      "type": "gable",
+      "direction": "x",
+      "baseY": 6.58,
+      "pitch": 42,
+      "overhang": 0.35,
+      "gableEnds": "both"
+    }
+  ],
+  "ceiling": {
+    "enabled": true,
+    "thickness": 0.12
+  },
+  "windowMesh": {
+    "enabled": true,
+    "frameWidth": 0.08,
+    "frameDepth": 0.12,
+    "glassThickness": 0.018
+  },
+  "doorMesh": {
+    "enabled": true,
+    "frameWidth": 0.09,
+    "frameDepth": 0.14,
+    "panelThickness": 0.045,
+    "detailDepth": 0.018
+  },
+  "floors": [
+    {
+      "id": "floor_8qw22v",
+      "label": "Lower Story",
+      "walls": [
+        {
+          "id": "wall_5q0fr1",
+          "a": {
+            "x": -6,
+            "z": -5
+          },
+          "b": {
+            "x": 6,
+            "z": -5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_i6j4v6",
+          "a": {
+            "x": 6,
+            "z": -5
+          },
+          "b": {
+            "x": 6,
+            "z": 5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_eesjan",
+          "a": {
+            "x": 6,
+            "z": 5
+          },
+          "b": {
+            "x": -6,
+            "z": 5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_qmto0e",
+          "a": {
+            "x": -6,
+            "z": 5
+          },
+          "b": {
+            "x": -6,
+            "z": -5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        }
+      ],
+      "openings": [],
+      "lights": [],
+      "stairs": [],
+      "slabs": [],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "regions": []
+    },
+    {
+      "id": "floor_kdsngw",
+      "label": "Upper Story",
+      "walls": [
+        {
+          "id": "wall_bzehac",
+          "a": {
+            "x": -2,
+            "z": -2.5
+          },
+          "b": {
+            "x": 4,
+            "z": -2.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_3c8oxa",
+          "a": {
+            "x": 4,
+            "z": -2.5
+          },
+          "b": {
+            "x": 4,
+            "z": 2.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_14pmkg",
+          "a": {
+            "x": 4,
+            "z": 2.5
+          },
+          "b": {
+            "x": -2,
+            "z": 2.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_169o7c",
+          "a": {
+            "x": -2,
+            "z": 2.5
+          },
+          "b": {
+            "x": -2,
+            "z": -2.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        }
+      ],
+      "openings": [],
+      "lights": [],
+      "stairs": [],
+      "slabs": [],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "regions": []
+    }
+  ]
+}

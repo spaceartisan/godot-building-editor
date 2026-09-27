@@ -1,0 +1,256 @@
+{
+  "version": 9,
+  "name": "Stair steps south",
+  "exportProfile": "generic",
+  "wallHeight": 2.8,
+  "wallThickness": 0.18,
+  "floorThickness": 0.18,
+  "gridSize": 0.5,
+  "roof": {
+    "type": "none",
+    "pitch": 35,
+    "overhang": 0.35
+  },
+  "roofSections": [],
+  "manualFloors": [],
+  "manualCeilings": [],
+  "ceiling": {
+    "thickness": 0.12
+  },
+  "windowMesh": {
+    "enabled": true,
+    "frameWidth": 0.08,
+    "frameDepth": 0.12,
+    "glassThickness": 0.018
+  },
+  "doorMesh": {
+    "enabled": true,
+    "frameWidth": 0.09,
+    "frameDepth": 0.14,
+    "panelThickness": 0.045,
+    "detailDepth": 0.018
+  },
+  "floors": [
+    {
+      "id": "floor_1",
+      "label": "Floor 1",
+      "walls": [
+        {
+          "id": "wall_2",
+          "a": {
+            "x": -5,
+            "z": -5
+          },
+          "b": {
+            "x": 5,
+            "z": -5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_3",
+          "a": {
+            "x": 5,
+            "z": -5
+          },
+          "b": {
+            "x": 5,
+            "z": 5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_4",
+          "a": {
+            "x": 5,
+            "z": 5
+          },
+          "b": {
+            "x": -5,
+            "z": 5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_5",
+          "a": {
+            "x": -5,
+            "z": 5
+          },
+          "b": {
+            "x": -5,
+            "z": -5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_6",
+          "role": "interior",
+          "a": {
+            "x": -2,
+            "z": -5
+          },
+          "b": {
+            "x": -2,
+            "z": 5
+          }
+        }
+      ],
+      "openings": [],
+      "lights": [
+        {
+          "id": "lights_7",
+          "label": "Light",
+          "position": {
+            "x": 0,
+            "y": 2.2,
+            "z": 0
+          },
+          "color": {
+            "r": 1,
+            "g": 0.65,
+            "b": 0.34,
+            "a": 1
+          },
+          "energy": 2.35,
+          "range": 8,
+          "shadows": true,
+          "group": "building_lights"
+        }
+      ],
+      "stairs": [
+        {
+          "id": "stairs_8",
+          "label": "Staircase",
+          "x": 1,
+          "z": 0,
+          "width": 1.2,
+          "run": 4,
+          "direction": "south",
+          "style": "steps",
+          "steps": 12,
+          "blockBelow": true
+        }
+      ],
+      "slabs": [],
+      "regions": [],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": false
+    },
+    {
+      "id": "floor_9",
+      "label": "Upper",
+      "walls": [
+        {
+          "id": "wall_10",
+          "a": {
+            "x": -5,
+            "z": -5
+          },
+          "b": {
+            "x": 5,
+            "z": -5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_11",
+          "a": {
+            "x": 5,
+            "z": -5
+          },
+          "b": {
+            "x": 5,
+            "z": 5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_12",
+          "a": {
+            "x": 5,
+            "z": 5
+          },
+          "b": {
+            "x": -5,
+            "z": 5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_13",
+          "a": {
+            "x": -5,
+            "z": 5
+          },
+          "b": {
+            "x": -5,
+            "z": -5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_14",
+          "role": "interior",
+          "a": {
+            "x": -2,
+            "z": -5
+          },
+          "b": {
+            "x": -2,
+            "z": 5
+          }
+        }
+      ],
+      "openings": [],
+      "lights": [
+        {
+          "id": "lights_15",
+          "label": "Light",
+          "position": {
+            "x": 0,
+            "y": 2.2,
+            "z": 0
+          },
+          "color": {
+            "r": 1,
+            "g": 0.65,
+            "b": 0.34,
+            "a": 1
+          },
+          "energy": 2.35,
+          "range": 8,
+          "shadows": true,
+          "group": "building_lights"
+        }
+      ],
+      "stairs": [],
+      "slabs": [],
+      "regions": [],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": false
+    }
+  ]
+}

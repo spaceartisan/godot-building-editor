@@ -1,0 +1,436 @@
+{
+  "version": 9,
+  "name": "Miller Farmhouse",
+  "wallHeight": 3.2,
+  "wallThickness": 0.18,
+  "floorThickness": 0.18,
+  "gridSize": 0.5,
+  "roof": {
+    "type": "gable",
+    "pitch": 35,
+    "overhang": 0.4
+  },
+  "roofSections": [],
+  "manualFloors": [],
+  "manualCeilings": [],
+  "ceiling": {
+    "enabled": true,
+    "thickness": 0.12
+  },
+  "windowMesh": {
+    "enabled": true,
+    "frameWidth": 0.08,
+    "frameDepth": 0.12,
+    "glassThickness": 0.018
+  },
+  "doorMesh": {
+    "enabled": true,
+    "frameWidth": 0.09,
+    "frameDepth": 0.14,
+    "panelThickness": 0.045,
+    "detailDepth": 0.018
+  },
+  "floors": [
+    {
+      "id": "floor_wkz24u",
+      "label": "Floor 1",
+      "walls": [
+        {
+          "id": "wall_s6v6z0",
+          "a": {
+            "x": -6,
+            "z": -4.5
+          },
+          "b": {
+            "x": 6,
+            "z": -4.5
+          },
+          "label": "North Exterior",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_uxuxr0",
+          "a": {
+            "x": 6,
+            "z": -4.5
+          },
+          "b": {
+            "x": 6,
+            "z": 4.5
+          },
+          "label": "East Exterior",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_8p1fm0",
+          "a": {
+            "x": 6,
+            "z": 4.5
+          },
+          "b": {
+            "x": -6,
+            "z": 4.5
+          },
+          "label": "South Exterior",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_fbp7qv",
+          "a": {
+            "x": -6,
+            "z": 4.5
+          },
+          "b": {
+            "x": -6,
+            "z": -4.5
+          },
+          "label": "West Exterior",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_7j283i",
+          "a": {
+            "x": -1,
+            "z": -4.5
+          },
+          "b": {
+            "x": -1,
+            "z": 4.5
+          },
+          "label": "Hall West",
+          "role": "interior",
+          "height": null
+        },
+        {
+          "id": "wall_zgzkxt",
+          "a": {
+            "x": 1,
+            "z": -4.5
+          },
+          "b": {
+            "x": 1,
+            "z": 4.5
+          },
+          "label": "Hall East",
+          "role": "interior",
+          "height": null
+        },
+        {
+          "id": "wall_uqezp1",
+          "a": {
+            "x": -6,
+            "z": -0.8
+          },
+          "b": {
+            "x": -1,
+            "z": -0.8
+          },
+          "label": "Living / Kitchen",
+          "role": "interior",
+          "height": null
+        },
+        {
+          "id": "wall_dmz6xi",
+          "a": {
+            "x": -6,
+            "z": 2
+          },
+          "b": {
+            "x": -1,
+            "z": 2
+          },
+          "label": "Kitchen / Utility",
+          "role": "interior",
+          "height": null
+        },
+        {
+          "id": "wall_wdhy44",
+          "a": {
+            "x": 1,
+            "z": -1.2
+          },
+          "b": {
+            "x": 6,
+            "z": -1.2
+          },
+          "label": "Bedroom / Bath",
+          "role": "interior",
+          "height": null
+        },
+        {
+          "id": "wall_eecza0",
+          "a": {
+            "x": 1,
+            "z": 1.8
+          },
+          "b": {
+            "x": 6,
+            "z": 1.8
+          },
+          "label": "Bath / Rest Room",
+          "role": "interior",
+          "height": null
+        }
+      ],
+      "openings": [
+        {
+          "id": "door_bqd1jk",
+          "type": "door",
+          "wallId": "wall_8p1fm0",
+          "t": 0.5,
+          "width": 1.15,
+          "height": 2.15,
+          "label": "Front Door",
+          "doorStyle": "exterior"
+        },
+        {
+          "id": "door_2ct8sv",
+          "type": "door",
+          "wallId": "wall_7j283i",
+          "t": 0.18,
+          "width": 0.9,
+          "height": 2.1,
+          "label": "Living Door",
+          "doorStyle": "room"
+        },
+        {
+          "id": "door_3x41xq",
+          "type": "door",
+          "wallId": "wall_7j283i",
+          "t": 0.53,
+          "width": 0.9,
+          "height": 2.1,
+          "label": "Kitchen Door",
+          "doorStyle": "room"
+        },
+        {
+          "id": "door_mii4gw",
+          "type": "door",
+          "wallId": "wall_7j283i",
+          "t": 0.82,
+          "width": 0.9,
+          "height": 2.1,
+          "label": "Utility Door",
+          "doorStyle": "room"
+        },
+        {
+          "id": "door_4axxta",
+          "type": "door",
+          "wallId": "wall_zgzkxt",
+          "t": 0.18,
+          "width": 0.9,
+          "height": 2.1,
+          "label": "Bedroom Door",
+          "doorStyle": "room"
+        },
+        {
+          "id": "door_w3bn8n",
+          "type": "door",
+          "wallId": "wall_zgzkxt",
+          "t": 0.52,
+          "width": 0.9,
+          "height": 2.1,
+          "label": "Bathroom Door",
+          "doorStyle": "room"
+        },
+        {
+          "id": "door_gsginy",
+          "type": "door",
+          "wallId": "wall_zgzkxt",
+          "t": 0.82,
+          "width": 0.9,
+          "height": 2.1,
+          "label": "Rest Room Door",
+          "doorStyle": "room"
+        },
+        {
+          "id": "window_q8sn9m",
+          "type": "window",
+          "wallId": "wall_s6v6z0",
+          "t": 0.2,
+          "width": 1.5,
+          "height": 1.15,
+          "label": "Living Window",
+          "sill": 0.85,
+          "windowStyle": "plain"
+        },
+        {
+          "id": "window_6s0sox",
+          "type": "window",
+          "wallId": "wall_s6v6z0",
+          "t": 0.8,
+          "width": 1.5,
+          "height": 1.15,
+          "label": "Bedroom Window",
+          "sill": 0.85,
+          "windowStyle": "plain"
+        },
+        {
+          "id": "window_n055ya",
+          "type": "window",
+          "wallId": "wall_fbp7qv",
+          "t": 0.28,
+          "width": 1.4,
+          "height": 1,
+          "label": "Living Side Window",
+          "sill": 0.95,
+          "windowStyle": "plain"
+        },
+        {
+          "id": "window_7pw74v",
+          "type": "window",
+          "wallId": "wall_uxuxr0",
+          "t": 0.3,
+          "width": 1.2,
+          "height": 1,
+          "label": "Bedroom Side Window",
+          "sill": 0.95,
+          "windowStyle": "plain"
+        },
+        {
+          "id": "window_q1ewog",
+          "type": "window",
+          "wallId": "wall_uxuxr0",
+          "t": 0.76,
+          "width": 1,
+          "height": 0.9,
+          "label": "Rest Side Window",
+          "sill": 1.05,
+          "windowStyle": "plain"
+        }
+      ],
+      "lights": [
+        {
+          "id": "light_qdabbk",
+          "label": "HallLight",
+          "position": {
+            "x": 1.5,
+            "y": 2.2,
+            "z": -0.5
+          },
+          "color": {
+            "r": 1,
+            "g": 0.65,
+            "b": 0.34,
+            "a": 1
+          },
+          "energy": 2.35,
+          "range": 8,
+          "shadows": true,
+          "group": "paranormal_lights"
+        }
+      ],
+      "stairs": [
+        {
+          "id": "stair_tj3iuc",
+          "label": "Main Ramp",
+          "x": 2.6,
+          "z": 0.25,
+          "width": 2.4,
+          "run": 6.5,
+          "direction": "north",
+          "style": "ramp",
+          "steps": 12,
+          "blockBelow": true
+        }
+      ],
+      "slabs": [],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": true,
+      "regions": []
+    },
+    {
+      "id": "floor_w1jvnx",
+      "label": "Floor 2",
+      "walls": [
+        {
+          "id": "wall_cnhn06",
+          "a": {
+            "x": -6,
+            "z": -4.5
+          },
+          "b": {
+            "x": 6,
+            "z": -4.5
+          },
+          "label": "North Exterior",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_4m94xs",
+          "a": {
+            "x": 6,
+            "z": -4.5
+          },
+          "b": {
+            "x": 6,
+            "z": 4.5
+          },
+          "label": "East Exterior",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_3jpf4f",
+          "a": {
+            "x": 6,
+            "z": 4.5
+          },
+          "b": {
+            "x": -6,
+            "z": 4.5
+          },
+          "label": "South Exterior",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_sh94dv",
+          "a": {
+            "x": -6,
+            "z": 4.5
+          },
+          "b": {
+            "x": -6,
+            "z": -4.5
+          },
+          "label": "West Exterior",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_g3vgqs",
+          "role": "interior",
+          "a": {
+            "x": 0,
+            "z": -4
+          },
+          "b": {
+            "x": 0,
+            "z": 4
+          },
+          "label": "Upper partition",
+          "height": null
+        }
+      ],
+      "openings": [],
+      "lights": [],
+      "stairs": [],
+      "slabs": [],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": true,
+      "regions": []
+    }
+  ]
+}

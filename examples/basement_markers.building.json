@@ -1,0 +1,278 @@
+{
+  "version": 9,
+  "name": "Basement and named markers",
+  "exportProfile": "generic",
+  "wallHeight": 2.8,
+  "wallThickness": 0.18,
+  "floorThickness": 0.18,
+  "gridSize": 0.5,
+  "roof": {
+    "type": "gable",
+    "pitch": 35,
+    "overhang": 0.35
+  },
+  "roofSections": [],
+  "manualFloors": [],
+  "manualCeilings": [],
+  "ceiling": {
+    "thickness": 0.12
+  },
+  "windowMesh": {
+    "enabled": true,
+    "frameWidth": 0.08,
+    "frameDepth": 0.12,
+    "glassThickness": 0.018
+  },
+  "doorMesh": {
+    "enabled": true,
+    "frameWidth": 0.09,
+    "frameDepth": 0.14,
+    "panelThickness": 0.045,
+    "detailDepth": 0.018
+  },
+  "floors": [
+    {
+      "id": "basement",
+      "label": "Basement",
+      "walls": [
+        {
+          "id": "basement_wall_0",
+          "a": {
+            "x": -4,
+            "z": -4
+          },
+          "b": {
+            "x": 4,
+            "z": -4
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "basement_wall_1",
+          "a": {
+            "x": 4,
+            "z": -4
+          },
+          "b": {
+            "x": 4,
+            "z": 4
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "basement_wall_2",
+          "a": {
+            "x": 4,
+            "z": 4
+          },
+          "b": {
+            "x": -4,
+            "z": 4
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "basement_wall_3",
+          "a": {
+            "x": -4,
+            "z": 4
+          },
+          "b": {
+            "x": -4,
+            "z": -4
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "basement_partition",
+          "role": "interior",
+          "a": {
+            "x": -2,
+            "z": -4
+          },
+          "b": {
+            "x": -2,
+            "z": 4
+          },
+          "label": "Partition",
+          "height": null
+        }
+      ],
+      "openings": [
+        {
+          "id": "basement_passage",
+          "wallId": "basement_partition",
+          "type": "door",
+          "doorStyle": "empty",
+          "t": 0.7,
+          "width": 1,
+          "height": 2.1,
+          "label": "Passage"
+        }
+      ],
+      "lights": [],
+      "stairs": [
+        {
+          "id": "basement_stairs",
+          "label": "Basement stairs",
+          "x": 1,
+          "z": 0,
+          "width": 1.2,
+          "run": 4,
+          "direction": "north",
+          "style": "steps",
+          "steps": 16,
+          "blockBelow": true
+        }
+      ],
+      "slabs": [],
+      "regions": [],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": true,
+      "elevation": -2.98,
+      "markers": [
+        {
+          "id": "storage_reference",
+          "label": "Storage reference",
+          "details": "JSON note: leave this bay clear for future storage design.",
+          "position": {
+            "x": -3,
+            "y": 0.2,
+            "z": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "ground",
+      "label": "Ground floor",
+      "walls": [
+        {
+          "id": "ground_wall_0",
+          "a": {
+            "x": -4,
+            "z": -4
+          },
+          "b": {
+            "x": 4,
+            "z": -4
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "ground_wall_1",
+          "a": {
+            "x": 4,
+            "z": -4
+          },
+          "b": {
+            "x": 4,
+            "z": 4
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "ground_wall_2",
+          "a": {
+            "x": 4,
+            "z": 4
+          },
+          "b": {
+            "x": -4,
+            "z": 4
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "ground_wall_3",
+          "a": {
+            "x": -4,
+            "z": 4
+          },
+          "b": {
+            "x": -4,
+            "z": -4
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "ground_partition",
+          "role": "interior",
+          "a": {
+            "x": -2,
+            "z": -4
+          },
+          "b": {
+            "x": -2,
+            "z": 4
+          },
+          "label": "Partition",
+          "height": null
+        }
+      ],
+      "openings": [
+        {
+          "id": "ground_passage",
+          "wallId": "ground_partition",
+          "type": "door",
+          "doorStyle": "empty",
+          "t": 0.7,
+          "width": 1,
+          "height": 2.1,
+          "label": "Passage"
+        }
+      ],
+      "lights": [],
+      "stairs": [],
+      "slabs": [],
+      "regions": [],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": true,
+      "elevation": 0,
+      "markers": [
+        {
+          "id": "entry_reference",
+          "label": "Entry reference",
+          "details": "JSON note: align the entrance approach here.",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "z": 3
+          }
+        },
+        {
+          "id": "landing_reference",
+          "label": "Stair landing",
+          "details": "JSON note: keep the landing clear.",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "z": -2.5
+          }
+        }
+      ]
+    }
+  ]
+}

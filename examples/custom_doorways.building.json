@@ -1,0 +1,261 @@
+{
+  "version": 10,
+  "name": "Custom doorways and airlocks",
+  "exportProfile": "generic",
+  "wallHeight": 2.8,
+  "wallThickness": 0.18,
+  "floorThickness": 0.18,
+  "gridSize": 0.5,
+  "roof": {
+    "type": "none",
+    "pitch": 35,
+    "overhang": 0.35
+  },
+  "roofSections": [],
+  "manualFloors": [],
+  "manualCeilings": [],
+  "ceiling": {
+    "thickness": 0.12
+  },
+  "windowMesh": {
+    "enabled": true,
+    "frameWidth": 0.08,
+    "frameDepth": 0.12,
+    "glassThickness": 0.018
+  },
+  "doorMesh": {
+    "enabled": true,
+    "frameWidth": 0.09,
+    "frameDepth": 0.14,
+    "panelThickness": 0.045,
+    "detailDepth": 0.018
+  },
+  "floors": [
+    {
+      "id": "floor",
+      "label": "Floor 1",
+      "walls": [
+        {
+          "id": "wall_0",
+          "a": {
+            "x": -4,
+            "z": -3
+          },
+          "b": {
+            "x": 4,
+            "z": -3
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_1",
+          "a": {
+            "x": 4,
+            "z": -3
+          },
+          "b": {
+            "x": 4,
+            "z": 3
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_2",
+          "a": {
+            "x": 4,
+            "z": 3
+          },
+          "b": {
+            "x": -4,
+            "z": 3
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "wall_3",
+          "a": {
+            "x": -4,
+            "z": 3
+          },
+          "b": {
+            "x": -4,
+            "z": -3
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "partition",
+          "label": "Open airlock bulkhead",
+          "a": {
+            "x": -4,
+            "z": 0
+          },
+          "b": {
+            "x": 4,
+            "z": 0
+          },
+          "role": "interior",
+          "height": null
+        }
+      ],
+      "openings": [
+        {
+          "id": "opening",
+          "type": "door",
+          "wallId": "wall_0",
+          "label": "Custom doorway",
+          "t": 0.5,
+          "width": 3,
+          "height": 2.4,
+          "shapeId": "outline",
+          "doorStyle": "room"
+        },
+        {
+          "id": "passage",
+          "type": "door",
+          "wallId": "partition",
+          "label": "Open airlock",
+          "t": 0.5,
+          "width": 3.6,
+          "height": 2.5,
+          "shapeId": "outline",
+          "doorStyle": "empty"
+        },
+        {
+          "id": "archway",
+          "type": "door",
+          "wallId": "wall_2",
+          "label": "Arched exit",
+          "t": 0.5,
+          "width": 2,
+          "height": 2.4,
+          "shapeId": "arch",
+          "doorStyle": "empty"
+        }
+      ],
+      "lights": [],
+      "stairs": [],
+      "slabs": [],
+      "regions": [],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": false
+    }
+  ],
+  "openingShapes": [
+    {
+      "id": "outline",
+      "label": "Airlock outline",
+      "points": [
+        {
+          "x": 0.16,
+          "y": 0
+        },
+        {
+          "x": 0.84,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0.2
+        },
+        {
+          "x": 1,
+          "y": 0.8
+        },
+        {
+          "x": 0.88,
+          "y": 1
+        },
+        {
+          "x": 0.12,
+          "y": 1
+        },
+        {
+          "x": 0,
+          "y": 0.8
+        },
+        {
+          "x": 0,
+          "y": 0.2
+        }
+      ]
+    },
+    {
+      "id": "arch",
+      "label": "Faceted arch",
+      "points": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0.65
+        },
+        {
+          "x": 0.9829629131445341,
+          "y": 0.7405866657858823
+        },
+        {
+          "x": 0.9330127018922194,
+          "y": 0.825
+        },
+        {
+          "x": 0.8535533905932737,
+          "y": 0.8974873734152916
+        },
+        {
+          "x": 0.75,
+          "y": 0.9531088913245536
+        },
+        {
+          "x": 0.6294095225512604,
+          "y": 0.988074039201174
+        },
+        {
+          "x": 0.5,
+          "y": 1
+        },
+        {
+          "x": 0.3705904774487397,
+          "y": 0.988074039201174
+        },
+        {
+          "x": 0.2500000000000001,
+          "y": 0.9531088913245536
+        },
+        {
+          "x": 0.14644660940672627,
+          "y": 0.8974873734152917
+        },
+        {
+          "x": 0.06698729810778065,
+          "y": 0.825
+        },
+        {
+          "x": 0.0170370868554659,
+          "y": 0.7405866657858824
+        },
+        {
+          "x": 0,
+          "y": 0.65
+        }
+      ]
+    }
+  ]
+}

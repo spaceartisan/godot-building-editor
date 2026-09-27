@@ -88,7 +88,7 @@ Destinations must be new. Unknown/repeated flags are errors. There is no `--forc
 
 `validate --out` deliberately saves diagnostics for invalid or missing inputs while retaining failure exit codes. Its saved file uses the portable check-report envelope; stdout retains the CLI command-response envelope. See [CHECK_REPORTS.md](CHECK_REPORTS.md). Targets are scoped navigation references and can be missing/ambiguous; they are not automatic repair instructions.
 
-Authored diffs use JSON Pointer paths but are reports, not executable patches. Array membership changes can replace an entire array in the diff. `null` overrides mean automatic/default only for fields documented that way. `before:null`/`after:null` in derived reports mean addition/removal or unavailable state as documented; never interpret them as zero elevation or zero rise. Manual surfaces listed in alignment review are context, not proof of a collision.
+Authored diffs use JSON Pointer paths but are reports, not executable patches. Added/removed objects in ID'd arrays are per-ID `add`/`remove` entries whose `path` names the array (with `id` and `index`); arrays without unique IDs or with reordered IDs still appear as one `replace`. `null` overrides mean automatic/default only for fields documented that way. `before:null`/`after:null` in derived reports mean addition/removal or unavailable state as documented; never interpret them as zero elevation or zero rise. Manual surfaces listed in alignment review are context, not proof of a collision.
 
 ## 5. Geometry conventions and common pitfalls
 

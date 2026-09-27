@@ -124,8 +124,13 @@ export function validateTransaction(transaction){
   });
 }
 
-// Report-only JSON Pointer paths. Array membership changes are one replacement
-// so removals do not masquerade as edits to every subsequent object's identity.
+// Report-only JSON Pointer paths. Arrays of uniquely ID'd objects report
+// membership changes per ID ({path: array, op: add|remove, id, index}) and
+// recurse into retained objects at their resulting index, so adding one wall
+// does not restate every other wall. Other arrays with changed membership or
+// reordered IDs remain a single replacement, so removals never masquerade as
+// edits to the identity of subsequent objects.
+const uniquelyKeyed=list=>list.every(v=>object(v)&&typeof v.id==='string'&&v.id)&&new Set(list.map(v=>v.id)).size===list.length;
 export function documentDiff(before,after,path=''){
   if(JSON.stringify(before)===JSON.stringify(after))return [];
   const entry={path};
@@ -134,6 +139,14 @@ export function documentDiff(before,after,path=''){
   if(Array.isArray(before)&&Array.isArray(after)){
     if(before.length===after.length&&before.every((v,i)=>!object(v)||v.id===after[i]?.id))
       return before.flatMap((v,i)=>documentDiff(v,after[i],`${path}/${i}`));
+    if(uniquelyKeyed(before)&&uniquelyKeyed(after)){
+      const afterIds=new Set(after.map(v=>v.id)),beforeById=new Map(before.map((v,i)=>[v.id,{v,i}]));
+      const retainedBefore=before.filter(v=>afterIds.has(v.id)).map(v=>v.id),retainedAfter=after.filter(v=>beforeById.has(v.id)).map(v=>v.id);
+      if(retainedBefore.every((id,i)=>id===retainedAfter[i]))return [
+        ...before.flatMap((v,i)=>afterIds.has(v.id)?[]:[{...entry,op:'remove',id:v.id,index:i,before:structuredClone(v)}]),
+        ...after.flatMap((v,i)=>beforeById.has(v.id)?documentDiff(beforeById.get(v.id).v,v,`${path}/${i}`):[{...entry,op:'add',id:v.id,index:i,after:structuredClone(v)}])
+      ];
+    }
   }else if(object(before)&&object(after)){
     return [...new Set([...Object.keys(before),...Object.keys(after)])].sort().flatMap(key=>documentDiff(
       Object.hasOwn(before,key)?before[key]:undefined,Object.hasOwn(after,key)?after[key]:undefined,`${path}/${key.replaceAll('~','~0').replaceAll('/','~1')}`));

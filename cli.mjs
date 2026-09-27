@@ -328,7 +328,7 @@ function human(result,verbose){
     for(const w of result.warnings||[])lines.push('WARNING '+w.message);
     if(result.sourceSha256)lines.push('Source SHA-256: '+result.sourceSha256);
     if(result.operations)lines.push(`${result.operations.length} operations processed · ${result.changes.length} edit differences · ${result.normalizationChanges.length} import/default differences`);
-    const show=d=>lines.push(`  ${d.op} ${d.path||'/'}: ${Object.hasOwn(d,'before')?JSON.stringify(d.before):'(absent)'} → ${Object.hasOwn(d,'after')?JSON.stringify(d.after):'(absent)'}`);
+    const show=d=>lines.push(`  ${d.op} ${d.path||'/'}${d.id!==undefined?` [${d.id} @ ${d.index}]`:''}: ${Object.hasOwn(d,'before')?JSON.stringify(d.before):'(absent)'} → ${Object.hasOwn(d,'after')?JSON.stringify(d.after):'(absent)'}`);
     for(const d of result.changes||[])show(d);
     const metres=n=>Number(n.toFixed(4))+' m';
     const level=v=>v===null?'(absent)':`base ${metres(v.elevation)}, walls ${metres(v.wallHeight)}, slab ${metres(v.floorThickness)}, wall top ${metres(v.wallTop)}`;

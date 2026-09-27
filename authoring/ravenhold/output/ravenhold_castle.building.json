@@ -1,0 +1,4973 @@
+{
+  "version": 9,
+  "name": "Ravenhold Castle",
+  "exportProfile": "generic",
+  "wallHeight": 2.8,
+  "wallThickness": 0.5,
+  "floorThickness": 0.18,
+  "gridSize": 0.5,
+  "roof": {
+    "type": "none",
+    "pitch": 35,
+    "overhang": 0
+  },
+  "roofSections": [
+    {
+      "id": "roof_north",
+      "label": "Guest chambers & chapel roof",
+      "minX": -10,
+      "maxX": 10,
+      "minZ": -13.5,
+      "maxZ": -10,
+      "type": "gable",
+      "direction": "x",
+      "baseY": 7.68,
+      "pitch": 30,
+      "overhang": 0.4,
+      "gableEnds": "none",
+      "edgeModes": {
+        "minX": "flush",
+        "maxX": "flush"
+      }
+    },
+    {
+      "id": "roof_east",
+      "label": "Armory roof",
+      "minX": 10,
+      "maxX": 13.5,
+      "minZ": -10,
+      "maxZ": 10,
+      "type": "gable",
+      "direction": "z",
+      "baseY": 7.68,
+      "pitch": 30,
+      "overhang": 0.4,
+      "gableEnds": "none",
+      "edgeModes": {
+        "minZ": "flush",
+        "maxZ": "flush"
+      }
+    },
+    {
+      "id": "roof_west",
+      "label": "Garrison hall roof",
+      "minX": -13.5,
+      "maxX": -10,
+      "minZ": -10,
+      "maxZ": 10,
+      "type": "gable",
+      "direction": "z",
+      "baseY": 7.68,
+      "pitch": 30,
+      "overhang": 0.4,
+      "gableEnds": "none",
+      "edgeModes": {
+        "minZ": "flush",
+        "maxZ": "flush"
+      }
+    }
+  ],
+  "manualFloors": [],
+  "manualCeilings": [],
+  "ceiling": {
+    "thickness": 0.12
+  },
+  "windowMesh": {
+    "enabled": true,
+    "frameWidth": 0.08,
+    "frameDepth": 0.12,
+    "glassThickness": 0.018
+  },
+  "doorMesh": {
+    "enabled": true,
+    "frameWidth": 0.09,
+    "frameDepth": 0.14,
+    "panelThickness": 0.045,
+    "detailDepth": 0.018
+  },
+  "floors": [
+    {
+      "id": "floor_1",
+      "label": "Ground",
+      "walls": [
+        {
+          "label": "Curtain",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -18,
+            "z": -18
+          },
+          "b": {
+            "x": -10,
+            "z": -18
+          },
+          "id": "g_outer01"
+        },
+        {
+          "label": "Curtain",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -10,
+            "z": -18
+          },
+          "b": {
+            "x": -10,
+            "z": -16
+          },
+          "id": "g_outer02"
+        },
+        {
+          "label": "Curtain",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -10,
+            "z": -16
+          },
+          "b": {
+            "x": 10,
+            "z": -16
+          },
+          "id": "g_outer03"
+        },
+        {
+          "label": "Curtain",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 10,
+            "z": -16
+          },
+          "b": {
+            "x": 10,
+            "z": -18
+          },
+          "id": "g_outer04"
+        },
+        {
+          "label": "Curtain",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 10,
+            "z": -18
+          },
+          "b": {
+            "x": 18,
+            "z": -18
+          },
+          "id": "g_outer05"
+        },
+        {
+          "label": "Curtain",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 18,
+            "z": -18
+          },
+          "b": {
+            "x": 18,
+            "z": -10
+          },
+          "id": "g_outer06"
+        },
+        {
+          "label": "Curtain",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 18,
+            "z": -10
+          },
+          "b": {
+            "x": 16,
+            "z": -10
+          },
+          "id": "g_outer07"
+        },
+        {
+          "label": "Curtain",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 16,
+            "z": -10
+          },
+          "b": {
+            "x": 16,
+            "z": 10
+          },
+          "id": "g_outer08"
+        },
+        {
+          "label": "Curtain",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 16,
+            "z": 10
+          },
+          "b": {
+            "x": 18,
+            "z": 10
+          },
+          "id": "g_outer09"
+        },
+        {
+          "label": "Curtain",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 18,
+            "z": 10
+          },
+          "b": {
+            "x": 18,
+            "z": 18
+          },
+          "id": "g_outer10"
+        },
+        {
+          "label": "Curtain",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 18,
+            "z": 18
+          },
+          "b": {
+            "x": 10,
+            "z": 18
+          },
+          "id": "g_outer11"
+        },
+        {
+          "label": "Curtain",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 10,
+            "z": 18
+          },
+          "b": {
+            "x": 10,
+            "z": 16
+          },
+          "id": "g_outer12"
+        },
+        {
+          "label": "Curtain",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 10,
+            "z": 16
+          },
+          "b": {
+            "x": 6,
+            "z": 16
+          },
+          "id": "g_outer13"
+        },
+        {
+          "label": "Curtain",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 6,
+            "z": 16
+          },
+          "b": {
+            "x": 6,
+            "z": 20
+          },
+          "id": "g_outer14"
+        },
+        {
+          "label": "Curtain",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 6,
+            "z": 20
+          },
+          "b": {
+            "x": -6,
+            "z": 20
+          },
+          "id": "g_outer15"
+        },
+        {
+          "label": "Curtain",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -6,
+            "z": 20
+          },
+          "b": {
+            "x": -6,
+            "z": 16
+          },
+          "id": "g_outer16"
+        },
+        {
+          "label": "Curtain",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -6,
+            "z": 16
+          },
+          "b": {
+            "x": -10,
+            "z": 16
+          },
+          "id": "g_outer17"
+        },
+        {
+          "label": "Curtain",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -10,
+            "z": 16
+          },
+          "b": {
+            "x": -10,
+            "z": 18
+          },
+          "id": "g_outer18"
+        },
+        {
+          "label": "Curtain",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -10,
+            "z": 18
+          },
+          "b": {
+            "x": -18,
+            "z": 18
+          },
+          "id": "g_outer19"
+        },
+        {
+          "label": "Curtain",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -18,
+            "z": 18
+          },
+          "b": {
+            "x": -18,
+            "z": 10
+          },
+          "id": "g_outer20"
+        },
+        {
+          "label": "Curtain",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -18,
+            "z": 10
+          },
+          "b": {
+            "x": -16,
+            "z": 10
+          },
+          "id": "g_outer21"
+        },
+        {
+          "label": "Curtain",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -16,
+            "z": 10
+          },
+          "b": {
+            "x": -16,
+            "z": -10
+          },
+          "id": "g_outer22"
+        },
+        {
+          "label": "Curtain",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -16,
+            "z": -10
+          },
+          "b": {
+            "x": -18,
+            "z": -10
+          },
+          "id": "g_outer23"
+        },
+        {
+          "label": "Curtain",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -18,
+            "z": -10
+          },
+          "b": {
+            "x": -18,
+            "z": -18
+          },
+          "id": "g_outer24"
+        },
+        {
+          "label": "Courtyard face",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -10,
+            "z": -10
+          },
+          "b": {
+            "x": 10,
+            "z": -10
+          },
+          "id": "g_court_n"
+        },
+        {
+          "label": "Courtyard face",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 10,
+            "z": -10
+          },
+          "b": {
+            "x": 10,
+            "z": 10
+          },
+          "id": "g_court_e"
+        },
+        {
+          "label": "Courtyard face",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 10,
+            "z": 10
+          },
+          "b": {
+            "x": -10,
+            "z": 10
+          },
+          "id": "g_court_s"
+        },
+        {
+          "label": "Courtyard face",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -10,
+            "z": 10
+          },
+          "b": {
+            "x": -10,
+            "z": -10
+          },
+          "id": "g_court_w"
+        },
+        {
+          "label": "Keep",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -5,
+            "z": -6
+          },
+          "b": {
+            "x": 5,
+            "z": -6
+          },
+          "id": "g_keep_n"
+        },
+        {
+          "label": "Keep",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 5,
+            "z": -6
+          },
+          "b": {
+            "x": 5,
+            "z": 2
+          },
+          "id": "g_keep_e"
+        },
+        {
+          "label": "Keep",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 5,
+            "z": 2
+          },
+          "b": {
+            "x": -5,
+            "z": 2
+          },
+          "id": "g_keep_s"
+        },
+        {
+          "label": "Keep",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -5,
+            "z": 2
+          },
+          "b": {
+            "x": -5,
+            "z": -6
+          },
+          "id": "g_keep_w"
+        },
+        {
+          "label": "NW tower / hall",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": -10,
+            "z": -16
+          },
+          "b": {
+            "x": -10,
+            "z": -10
+          },
+          "id": "g_nw_e"
+        },
+        {
+          "label": "NW tower / storehouse",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": -16,
+            "z": -10
+          },
+          "b": {
+            "x": -10,
+            "z": -10
+          },
+          "id": "g_nw_s"
+        },
+        {
+          "label": "NE tower / hall",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": 10,
+            "z": -16
+          },
+          "b": {
+            "x": 10,
+            "z": -10
+          },
+          "id": "g_ne_w"
+        },
+        {
+          "label": "NE tower / barracks",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": 10,
+            "z": -10
+          },
+          "b": {
+            "x": 16,
+            "z": -10
+          },
+          "id": "g_ne_s"
+        },
+        {
+          "label": "SE tower / store",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": 10,
+            "z": 10
+          },
+          "b": {
+            "x": 10,
+            "z": 16
+          },
+          "id": "g_se_w"
+        },
+        {
+          "label": "SE tower / barracks",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": 10,
+            "z": 10
+          },
+          "b": {
+            "x": 16,
+            "z": 10
+          },
+          "id": "g_se_n"
+        },
+        {
+          "label": "SW tower / store",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": -10,
+            "z": 10
+          },
+          "b": {
+            "x": -10,
+            "z": 16
+          },
+          "id": "g_sw_e"
+        },
+        {
+          "label": "SW tower / stables",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": -16,
+            "z": 10
+          },
+          "b": {
+            "x": -10,
+            "z": 10
+          },
+          "id": "g_sw_n"
+        },
+        {
+          "label": "Gate tunnel W",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": -2,
+            "z": 10
+          },
+          "b": {
+            "x": -2,
+            "z": 20
+          },
+          "id": "g_gate_w"
+        },
+        {
+          "label": "Gate tunnel E",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": 2,
+            "z": 10
+          },
+          "b": {
+            "x": 2,
+            "z": 20
+          },
+          "id": "g_gate_e"
+        },
+        {
+          "label": "Guard room / store W",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": -6,
+            "z": 10
+          },
+          "b": {
+            "x": -6,
+            "z": 16
+          },
+          "id": "g_guard_w"
+        },
+        {
+          "label": "Guard room / store E",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": 6,
+            "z": 10
+          },
+          "b": {
+            "x": 6,
+            "z": 16
+          },
+          "id": "g_guard_e"
+        },
+        {
+          "label": "Barracks partition",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": 10,
+            "z": 0
+          },
+          "b": {
+            "x": 16,
+            "z": 0
+          },
+          "id": "g_east_part"
+        },
+        {
+          "label": "Stables partition",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": -16,
+            "z": 0
+          },
+          "b": {
+            "x": -10,
+            "z": 0
+          },
+          "id": "g_west_part"
+        }
+      ],
+      "openings": [
+        {
+          "label": "Outer gate",
+          "doorStyle": "empty",
+          "type": "door",
+          "wallId": "g_outer15",
+          "width": 3,
+          "height": 3.6,
+          "t": 0.5,
+          "id": "o_gate_outer"
+        },
+        {
+          "label": "Inner gate",
+          "doorStyle": "empty",
+          "type": "door",
+          "wallId": "g_court_s",
+          "width": 3,
+          "height": 3.6,
+          "t": 0.5,
+          "id": "o_gate_inner"
+        },
+        {
+          "label": "West guard room door",
+          "doorStyle": "room",
+          "type": "door",
+          "wallId": "g_gate_w",
+          "width": 1,
+          "height": 2.2,
+          "t": 0.5,
+          "id": "o_guard_w"
+        },
+        {
+          "label": "East guard room door",
+          "doorStyle": "room",
+          "type": "door",
+          "wallId": "g_gate_e",
+          "width": 1,
+          "height": 2.2,
+          "t": 0.5,
+          "id": "o_guard_e"
+        },
+        {
+          "label": "South-west store door",
+          "doorStyle": "room",
+          "type": "door",
+          "wallId": "g_guard_w",
+          "width": 1,
+          "height": 2.2,
+          "t": 0.5,
+          "id": "o_store_w"
+        },
+        {
+          "label": "South-east store door",
+          "doorStyle": "room",
+          "type": "door",
+          "wallId": "g_guard_e",
+          "width": 1,
+          "height": 2.2,
+          "t": 0.5,
+          "id": "o_store_e"
+        },
+        {
+          "label": "Guard slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "g_outer15",
+          "width": 0.3,
+          "height": 1.2,
+          "t": 0.833333333,
+          "id": "o_slit_gw"
+        },
+        {
+          "label": "Guard slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "g_outer15",
+          "width": 0.3,
+          "height": 1.2,
+          "t": 0.166666667,
+          "id": "o_slit_ge"
+        },
+        {
+          "label": "Great hall door",
+          "doorStyle": "exterior",
+          "type": "door",
+          "wallId": "g_court_n",
+          "width": 2,
+          "height": 3,
+          "t": 0.5,
+          "id": "o_hall"
+        },
+        {
+          "label": "Hall window",
+          "sill": 1.2,
+          "windowStyle": "four_pane",
+          "type": "window",
+          "wallId": "g_court_n",
+          "width": 1.1,
+          "height": 2,
+          "t": 0.15,
+          "id": "o_hall_win_w7"
+        },
+        {
+          "label": "Hall window",
+          "sill": 1.2,
+          "windowStyle": "four_pane",
+          "type": "window",
+          "wallId": "g_court_n",
+          "width": 1.1,
+          "height": 2,
+          "t": 0.325,
+          "id": "o_hall_win_w3_5"
+        },
+        {
+          "label": "Hall window",
+          "sill": 1.2,
+          "windowStyle": "four_pane",
+          "type": "window",
+          "wallId": "g_court_n",
+          "width": 1.1,
+          "height": 2,
+          "t": 0.675,
+          "id": "o_hall_win_e3_5"
+        },
+        {
+          "label": "Hall window",
+          "sill": 1.2,
+          "windowStyle": "four_pane",
+          "type": "window",
+          "wallId": "g_court_n",
+          "width": 1.1,
+          "height": 2,
+          "t": 0.85,
+          "id": "o_hall_win_e7"
+        },
+        {
+          "label": "Hall arrow slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "g_outer03",
+          "width": 0.3,
+          "height": 1.4,
+          "t": 0.2,
+          "id": "o_hall_slit_w6"
+        },
+        {
+          "label": "Hall arrow slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "g_outer03",
+          "width": 0.3,
+          "height": 1.4,
+          "t": 0.4,
+          "id": "o_hall_slit_w2"
+        },
+        {
+          "label": "Hall arrow slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "g_outer03",
+          "width": 0.3,
+          "height": 1.4,
+          "t": 0.6,
+          "id": "o_hall_slit_e2"
+        },
+        {
+          "label": "Hall arrow slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "g_outer03",
+          "width": 0.3,
+          "height": 1.4,
+          "t": 0.8,
+          "id": "o_hall_slit_e6"
+        },
+        {
+          "label": "Barracks north door",
+          "doorStyle": "exterior",
+          "type": "door",
+          "wallId": "g_court_e",
+          "width": 1.2,
+          "height": 2.4,
+          "t": 0.25,
+          "id": "o_barr_n"
+        },
+        {
+          "label": "Barracks south door",
+          "doorStyle": "exterior",
+          "type": "door",
+          "wallId": "g_court_e",
+          "width": 1.2,
+          "height": 2.4,
+          "t": 0.75,
+          "id": "o_barr_s"
+        },
+        {
+          "label": "Barracks connecting door",
+          "doorStyle": "room",
+          "type": "door",
+          "wallId": "g_east_part",
+          "width": 1,
+          "height": 2.2,
+          "t": 0.5,
+          "id": "o_barr_mid"
+        },
+        {
+          "label": "Barracks slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "g_outer08",
+          "width": 0.3,
+          "height": 1.4,
+          "t": 0.25,
+          "id": "o_barr_slit_n"
+        },
+        {
+          "label": "Barracks slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "g_outer08",
+          "width": 0.3,
+          "height": 1.4,
+          "t": 0.75,
+          "id": "o_barr_slit_s"
+        },
+        {
+          "label": "Stable doorway",
+          "doorStyle": "empty",
+          "type": "door",
+          "wallId": "g_court_w",
+          "width": 2.4,
+          "height": 3,
+          "t": 0.25,
+          "id": "o_stables"
+        },
+        {
+          "label": "Storehouse door",
+          "doorStyle": "exterior",
+          "type": "door",
+          "wallId": "g_court_w",
+          "width": 1.4,
+          "height": 2.6,
+          "t": 0.75,
+          "id": "o_storehouse"
+        },
+        {
+          "label": "Stables/storehouse door",
+          "doorStyle": "room",
+          "type": "door",
+          "wallId": "g_west_part",
+          "width": 1,
+          "height": 2.2,
+          "t": 0.5,
+          "id": "o_stables_mid"
+        },
+        {
+          "label": "West range slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "g_outer22",
+          "width": 0.3,
+          "height": 1.4,
+          "t": 0.75,
+          "id": "o_west_slit_n"
+        },
+        {
+          "label": "West range slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "g_outer22",
+          "width": 0.3,
+          "height": 1.4,
+          "t": 0.25,
+          "id": "o_west_slit_s"
+        },
+        {
+          "label": "Hall to NW tower",
+          "doorStyle": "room",
+          "type": "door",
+          "wallId": "g_nw_e",
+          "width": 1,
+          "height": 2.2,
+          "t": 0.5,
+          "id": "o_nw_hall"
+        },
+        {
+          "label": "Hall to NE tower",
+          "doorStyle": "room",
+          "type": "door",
+          "wallId": "g_ne_w",
+          "width": 1,
+          "height": 2.2,
+          "t": 0.5,
+          "id": "o_ne_hall"
+        },
+        {
+          "label": "Storehouse to NW tower",
+          "doorStyle": "room",
+          "type": "door",
+          "wallId": "g_nw_s",
+          "width": 1,
+          "height": 2.2,
+          "t": 0.5,
+          "id": "o_nw_store"
+        },
+        {
+          "label": "Barracks to NE tower",
+          "doorStyle": "room",
+          "type": "door",
+          "wallId": "g_ne_s",
+          "width": 1,
+          "height": 2.2,
+          "t": 0.5,
+          "id": "o_ne_barr"
+        },
+        {
+          "label": "Barracks to SE tower",
+          "doorStyle": "room",
+          "type": "door",
+          "wallId": "g_se_n",
+          "width": 1,
+          "height": 2.2,
+          "t": 0.5,
+          "id": "o_se_barr"
+        },
+        {
+          "label": "Stables to SW tower",
+          "doorStyle": "room",
+          "type": "door",
+          "wallId": "g_sw_n",
+          "width": 1,
+          "height": 2.2,
+          "t": 0.5,
+          "id": "o_sw_stab"
+        },
+        {
+          "label": "Keep door",
+          "doorStyle": "exterior",
+          "type": "door",
+          "wallId": "g_keep_s",
+          "width": 1.6,
+          "height": 2.6,
+          "t": 0.5,
+          "id": "o_keep_door"
+        },
+        {
+          "label": "Undercroft slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "g_keep_n",
+          "width": 0.3,
+          "height": 1.2,
+          "t": 0.5,
+          "id": "o_keep_slit_n"
+        },
+        {
+          "label": "Undercroft slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "g_keep_e",
+          "width": 0.3,
+          "height": 1.2,
+          "t": 0.5,
+          "id": "o_keep_slit_e"
+        },
+        {
+          "label": "Undercroft slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "g_keep_w",
+          "width": 0.3,
+          "height": 1.2,
+          "t": 0.125,
+          "id": "o_keep_slit_w"
+        },
+        {
+          "label": "NW tower slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "g_outer01",
+          "width": 0.3,
+          "height": 1.4,
+          "t": 0.5,
+          "id": "o_nw_slit_01"
+        },
+        {
+          "label": "NW tower slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "g_outer24",
+          "width": 0.3,
+          "height": 1.4,
+          "t": 0.5,
+          "id": "o_nw_slit_24"
+        },
+        {
+          "label": "NE tower slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "g_outer05",
+          "width": 0.3,
+          "height": 1.4,
+          "t": 0.5,
+          "id": "o_ne_slit_05"
+        },
+        {
+          "label": "NE tower slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "g_outer06",
+          "width": 0.3,
+          "height": 1.4,
+          "t": 0.5,
+          "id": "o_ne_slit_06"
+        },
+        {
+          "label": "SE tower slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "g_outer10",
+          "width": 0.3,
+          "height": 1.4,
+          "t": 0.5,
+          "id": "o_se_slit_10"
+        },
+        {
+          "label": "SE tower slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "g_outer11",
+          "width": 0.3,
+          "height": 1.4,
+          "t": 0.5,
+          "id": "o_se_slit_11"
+        },
+        {
+          "label": "SW tower slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "g_outer19",
+          "width": 0.3,
+          "height": 1.4,
+          "t": 0.5,
+          "id": "o_sw_slit_19"
+        },
+        {
+          "label": "SW tower slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "g_outer20",
+          "width": 0.3,
+          "height": 1.4,
+          "t": 0.5,
+          "id": "o_sw_slit_20"
+        }
+      ],
+      "lights": [],
+      "stairs": [
+        {
+          "id": "st_nw_1",
+          "label": "NW tower stair (ground)",
+          "x": -16.9,
+          "z": -14,
+          "width": 1.2,
+          "run": 5,
+          "direction": "south",
+          "style": "steps",
+          "steps": 24,
+          "blockBelow": true
+        },
+        {
+          "id": "st_ne_1",
+          "label": "NE tower stair (ground)",
+          "x": 16.9,
+          "z": -14,
+          "width": 1.2,
+          "run": 5,
+          "direction": "south",
+          "style": "steps",
+          "steps": 24,
+          "blockBelow": true
+        },
+        {
+          "id": "st_se_1",
+          "label": "SE tower stair (ground)",
+          "x": 16.9,
+          "z": 14,
+          "width": 1.2,
+          "run": 5,
+          "direction": "north",
+          "style": "steps",
+          "steps": 24,
+          "blockBelow": true
+        },
+        {
+          "id": "st_sw_1",
+          "label": "SW tower stair (ground)",
+          "x": -16.9,
+          "z": 14,
+          "width": 1.2,
+          "run": 5,
+          "direction": "north",
+          "style": "steps",
+          "steps": 24,
+          "blockBelow": true
+        },
+        {
+          "id": "st_court_w",
+          "label": "Courtyard stair west",
+          "x": -8,
+          "z": 7,
+          "width": 1.6,
+          "run": 6,
+          "direction": "south",
+          "style": "steps",
+          "steps": 24,
+          "blockBelow": true
+        },
+        {
+          "id": "st_court_e",
+          "label": "Courtyard stair east",
+          "x": 8,
+          "z": 7,
+          "width": 1.6,
+          "run": 6,
+          "direction": "south",
+          "style": "steps",
+          "steps": 24,
+          "blockBelow": true
+        },
+        {
+          "id": "st_keep_1",
+          "label": "Keep stair (undercroft)",
+          "x": -4,
+          "z": -1.75,
+          "width": 1.2,
+          "run": 5,
+          "direction": "north",
+          "style": "steps",
+          "steps": 24,
+          "blockBelow": true
+        }
+      ],
+      "slabs": [],
+      "regions": [
+        {
+          "id": "cov_core",
+          "label": "Castle ground",
+          "minX": -16,
+          "maxX": 16,
+          "minZ": -16,
+          "maxZ": 16,
+          "kind": "wing",
+          "effect": "solid"
+        },
+        {
+          "id": "cov_nw",
+          "label": "NW tower base",
+          "minX": -18,
+          "maxX": -10,
+          "minZ": -18,
+          "maxZ": -10,
+          "kind": "room",
+          "effect": "solid"
+        },
+        {
+          "id": "cov_ne",
+          "label": "NE tower base",
+          "minX": 10,
+          "maxX": 18,
+          "minZ": -18,
+          "maxZ": -10,
+          "kind": "room",
+          "effect": "solid"
+        },
+        {
+          "id": "cov_se",
+          "label": "SE tower base",
+          "minX": 10,
+          "maxX": 18,
+          "minZ": 10,
+          "maxZ": 18,
+          "kind": "room",
+          "effect": "solid"
+        },
+        {
+          "id": "cov_sw",
+          "label": "SW tower base",
+          "minX": -18,
+          "maxX": -10,
+          "minZ": 10,
+          "maxZ": 18,
+          "kind": "room",
+          "effect": "solid"
+        },
+        {
+          "id": "cov_gate",
+          "label": "Gatehouse front",
+          "minX": -6,
+          "maxX": 6,
+          "minZ": 16,
+          "maxZ": 20,
+          "kind": "room",
+          "effect": "solid"
+        },
+        {
+          "id": "lbl_hall",
+          "label": "Great hall",
+          "minX": -10,
+          "maxX": 10,
+          "minZ": -16,
+          "maxZ": -10,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "lbl_barr_n",
+          "label": "Barracks north",
+          "minX": 10,
+          "maxX": 16,
+          "minZ": -10,
+          "maxZ": 0,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "lbl_barr_s",
+          "label": "Barracks south",
+          "minX": 10,
+          "maxX": 16,
+          "minZ": 0,
+          "maxZ": 10,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "lbl_store",
+          "label": "Storehouse",
+          "minX": -16,
+          "maxX": -10,
+          "minZ": -10,
+          "maxZ": 0,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "lbl_stables",
+          "label": "Stables",
+          "minX": -16,
+          "maxX": -10,
+          "minZ": 0,
+          "maxZ": 10,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "lbl_court",
+          "label": "Courtyard",
+          "minX": -10,
+          "maxX": 10,
+          "minZ": -10,
+          "maxZ": 10,
+          "kind": "courtyard",
+          "effect": "label"
+        },
+        {
+          "id": "lbl_tunnel",
+          "label": "Gate tunnel",
+          "minX": -2,
+          "maxX": 2,
+          "minZ": 10,
+          "maxZ": 20,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "lbl_guard_w",
+          "label": "West guard room",
+          "minX": -6,
+          "maxX": -2,
+          "minZ": 10,
+          "maxZ": 20,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "lbl_guard_e",
+          "label": "East guard room",
+          "minX": 2,
+          "maxX": 6,
+          "minZ": 10,
+          "maxZ": 20,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "lbl_undercroft",
+          "label": "Keep undercroft",
+          "minX": -5,
+          "maxX": 5,
+          "minZ": -6,
+          "maxZ": 2,
+          "kind": "room",
+          "effect": "label"
+        }
+      ],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": false,
+      "wallHeight": 4
+    },
+    {
+      "id": "f2_ramparts",
+      "label": "Ramparts",
+      "walls": [
+        {
+          "label": "NW tower",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -18,
+            "z": -10
+          },
+          "b": {
+            "x": -18,
+            "z": -18
+          },
+          "id": "r_nw_ox"
+        },
+        {
+          "label": "NW tower",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -18,
+            "z": -18
+          },
+          "b": {
+            "x": -10,
+            "z": -18
+          },
+          "id": "r_nw_oz"
+        },
+        {
+          "label": "NW tower",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -10,
+            "z": -18
+          },
+          "b": {
+            "x": -10,
+            "z": -13.5
+          },
+          "id": "r_nw_ix_ext"
+        },
+        {
+          "label": "NW tower",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -13.5,
+            "z": -10
+          },
+          "b": {
+            "x": -18,
+            "z": -10
+          },
+          "id": "r_nw_iz_ext"
+        },
+        {
+          "label": "NE tower",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 18,
+            "z": -10
+          },
+          "b": {
+            "x": 18,
+            "z": -18
+          },
+          "id": "r_ne_ox"
+        },
+        {
+          "label": "NE tower",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 18,
+            "z": -18
+          },
+          "b": {
+            "x": 10,
+            "z": -18
+          },
+          "id": "r_ne_oz"
+        },
+        {
+          "label": "NE tower",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 10,
+            "z": -18
+          },
+          "b": {
+            "x": 10,
+            "z": -13.5
+          },
+          "id": "r_ne_ix_ext"
+        },
+        {
+          "label": "NE tower",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 13.5,
+            "z": -10
+          },
+          "b": {
+            "x": 18,
+            "z": -10
+          },
+          "id": "r_ne_iz_ext"
+        },
+        {
+          "label": "SE tower",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 18,
+            "z": 10
+          },
+          "b": {
+            "x": 18,
+            "z": 18
+          },
+          "id": "r_se_ox"
+        },
+        {
+          "label": "SE tower",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 18,
+            "z": 18
+          },
+          "b": {
+            "x": 10,
+            "z": 18
+          },
+          "id": "r_se_oz"
+        },
+        {
+          "label": "SE tower",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 10,
+            "z": 18
+          },
+          "b": {
+            "x": 10,
+            "z": 10
+          },
+          "id": "r_se_ix_ext"
+        },
+        {
+          "label": "SE tower",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 13.5,
+            "z": 10
+          },
+          "b": {
+            "x": 18,
+            "z": 10
+          },
+          "id": "r_se_iz_ext"
+        },
+        {
+          "label": "SW tower",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -18,
+            "z": 10
+          },
+          "b": {
+            "x": -18,
+            "z": 18
+          },
+          "id": "r_sw_ox"
+        },
+        {
+          "label": "SW tower",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -18,
+            "z": 18
+          },
+          "b": {
+            "x": -10,
+            "z": 18
+          },
+          "id": "r_sw_oz"
+        },
+        {
+          "label": "SW tower",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -10,
+            "z": 18
+          },
+          "b": {
+            "x": -10,
+            "z": 10
+          },
+          "id": "r_sw_ix_ext"
+        },
+        {
+          "label": "SW tower",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -13.5,
+            "z": 10
+          },
+          "b": {
+            "x": -18,
+            "z": 10
+          },
+          "id": "r_sw_iz_ext"
+        },
+        {
+          "label": "NW tower / guest chambers",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": -10,
+            "z": -13.5
+          },
+          "b": {
+            "x": -10,
+            "z": -10
+          },
+          "id": "r_nw_ix_int"
+        },
+        {
+          "label": "NE tower / chapel",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": 10,
+            "z": -13.5
+          },
+          "b": {
+            "x": 10,
+            "z": -10
+          },
+          "id": "r_ne_ix_int"
+        },
+        {
+          "label": "NW tower / garrison hall",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": -13.5,
+            "z": -10
+          },
+          "b": {
+            "x": -10,
+            "z": -10
+          },
+          "id": "r_nw_iz_int"
+        },
+        {
+          "label": "NE tower / armory",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": 10,
+            "z": -10
+          },
+          "b": {
+            "x": 13.5,
+            "z": -10
+          },
+          "id": "r_ne_iz_int"
+        },
+        {
+          "label": "SW tower / garrison hall",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": -13.5,
+            "z": 10
+          },
+          "b": {
+            "x": -10,
+            "z": 10
+          },
+          "id": "r_sw_iz_int"
+        },
+        {
+          "label": "SE tower / armory",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": 10,
+            "z": 10
+          },
+          "b": {
+            "x": 13.5,
+            "z": 10
+          },
+          "id": "r_se_iz_int"
+        },
+        {
+          "label": "Guest chambers / chapel",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": 0,
+            "z": -13.5
+          },
+          "b": {
+            "x": 0,
+            "z": -10
+          },
+          "id": "r_north_part"
+        },
+        {
+          "label": "Guest chambers / wall walk",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -10,
+            "z": -13.5
+          },
+          "b": {
+            "x": 10,
+            "z": -13.5
+          },
+          "id": "r_north_walk"
+        },
+        {
+          "label": "Guest chambers / courtyard",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 10,
+            "z": -10
+          },
+          "b": {
+            "x": -10,
+            "z": -10
+          },
+          "id": "r_north_court"
+        },
+        {
+          "label": "Armory / wall walk",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 13.5,
+            "z": -10
+          },
+          "b": {
+            "x": 13.5,
+            "z": 10
+          },
+          "id": "r_east_walk"
+        },
+        {
+          "label": "Armory / courtyard",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 10,
+            "z": 10
+          },
+          "b": {
+            "x": 10,
+            "z": -10
+          },
+          "id": "r_east_court"
+        },
+        {
+          "label": "Garrison hall / wall walk",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -13.5,
+            "z": 10
+          },
+          "b": {
+            "x": -13.5,
+            "z": -10
+          },
+          "id": "r_west_walk"
+        },
+        {
+          "label": "Garrison hall / courtyard",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -10,
+            "z": -10
+          },
+          "b": {
+            "x": -10,
+            "z": 10
+          },
+          "id": "r_west_court"
+        },
+        {
+          "label": "Winch room",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -6,
+            "z": 10
+          },
+          "b": {
+            "x": 6,
+            "z": 10
+          },
+          "id": "r_gh_n"
+        },
+        {
+          "label": "Winch room",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 6,
+            "z": 10
+          },
+          "b": {
+            "x": 6,
+            "z": 20
+          },
+          "id": "r_gh_e"
+        },
+        {
+          "label": "Winch room",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 6,
+            "z": 20
+          },
+          "b": {
+            "x": -6,
+            "z": 20
+          },
+          "id": "r_gh_s"
+        },
+        {
+          "label": "Winch room",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -6,
+            "z": 20
+          },
+          "b": {
+            "x": -6,
+            "z": 10
+          },
+          "id": "r_gh_w"
+        },
+        {
+          "label": "Keep",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -5,
+            "z": -6
+          },
+          "b": {
+            "x": 5,
+            "z": -6
+          },
+          "id": "r_keep_n"
+        },
+        {
+          "label": "Keep",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 5,
+            "z": -6
+          },
+          "b": {
+            "x": 5,
+            "z": 2
+          },
+          "id": "r_keep_e"
+        },
+        {
+          "label": "Keep",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 5,
+            "z": 2
+          },
+          "b": {
+            "x": -5,
+            "z": 2
+          },
+          "id": "r_keep_s"
+        },
+        {
+          "label": "Keep",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -5,
+            "z": 2
+          },
+          "b": {
+            "x": -5,
+            "z": -6
+          },
+          "id": "r_keep_w"
+        },
+        {
+          "label": "North parapet",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": -10,
+            "z": -16
+          },
+          "b": {
+            "x": 10,
+            "z": -16
+          },
+          "id": "r_par_n"
+        },
+        {
+          "label": "East parapet",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": 16,
+            "z": -10
+          },
+          "b": {
+            "x": 16,
+            "z": 10
+          },
+          "id": "r_par_e"
+        },
+        {
+          "label": "West parapet",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": -16,
+            "z": 10
+          },
+          "b": {
+            "x": -16,
+            "z": -10
+          },
+          "id": "r_par_w"
+        },
+        {
+          "label": "South-west parapet",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": -10,
+            "z": 16
+          },
+          "b": {
+            "x": -6,
+            "z": 16
+          },
+          "id": "r_par_sw"
+        },
+        {
+          "label": "South-east parapet",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": 6,
+            "z": 16
+          },
+          "b": {
+            "x": 10,
+            "z": 16
+          },
+          "id": "r_par_se"
+        }
+      ],
+      "openings": [
+        {
+          "label": "NW tower to side walk",
+          "doorStyle": "exterior",
+          "type": "door",
+          "wallId": "r_nw_iz_ext",
+          "width": 1.1,
+          "height": 2.2,
+          "t": 0.277777778,
+          "id": "o_nw_walk_ew"
+        },
+        {
+          "label": "NW tower to north walk",
+          "doorStyle": "exterior",
+          "type": "door",
+          "wallId": "r_nw_ix_ext",
+          "width": 1.1,
+          "height": 2.2,
+          "t": 0.722222222,
+          "id": "o_nw_walk_ns"
+        },
+        {
+          "label": "NW tower slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_nw_ox",
+          "width": 0.3,
+          "height": 1.4,
+          "t": 0.5,
+          "id": "o_nw_slit2_ox"
+        },
+        {
+          "label": "NW tower slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_nw_oz",
+          "width": 0.3,
+          "height": 1.4,
+          "t": 0.5,
+          "id": "o_nw_slit2_oz"
+        },
+        {
+          "label": "NE tower to side walk",
+          "doorStyle": "exterior",
+          "type": "door",
+          "wallId": "r_ne_iz_ext",
+          "width": 1.1,
+          "height": 2.2,
+          "t": 0.277777778,
+          "id": "o_ne_walk_ew"
+        },
+        {
+          "label": "NE tower to north walk",
+          "doorStyle": "exterior",
+          "type": "door",
+          "wallId": "r_ne_ix_ext",
+          "width": 1.1,
+          "height": 2.2,
+          "t": 0.722222222,
+          "id": "o_ne_walk_ns"
+        },
+        {
+          "label": "NE tower slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_ne_ox",
+          "width": 0.3,
+          "height": 1.4,
+          "t": 0.5,
+          "id": "o_ne_slit2_ox"
+        },
+        {
+          "label": "NE tower slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_ne_oz",
+          "width": 0.3,
+          "height": 1.4,
+          "t": 0.5,
+          "id": "o_ne_slit2_oz"
+        },
+        {
+          "label": "SE tower to side walk",
+          "doorStyle": "exterior",
+          "type": "door",
+          "wallId": "r_se_iz_ext",
+          "width": 1.1,
+          "height": 2.2,
+          "t": 0.277777778,
+          "id": "o_se_walk_ew"
+        },
+        {
+          "label": "SE tower to south walk",
+          "doorStyle": "exterior",
+          "type": "door",
+          "wallId": "r_se_ix_ext",
+          "width": 1.1,
+          "height": 2.2,
+          "t": 0.625,
+          "id": "o_se_walk_ns"
+        },
+        {
+          "label": "SE tower slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_se_ox",
+          "width": 0.3,
+          "height": 1.4,
+          "t": 0.5,
+          "id": "o_se_slit2_ox"
+        },
+        {
+          "label": "SE tower slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_se_oz",
+          "width": 0.3,
+          "height": 1.4,
+          "t": 0.5,
+          "id": "o_se_slit2_oz"
+        },
+        {
+          "label": "SW tower to side walk",
+          "doorStyle": "exterior",
+          "type": "door",
+          "wallId": "r_sw_iz_ext",
+          "width": 1.1,
+          "height": 2.2,
+          "t": 0.277777778,
+          "id": "o_sw_walk_ew"
+        },
+        {
+          "label": "SW tower to south walk",
+          "doorStyle": "exterior",
+          "type": "door",
+          "wallId": "r_sw_ix_ext",
+          "width": 1.1,
+          "height": 2.2,
+          "t": 0.625,
+          "id": "o_sw_walk_ns"
+        },
+        {
+          "label": "SW tower slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_sw_ox",
+          "width": 0.3,
+          "height": 1.4,
+          "t": 0.5,
+          "id": "o_sw_slit2_ox"
+        },
+        {
+          "label": "SW tower slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_sw_oz",
+          "width": 0.3,
+          "height": 1.4,
+          "t": 0.5,
+          "id": "o_sw_slit2_oz"
+        },
+        {
+          "label": "Guest chambers door",
+          "doorStyle": "exterior",
+          "type": "door",
+          "wallId": "r_north_walk",
+          "width": 1,
+          "height": 2.2,
+          "t": 0.25,
+          "id": "o_guest_door"
+        },
+        {
+          "label": "Chapel door",
+          "doorStyle": "exterior",
+          "type": "door",
+          "wallId": "r_north_walk",
+          "width": 1,
+          "height": 2.2,
+          "t": 0.75,
+          "id": "o_chapel_door"
+        },
+        {
+          "label": "Guest chamber window",
+          "sill": 1,
+          "windowStyle": "double_hung",
+          "type": "window",
+          "wallId": "r_north_court",
+          "width": 1,
+          "height": 1.4,
+          "t": 0.85,
+          "id": "o_guest_win7"
+        },
+        {
+          "label": "Guest chamber window",
+          "sill": 1,
+          "windowStyle": "double_hung",
+          "type": "window",
+          "wallId": "r_north_court",
+          "width": 1,
+          "height": 1.4,
+          "t": 0.65,
+          "id": "o_guest_win3"
+        },
+        {
+          "label": "Chapel window",
+          "sill": 0.8,
+          "windowStyle": "four_pane",
+          "type": "window",
+          "wallId": "r_north_court",
+          "width": 0.8,
+          "height": 2.2,
+          "t": 0.35,
+          "id": "o_chapel_win3"
+        },
+        {
+          "label": "Chapel window",
+          "sill": 0.8,
+          "windowStyle": "four_pane",
+          "type": "window",
+          "wallId": "r_north_court",
+          "width": 0.8,
+          "height": 2.2,
+          "t": 0.25,
+          "id": "o_chapel_win5"
+        },
+        {
+          "label": "Chapel window",
+          "sill": 0.8,
+          "windowStyle": "four_pane",
+          "type": "window",
+          "wallId": "r_north_court",
+          "width": 0.8,
+          "height": 2.2,
+          "t": 0.15,
+          "id": "o_chapel_win7"
+        },
+        {
+          "label": "Armory door",
+          "doorStyle": "exterior",
+          "type": "door",
+          "wallId": "r_east_walk",
+          "width": 1,
+          "height": 2.2,
+          "t": 0.25,
+          "id": "o_armory_door_n"
+        },
+        {
+          "label": "Garrison hall door",
+          "doorStyle": "exterior",
+          "type": "door",
+          "wallId": "r_west_walk",
+          "width": 1,
+          "height": 2.2,
+          "t": 0.75,
+          "id": "o_garrison_door_n"
+        },
+        {
+          "label": "Armory door",
+          "doorStyle": "exterior",
+          "type": "door",
+          "wallId": "r_east_walk",
+          "width": 1,
+          "height": 2.2,
+          "t": 0.75,
+          "id": "o_armory_door_s"
+        },
+        {
+          "label": "Garrison hall door",
+          "doorStyle": "exterior",
+          "type": "door",
+          "wallId": "r_west_walk",
+          "width": 1,
+          "height": 2.2,
+          "t": 0.25,
+          "id": "o_garrison_door_s"
+        },
+        {
+          "label": "Armory window",
+          "sill": 1,
+          "windowStyle": "double_hung",
+          "type": "window",
+          "wallId": "r_east_court",
+          "width": 1,
+          "height": 1.4,
+          "t": 0.8,
+          "id": "o_armory_win_n"
+        },
+        {
+          "label": "Garrison window",
+          "sill": 1,
+          "windowStyle": "double_hung",
+          "type": "window",
+          "wallId": "r_west_court",
+          "width": 1,
+          "height": 1.4,
+          "t": 0.2,
+          "id": "o_garrison_win_n"
+        },
+        {
+          "label": "Armory window",
+          "sill": 1,
+          "windowStyle": "double_hung",
+          "type": "window",
+          "wallId": "r_east_court",
+          "width": 1,
+          "height": 1.4,
+          "t": 0.5,
+          "id": "o_armory_win_c"
+        },
+        {
+          "label": "Garrison window",
+          "sill": 1,
+          "windowStyle": "double_hung",
+          "type": "window",
+          "wallId": "r_west_court",
+          "width": 1,
+          "height": 1.4,
+          "t": 0.5,
+          "id": "o_garrison_win_c"
+        },
+        {
+          "label": "Armory window",
+          "sill": 1,
+          "windowStyle": "double_hung",
+          "type": "window",
+          "wallId": "r_east_court",
+          "width": 1,
+          "height": 1.4,
+          "t": 0.2,
+          "id": "o_armory_win_s"
+        },
+        {
+          "label": "Garrison window",
+          "sill": 1,
+          "windowStyle": "double_hung",
+          "type": "window",
+          "wallId": "r_west_court",
+          "width": 1,
+          "height": 1.4,
+          "t": 0.8,
+          "id": "o_garrison_win_s"
+        },
+        {
+          "label": "Winch room west door",
+          "doorStyle": "exterior",
+          "type": "door",
+          "wallId": "r_gh_w",
+          "width": 1.1,
+          "height": 2.2,
+          "t": 0.7,
+          "id": "o_winch_w"
+        },
+        {
+          "label": "Winch room east door",
+          "doorStyle": "exterior",
+          "type": "door",
+          "wallId": "r_gh_e",
+          "width": 1.1,
+          "height": 2.2,
+          "t": 0.3,
+          "id": "o_winch_e"
+        },
+        {
+          "label": "Winch room slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_gh_s",
+          "width": 0.3,
+          "height": 1.2,
+          "t": 0.875,
+          "id": "o_winch_slit_w"
+        },
+        {
+          "label": "Winch room slit",
+          "sill": 1.3,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_gh_s",
+          "width": 0.3,
+          "height": 1.2,
+          "t": 0.125,
+          "id": "o_winch_slit_e"
+        },
+        {
+          "label": "Winch room courtyard window",
+          "sill": 1,
+          "windowStyle": "four_pane",
+          "type": "window",
+          "wallId": "r_gh_n",
+          "width": 1.2,
+          "height": 1.2,
+          "t": 0.5,
+          "id": "o_winch_court"
+        },
+        {
+          "label": "Great chamber window",
+          "sill": 1,
+          "windowStyle": "four_pane",
+          "type": "window",
+          "wallId": "r_keep_n",
+          "width": 0.9,
+          "height": 1.6,
+          "t": 0.4,
+          "id": "o_keep2_win_n"
+        },
+        {
+          "label": "Great chamber window",
+          "sill": 1,
+          "windowStyle": "four_pane",
+          "type": "window",
+          "wallId": "r_keep_e",
+          "width": 0.9,
+          "height": 1.6,
+          "t": 0.8125,
+          "id": "o_keep2_win_e"
+        },
+        {
+          "label": "Great chamber window",
+          "sill": 1,
+          "windowStyle": "four_pane",
+          "type": "window",
+          "wallId": "r_keep_s",
+          "width": 0.9,
+          "height": 1.6,
+          "t": 0.5,
+          "id": "o_keep2_win_s"
+        },
+        {
+          "label": "Great chamber window",
+          "sill": 1,
+          "windowStyle": "four_pane",
+          "type": "window",
+          "wallId": "r_keep_w",
+          "width": 0.9,
+          "height": 1.6,
+          "t": 0.4375,
+          "id": "o_keep2_win_w"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_n",
+          "t": 0.095,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_n-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_n",
+          "t": 0.185,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_n-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_n",
+          "t": 0.275,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_n-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_n",
+          "t": 0.365,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_n-crenel-4"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_n",
+          "t": 0.45499999999999996,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_n-crenel-5"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_n",
+          "t": 0.545,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_n-crenel-6"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_n",
+          "t": 0.635,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_n-crenel-7"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_n",
+          "t": 0.725,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_n-crenel-8"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_n",
+          "t": 0.8149999999999998,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_n-crenel-9"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_n",
+          "t": 0.905,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_n-crenel-10"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_e",
+          "t": 0.095,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_e-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_e",
+          "t": 0.185,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_e-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_e",
+          "t": 0.275,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_e-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_e",
+          "t": 0.365,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_e-crenel-4"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_e",
+          "t": 0.45499999999999996,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_e-crenel-5"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_e",
+          "t": 0.545,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_e-crenel-6"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_e",
+          "t": 0.635,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_e-crenel-7"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_e",
+          "t": 0.725,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_e-crenel-8"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_e",
+          "t": 0.8149999999999998,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_e-crenel-9"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_e",
+          "t": 0.905,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_e-crenel-10"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_w",
+          "t": 0.095,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_w-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_w",
+          "t": 0.185,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_w-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_w",
+          "t": 0.275,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_w-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_w",
+          "t": 0.365,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_w-crenel-4"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_w",
+          "t": 0.45499999999999996,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_w-crenel-5"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_w",
+          "t": 0.545,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_w-crenel-6"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_w",
+          "t": 0.635,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_w-crenel-7"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_w",
+          "t": 0.725,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_w-crenel-8"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_w",
+          "t": 0.8149999999999998,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_w-crenel-9"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_w",
+          "t": 0.905,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_w-crenel-10"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_sw",
+          "t": 0.5,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_sw-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "r_par_se",
+          "t": 0.5,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "r_par_se-crenel-1"
+        }
+      ],
+      "lights": [],
+      "stairs": [
+        {
+          "id": "st_nw_2",
+          "label": "NW tower stair (roof)",
+          "x": -13.75,
+          "z": -16.9,
+          "width": 1.2,
+          "run": 4.5,
+          "direction": "west",
+          "style": "steps",
+          "steps": 21,
+          "blockBelow": true
+        },
+        {
+          "id": "st_ne_2",
+          "label": "NE tower stair (roof)",
+          "x": 13.75,
+          "z": -16.9,
+          "width": 1.2,
+          "run": 4.5,
+          "direction": "east",
+          "style": "steps",
+          "steps": 21,
+          "blockBelow": true
+        },
+        {
+          "id": "st_se_2",
+          "label": "SE tower stair (roof)",
+          "x": 13.75,
+          "z": 16.9,
+          "width": 1.2,
+          "run": 4.5,
+          "direction": "east",
+          "style": "steps",
+          "steps": 21,
+          "blockBelow": true
+        },
+        {
+          "id": "st_sw_2",
+          "label": "SW tower stair (roof)",
+          "x": -13.75,
+          "z": 16.9,
+          "width": 1.2,
+          "run": 4.5,
+          "direction": "west",
+          "style": "steps",
+          "steps": 21,
+          "blockBelow": true
+        },
+        {
+          "id": "st_gate",
+          "label": "Gatehouse stair",
+          "x": 0,
+          "z": 18.9,
+          "width": 1.2,
+          "run": 4.5,
+          "direction": "east",
+          "style": "steps",
+          "steps": 21,
+          "blockBelow": true
+        },
+        {
+          "id": "st_keep_2",
+          "label": "Keep stair (great chamber)",
+          "x": 4,
+          "z": -2.75,
+          "width": 1.2,
+          "run": 4.5,
+          "direction": "south",
+          "style": "steps",
+          "steps": 21,
+          "blockBelow": true
+        }
+      ],
+      "slabs": [],
+      "regions": [
+        {
+          "id": "cov_n",
+          "label": "North range",
+          "minX": -10,
+          "maxX": 10,
+          "minZ": -16,
+          "maxZ": -10,
+          "kind": "wing",
+          "effect": "solid"
+        },
+        {
+          "id": "cov_e",
+          "label": "East range",
+          "minX": 10,
+          "maxX": 16,
+          "minZ": -10,
+          "maxZ": 10,
+          "kind": "wing",
+          "effect": "solid"
+        },
+        {
+          "id": "cov_w",
+          "label": "West range",
+          "minX": -16,
+          "maxX": -10,
+          "minZ": -10,
+          "maxZ": 10,
+          "kind": "wing",
+          "effect": "solid"
+        },
+        {
+          "id": "cov_s_w",
+          "label": "South-west walk",
+          "minX": -10,
+          "maxX": -6,
+          "minZ": 10,
+          "maxZ": 16,
+          "kind": "wing",
+          "effect": "solid"
+        },
+        {
+          "id": "cov_s_e",
+          "label": "South-east walk",
+          "minX": 6,
+          "maxX": 10,
+          "minZ": 10,
+          "maxZ": 16,
+          "kind": "wing",
+          "effect": "solid"
+        },
+        {
+          "id": "cov_gate",
+          "label": "Winch room",
+          "minX": -6,
+          "maxX": 6,
+          "minZ": 10,
+          "maxZ": 20,
+          "kind": "room",
+          "effect": "solid"
+        },
+        {
+          "id": "cov_keep",
+          "label": "Great chamber",
+          "minX": -5,
+          "maxX": 5,
+          "minZ": -6,
+          "maxZ": 2,
+          "kind": "room",
+          "effect": "solid"
+        },
+        {
+          "id": "cov_nw",
+          "label": "NW tower",
+          "minX": -18,
+          "maxX": -10,
+          "minZ": -18,
+          "maxZ": -10,
+          "kind": "room",
+          "effect": "solid"
+        },
+        {
+          "id": "cov_ne",
+          "label": "NE tower",
+          "minX": 10,
+          "maxX": 18,
+          "minZ": -18,
+          "maxZ": -10,
+          "kind": "room",
+          "effect": "solid"
+        },
+        {
+          "id": "cov_se",
+          "label": "SE tower",
+          "minX": 10,
+          "maxX": 18,
+          "minZ": 10,
+          "maxZ": 18,
+          "kind": "room",
+          "effect": "solid"
+        },
+        {
+          "id": "cov_sw",
+          "label": "SW tower",
+          "minX": -18,
+          "maxX": -10,
+          "minZ": 10,
+          "maxZ": 18,
+          "kind": "room",
+          "effect": "solid"
+        },
+        {
+          "id": "lbl_walk_n",
+          "label": "North wall walk",
+          "minX": -10,
+          "maxX": 10,
+          "minZ": -16,
+          "maxZ": -13.5,
+          "kind": "bay",
+          "effect": "label"
+        },
+        {
+          "id": "lbl_walk_e",
+          "label": "East wall walk",
+          "minX": 13.5,
+          "maxX": 16,
+          "minZ": -10,
+          "maxZ": 10,
+          "kind": "bay",
+          "effect": "label"
+        },
+        {
+          "id": "lbl_walk_w",
+          "label": "West wall walk",
+          "minX": -16,
+          "maxX": -13.5,
+          "minZ": -10,
+          "maxZ": 10,
+          "kind": "bay",
+          "effect": "label"
+        },
+        {
+          "id": "lbl_guest",
+          "label": "Guest chambers",
+          "minX": -10,
+          "maxX": 0,
+          "minZ": -13.5,
+          "maxZ": -10,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "lbl_chapel",
+          "label": "Chapel",
+          "minX": 0,
+          "maxX": 10,
+          "minZ": -13.5,
+          "maxZ": -10,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "lbl_armory",
+          "label": "Armory",
+          "minX": 10,
+          "maxX": 13.5,
+          "minZ": -10,
+          "maxZ": 10,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "lbl_garrison",
+          "label": "Garrison hall",
+          "minX": -13.5,
+          "maxX": -10,
+          "minZ": -10,
+          "maxZ": 10,
+          "kind": "room",
+          "effect": "label"
+        }
+      ],
+      "platforms": [],
+      "railings": [
+        {
+          "label": "NW stair-hole railing",
+          "a": {
+            "x": -16.1,
+            "z": -11.5
+          },
+          "b": {
+            "x": -16.1,
+            "z": -16.2
+          },
+          "height": 1,
+          "style": "picket",
+          "id": "rl_nw_hole1"
+        },
+        {
+          "label": "NE stair-hole railing",
+          "a": {
+            "x": 16.1,
+            "z": -11.5
+          },
+          "b": {
+            "x": 16.1,
+            "z": -16.2
+          },
+          "height": 1,
+          "style": "picket",
+          "id": "rl_ne_hole1"
+        },
+        {
+          "label": "SE stair-hole railing",
+          "a": {
+            "x": 16.1,
+            "z": 11.5
+          },
+          "b": {
+            "x": 16.1,
+            "z": 16.2
+          },
+          "height": 1,
+          "style": "picket",
+          "id": "rl_se_hole1"
+        },
+        {
+          "label": "SW stair-hole railing",
+          "a": {
+            "x": -16.1,
+            "z": 11.5
+          },
+          "b": {
+            "x": -16.1,
+            "z": 16.2
+          },
+          "height": 1,
+          "style": "picket",
+          "id": "rl_sw_hole1"
+        },
+        {
+          "label": "Keep stair-hole railing",
+          "a": {
+            "x": -3.2,
+            "z": -4.25
+          },
+          "b": {
+            "x": -3.2,
+            "z": 0.95
+          },
+          "height": 1,
+          "style": "picket",
+          "id": "rl_keep_hole1_e"
+        },
+        {
+          "label": "Keep stair-hole railing",
+          "a": {
+            "x": -3.2,
+            "z": 0.95
+          },
+          "b": {
+            "x": -4.7,
+            "z": 0.95
+          },
+          "height": 1,
+          "style": "picket",
+          "id": "rl_keep_hole1_s"
+        },
+        {
+          "label": "South walk courtyard railing",
+          "a": {
+            "x": -9.7,
+            "z": 10.3
+          },
+          "b": {
+            "x": -8.9,
+            "z": 10.3
+          },
+          "height": 1,
+          "style": "picket",
+          "id": "rl_walk_sw_a"
+        },
+        {
+          "label": "South walk courtyard railing",
+          "a": {
+            "x": -7.1,
+            "z": 10.3
+          },
+          "b": {
+            "x": -6.3,
+            "z": 10.3
+          },
+          "height": 1,
+          "style": "picket",
+          "id": "rl_walk_sw_b"
+        },
+        {
+          "label": "South walk courtyard railing",
+          "a": {
+            "x": 9.7,
+            "z": 10.3
+          },
+          "b": {
+            "x": 8.9,
+            "z": 10.3
+          },
+          "height": 1,
+          "style": "picket",
+          "id": "rl_walk_se_a"
+        },
+        {
+          "label": "South walk courtyard railing",
+          "a": {
+            "x": 7.1,
+            "z": 10.3
+          },
+          "b": {
+            "x": 6.3,
+            "z": 10.3
+          },
+          "height": 1,
+          "style": "picket",
+          "id": "rl_walk_se_b"
+        }
+      ],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": false,
+      "wallHeight": 3.5
+    },
+    {
+      "id": "f3_towertops",
+      "label": "Tower tops",
+      "walls": [
+        {
+          "label": "NW tower top N",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": -18,
+            "z": -18
+          },
+          "b": {
+            "x": -10,
+            "z": -18
+          },
+          "id": "t_nw_n"
+        },
+        {
+          "label": "NW tower top E",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": -10,
+            "z": -18
+          },
+          "b": {
+            "x": -10,
+            "z": -10
+          },
+          "id": "t_nw_e"
+        },
+        {
+          "label": "NW tower top S",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": -10,
+            "z": -10
+          },
+          "b": {
+            "x": -18,
+            "z": -10
+          },
+          "id": "t_nw_s"
+        },
+        {
+          "label": "NW tower top W",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": -18,
+            "z": -10
+          },
+          "b": {
+            "x": -18,
+            "z": -18
+          },
+          "id": "t_nw_w"
+        },
+        {
+          "label": "NE tower top N",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": 10,
+            "z": -18
+          },
+          "b": {
+            "x": 18,
+            "z": -18
+          },
+          "id": "t_ne_n"
+        },
+        {
+          "label": "NE tower top E",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": 18,
+            "z": -18
+          },
+          "b": {
+            "x": 18,
+            "z": -10
+          },
+          "id": "t_ne_e"
+        },
+        {
+          "label": "NE tower top S",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": 18,
+            "z": -10
+          },
+          "b": {
+            "x": 10,
+            "z": -10
+          },
+          "id": "t_ne_s"
+        },
+        {
+          "label": "NE tower top W",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": 10,
+            "z": -10
+          },
+          "b": {
+            "x": 10,
+            "z": -18
+          },
+          "id": "t_ne_w"
+        },
+        {
+          "label": "SE tower top N",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": 10,
+            "z": 10
+          },
+          "b": {
+            "x": 18,
+            "z": 10
+          },
+          "id": "t_se_n"
+        },
+        {
+          "label": "SE tower top E",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": 18,
+            "z": 10
+          },
+          "b": {
+            "x": 18,
+            "z": 18
+          },
+          "id": "t_se_e"
+        },
+        {
+          "label": "SE tower top S",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": 18,
+            "z": 18
+          },
+          "b": {
+            "x": 10,
+            "z": 18
+          },
+          "id": "t_se_s"
+        },
+        {
+          "label": "SE tower top W",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": 10,
+            "z": 18
+          },
+          "b": {
+            "x": 10,
+            "z": 10
+          },
+          "id": "t_se_w"
+        },
+        {
+          "label": "SW tower top N",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": -18,
+            "z": 10
+          },
+          "b": {
+            "x": -10,
+            "z": 10
+          },
+          "id": "t_sw_n"
+        },
+        {
+          "label": "SW tower top E",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": -10,
+            "z": 10
+          },
+          "b": {
+            "x": -10,
+            "z": 18
+          },
+          "id": "t_sw_e"
+        },
+        {
+          "label": "SW tower top S",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": -10,
+            "z": 18
+          },
+          "b": {
+            "x": -18,
+            "z": 18
+          },
+          "id": "t_sw_s"
+        },
+        {
+          "label": "SW tower top W",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": -18,
+            "z": 18
+          },
+          "b": {
+            "x": -18,
+            "z": 10
+          },
+          "id": "t_sw_w"
+        },
+        {
+          "label": "Gatehouse top N",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": -6,
+            "z": 10
+          },
+          "b": {
+            "x": 6,
+            "z": 10
+          },
+          "id": "t_gh_n"
+        },
+        {
+          "label": "Gatehouse top E",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": 6,
+            "z": 10
+          },
+          "b": {
+            "x": 6,
+            "z": 20
+          },
+          "id": "t_gh_e"
+        },
+        {
+          "label": "Gatehouse top S",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": 6,
+            "z": 20
+          },
+          "b": {
+            "x": -6,
+            "z": 20
+          },
+          "id": "t_gh_s"
+        },
+        {
+          "label": "Gatehouse top W",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": -6,
+            "z": 20
+          },
+          "b": {
+            "x": -6,
+            "z": 10
+          },
+          "id": "t_gh_w"
+        },
+        {
+          "label": "Keep",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -5,
+            "z": -6
+          },
+          "b": {
+            "x": 5,
+            "z": -6
+          },
+          "id": "t_keep_n"
+        },
+        {
+          "label": "Keep",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 5,
+            "z": -6
+          },
+          "b": {
+            "x": 5,
+            "z": 2
+          },
+          "id": "t_keep_e"
+        },
+        {
+          "label": "Keep",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 5,
+            "z": 2
+          },
+          "b": {
+            "x": -5,
+            "z": 2
+          },
+          "id": "t_keep_s"
+        },
+        {
+          "label": "Keep",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -5,
+            "z": 2
+          },
+          "b": {
+            "x": -5,
+            "z": -6
+          },
+          "id": "t_keep_w"
+        }
+      ],
+      "openings": [
+        {
+          "label": "Lord's chamber window",
+          "sill": 1,
+          "windowStyle": "four_pane",
+          "type": "window",
+          "wallId": "t_keep_n",
+          "width": 0.9,
+          "height": 1.6,
+          "t": 0.6,
+          "id": "o_keep3_win_n"
+        },
+        {
+          "label": "Lord's chamber window",
+          "sill": 1,
+          "windowStyle": "four_pane",
+          "type": "window",
+          "wallId": "t_keep_e",
+          "width": 0.9,
+          "height": 1.6,
+          "t": 0.75,
+          "id": "o_keep3_win_e"
+        },
+        {
+          "label": "Lord's chamber window",
+          "sill": 1,
+          "windowStyle": "four_pane",
+          "type": "window",
+          "wallId": "t_keep_s",
+          "width": 0.9,
+          "height": 1.6,
+          "t": 0.5,
+          "id": "o_keep3_win_s"
+        },
+        {
+          "label": "Lord's chamber window",
+          "sill": 1,
+          "windowStyle": "four_pane",
+          "type": "window",
+          "wallId": "t_keep_w",
+          "width": 0.9,
+          "height": 1.6,
+          "t": 0.125,
+          "id": "o_keep3_win_w"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_nw_n",
+          "t": 0.275,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_nw_n-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_nw_n",
+          "t": 0.5,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_nw_n-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_nw_n",
+          "t": 0.725,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_nw_n-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_nw_e",
+          "t": 0.275,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_nw_e-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_nw_e",
+          "t": 0.5,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_nw_e-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_nw_e",
+          "t": 0.725,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_nw_e-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_nw_s",
+          "t": 0.275,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_nw_s-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_nw_s",
+          "t": 0.5,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_nw_s-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_nw_s",
+          "t": 0.725,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_nw_s-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_nw_w",
+          "t": 0.275,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_nw_w-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_nw_w",
+          "t": 0.5,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_nw_w-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_nw_w",
+          "t": 0.725,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_nw_w-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_ne_n",
+          "t": 0.275,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_ne_n-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_ne_n",
+          "t": 0.5,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_ne_n-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_ne_n",
+          "t": 0.725,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_ne_n-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_ne_e",
+          "t": 0.275,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_ne_e-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_ne_e",
+          "t": 0.5,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_ne_e-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_ne_e",
+          "t": 0.725,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_ne_e-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_ne_s",
+          "t": 0.275,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_ne_s-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_ne_s",
+          "t": 0.5,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_ne_s-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_ne_s",
+          "t": 0.725,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_ne_s-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_ne_w",
+          "t": 0.275,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_ne_w-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_ne_w",
+          "t": 0.5,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_ne_w-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_ne_w",
+          "t": 0.725,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_ne_w-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_se_n",
+          "t": 0.275,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_se_n-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_se_n",
+          "t": 0.5,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_se_n-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_se_n",
+          "t": 0.725,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_se_n-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_se_e",
+          "t": 0.275,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_se_e-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_se_e",
+          "t": 0.5,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_se_e-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_se_e",
+          "t": 0.725,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_se_e-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_se_s",
+          "t": 0.275,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_se_s-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_se_s",
+          "t": 0.5,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_se_s-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_se_s",
+          "t": 0.725,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_se_s-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_se_w",
+          "t": 0.275,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_se_w-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_se_w",
+          "t": 0.5,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_se_w-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_se_w",
+          "t": 0.725,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_se_w-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_sw_n",
+          "t": 0.275,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_sw_n-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_sw_n",
+          "t": 0.5,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_sw_n-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_sw_n",
+          "t": 0.725,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_sw_n-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_sw_e",
+          "t": 0.275,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_sw_e-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_sw_e",
+          "t": 0.5,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_sw_e-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_sw_e",
+          "t": 0.725,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_sw_e-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_sw_s",
+          "t": 0.275,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_sw_s-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_sw_s",
+          "t": 0.5,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_sw_s-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_sw_s",
+          "t": 0.725,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_sw_s-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_sw_w",
+          "t": 0.275,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_sw_w-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_sw_w",
+          "t": 0.5,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_sw_w-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_sw_w",
+          "t": 0.725,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_sw_w-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_gh_n",
+          "t": 0.125,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_gh_n-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_gh_n",
+          "t": 0.275,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_gh_n-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_gh_n",
+          "t": 0.425,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_gh_n-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_gh_n",
+          "t": 0.575,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_gh_n-crenel-4"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_gh_n",
+          "t": 0.725,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_gh_n-crenel-5"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_gh_n",
+          "t": 0.875,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_gh_n-crenel-6"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_gh_e",
+          "t": 0.14,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_gh_e-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_gh_e",
+          "t": 0.32,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_gh_e-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_gh_e",
+          "t": 0.5,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_gh_e-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_gh_e",
+          "t": 0.68,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_gh_e-crenel-4"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_gh_e",
+          "t": 0.86,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_gh_e-crenel-5"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_gh_s",
+          "t": 0.125,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_gh_s-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_gh_s",
+          "t": 0.275,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_gh_s-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_gh_s",
+          "t": 0.425,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_gh_s-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_gh_s",
+          "t": 0.575,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_gh_s-crenel-4"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_gh_s",
+          "t": 0.725,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_gh_s-crenel-5"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_gh_s",
+          "t": 0.875,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_gh_s-crenel-6"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_gh_w",
+          "t": 0.14,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_gh_w-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_gh_w",
+          "t": 0.32,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_gh_w-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_gh_w",
+          "t": 0.5,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_gh_w-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_gh_w",
+          "t": 0.68,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_gh_w-crenel-4"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "t_gh_w",
+          "t": 0.86,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "t_gh_w-crenel-5"
+        }
+      ],
+      "lights": [],
+      "stairs": [
+        {
+          "id": "st_keep_3",
+          "label": "Keep stair (lord's chamber)",
+          "x": -4,
+          "z": -2,
+          "width": 1.2,
+          "run": 4.5,
+          "direction": "north",
+          "style": "steps",
+          "steps": 21,
+          "blockBelow": true
+        }
+      ],
+      "slabs": [],
+      "regions": [
+        {
+          "id": "cov_nw",
+          "label": "NW tower top",
+          "minX": -18,
+          "maxX": -10,
+          "minZ": -18,
+          "maxZ": -10,
+          "kind": "room",
+          "effect": "solid"
+        },
+        {
+          "id": "cov_ne",
+          "label": "NE tower top",
+          "minX": 10,
+          "maxX": 18,
+          "minZ": -18,
+          "maxZ": -10,
+          "kind": "room",
+          "effect": "solid"
+        },
+        {
+          "id": "cov_se",
+          "label": "SE tower top",
+          "minX": 10,
+          "maxX": 18,
+          "minZ": 10,
+          "maxZ": 18,
+          "kind": "room",
+          "effect": "solid"
+        },
+        {
+          "id": "cov_sw",
+          "label": "SW tower top",
+          "minX": -18,
+          "maxX": -10,
+          "minZ": 10,
+          "maxZ": 18,
+          "kind": "room",
+          "effect": "solid"
+        },
+        {
+          "id": "cov_gate",
+          "label": "Gatehouse top",
+          "minX": -6,
+          "maxX": 6,
+          "minZ": 10,
+          "maxZ": 20,
+          "kind": "room",
+          "effect": "solid"
+        },
+        {
+          "id": "cov_keep",
+          "label": "Lord's chamber",
+          "minX": -5,
+          "maxX": 5,
+          "minZ": -6,
+          "maxZ": 2,
+          "kind": "room",
+          "effect": "solid"
+        }
+      ],
+      "platforms": [],
+      "railings": [
+        {
+          "label": "NW stair-hole railing",
+          "a": {
+            "x": -16,
+            "z": -16.1
+          },
+          "b": {
+            "x": -11.3,
+            "z": -16.1
+          },
+          "height": 1,
+          "style": "picket",
+          "id": "rl_nw_hole2_inner"
+        },
+        {
+          "label": "NW stair-hole railing",
+          "a": {
+            "x": -11.3,
+            "z": -16.1
+          },
+          "b": {
+            "x": -11.3,
+            "z": -17.7
+          },
+          "height": 1,
+          "style": "picket",
+          "id": "rl_nw_hole2_end"
+        },
+        {
+          "label": "NE stair-hole railing",
+          "a": {
+            "x": 16,
+            "z": -16.1
+          },
+          "b": {
+            "x": 11.3,
+            "z": -16.1
+          },
+          "height": 1,
+          "style": "picket",
+          "id": "rl_ne_hole2_inner"
+        },
+        {
+          "label": "NE stair-hole railing",
+          "a": {
+            "x": 11.3,
+            "z": -16.1
+          },
+          "b": {
+            "x": 11.3,
+            "z": -17.7
+          },
+          "height": 1,
+          "style": "picket",
+          "id": "rl_ne_hole2_end"
+        },
+        {
+          "label": "SE stair-hole railing",
+          "a": {
+            "x": 16,
+            "z": 16.1
+          },
+          "b": {
+            "x": 11.3,
+            "z": 16.1
+          },
+          "height": 1,
+          "style": "picket",
+          "id": "rl_se_hole2_inner"
+        },
+        {
+          "label": "SE stair-hole railing",
+          "a": {
+            "x": 11.3,
+            "z": 16.1
+          },
+          "b": {
+            "x": 11.3,
+            "z": 17.7
+          },
+          "height": 1,
+          "style": "picket",
+          "id": "rl_se_hole2_end"
+        },
+        {
+          "label": "SW stair-hole railing",
+          "a": {
+            "x": -16,
+            "z": 16.1
+          },
+          "b": {
+            "x": -11.3,
+            "z": 16.1
+          },
+          "height": 1,
+          "style": "picket",
+          "id": "rl_sw_hole2_inner"
+        },
+        {
+          "label": "SW stair-hole railing",
+          "a": {
+            "x": -11.3,
+            "z": 16.1
+          },
+          "b": {
+            "x": -11.3,
+            "z": 17.7
+          },
+          "height": 1,
+          "style": "picket",
+          "id": "rl_sw_hole2_end"
+        },
+        {
+          "label": "Gatehouse stair-hole railing",
+          "a": {
+            "x": -2.45,
+            "z": 19.7
+          },
+          "b": {
+            "x": -2.45,
+            "z": 18.1
+          },
+          "height": 1,
+          "style": "picket",
+          "id": "rl_gh_side"
+        },
+        {
+          "label": "Gatehouse stair-hole railing",
+          "a": {
+            "x": -2.45,
+            "z": 18.1
+          },
+          "b": {
+            "x": 2.25,
+            "z": 18.1
+          },
+          "height": 1,
+          "style": "picket",
+          "id": "rl_gh_long"
+        },
+        {
+          "label": "Keep stair-hole railing",
+          "a": {
+            "x": 3.2,
+            "z": -0.5
+          },
+          "b": {
+            "x": 3.2,
+            "z": -5.2
+          },
+          "height": 1,
+          "style": "picket",
+          "id": "rl_keep_hole2_w"
+        },
+        {
+          "label": "Keep stair-hole railing",
+          "a": {
+            "x": 3.2,
+            "z": -5.2
+          },
+          "b": {
+            "x": 4.7,
+            "z": -5.2
+          },
+          "height": 1,
+          "style": "picket",
+          "id": "rl_keep_hole2_n"
+        }
+      ],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": false,
+      "wallHeight": 3.5
+    },
+    {
+      "id": "f4_keeproof",
+      "label": "Keep roof",
+      "walls": [
+        {
+          "label": "Keep roof N",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": -5,
+            "z": -6
+          },
+          "b": {
+            "x": 5,
+            "z": -6
+          },
+          "id": "k_keep_n"
+        },
+        {
+          "label": "Keep roof E",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": 5,
+            "z": -6
+          },
+          "b": {
+            "x": 5,
+            "z": 2
+          },
+          "id": "k_keep_e"
+        },
+        {
+          "label": "Keep roof S",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": 5,
+            "z": 2
+          },
+          "b": {
+            "x": -5,
+            "z": 2
+          },
+          "id": "k_keep_s"
+        },
+        {
+          "label": "Keep roof W",
+          "role": "exterior",
+          "height": 1.7,
+          "a": {
+            "x": -5,
+            "z": 2
+          },
+          "b": {
+            "x": -5,
+            "z": -6
+          },
+          "id": "k_keep_w"
+        }
+      ],
+      "openings": [
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "k_keep_n",
+          "t": 0.14,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "k_keep_n-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "k_keep_n",
+          "t": 0.32,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "k_keep_n-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "k_keep_n",
+          "t": 0.5,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "k_keep_n-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "k_keep_n",
+          "t": 0.68,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "k_keep_n-crenel-4"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "k_keep_n",
+          "t": 0.86,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "k_keep_n-crenel-5"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "k_keep_e",
+          "t": 0.275,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "k_keep_e-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "k_keep_e",
+          "t": 0.5,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "k_keep_e-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "k_keep_e",
+          "t": 0.725,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "k_keep_e-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "k_keep_s",
+          "t": 0.14,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "k_keep_s-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "k_keep_s",
+          "t": 0.32,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "k_keep_s-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "k_keep_s",
+          "t": 0.5,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "k_keep_s-crenel-3"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "k_keep_s",
+          "t": 0.68,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "k_keep_s-crenel-4"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "k_keep_s",
+          "t": 0.86,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "k_keep_s-crenel-5"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "k_keep_w",
+          "t": 0.275,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "k_keep_w-crenel-1"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "k_keep_w",
+          "t": 0.5,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "k_keep_w-crenel-2"
+        },
+        {
+          "label": "Crenel",
+          "sill": 1,
+          "windowStyle": "empty",
+          "type": "window",
+          "wallId": "k_keep_w",
+          "t": 0.725,
+          "width": 0.8,
+          "height": 0.7,
+          "id": "k_keep_w-crenel-3"
+        }
+      ],
+      "lights": [],
+      "stairs": [],
+      "slabs": [],
+      "regions": [
+        {
+          "id": "cov_keep",
+          "label": "Keep roof",
+          "minX": -5,
+          "maxX": 5,
+          "minZ": -6,
+          "maxZ": 2,
+          "kind": "room",
+          "effect": "solid"
+        }
+      ],
+      "platforms": [],
+      "railings": [
+        {
+          "label": "Keep stair-hole railing",
+          "a": {
+            "x": -3.2,
+            "z": -4.25
+          },
+          "b": {
+            "x": -3.2,
+            "z": 0.5
+          },
+          "height": 1,
+          "style": "picket",
+          "id": "rl_keep_hole3_e"
+        },
+        {
+          "label": "Keep stair-hole railing",
+          "a": {
+            "x": -3.2,
+            "z": 0.5
+          },
+          "b": {
+            "x": -4.7,
+            "z": 0.5
+          },
+          "height": 1,
+          "style": "picket",
+          "id": "rl_keep_hole3_s"
+        }
+      ],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": false,
+      "wallHeight": 3
+    }
+  ]
+}

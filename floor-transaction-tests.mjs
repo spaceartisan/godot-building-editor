@@ -52,7 +52,7 @@ try{
   const metadata=structuredClone(source);metadata.floors[0].notes={custom:'keep'};assert.deepEqual(edit(recipe.operations,metadata).building.floors[0].notes,metadata.floors[0].notes);
   console.log('PASS floor overrides/reset: resolved levels, unchanged IDs/entities, deterministic reload, metadata, ramp and stepped-stair rise');
 
-  for(const [value,pattern] of [[{label:''},/nonempty/],[{label:' '},/nonempty/],[{label:null},/text/],[{},/at least/],[{wallHeight:'4'},/finite/],[{wallHeight:.19},/finite/],[{wallHeight:1001},/finite/],[{floorThickness:0},/finite/],[{floorThickness:101},/finite/],[{elevation:Infinity},/finite/],[{elevation:1000001},/finite/],[{autoFloor:false},/Unknown field/],[{id:'new'},/Unknown field/],[{stairs:[]},/Unknown field/]])reject([op(lower,value)],pattern);
+  for(const [value,pattern] of [[{label:''},/nonempty/],[{label:' '},/nonempty/],[{label:null},/text/],[{},/at least/],[{wallHeight:'4'},/finite/],[{wallHeight:.19},/finite/],[{wallHeight:1001},/finite/],[{floorThickness:0},/finite/],[{floorThickness:101},/finite/],[{elevation:Infinity},/finite/],[{elevation:1000001},/finite/],[{autoFloor:'no'},/boolean/],[{autoCeiling:null},/boolean/],[{boundaryMode:'open'},/one of/],[{id:'new'},/Unknown field/],[{stairs:[]},/Unknown field/]])reject([op(lower,value)],pattern);
   reject([op('missing',{label:'No'})],/Unknown floor/);
   for(const action of ['add','remove','move-endpoint'])reject([{op:`floor.${action}`,id:lower}],/Unknown operation/);
   reject([{...op(lower,{label:'No'}),floorId:lower}],/Unknown field/);

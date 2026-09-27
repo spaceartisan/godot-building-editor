@@ -23,7 +23,7 @@ Keep a short evidence table. For each item record **verified**, **failed**, **un
 | Architectural brief | Whole-building views show the requested silhouette and authored defining details |
 | Export | Scene and relative door dependencies exist and load under the checks actually performed |
 
-Use Plan and floor-isolated views to inspect coverage and routes. A whole-building thumbnail hides floor holes and disconnected stories. Review opposite exterior viewpoints, every distinct floor, the entrance, stairs/landings and void boundaries. Software preview is geometry evidence; it does not prove Godot lighting or character clearance. Use target-engine traversal/physics checks before claiming playability, or clearly mark traversal unverified.
+Run `node cli.mjs validate FILE --reachability` for route evidence. It rasterizes each floor's walkable surface, blocks walls and railings with a 0.25 m walker clearance, opens doors and empty passages, links stair entrances to their arrivals and floods from open ground outside the building. Every floor area of 1 m² or more that cannot be reached becomes a warning naming the floor, its approximate location and the labelled regions it covers; blocked stair entrances or arrivals are reported per stair. It is a connectivity check, not a physics, headroom or door-swing test. Also use Plan and floor-isolated views to inspect coverage and routes. A whole-building thumbnail hides floor holes and disconnected stories. Review opposite exterior viewpoints, every distinct floor, the entrance, stairs/landings and void boundaries. Software preview is geometry evidence; it does not prove Godot lighting or character clearance. Use target-engine traversal/physics checks before claiming playability, or clearly mark traversal unverified.
 
 ## 3. Understand region precedence
 
@@ -49,7 +49,7 @@ for floor in 1 2 3 4; do
 done
 ```
 
-Preview commands require the documented canvas dependency. Inspect the resulting images; creating them is not visual review. For another plan, discover the actual floor count and IDs. Use supported transactions and reviewed dry runs for edits, save a separate candidate, and repeat the affected coverage/route checks. Export after review, retaining the editable JSON and relative door assets. Do not hand-edit a TSCN to hide a source-plan problem.
+The CLI `preview` is a quick software approximation. For the delivered look, render the export in Godot: `node cli.mjs godot-check --assets DIR --godot PATH --render --out NEW_DIR` gives exterior, aerial and eye-level region views of the actual `.tscn`. Preview commands require the documented canvas dependency. Inspect the resulting images; creating them is not visual review. For another plan, discover the actual floor count and IDs. Use supported transactions and reviewed dry runs for edits, save a separate candidate, and repeat the affected coverage/route checks. Export after review, retaining the editable JSON and relative door assets. Do not hand-edit a TSCN to hide a source-plan problem.
 
 ## 5. Castle case study: why zero warnings was insufficient
 

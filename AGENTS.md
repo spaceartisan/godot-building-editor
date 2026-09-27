@@ -16,6 +16,7 @@ Focus on cleanup of the web builder and Linux CLI: reproducible bugs, usability,
 - Keep materials empty by default. Preserve geometry/collision parity, stair and multi-story seam behavior, supplied examples and intentional openings.
 - Keep the barn's large ground-floor entrance and closed upper gable. Furniture and gameplay are outside the tool's scope.
 - Reuse shared model, validation and exporter code. Avoid divergent web/CLI geometry rules.
+- Every capability must be available in both the web editor and the CLI, backed by the same shared code. Features that need a local process (such as Godot rendering) reach the web editor through `server.mjs`. Add web-handler and CLI tests for both routes.
 - Choose verification appropriate to the change. Report actual engine versions and skipped/unavailable checks. DOM-handler tests do not establish browser layout; software previews do not establish Godot rendering or physics.
 - Do not overwrite user outputs, regenerate supplied fixtures casually, or modify generated scenes to hide an exporter defect.
 

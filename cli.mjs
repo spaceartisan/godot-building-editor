@@ -10,9 +10,12 @@ import { createCheckReport } from './src/check-report.js';
 import { parseJsonText } from './src/document.js';
 import { exportGodotFiles, makeStoredZip } from './src/exporter.js';
 import { prepareAssetDirectory, AssetCheckError } from './asset-check.mjs';
+import { renderPreparedScenes, parseViews, RenderError } from './godot-render.mjs';
 import { EXAMPLE_CATALOG } from './src/examples.js';
 import { checkExampleExpectation } from './src/example-check.js';
 import { applyTransaction } from './src/transactions.js';
+import { makeEmptyBuilding } from './src/model.js';
+import { reachabilityWarnings } from './src/reachability.js';
 import { attachmentSummary } from './src/roof-diagnostics.js';
 import { runReleaseCheck, assertExternalReport } from './release-check.mjs';
 import { suites } from './test-suites.mjs';
@@ -20,14 +23,17 @@ import { suites } from './test-suites.mjs';
 const root=path.dirname(fileURLToPath(import.meta.url));
 const version=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8')).version;
 const common=['json','quiet','verbose','help'];
-const specs={edit:['ops','out','dry-run','warnings-as-errors'],validate:['warnings-as-errors','out'],inspect:['warnings-as-errors','entities'],export:['out','profile','no-collision','no-markers','placeholders','warnings-as-errors'],package:['out','profile','no-collision','no-markers','placeholders','warnings-as-errors','include-json'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof']};
-const values=new Set(['ops','out','profile','suite','godot','assets','yaw','pitch','distance','floor','view','compare','overlay','roof','canvas','engine','timeout']);
+const specs={new:['out','name'],edit:['ops','out','dry-run','warnings-as-errors'],validate:['warnings-as-errors','out','reachability'],inspect:['warnings-as-errors','entities','reachability'],export:['out','profile','no-collision','no-markers','placeholders','warnings-as-errors'],package:['out','profile','no-collision','no-markers','placeholders','warnings-as-errors','include-json'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision','render','views','out'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof']};
+const values=new Set(['name','views','ops','out','profile','suite','godot','assets','yaw','pitch','distance','floor','view','compare','overlay','roof','canvas','engine','timeout']);
 class CliError extends Error{constructor(message,code=2){super(message);this.code=code;}}
 const help=`Building Studio ${version}
 Usage: node cli.mjs COMMAND [FILES...] [OPTIONS]
 
+  new --out NEW.json [--name TEXT]   Create a blank one-floor building (floor ID floor_1)
   validate FILE... [--out NEW.json]   Validate; optionally save a check report
   inspect FILE... [--entities]   Inventory; optionally list authoring IDs/fields
+    --reachability      Validate/inspect: warn about floor areas and stairs that
+                        cannot be reached from outside via doors and stairs
   edit FILE --ops JSON --dry-run   Validate a transaction and show its diff
   edit FILE --ops JSON --out FILE  Save the validated edit to a NEW building JSON
   export FILE... --out DIR   Export TSCNs and doors to a NEW directory
@@ -42,6 +48,9 @@ Usage: node cli.mjs COMMAND [FILES...] [OPTIONS]
   godot-check [--godot PATH] Run bundled scene/physics checks; or set GODOT_BIN
     --assets DIR        Check new exported scenes (resource checks, not walking probes)
     --allow-materials --require-collision   Optional asset-set expectations
+    --render --out NEW_DIR [--views FILE]  Also render the checked scenes in
+                        Godot (needs DISPLAY or xvfb-run): exterior, aerial and
+                        eye-level region views unless FILE lists views
 
 Global: --json (one result on stdout), --quiet, --verbose, --help, --version
 Validate/inspect/export/package/edit: --warnings-as-errors
@@ -82,7 +91,7 @@ function parse(args){
   const needsFiles=['validate','inspect','export','package','preview','edit'].includes(command);
   if(needsFiles&&!files.length)throw new CliError(`${command} requires an input file`);
   if(!needsFiles&&files.length)throw new CliError(`${command} does not accept input files`);
-  if(['export','package','preview'].includes(command)&&!options.out)throw new CliError(`${command} requires --out`);
+  if(['new','export','package','preview'].includes(command)&&!options.out)throw new CliError(`${command} requires --out`);
   if(command==='preview'&&files.length!==1)throw new CliError('preview accepts exactly one input');
   if(options.view&&!['building','floor','roofs'].includes(options.view))throw new CliError('Unknown preview view; use building, floor or roofs');
   if(options.overlay&&!['none','footprint','attachments'].includes(options.overlay))throw new CliError('Unknown preview overlay; use none, footprint or attachments');
@@ -100,6 +109,10 @@ function parse(args){
   if(options.profile&&!['generic','get_probed'].includes(options.profile))throw new CliError('Unknown export profile');
   if(options.suite&&!Object.hasOwn(suites,options.suite))throw new CliError(`Unknown test suite: ${options.suite}`);
   if(command==='godot-check'&&(options['allow-materials']||options['require-collision'])&&!options.assets)throw new CliError('--allow-materials and --require-collision require --assets');
+  if(command==='godot-check'&&(options.render||options.views||options.out)){
+    if(!options.render)throw new CliError('--views and --out require --render');
+    if(!options.assets||!options.out)throw new CliError('--render requires --assets and --out');
+  }
   return {command,options,files:[...new Set(files)]};
 }
 
@@ -197,7 +210,7 @@ async function preview(docs,options,out){
   if(!Number.isInteger(floor))throw new CliError('--floor must be an integer');
   if(options.roof)for(const doc of docs)if(!doc.building.roofSections.some(r=>r.id===options.roof))throw new CliError(`${doc.file}: unknown manual roof ID ${options.roof}`);
   const require=createRequire(import.meta.url);let createCanvas;
-  try{({createCanvas}=require(process.env.CANVAS_MODULE||'@napi-rs/canvas'));}catch{throw new CliError('Preview needs @napi-rs/canvas. Install it locally or set CANVAS_MODULE to its installed path.',3);}
+  try{({createCanvas}=require(process.env.CANVAS_MODULE||'@napi-rs/canvas'));}catch{throw new CliError('Preview needs @napi-rs/canvas. Install it (for example: npm install --prefix ../canvas-backend @napi-rs/canvas) and set CANVAS_MODULE to the installed package directory (../canvas-backend/node_modules/@napi-rs/canvas).',3);}
   const {renderReview}=await import('./src/preview-review.js');
   const {canvas,report}=renderReview(docs.map(d=>d.building),createCanvas,{view:options.view||'building',floor,yaw,pitch,distance,overlay:options.overlay||'none',roof:options.roof});
   writeNewFile(out,canvas.toBuffer('image/png'));
@@ -218,6 +231,17 @@ async function execute({command,options,files}){
       if(out){result.output=out;writeNewFile(out,JSON.stringify(result,null,2)+'\n');}
       return result;
     }finally{process.removeListener('SIGINT',interrupt);process.removeListener('SIGTERM',terminate);}
+  }
+  if(command==='new'){
+    // Deterministic blank document: the web editor's New building with a
+    // stable floor ID, so a first transaction can reference it immediately.
+    const blank=makeEmptyBuilding();blank.floors[0].id='floor_1';
+    if(options.name!==undefined){if(!options.name.trim()||options.name.length>1024)throw new CliError('--name must be nonempty text of at most 1024 characters');blank.name=options.name;}
+    const prepared=prepareDocument(blank);
+    if(prepared.errors.length)throw new CliError(prepared.errors[0].message,1);
+    const output=JSON.stringify(prepared.building,null,2)+'\n',out=destination(options.out);
+    writeEditFile(out,output);
+    return {command,ok:true,output:out,floorId:'floor_1',resultSha256:createHash('sha256').update(output).digest('hex'),warnings:prepared.warnings,exitCode:0};
   }
   if(command==='edit'){
     const input=load(files[0]),transaction=load(path.resolve(options.ops));
@@ -249,6 +273,8 @@ async function execute({command,options,files}){
   }
   if(command==='godot-check'){
     const prepared=options.assets?prepareAssetDirectory(options.assets):null;
+    const renderOut=options.render?destination(options.out):null;
+    const views=options.views?parseViews(load(path.resolve(options.views)).source):null;
     const executable=options.godot||process.env.GODOT_BIN;
     if(!executable)throw new CliError('Set GODOT_BIN or pass --godot /path/to/godot. No executable is downloaded automatically.',3);
     const probe=spawnSync(executable,['--version'],{encoding:'utf8',timeout:10000});
@@ -259,20 +285,39 @@ async function execute({command,options,files}){
       const line=/^ASSET_RESULT: (.+)$/m.exec(result.stdout);
       const checks=line?JSON.parse(line[1]):null;
       const ok=result.ok&&!!checks&&checks.scenes===prepared.sceneCount&&checks.failures===0;
-      return {command,ok,engineVersion,checks,mode:'assets',scope:'Exported asset resource checks only; no building-specific walking/headroom probes',preflight:{root:prepared.root,scenes:prepared.sceneCount,dependencies:prepared.dependencyCount,bytes:prepared.bytes},results:[result],exitCode:ok?0:1};
+      let render=null;
+      // Render only scenes that passed the resource checks.
+      if(renderOut&&ok){
+        const rendered=renderPreparedScenes({executable:executable.includes('/')||executable.includes('\\')?path.resolve(executable):executable,prepared,views});
+        const manifest={engineVersion,renderer:rendered.renderer,virtualDisplay:rendered.virtualDisplay,scenes:rendered.roots,views:rendered.manifest,
+          note:'Scenes loaded unmodified (empty materials render as default grey); only camera, sky, sun and ambient light were added. Lighting in a game scene will differ.'};
+        writeDirectory(renderOut,[...rendered.entries,{name:'renders.json',data:JSON.stringify(manifest,null,2)+'\n'}]);
+        render={output:renderOut,images:rendered.entries.length,renderer:rendered.renderer,virtualDisplay:rendered.virtualDisplay,files:rendered.manifest.map(v=>v.file)};
+      }
+      return {command,ok,engineVersion,checks,...(render?{render}:{}),mode:'assets',scope:'Exported asset resource checks only; no building-specific walking/headroom probes',preflight:{root:prepared.root,scenes:prepared.sceneCount,dependencies:prepared.dependencyCount,bytes:prepared.bytes},results:[result],exitCode:ok?0:1};
     }
     const counts=/RESULT: (\d+) scenes; (\d+) physics rays; (\d+) trimmed mesh\/collision comparisons; (\d+) failures/.exec(result.stdout);
     const checks=counts?{scenes:Number(counts[1]),physicsRays:Number(counts[2]),trimmedMeshComparisons:Number(counts[3]),failures:Number(counts[4])}:null;
     const ok=result.ok&&!!checks&&checks.scenes>0&&checks.failures===0;
     return {command,ok,engineVersion,checks,mode:'fixtures',scope:'Bundled example scenes and authored collision probes',results:[result],exitCode:ok?0:1};
   }
-  const {loaded,exitCode}=documents(command==='preview'&&options.compare?[...files,path.resolve(options.compare)]:files,options['warnings-as-errors']);
-  const response={command,ok:exitCode===0,results:loaded.map(publicDocument),exitCode};
+  let {loaded,exitCode}=documents(command==='preview'&&options.compare?[...files,path.resolve(options.compare)]:files,options['warnings-as-errors']);
+  if(options.reachability){
+    // Opt-in route check: its findings join the document warnings, so strict
+    // mode and saved check reports treat them like any other warning.
+    for(const doc of loaded)if(doc.building&&!doc.errors.length){
+      const {result,warnings}=reachabilityWarnings(doc.building);
+      doc.reachability=result;doc.warnings=[...doc.warnings,...warnings];
+      doc.ok=!options['warnings-as-errors']||!doc.warnings.length;if(!doc.ok)exitCode=Math.max(exitCode,1);
+    }
+  }
+  const response={command,ok:exitCode===0,results:loaded.map(d=>({...publicDocument(d),...(d.reachability?{reachability:d.reachability}:{})})),exitCode};
   if(command==='validate'){
     if(options.out){
       const out=destination(options.out);
       if(files.some(file=>canonicalLocation(file)===canonicalLocation(out)))throw new CliError('Report destination must differ from every input path',3);
-      const report=createCheckReport(loaded.map(d=>({...d,building:d.building||d.rawBuilding,validationStage:d.building?'prepared-document':d.rawBuilding!==undefined?'raw-document':'unreadable-input'})),{warningsAsErrors:!!options['warnings-as-errors']});
+      // Portable report: input paths relative to the report's own directory.
+      const report=createCheckReport(loaded.map(d=>({...d,file:path.relative(path.dirname(out),d.file).split(path.sep).join('/')||path.basename(d.file),building:d.building||d.rawBuilding,validationStage:d.building?'prepared-document':d.rawBuilding!==undefined?'raw-document':'unreadable-input'})),{warningsAsErrors:!!options['warnings-as-errors']});
       writeNewFile(out,JSON.stringify(report,null,2)+'\n');response.output=out;
     }
     return response;
@@ -280,7 +325,7 @@ async function execute({command,options,files}){
   if(command==='inspect'){
     response.results.forEach((r,i)=>{if(loaded[i].building&&!loaded[i].errors.length){
       const b=loaded[i].building;r.inspection=inspectBuilding(b);
-      if(options.entities)r.entities={floors:b.floors.map(f=>({id:f.id,label:f.label,overrides:{elevation:f.elevation??null,wallHeight:f.wallHeight??null,floorThickness:f.floorThickness??null},walls:f.walls,openings:f.openings,regions:f.regions,stairs:f.stairs,platforms:f.platforms,markers:f.markers||[]})),roofs:b.roofSections};
+      if(options.entities)r.entities={floors:b.floors.map(f=>({id:f.id,label:f.label,overrides:{elevation:f.elevation??null,wallHeight:f.wallHeight??null,floorThickness:f.floorThickness??null},walls:f.walls,openings:f.openings,regions:f.regions,stairs:f.stairs,platforms:f.platforms,railings:f.railings||[],markers:f.markers||[]})),roofs:b.roofSections};
     }});return response;
   }
   if(exitCode)return response; // All input documents must pass before any write.
@@ -315,7 +360,7 @@ function human(result,verbose){
     for(const w of result.warnings||[])lines.push('WARNING '+w.message);
     if(result.sourceSha256)lines.push('Source SHA-256: '+result.sourceSha256);
     if(result.operations)lines.push(`${result.operations.length} operations processed · ${result.changes.length} edit differences · ${result.normalizationChanges.length} import/default differences`);
-    const show=d=>lines.push(`  ${d.op} ${d.path||'/'}: ${Object.hasOwn(d,'before')?JSON.stringify(d.before):'(absent)'} → ${Object.hasOwn(d,'after')?JSON.stringify(d.after):'(absent)'}`);
+    const show=d=>lines.push(`  ${d.op} ${d.path||'/'}${d.id!==undefined?` [${d.id} @ ${d.index}]`:''}: ${Object.hasOwn(d,'before')?JSON.stringify(d.before):'(absent)'} → ${Object.hasOwn(d,'after')?JSON.stringify(d.after):'(absent)'}`);
     for(const d of result.changes||[])show(d);
     const metres=n=>Number(n.toFixed(4))+' m';
     const level=v=>v===null?'(absent)':`base ${metres(v.elevation)}, walls ${metres(v.wallHeight)}, slab ${metres(v.floorThickness)}, wall top ${metres(v.wallTop)}`;
@@ -371,6 +416,7 @@ function human(result,verbose){
     lines.push(p.note);
   }
   if(result.mode==='assets')lines.push('Asset resource checks only; no building-specific walking/headroom probes.');
+  if(result.render)lines.push(`Rendered ${result.render.images} views${result.render.virtualDisplay?' (virtual display)':''}${result.render.renderer?' · '+result.render.renderer:''}: ${result.render.output}`);
   if(result.checks)lines.push(`${result.checks.scenes} scenes · ${result.checks.physicsRays} physics rays · ${result.checks.trimmedMeshComparisons} trimmed mesh comparisons · ${result.checks.failures} failures`);
   if(result.output)lines.push('Output: '+result.output);
   if(result.generated)lines.push(`${result.generated.length} files`,...(verbose?result.generated:[]));
@@ -393,7 +439,7 @@ try{
     else if(!result.ok)process.stderr.write(human(result,false));
   }
 }catch(e){
-  const exitCode=e instanceof CliError||e instanceof AssetCheckError?e.code:e.code&&typeof e.code==='string'?3:1;
+  const exitCode=e instanceof CliError||e instanceof AssetCheckError||e instanceof RenderError?e.code:e.code&&typeof e.code==='string'?3:1;
   const result={command,ok:false,error:e.message,exitCode};process.exitCode=exitCode;
   if(options.json)process.stdout.write(JSON.stringify(result,null,2)+'\n');else process.stderr.write(human(result,false));
 }

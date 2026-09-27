@@ -1,0 +1,266 @@
+{
+  "engineVersion": "4.5.1.stable.official.f62fdbde1",
+  "renderer": "4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.1 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)",
+  "virtualDisplay": true,
+  "scenes": [
+    "ravenhold_castle.tscn"
+  ],
+  "views": [
+    {
+      "eye": [
+        36.7601898173149,
+        32.5233797073364,
+        -35.760189817315
+      ],
+      "file": "exterior-ne.png",
+      "fov": 45,
+      "look": [
+        0,
+        6.53000020980835,
+        1
+      ],
+      "scene": "assets/ravenhold_castle.tscn"
+    },
+    {
+      "eye": [
+        36.760189817315,
+        32.5233797073364,
+        37.7601898173149
+      ],
+      "file": "exterior-se.png",
+      "fov": 45,
+      "look": [
+        0,
+        6.53000020980835,
+        1
+      ],
+      "scene": "assets/ravenhold_castle.tscn"
+    },
+    {
+      "eye": [
+        -36.7601898173149,
+        32.5233797073364,
+        37.760189817315
+      ],
+      "file": "exterior-sw.png",
+      "fov": 45,
+      "look": [
+        0,
+        6.53000020980835,
+        1
+      ],
+      "scene": "assets/ravenhold_castle.tscn"
+    },
+    {
+      "eye": [
+        -36.760189817315,
+        32.5233797073364,
+        -35.7601898173149
+      ],
+      "file": "exterior-nw.png",
+      "fov": 45,
+      "look": [
+        0,
+        6.53000020980835,
+        1
+      ],
+      "scene": "assets/ravenhold_castle.tscn"
+    },
+    {
+      "eye": [
+        0,
+        63.9890496253967,
+        17.4168712615967
+      ],
+      "file": "aerial.png",
+      "fov": 50,
+      "look": [
+        0,
+        6.53000020980835,
+        1
+      ],
+      "scene": "assets/ravenhold_castle.tscn"
+    },
+    {
+      "eye": [
+        -16.3999996185303,
+        1.64999997615814,
+        -14
+      ],
+      "file": "floor-01-nw-tower-base.png",
+      "fov": 75,
+      "look": [
+        -10,
+        1.39999997615814,
+        -14
+      ],
+      "scene": "assets/ravenhold_castle.tscn"
+    },
+    {
+      "eye": [
+        -6,
+        1.64999997615814,
+        -13
+      ],
+      "file": "floor-01-great-hall.png",
+      "fov": 75,
+      "look": [
+        10,
+        1.39999997615814,
+        -13
+      ],
+      "scene": "assets/ravenhold_castle.tscn"
+    },
+    {
+      "eye": [
+        -6,
+        1.64999997615814,
+        0
+      ],
+      "file": "floor-01-courtyard.png",
+      "fov": 75,
+      "look": [
+        10,
+        1.39999997615814,
+        0
+      ],
+      "scene": "assets/ravenhold_castle.tscn"
+    },
+    {
+      "eye": [
+        0,
+        1.64999997615814,
+        12
+      ],
+      "file": "floor-01-gate-tunnel.png",
+      "fov": 75,
+      "look": [
+        0,
+        1.39999997615814,
+        20
+      ],
+      "scene": "assets/ravenhold_castle.tscn"
+    },
+    {
+      "eye": [
+        -3,
+        5.82999992370605,
+        -2
+      ],
+      "file": "floor-02-great-chamber.png",
+      "fov": 75,
+      "look": [
+        5,
+        5.57999992370605,
+        -2
+      ],
+      "scene": "assets/ravenhold_castle.tscn"
+    },
+    {
+      "eye": [
+        -16.3999996185303,
+        5.82999992370605,
+        -14
+      ],
+      "file": "floor-02-nw-tower.png",
+      "fov": 75,
+      "look": [
+        -10,
+        5.57999992370605,
+        -14
+      ],
+      "scene": "assets/ravenhold_castle.tscn"
+    },
+    {
+      "eye": [
+        -6,
+        5.82999992370605,
+        -14.75
+      ],
+      "file": "floor-02-north-wall-walk.png",
+      "fov": 75,
+      "look": [
+        10,
+        5.57999992370605,
+        -14.75
+      ],
+      "scene": "assets/ravenhold_castle.tscn"
+    },
+    {
+      "eye": [
+        14.75,
+        5.82999992370605,
+        -6
+      ],
+      "file": "floor-02-east-wall-walk.png",
+      "fov": 75,
+      "look": [
+        14.75,
+        5.57999992370605,
+        10
+      ],
+      "scene": "assets/ravenhold_castle.tscn"
+    },
+    {
+      "eye": [
+        2,
+        5.82999992370605,
+        -11.75
+      ],
+      "file": "floor-02-chapel.png",
+      "fov": 75,
+      "look": [
+        10,
+        5.57999992370605,
+        -11.75
+      ],
+      "scene": "assets/ravenhold_castle.tscn"
+    },
+    {
+      "eye": [
+        -16.3999996185303,
+        9.51000022888184,
+        -14
+      ],
+      "file": "floor-03-nw-tower-top.png",
+      "fov": 75,
+      "look": [
+        -10,
+        9.26000022888184,
+        -14
+      ],
+      "scene": "assets/ravenhold_castle.tscn"
+    },
+    {
+      "eye": [
+        -3.59999990463257,
+        9.51000022888184,
+        15
+      ],
+      "file": "floor-03-gatehouse-top.png",
+      "fov": 75,
+      "look": [
+        6,
+        9.26000022888184,
+        15
+      ],
+      "scene": "assets/ravenhold_castle.tscn"
+    },
+    {
+      "eye": [
+        -3,
+        13.1899995803833,
+        -2
+      ],
+      "file": "floor-04-keep-roof.png",
+      "fov": 75,
+      "look": [
+        5,
+        12.9399995803833,
+        -2
+      ],
+      "scene": "assets/ravenhold_castle.tscn"
+    }
+  ],
+  "note": "Scenes loaded unmodified (empty materials render as default grey); only camera, sky, sun and ambient light were added. Lighting in a game scene will differ. This folder keeps a curated subset; build.sh renders all views."
+}

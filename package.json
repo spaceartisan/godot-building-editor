@@ -1,6 +1,6 @@
 {
   "name": "building-studio",
-  "version": "1.2.5",
+  "version": "1.3.0",
   "private": true,
   "type": "module",
   "bin": { "building-studio": "./cli.mjs" },
@@ -13,6 +13,7 @@
     "test:godot": "node godot-tests.mjs",
     "test:infra": "node infrastructure-tests.mjs",
     "check:release": "node cli.mjs release-check",
-    "test:browser": "node browser-tests.mjs"
+    "test:browser": "node browser-tests.mjs",
+    "test:browser-parity": "node browser-parity-tests.mjs"
   }
 }

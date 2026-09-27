@@ -2037,6 +2037,10 @@ function downloadBlob(filename,blob,delay=500){
   }
 }
 
+export function downloadBinary(filename, blob) {
+  downloadBlob(filename,blob,1000);
+}
+
 export function downloadText(filename, text, mime='text/plain') {
   downloadBlob(filename,new Blob([text],{type:mime}));
 }

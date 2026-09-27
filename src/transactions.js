@@ -1,9 +1,9 @@
 import { regionPolygonProblem, regionBounds } from './regions.js';
 import { prepareDocument, resolvedFloorDimensions, inspectStair, inspectPlatform, inspectFloorCoverage } from './diagnostics.js';
 import { validateBuilding } from './validation.js';
-import { floorView, makeRegion, makeRoofSection, makeStair, makePlatform, rectValid, REGION_KINDS, REGION_EFFECTS, validateOpeningLayout } from './model.js';
+import { floorView, makeRegion, makeRoofSection, makeStair, makePlatform, makeRailing, wallLength, rectValid, REGION_KINDS, REGION_EFFECTS, validateOpeningLayout } from './model.js';
 import { proposeEndpointMove } from './wall-edit.js';
-import { wallSegmentProblem, proposePlatformUpdate } from './authoring.js';
+import { wallSegmentProblem, proposePlatformUpdate, proposeCrenellation } from './authoring.js';
 import {proposeFloorStackEdit} from './floor-stack.js';
 
 // Versioned authoring commands, not arbitrary JSON patches. All work is done on
@@ -23,17 +23,20 @@ function choice(value,allowed,where){if(!allowed.includes(value))fail(`Expected 
 function point(value,where){keys(value,['x','z'],where);number(value.x,`${where}/x`);number(value.z,`${where}/z`);}
 const rectKeys=['minX','maxX','minZ','maxZ'];
 const fields={
-  floor:['label','elevation','wallHeight','floorThickness'],
+  building:['name','exportProfile','wallHeight','wallThickness','floorThickness','gridSize','roof','ceiling'],
+  floor:['label','elevation','wallHeight','floorThickness','autoFloor','autoCeiling','boundaryMode'],
   platform:['label',...rectKeys,'kind','height','covered'],
   stair:['label','x','z','width','run','direction','style','steps','blockBelow'],
   wall:['label','role','height','a','b'],
-  opening:['label','type','wallId','t','width','height','sill','doorStyle','windowStyle','shapeId'],
+  railing:['label','a','b','height','style'],
+  opening:['label','type','wallId','t','at','width','height','sill','doorStyle','windowStyle','shapeId'],
   roof:['label',...rectKeys,'type','direction','baseY','pitch','overhang','gableEnds','hostRoofId','edgeModes'],
-  region:['label',...rectKeys,'kind','effect','polygon']
+  region:['label',...rectKeys,'kind','effect','polygon'],
+  // Not an operation family: wall.crenellate value fields.
+  crenellation:['crenelWidth','merlonWidth','depth','idPrefix']
 };
 function checkValue(kind,value,action,where){
   let allowed=fields[kind];
-  if(kind==='floor'&&action==='add-top')allowed=[...allowed,'autoFloor','autoCeiling'];
   if(action==='update')allowed=allowed.filter(k=>!(kind==='wall'&&['a','b'].includes(k))&&!(kind==='opening'&&k==='type'));
   keys(value,allowed,where);
   if(!Object.keys(value).length&&action!=='add-top')fail('Provide at least one field',where);
@@ -52,12 +55,31 @@ function checkValue(kind,value,action,where){
       else if(key==='steps'){number(v,p,2,512);if(!Number.isInteger(v))fail('Step count must be an integer',p);}
       else number(v,p,key==='width'?.5:key==='run'?1:-1e6,['width','run'].includes(key)?10000:1e6);
     }
+    else if(kind==='building'){
+      // Ranges match the web building settings and the shared validator.
+      if(key==='name')text(v,p);
+      else if(key==='exportProfile')choice(v,['generic','get_probed'],p);
+      else if(key==='roof'){
+        keys(v,['type','pitch','overhang'],p);if(!Object.keys(v).length)fail('Provide at least one roof field',p);
+        if(v.type!==undefined)choice(v.type,['gable','hip','flat','none'],`${p}/type`);
+        if(v.pitch!==undefined)number(v.pitch,`${p}/pitch`,5,70);
+        if(v.overhang!==undefined)number(v.overhang,`${p}/overhang`,0,100);
+      }else if(key==='ceiling'){keys(v,['thickness'],p);if(v.thickness===undefined)fail('Provide ceiling thickness',p);number(v.thickness,`${p}/thickness`,.02,100);}
+      else number(v,p,key==='wallHeight'?.2:key==='wallThickness'?.02:.001,key==='wallHeight'||key==='gridSize'?1000:100);
+    }
     else if(kind==='floor'){
       if(['autoFloor','autoCeiling'].includes(key)){if(typeof v!=='boolean')fail('Expected a boolean',p);}
+      else if(key==='boundaryMode')choice(v,['closed','intentional_open'],p);
       else if(v!==null)number(v,p,key==='elevation'?-1e6:key==='wallHeight'?.2:.001,key==='elevation'?1e6:key==='wallHeight'?1000:100);
     }
+    else if(kind==='railing'&&key==='height')number(v,p,.4,100);
+    else if(kind==='railing'&&key==='style')choice(v,['two_rail','picket','cross_brace'],p);
+    else if(kind==='crenellation'){
+      if(key==='idPrefix'){text(v,p);if(!/^[A-Za-z0-9_-]{1,48}$/.test(v))fail('idPrefix must be 1–48 letters, digits, - or _',p);}
+      else number(v,p,key==='depth'?.1:.2,key==='depth'?100:1000);
+    }
     else if(key==='polygon'){const problem=regionPolygonProblem(v);if(problem)fail(problem,p);}
-    else if(key==='a'||key==='b')point(v,p);
+    else if(key==='a'||key==='b'||key==='at')point(v,p);
     else if(key==='role')choice(v,['exterior','interior'],p);
     else if(key==='type')choice(v,kind==='roof'?['gable','shed','flat']:['door','window'],p);
     else if(key==='direction')choice(v,['x','z'],p);
@@ -78,7 +100,9 @@ function checkValue(kind,value,action,where){
     else if(key==='overhang')number(v,p,0,100);
     else number(v,p);
   }
-  if(action==='add')for(const required of kind==='stair'?['x','z','width','run','direction']:kind==='wall'?['a','b']:kind==='opening'?['type','wallId','t','width','height']:kind==='region'&&value.polygon?['polygon']:rectKeys)
+  if(kind==='opening'&&Object.hasOwn(value,'t')&&Object.hasOwn(value,'at'))fail('Use either t or at, not both',where);
+  if(kind==='crenellation')for(const required of ['crenelWidth','merlonWidth','depth'])if(!Object.hasOwn(value,required))fail(`Missing required field: ${required}`,where);
+  if(action==='add')for(const required of kind==='stair'?['x','z','width','run','direction']:kind==='wall'||kind==='railing'?['a','b']:kind==='opening'?['type','wallId',Object.hasOwn(value,'at')?'at':'t','width','height']:kind==='region'&&value.polygon?['polygon']:rectKeys)
     if(!Object.hasOwn(value,required))fail(`Missing required field: ${required}`,where);
 }
 
@@ -91,7 +115,12 @@ export function validateTransaction(transaction){
     const p=`operations/${index}`;
     if(!object(op)||typeof op.op!=='string')fail('Expected an operation object with an op name',p);
     const [kind,action,...extra]=op.op.split('.');
-    if(extra.length||!Object.hasOwn(fields,kind)||!(kind==='floor'?['update','add-top','remove-top']:['add','update','remove',...(kind==='wall'?['move-endpoint']:[])]).includes(action))fail(`Unknown operation: ${op.op}`,p);
+    if(extra.length||!Object.hasOwn(fields,kind)||!(kind==='floor'?['update','add-top','remove-top']:kind==='building'?['update']:['add','update','remove',...(kind==='wall'?['move-endpoint','crenellate']:[])]).includes(action))fail(`Unknown operation: ${op.op}`,p);
+    if(kind==='wall'&&action==='crenellate'){
+      keys(op,['op','id','floorId','value'],p);text(op.id,`${p}/id`);text(op.floorId,`${p}/floorId`);
+      checkValue('crenellation',op.value,'crenellate',`${p}/value`);return;
+    }
+    if(kind==='building'){keys(op,['op','value'],p);checkValue(kind,op.value,action,`${p}/value`);return;}
     if(kind==='floor'&&action!=='update'){
       keys(op,['op','id',...(action==='add-top'?['aboveFloorId','value']:['removeContents','removeAffectedStairs'])],p);text(op.id,`${p}/id`);
       if(action==='add-top'){text(op.aboveFloorId,`${p}/aboveFloorId`);if(op.value!==undefined)checkValue(kind,op.value,action,`${p}/value`);}
@@ -109,8 +138,13 @@ export function validateTransaction(transaction){
   });
 }
 
-// Report-only JSON Pointer paths. Array membership changes are one replacement
-// so removals do not masquerade as edits to every subsequent object's identity.
+// Report-only JSON Pointer paths. Arrays of uniquely ID'd objects report
+// membership changes per ID ({path: array, op: add|remove, id, index}) and
+// recurse into retained objects at their resulting index, so adding one wall
+// does not restate every other wall. Other arrays with changed membership or
+// reordered IDs remain a single replacement, so removals never masquerade as
+// edits to the identity of subsequent objects.
+const uniquelyKeyed=list=>list.every(v=>object(v)&&typeof v.id==='string'&&v.id)&&new Set(list.map(v=>v.id)).size===list.length;
 export function documentDiff(before,after,path=''){
   if(JSON.stringify(before)===JSON.stringify(after))return [];
   const entry={path};
@@ -119,6 +153,14 @@ export function documentDiff(before,after,path=''){
   if(Array.isArray(before)&&Array.isArray(after)){
     if(before.length===after.length&&before.every((v,i)=>!object(v)||v.id===after[i]?.id))
       return before.flatMap((v,i)=>documentDiff(v,after[i],`${path}/${i}`));
+    if(uniquelyKeyed(before)&&uniquelyKeyed(after)){
+      const afterIds=new Set(after.map(v=>v.id)),beforeById=new Map(before.map((v,i)=>[v.id,{v,i}]));
+      const retainedBefore=before.filter(v=>afterIds.has(v.id)).map(v=>v.id),retainedAfter=after.filter(v=>beforeById.has(v.id)).map(v=>v.id);
+      if(retainedBefore.every((id,i)=>id===retainedAfter[i]))return [
+        ...before.flatMap((v,i)=>afterIds.has(v.id)?[]:[{...entry,op:'remove',id:v.id,index:i,before:structuredClone(v)}]),
+        ...after.flatMap((v,i)=>beforeById.has(v.id)?documentDiff(beforeById.get(v.id).v,v,`${path}/${i}`):[{...entry,op:'add',id:v.id,index:i,after:structuredClone(v)}])
+      ];
+    }
   }else if(object(before)&&object(after)){
     return [...new Set([...Object.keys(before),...Object.keys(after)])].sort().flatMap(key=>documentDiff(
       Object.hasOwn(before,key)?before[key]:undefined,Object.hasOwn(after,key)?after[key]:undefined,`${path}/${key.replaceAll('~','~0').replaceAll('/','~1')}`));
@@ -128,6 +170,15 @@ export function documentDiff(before,after,path=''){
 
 function applyOperation(building,op,index){
   const p=`operations/${index}`,[kind,action]=op.op.split('.');
+  if(kind==='building'){
+    // Nested settings merge field by field; numeric changes are checked by
+    // final validation (opening fit, stair rise, junction clearance).
+    for(const [key,value] of Object.entries(op.value)){
+      if(key==='roof'||key==='ceiling')building[key]={...(building[key]||{}),...value};
+      else building[key]=value;
+    }
+    return;
+  }
   if(kind==='floor'){
     if(action==='add-top'||action==='remove-top'){
       const top=building.floors.at(-1),topIndex=building.floors.length-1;
@@ -137,6 +188,7 @@ function applyOperation(building,op,index){
         const result=proposeFloorStackEdit(building,topIndex,'above',{validateResult:false});if(!result.ok)fail(result.reason,p);
         const added=result.building.floors.at(-1);added.id=op.id;
         for(const [key,value] of Object.entries(op.value||{}))if(value!==null)added[key]=value;
+        if(added.boundaryMode==='closed')delete added.boundaryMode;
         building.floors=result.building.floors;
         return {action:'added',floorId:op.id,aboveFloorId:top.id,removedEntities:[],removedIncomingStairs:[]};
       }
@@ -153,13 +205,14 @@ function applyOperation(building,op,index){
     const floor=building.floors.find(f=>f.id===op.id);
     if(!floor)fail(`Unknown floor ID: ${op.id}`,p);
     for(const [key,value] of Object.entries(op.value)){
-      if(value===null)delete floor[key];else floor[key]=value;
+      if(['autoFloor','autoCeiling','boundaryMode'].includes(key)&&value===null)fail(`${key} does not accept null`,`${p}/value/${key}`);
+      if(value===null||(key==='boundaryMode'&&value==='closed'))delete floor[key];else floor[key]=value;
     }
     return;
   }
   const fi=kind==='roof'?-1:building.floors.findIndex(f=>f.id===op.floorId);
   if(kind!=='roof'&&fi<0)fail(`Unknown floor ID: ${op.floorId}`,p);
-  const floor=building.floors[fi],collection={wall:'walls',opening:'openings',roof:'roofSections',region:'regions',stair:'stairs',platform:'platforms'}[kind];
+  const floor=building.floors[fi],collection={wall:'walls',railing:'railings',opening:'openings',roof:'roofSections',region:'regions',stair:'stairs',platform:'platforms'}[kind];
   const list=kind==='roof'?building.roofSections:floor[collection],item=list.find(v=>v.id===op.id);
   if(action==='add'&&item)fail(`ID already exists: ${op.id}`,p);
   if(action!=='add'&&!item)fail(`Unknown ${kind} ID: ${op.id}`,p);
@@ -174,15 +227,34 @@ function applyOperation(building,op,index){
   }
   if(kind==='stair'&&action!=='remove'&&!building.floors[fi+1])fail('Stair add/update requires an adjacent upper floor',p);
   if(action==='remove'){list.splice(list.indexOf(item),1);return;}
+  if(action==='crenellate'){
+    const result=proposeCrenellation(item,item.height??floorView(building,fi).wallHeight,floor.openings,op.value);
+    if(!result.ok)fail(result.reason,`${p}/value`);
+    floor.openings.push(...result.openings);return;
+  }
   if(action==='move-endpoint'){
     const result=proposeEndpointMove(building,fi,op.id,op.end,op.point,{connected:op.connected!==false});
     if(!result.ok)fail(result.reason,p);building.floors[fi]=result.floor;return;
   }
   const value=structuredClone(op.value);
+  if(kind==='opening'&&value.at){
+    // World-point placement: project onto the host wall centreline. Points on
+    // either wall face are accepted; anything farther away is rejected.
+    const host=floor.walls.find(w=>w.id===(value.wallId??item?.wallId));
+    if(!host)fail(`Unknown host wall: ${value.wallId??item?.wallId}`,`${p}/value/wallId`);
+    const dx=host.b.x-host.a.x,dz=host.b.z-host.a.z,length=Math.hypot(dx,dz);
+    const t=((value.at.x-host.a.x)*dx+(value.at.z-host.a.z)*dz)/(length*length);
+    const offset=Math.abs((value.at.z-host.a.z)*dx-(value.at.x-host.a.x)*dz)/length;
+    const tolerance=floorView(building,fi).wallThickness/2+1e-6;
+    if(offset>tolerance)fail(`Point is ${Number(offset.toFixed(4))} m from wall ${host.id}; place it within ${Number(tolerance.toFixed(4))} m of the centreline`,`${p}/value/at`);
+    if(t<=0||t>=1)fail(`Point projects outside wall ${host.id} (t = ${Number(t.toFixed(4))})`,`${p}/value/at`);
+    value.t=Math.round(t*1e9)/1e9;delete value.at;
+  }
   if(kind==='region'&&item?.polygon&&!value.polygon&&rectKeys.some(k=>Object.hasOwn(value,k)))fail('Edit polygon corners instead of rectangular bounds.',p);
   if(action==='add'){
     let defaults;
     if(kind==='wall')defaults={label:'',role:'interior',height:null};
+    else if(kind==='railing'){const r=makeRailing(value.a,value.b,value.label||'Railing',value.height??1,value.style||'two_rail');delete r.id;defaults=r;}
     else if(kind==='stair')defaults=makeStair({x:0,z:0},{x:0,z:-value.run},value.width,value.style||'ramp',value.steps??12,value.label||'');
     else if(kind==='opening')defaults={label:value.type==='door'?'Door':'Window',...(value.type==='window'?{sill:.9,windowStyle:'plain'}:{doorStyle:'room'})};
     else {
@@ -196,6 +268,10 @@ function applyOperation(building,op,index){
   if(kind==='region'&&updated.polygon)Object.assign(updated,regionBounds(updated.polygon));
   if(kind==='roof'&&updated.hostRoofId===null)delete updated.hostRoofId;
   if(kind==='roof'||kind==='region')if(!rectValid(updated))fail('Rectangle must have positive width and depth of at least 0.1 m each',p);
+  if(kind==='railing'){
+    if(wallLength(updated)<=.15)fail('Railing segments must be longer than 0.15 m',p);
+    if(updated.height>floorView(building,fi).wallHeight)fail('Railing height exceeds the story height',p);
+  }
   if(kind==='wall'){
     const problem=wallSegmentProblem(updated.a,updated.b,list.filter(v=>v!==updated));
     if(problem)fail(problem,p);

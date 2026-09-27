@@ -1,5 +1,7 @@
 # Release checks (1.2.5)
 
+For 1.3.0, `release-check --canvas required --engine required` passed all 7 gates (syntax, infrastructure, catalog, preview-render, godot-fixtures, engine-assets, source-integrity) on Linux with Node 22.22.2 and Godot 4.5.1. That report was not packaged with the source. The rest of this page describes the 1.2.5 package.
+
 The 1.2.5 cleanup package includes a fresh `release-report.json` for its source snapshot. Earlier documentation-only packages used a separately labeled baseline report.
 
 The existing CLI suite now covers literal option-like filenames and usage-error output routing. The existing validation-feedback suite covers Save JSON status/failures and shared object-URL cleanup for JSON, report and Godot ZIP downloads, including DOM exceptions. These are handler tests; live-browser download completion is not claimed. The core registry remains 37 scripts.

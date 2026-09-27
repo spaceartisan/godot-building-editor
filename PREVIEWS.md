@@ -52,7 +52,15 @@ Images contain 1100×760 viewports plus labels: **1100×852** for a single view 
 
 ## Output and optional dependency
 
-The canvas backend is optional. Install `@napi-rs/canvas` locally or set `CANVAS_MODULE` to its installed location. The CLI does not download dependencies. All output paths must be new. Invalid input on either side, invalid camera/floor options, and an existing destination prevent image creation. No blueprint is rewritten.
+The canvas backend is optional. Install `@napi-rs/canvas` locally or set `CANVAS_MODULE` to its installed location. The CLI does not download dependencies. To keep the editor folder dependency-free, install it elsewhere and point `CANVAS_MODULE` at the package directory:
+
+```bash
+npm install --prefix ../canvas-backend @napi-rs/canvas
+export CANVAS_MODULE="$(cd ../canvas-backend && pwd)/node_modules/@napi-rs/canvas"
+node cli.mjs preview examples/twostory.building.json --out ../twostory.png
+```
+
+The software preview is an approximation for quick geometry checks; use `godot-check --assets DIR --render --out NEW_DIR` to see how the exported scene looks in Godot. All output paths must be new. Invalid input on either side, invalid camera/floor options, and an existing destination prevent image creation. No blueprint is rewritten.
 
 `--json` returns ordinary input diagnostics plus `preview`: view mode, output dimensions, input paths, shared camera/bounds, and each panel's floor ID/label/elevation and visible/hidden object counts. Counts are software preview objects, not exported Godot mesh counts or triangle/collision statistics. Empty views report `empty:true`. The human report gives view dimensions and visible/hidden counts.
 

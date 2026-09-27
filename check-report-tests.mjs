@@ -33,7 +33,8 @@ try{
   const cli=args=>{const r=spawnSync(process.execPath,[path.join(root,'cli.mjs'),...args,'--json'],{cwd:temp,encoding:'utf8',timeout:20000});assert.equal(r.error,undefined);return {...r,result:JSON.parse(r.stdout)};};
   let run=cli(['validate',input,'--out','reports/check.json']);assert.equal(run.status,0);
   const saved=JSON.parse(fs.readFileSync(path.join(temp,'reports/check.json')));
-  assert.equal(saved.kind,'building-check-report');assert.equal(saved.results[0].file,input);
+  assert.equal(saved.kind,'building-check-report');assert.equal(saved.results[0].file,'../warning plan.building.json','saved reports use paths relative to the report directory');
+  assert.equal(JSON.stringify(saved).includes(temp),false,'no absolute machine paths in the saved report');
   assert.equal(saved.results[0].validationStage,'prepared-document');
   assert.deepEqual(saved.results[0].warnings,createCheckReport([{building,...validation}]).results[0].warnings);
   assert.deepEqual(saved.results[0].errors,[]);

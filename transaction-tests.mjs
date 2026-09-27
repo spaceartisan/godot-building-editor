@@ -91,6 +91,15 @@ try{
   const stale={...demo,expectedSourceSha256:'0'.repeat(64)};assert.equal(applyTransaction(source,stale,{sourceSha256:sha(sourceText)}).ok,false);
   assert.equal(applyTransaction(source,{...demo,expectedSourceSha256:sha(sourceText)},{sourceSha256:sha(sourceText)}).ok,true);
   assert.deepEqual(documentDiff({'a/b':{'~':1}},{'a/b':{'~':2}})[0].path,'/a~1b/~0');
+  // ID'd arrays report membership per ID and recurse into retained objects at their resulting index.
+  assert.deepEqual(documentDiff({w:[{id:'a',x:1},{id:'b',x:2},{id:'c',x:3}]},{w:[{id:'a',x:1},{id:'c',x:4},{id:'d',x:5}]}),[
+    {path:'/w',op:'remove',id:'b',index:1,before:{id:'b',x:2}},
+    {path:'/w/1/x',op:'replace',before:3,after:4},
+    {path:'/w',op:'add',id:'d',index:2,after:{id:'d',x:5}}
+  ]);
+  assert.deepEqual(documentDiff({w:[]},{w:[{id:'x'}]}),[{path:'/w',op:'add',id:'x',index:0,after:{id:'x'}}]);
+  for(const [before,after] of [[[{id:'a'},{id:'b'}],[{id:'b'},{id:'a'}]],[[1,2],[1,2,3]],[[{id:'a'},{id:'a'}],[{id:'a'}]],[[{x:1}],[{x:1},{x:2}]]])
+    assert.deepEqual(documentDiff({w:before},{w:after}),[{path:'/w',op:'replace',before,after}],'reorders, primitives, duplicate or missing IDs stay whole replacements');
   console.log('PASS legacy/default diffs, warnings policy, source fingerprint guard and escaped report paths');
 
   const args=['edit',sourceFile,'--ops',opsFile];

@@ -1,6 +1,6 @@
 # Using Building Studio effectively as an LLM
 
-Applies to executable version **1.2.5**, building schemas through **10**, transaction format **1**, and check-report format **1**. Start with `node cli.mjs --version` and `node cli.mjs --help` in the installed package; use its implementation and current guides over remembered behavior from older releases.
+Applies to executable version **1.3.0**, building schemas through **10**, transaction format **1**, and check-report format **1**. Start with `node cli.mjs --version` and `node cli.mjs --help` in the installed package; use its implementation and current guides over remembered behavior from older releases.
 
 ## 1. Establish the task and source
 
@@ -10,32 +10,34 @@ Keep the original blueprint. TSCNs are generated assets and cannot be reimported
 
 Use `examples --json` to find a suitable starting plan, its actual path, purpose and expected warnings. Use [QUICKSTART.md](QUICKSTART.md) for the source-to-recipe table: removal recipes require the result of their matching addition. Do not blindly apply an example recipe to another plan with different IDs.
 
-For a new design, choose the closest existing example, save a separate copy and edit it. There is no CLI `new`, arbitrary-property patch command or TSCN import. If the requested design needs fields outside supported transactions, use the web controls or a carefully scoped JSON edit based on the shared model and validator; preserve unrelated fields and validate the candidate before export.
+For a new design, start from `node cli.mjs new --out NEW.json --name NAME` (floor ID `floor_1`) or from a copy of the closest existing example. Use `building.update` for building settings. There is no arbitrary-property patch command or TSCN import. If the requested design needs fields outside supported transactions, use the web controls or a carefully scoped JSON edit based on the shared model and validator; preserve unrelated fields and validate the candidate before export.
 
 ## 2. Discover capabilities instead of inventing commands
 
 | Need | Supported route | Limits to remember |
 | --- | --- | --- |
 | Discover plans | `examples --json`, `examples --check --json` | Checks expectations; does not regenerate examples |
-| Diagnose a blueprint | `validate FILE --json`; optional `--out NEW.json` | Reports errors/warnings; normalization is in memory |
+| Diagnose a blueprint | `validate FILE --json`; optional `--out NEW.json`; `--reachability` adds route warnings | Reports errors/warnings; normalization is in memory |
 | Discover editable IDs | `inspect FILE --entities --json` | Lists normalized floor IDs and supported entity inventories; inspect JSON for fields not included |
 | Repeatable building edit | `edit FILE --ops RECIPE --dry-run` then `--out NEW.json` | Version-1 operations only; exact fields in TRANSACTIONS.md |
 | Walls/openings/regions/manual roofs | Add, update, remove transactions; wall endpoint moves | Wall property updates do not move endpoints; manual roofs are building-level objects |
-| Floors | Existing dimensions/labels, add/remove top floor | Basement/middle insertion, duplication and reordering are web controls |
+| Building settings | `building.update` (name, default dimensions, wall thickness, automatic roof, ceiling, profile) | Window/door mesh settings remain web/JSON fields |
+| Floors | Existing dimensions/labels/surface switches/boundary mode, add/remove top floor | Basement/middle insertion, duplication and reordering are web controls |
 | Stairs/platforms | Add, update, remove transactions | Stairs connect adjacent floors; independent pieces do not automatically follow platform edits |
 | Wall/door shapes | Web dialogs or authored JSON; transactions assign an existing door `shapeId` | No dedicated shared-shape-library transaction operations |
+| Parapets and guards | `wall.crenellate` (crenels as empty windows), `railing.add/update/remove` | Wall thickness remains building-wide |
 | Lights/markers/manual slabs | Web controls or supported JSON fields | No corresponding dedicated transaction commands in this version |
 | Inspect appearance | Web 3D preview; CLI `preview` with floor/roof views, comparisons and overlays | Optional canvas dependency for PNGs; no CLI plan/collision-overlay mode |
 | Generate Godot assets | `export FILE --out NEW_DIR`, `package FILE --out NEW.zip` | Retain relative door dependencies; materials empty by default |
-| Verify exported assets | `godot-check --assets DIR --godot PATH` | Resource checks, not character traversal certification |
+| Verify exported assets | `godot-check --assets DIR --godot PATH`; add `--render --out NEW_DIR` for Godot screenshots | Resource checks, not character traversal certification; rendering needs a display or xvfb-run |
 
-Transactions support `floor.update/add-top/remove-top`, `wall.add/update/move-endpoint/remove`, and `opening`, `roof`, `region`, `stair`, `platform` add/update/remove. Do not extrapolate new operation names from this pattern. Read the operation table for supported `value` fields and removal flags. In particular, retained wall-profile fields do not imply `wall.update` accepts them.
+Transactions support `building.update`, `floor.update/add-top/remove-top`, `wall.add/update/move-endpoint/crenellate/remove`, and `railing`, `opening`, `roof`, `region`, `stair`, `platform` add/update/remove. Do not extrapolate new operation names from this pattern. Read the operation table for supported `value` fields and removal flags. In particular, retained wall-profile fields do not imply `wall.update` accepts them.
 
 Core CLI and web serving need Node 20+ and no npm install. Linux is the tested platform. `CANVAS_MODULE` can name an installed canvas module; `GODOT_BIN` or `--godot` supplies an existing Godot executable. Browser tests additionally need Playwright and its Chromium binary. Do not infer availability from the module alone.
 
 ## 3. A complete, repeatable workflow
 
-For new buildings or substantial layout changes, first read [AUTHORING_REVIEW.md](AUTHORING_REVIEW.md). Reserve circulation before detailing, inspect each occupied level and actual surface coverage, and record failed/unverified requirements. Inspect rendered views before delivery. A successful CLI command or zero validation warnings cannot establish that a building is complete or accessible. The supplied castle case study demonstrates this failure and a focused floor-coverage repair.
+For new buildings or substantial layout changes, first read [AUTHORING_REVIEW.md](AUTHORING_REVIEW.md). Reserve circulation before detailing, inspect each occupied level and actual surface coverage, and record failed/unverified requirements. Inspect rendered views before delivery. A successful CLI command or zero default validation warnings cannot establish that a building is complete or accessible; run `validate --reachability` for route evidence and read its remaining limits. The supplied castle case study demonstrates this failure and a focused floor-coverage repair.
 
 Run from the extracted `building-editor` directory. The block uses a newly created output directory and the shipped stair recipe, so its IDs are known to match. Check every exit status and `ok` result before continuing. These commands were exercised when this guide was introduced.
 
@@ -87,7 +89,7 @@ Destinations must be new. Unknown/repeated flags are errors. There is no `--forc
 
 `validate --out` deliberately saves diagnostics for invalid or missing inputs while retaining failure exit codes. Its saved file uses the portable check-report envelope; stdout retains the CLI command-response envelope. See [CHECK_REPORTS.md](CHECK_REPORTS.md). Targets are scoped navigation references and can be missing/ambiguous; they are not automatic repair instructions.
 
-Authored diffs use JSON Pointer paths but are reports, not executable patches. Array membership changes can replace an entire array in the diff. `null` overrides mean automatic/default only for fields documented that way. `before:null`/`after:null` in derived reports mean addition/removal or unavailable state as documented; never interpret them as zero elevation or zero rise. Manual surfaces listed in alignment review are context, not proof of a collision.
+Authored diffs use JSON Pointer paths but are reports, not executable patches. Added/removed objects in ID'd arrays are per-ID `add`/`remove` entries whose `path` names the array (with `id` and `index`); arrays without unique IDs or with reordered IDs still appear as one `replace`. `null` overrides mean automatic/default only for fields documented that way. `before:null`/`after:null` in derived reports mean addition/removal or unavailable state as documented; never interpret them as zero elevation or zero rise. Manual surfaces listed in alignment review are context, not proof of a collision.
 
 ## 5. Geometry conventions and common pitfalls
 
@@ -96,6 +98,8 @@ Authored diffs use JSON Pointer paths but are reports, not executable patches. A
 - Openings reference a host wall within their floor. `t` is a fractional position along wall A→B. Opening fit, overlap and junction clearance still apply. Empty door/window styles are intentional unfilled openings.
 - Automatic surfaces can follow closed polygon wall loops and authored coverage. Floor Footprints take precedence over solid regions; label regions add metadata, void regions cut automatic surfaces. Region effects do not rewrite independent roofs/slabs, platforms, stairs or walls.
 - All voids are subtracted after solid coverage is combined. A solid keep inside a courtyard void loses its automatic floors too; changing region order or adding a Floor Footprint cannot override the void. Shape the cutout around the keep or use an intentional independent surface, and separately plan courtyard ground and vertical access.
+- Open walks, tower tops and roof terraces: with any automatic roof type other than `none`, every floor area not covered by a higher floor gets an automatic roof at its wall top, and an enabled automatic ceiling closes exposed areas too. For open decks use `building.update` with `roof:{type:"none"}`, set `autoCeiling:false` on the floors whose exposed areas must stay open (`floor.update`/`floor.add-top`), and make sure every enclosed room is covered by the next floor's slab or an independent roof (`roof.add` accepts all roof fields). Uncovered deck platforms also avoid roofs but do not receive stair openings. Parapets can be one wall with `wall.crenellate`; thin guards are `railing.add`.
+- Automatic elevation includes the new floor's slab: a 4.0 m ground story with 0.18 m slabs puts the next floor at 4.18 m, and its wall top at 4.18 m + wall height. Independent roof `baseY` is absolute, so read resolved values from the dry run's `structuralChanges` or `inspect` before placing roofs on a story.
 - Automatic Hip roofs support convex footprints; continuous concave valleys remain unsupported. Independent manual roofs/slabs use rectangular footprints. Do not confuse clipping an existing roof with generating a new valley or dormer.
 - Roof `hostRoofId` is a one-way trim relationship. Host chains/cycles are unsupported. The child may receive no additional cut or be removed entirely; read the attachment diagnostics. Gable fills are separate from attachment slab trimming. Use [ROOF_DIAGNOSTICS.md](ROOF_DIAGNOSTICS.md) and attachment overlays.
 - Wall-profile stations use normalized height 0–1, metre offsets and horizontal thickness. Positive offset means inward; negative means outward. `inwardSide` selects auto/left/right relative to wall A→B. Inspect the web inward arrow when orientation is ambiguous. Shared type edits affect every referencing wall.
@@ -107,13 +111,13 @@ Keep the supplied barn's large ground-level entrance and closed upper gable. The
 
 ## 6. Efficient web use and review
 
-Start the local web builder with `node server.mjs`. An unset `PORT` uses 5173; a supplied value must be decimal digits representing 0–65535. Empty, whitespace, fractional and out-of-range values exit 2. For automation, use `PORT=0` and parse the actual URL from stdout. An occupied port exits 3 with a recovery message; choose a different port instead of retrying the same one. The server binds to loopback only.
+Start the local web builder with `node server.mjs` (add `GODOT_BIN=/path/to/godot` to enable **Render in Godot**, which uses the same renderer and views as `godot-check --render`). An unset `PORT` uses 5173; a supplied value must be decimal digits representing 0–65535. Empty, whitespace, fractional and out-of-range values exit 2. For automation, use `PORT=0` and parse the actual URL from stdout. An occupied port exits 3 with a recovery message; choose a different port instead of retrying the same one. The server binds to loopback only.
 
 Placement numeric controls reject blank, nonfinite and out-of-range entries, restoring the last accepted preference. Stair counts must be integers from 2 through 512. These preferences affect subsequent placements without adding undo entries or rewriting existing objects. Negative absolute slab/roof elevations and relative platform offsets remain valid within their documented bounds. CLI preview numeric options must contain a number; empty strings are usage errors, while an explicit zero yaw is valid.
 
 Use selection filters when objects overlap; Shift/box selection and exact group offsets support moving multiple objects. Floor stack operations and shared wall/door shape editors expose functions beyond current transaction coverage. Shared shape editing affects all references; copy a shape first when only one opening should change.
 
-Use **Checks → Show…** to inspect affected objects. This switches to Plan, selects/frames the target or opens floor controls, and cancels pending drawing. The report download does not cancel pending drawing. Save JSON after editing; exported scenes do not preserve an editable web session. Undo covers authored edits, while inspection actions do not add undo entries.
+Every CLI capability has a web equivalent: **Include route check** (reachability warnings plus a red plan overlay of unreachable areas), **Render in Godot**, and the wall panel's **Add crenels** (same layout as `wall.crenellate`). Use **Checks → Show…** to inspect affected objects. This switches to Plan, selects/frames the target or opens floor controls, and cancels pending drawing. The report download does not cancel pending drawing. Save JSON after editing; exported scenes do not preserve an editable web session. Undo covers authored edits, while inspection actions do not add undo entries.
 
 Current selection already tests nearby openings and walls before filled areas. Stair selection already ranks hits by run-centerline distance with stable ID tie-breaking. Old audit recommendations about first-hit stair selection or areas winning over walls must be reproduced before scheduling another fix.
 
@@ -127,7 +131,9 @@ Save JSON reports a download request or a synchronous failure without changing t
 | --- | --- | --- |
 | `validate` / saved checks | Existing schema/authoring rules and warnings | Full geometric correctness or playability |
 | `inspect` | Derived dimensions, coverage, resource counts, shell paths | Watertightness, useful collision everywhere |
-| CLI software PNG | Shared preview geometry and camera framing | Godot lighting or browser layout |
+| `validate --reachability` | Floor areas and stairs connected to open ground through doors, passages and stairs, with walker clearance | Headroom, stair comfort, door swing, physics traversal |
+| CLI software PNG | Shared preview geometry and camera framing (approximation) | Godot lighting or browser layout |
+| `godot-check --assets --render` | How the exported scene renders in Godot with default materials and a neutral sun/sky | Game lighting, materials or post-processing; physics |
 | DOM editor suites | Actual handler behavior, history, modeled focus intent | Real CSS, responsive sizing, browser focus behavior |
 | Playwright browser suite | The executed live interactions and viewport checks | Engine physics |
 | `godot-check --assets` | Supported scene loading/resources and configured checks | Character traversal; it reports zero fixture physics rays |

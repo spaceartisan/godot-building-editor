@@ -5,7 +5,7 @@ import {exteriorWallOutsideSign,isExteriorWall} from './exporter.js';
 import {wallTypeProblem,wallTypeFor,wallTypeOpeningProblem,sampleWallType} from './wall-types.js';
 import { regionPolygonProblem, regionBounds } from './regions.js';
 import { containsArea } from './polygon-areas.js';
-import { REGION_KINDS, REGION_EFFECTS, floorElevation, floorWallHeight, floorSlabThickness, floorView, structuralFloorRectangles, exteriorFootprintIssue, stairFootprint, stairOpeningFootprint, wallLength, wallHeightFor, projectToWall, validateOpeningLayout } from './model.js';
+import { REGION_KINDS, REGION_EFFECTS, floorElevation, floorWallHeight, floorSlabThickness, floorView, structuralFloorRectangles, exteriorFootprintIssue, stairFootprint, stairOpeningFootprint, wallLength, wallHeightFor, projectToWall, validateOpeningLayout, rectValid } from './model.js';
 import { roofAttachmentDiagnostics, attachmentWarnings } from './roof-diagnostics.js';
 import {markerProblem} from './markers.js';
 import {openingShapeProblem,shapedOpeningProblem} from './opening-shapes.js';
@@ -222,7 +222,18 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
     const exterior=walls.filter(w=>w.role==='exterior');
     const key=p=>`${p.x.toFixed(4)},${p.z.toFixed(4)}`,degree=new Map();
     exterior.forEach(w=>[w.a,w.b].forEach(p=>degree.set(key(p),(degree.get(key(p))||0)+1)));
-    if(exterior.length&&[...degree.values()].some(n=>n>2))warn(p,'exterior boundary is branched; check wall layout and automatic footprint');
+    // With explicit coverage (solid regions or Floor Footprints) the wall
+    // graph no longer drives the automatic footprint: branches such as towers
+    // abutting ranges are expected, and an exterior end counts as joined when
+    // it touches any other wall (centreline or face), e.g. a parapet ending
+    // against a tower. Only genuinely free ends still warn.
+    const explicitCoverage=!!(f.slabs?.some(rectValid)||f.regions?.some(r=>r.effect==='solid'));
+    if(explicitCoverage){
+      const reach=(Number(view.wallThickness)||.18)/2+1e-4;
+      const free=exterior.filter(w=>['a','b'].some(end=>degree.get(key(w[end]))===1&&!walls.some(q=>q!==w&&projectToWall(q,w[end]).distance<=reach)));
+      if(free.length&&f.boundaryMode!=='intentional_open')warn(p,`exterior walls have free-standing ends (${free.slice(0,6).map(w=>w.label||w.id).join(', ')}${free.length>6?', …':''}); join them to another wall, or mark intentional access openings in Floors`,free.map(w=>({type:'wall',id:w.id,floorId:f.id})));
+    }
+    else if(exterior.length&&[...degree.values()].some(n=>n>2))warn(p,'exterior boundary is branched; check wall layout and automatic footprint');
     else if(exterior.length&&[...degree.values()].some(n=>n===1)&&f.boundaryMode!=='intentional_open')warn(p,'exterior boundary has open ends; mark intentional access openings in Floors or close the wall loop');
     const footprintIssue=exteriorFootprintIssue(view);
     if(exterior.length&&footprintIssue&&!(f.slabs?.length)&&!f.regions?.some(r=>r.effect==='solid'))warn(p,`automatic footprint uses rectangular bounds here. ${f.boundaryMode==='intentional_open'?'The intentional opening needs explicit coverage.':footprintIssue} Use Floor Footprint to define the intended coverage.`);

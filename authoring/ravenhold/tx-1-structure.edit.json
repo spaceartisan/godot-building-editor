@@ -1,0 +1,2630 @@
+{
+  "version": 1,
+  "operations": [
+    {
+      "op": "building.update",
+      "value": {
+        "name": "Ravenhold Castle",
+        "wallThickness": 0.5,
+        "roof": {
+          "type": "none",
+          "overhang": 0
+        }
+      }
+    },
+    {
+      "op": "floor.update",
+      "id": "floor_1",
+      "value": {
+        "label": "Ground",
+        "wallHeight": 4,
+        "autoCeiling": false
+      }
+    },
+    {
+      "op": "floor.add-top",
+      "id": "f2_ramparts",
+      "aboveFloorId": "floor_1",
+      "value": {
+        "label": "Ramparts",
+        "wallHeight": 3.5,
+        "autoCeiling": false
+      }
+    },
+    {
+      "op": "floor.add-top",
+      "id": "f3_towertops",
+      "aboveFloorId": "f2_ramparts",
+      "value": {
+        "label": "Tower tops",
+        "wallHeight": 3.5,
+        "autoCeiling": false
+      }
+    },
+    {
+      "op": "floor.add-top",
+      "id": "f4_keeproof",
+      "aboveFloorId": "f3_towertops",
+      "value": {
+        "label": "Keep roof",
+        "wallHeight": 3,
+        "autoCeiling": false
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "cov_core",
+      "value": {
+        "label": "Castle ground",
+        "minX": -16,
+        "maxX": 16,
+        "minZ": -16,
+        "maxZ": 16,
+        "kind": "wing",
+        "effect": "solid"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "cov_nw",
+      "value": {
+        "label": "NW tower base",
+        "minX": -18,
+        "maxX": -10,
+        "minZ": -18,
+        "maxZ": -10,
+        "kind": "room",
+        "effect": "solid"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "cov_ne",
+      "value": {
+        "label": "NE tower base",
+        "minX": 10,
+        "maxX": 18,
+        "minZ": -18,
+        "maxZ": -10,
+        "kind": "room",
+        "effect": "solid"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "cov_se",
+      "value": {
+        "label": "SE tower base",
+        "minX": 10,
+        "maxX": 18,
+        "minZ": 10,
+        "maxZ": 18,
+        "kind": "room",
+        "effect": "solid"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "cov_sw",
+      "value": {
+        "label": "SW tower base",
+        "minX": -18,
+        "maxX": -10,
+        "minZ": 10,
+        "maxZ": 18,
+        "kind": "room",
+        "effect": "solid"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "cov_gate",
+      "value": {
+        "label": "Gatehouse front",
+        "minX": -6,
+        "maxX": 6,
+        "minZ": 16,
+        "maxZ": 20,
+        "kind": "room",
+        "effect": "solid"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "lbl_hall",
+      "value": {
+        "label": "Great hall",
+        "minX": -10,
+        "maxX": 10,
+        "minZ": -16,
+        "maxZ": -10,
+        "kind": "room",
+        "effect": "label"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "lbl_barr_n",
+      "value": {
+        "label": "Barracks north",
+        "minX": 10,
+        "maxX": 16,
+        "minZ": -10,
+        "maxZ": 0,
+        "kind": "room",
+        "effect": "label"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "lbl_barr_s",
+      "value": {
+        "label": "Barracks south",
+        "minX": 10,
+        "maxX": 16,
+        "minZ": 0,
+        "maxZ": 10,
+        "kind": "room",
+        "effect": "label"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "lbl_store",
+      "value": {
+        "label": "Storehouse",
+        "minX": -16,
+        "maxX": -10,
+        "minZ": -10,
+        "maxZ": 0,
+        "kind": "room",
+        "effect": "label"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "lbl_stables",
+      "value": {
+        "label": "Stables",
+        "minX": -16,
+        "maxX": -10,
+        "minZ": 0,
+        "maxZ": 10,
+        "kind": "room",
+        "effect": "label"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "lbl_court",
+      "value": {
+        "label": "Courtyard",
+        "minX": -10,
+        "maxX": 10,
+        "minZ": -10,
+        "maxZ": 10,
+        "kind": "courtyard",
+        "effect": "label"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "lbl_tunnel",
+      "value": {
+        "label": "Gate tunnel",
+        "minX": -2,
+        "maxX": 2,
+        "minZ": 10,
+        "maxZ": 20,
+        "kind": "room",
+        "effect": "label"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "lbl_guard_w",
+      "value": {
+        "label": "West guard room",
+        "minX": -6,
+        "maxX": -2,
+        "minZ": 10,
+        "maxZ": 20,
+        "kind": "room",
+        "effect": "label"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "lbl_guard_e",
+      "value": {
+        "label": "East guard room",
+        "minX": 2,
+        "maxX": 6,
+        "minZ": 10,
+        "maxZ": 20,
+        "kind": "room",
+        "effect": "label"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "lbl_undercroft",
+      "value": {
+        "label": "Keep undercroft",
+        "minX": -5,
+        "maxX": 5,
+        "minZ": -6,
+        "maxZ": 2,
+        "kind": "room",
+        "effect": "label"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f2_ramparts",
+      "id": "cov_n",
+      "value": {
+        "label": "North range",
+        "minX": -10,
+        "maxX": 10,
+        "minZ": -16,
+        "maxZ": -10,
+        "kind": "wing",
+        "effect": "solid"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f2_ramparts",
+      "id": "cov_e",
+      "value": {
+        "label": "East range",
+        "minX": 10,
+        "maxX": 16,
+        "minZ": -10,
+        "maxZ": 10,
+        "kind": "wing",
+        "effect": "solid"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f2_ramparts",
+      "id": "cov_w",
+      "value": {
+        "label": "West range",
+        "minX": -16,
+        "maxX": -10,
+        "minZ": -10,
+        "maxZ": 10,
+        "kind": "wing",
+        "effect": "solid"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f2_ramparts",
+      "id": "cov_s_w",
+      "value": {
+        "label": "South-west walk",
+        "minX": -10,
+        "maxX": -6,
+        "minZ": 10,
+        "maxZ": 16,
+        "kind": "wing",
+        "effect": "solid"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f2_ramparts",
+      "id": "cov_s_e",
+      "value": {
+        "label": "South-east walk",
+        "minX": 6,
+        "maxX": 10,
+        "minZ": 10,
+        "maxZ": 16,
+        "kind": "wing",
+        "effect": "solid"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f2_ramparts",
+      "id": "cov_gate",
+      "value": {
+        "label": "Winch room",
+        "minX": -6,
+        "maxX": 6,
+        "minZ": 10,
+        "maxZ": 20,
+        "kind": "room",
+        "effect": "solid"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f2_ramparts",
+      "id": "cov_keep",
+      "value": {
+        "label": "Great chamber",
+        "minX": -5,
+        "maxX": 5,
+        "minZ": -6,
+        "maxZ": 2,
+        "kind": "room",
+        "effect": "solid"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f2_ramparts",
+      "id": "cov_nw",
+      "value": {
+        "label": "NW tower",
+        "minX": -18,
+        "maxX": -10,
+        "minZ": -18,
+        "maxZ": -10,
+        "kind": "room",
+        "effect": "solid"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f2_ramparts",
+      "id": "cov_ne",
+      "value": {
+        "label": "NE tower",
+        "minX": 10,
+        "maxX": 18,
+        "minZ": -18,
+        "maxZ": -10,
+        "kind": "room",
+        "effect": "solid"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f2_ramparts",
+      "id": "cov_se",
+      "value": {
+        "label": "SE tower",
+        "minX": 10,
+        "maxX": 18,
+        "minZ": 10,
+        "maxZ": 18,
+        "kind": "room",
+        "effect": "solid"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f2_ramparts",
+      "id": "cov_sw",
+      "value": {
+        "label": "SW tower",
+        "minX": -18,
+        "maxX": -10,
+        "minZ": 10,
+        "maxZ": 18,
+        "kind": "room",
+        "effect": "solid"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f2_ramparts",
+      "id": "lbl_walk_n",
+      "value": {
+        "label": "North wall walk",
+        "minX": -10,
+        "maxX": 10,
+        "minZ": -16,
+        "maxZ": -13.5,
+        "kind": "bay",
+        "effect": "label"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f2_ramparts",
+      "id": "lbl_walk_e",
+      "value": {
+        "label": "East wall walk",
+        "minX": 13.5,
+        "maxX": 16,
+        "minZ": -10,
+        "maxZ": 10,
+        "kind": "bay",
+        "effect": "label"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f2_ramparts",
+      "id": "lbl_walk_w",
+      "value": {
+        "label": "West wall walk",
+        "minX": -16,
+        "maxX": -13.5,
+        "minZ": -10,
+        "maxZ": 10,
+        "kind": "bay",
+        "effect": "label"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f2_ramparts",
+      "id": "lbl_guest",
+      "value": {
+        "label": "Guest chambers",
+        "minX": -10,
+        "maxX": 0,
+        "minZ": -13.5,
+        "maxZ": -10,
+        "kind": "room",
+        "effect": "label"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f2_ramparts",
+      "id": "lbl_chapel",
+      "value": {
+        "label": "Chapel",
+        "minX": 0,
+        "maxX": 10,
+        "minZ": -13.5,
+        "maxZ": -10,
+        "kind": "room",
+        "effect": "label"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f2_ramparts",
+      "id": "lbl_armory",
+      "value": {
+        "label": "Armory",
+        "minX": 10,
+        "maxX": 13.5,
+        "minZ": -10,
+        "maxZ": 10,
+        "kind": "room",
+        "effect": "label"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f2_ramparts",
+      "id": "lbl_garrison",
+      "value": {
+        "label": "Garrison hall",
+        "minX": -13.5,
+        "maxX": -10,
+        "minZ": -10,
+        "maxZ": 10,
+        "kind": "room",
+        "effect": "label"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f3_towertops",
+      "id": "cov_nw",
+      "value": {
+        "label": "NW tower top",
+        "minX": -18,
+        "maxX": -10,
+        "minZ": -18,
+        "maxZ": -10,
+        "kind": "room",
+        "effect": "solid"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f3_towertops",
+      "id": "cov_ne",
+      "value": {
+        "label": "NE tower top",
+        "minX": 10,
+        "maxX": 18,
+        "minZ": -18,
+        "maxZ": -10,
+        "kind": "room",
+        "effect": "solid"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f3_towertops",
+      "id": "cov_se",
+      "value": {
+        "label": "SE tower top",
+        "minX": 10,
+        "maxX": 18,
+        "minZ": 10,
+        "maxZ": 18,
+        "kind": "room",
+        "effect": "solid"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f3_towertops",
+      "id": "cov_sw",
+      "value": {
+        "label": "SW tower top",
+        "minX": -18,
+        "maxX": -10,
+        "minZ": 10,
+        "maxZ": 18,
+        "kind": "room",
+        "effect": "solid"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f3_towertops",
+      "id": "cov_gate",
+      "value": {
+        "label": "Gatehouse top",
+        "minX": -6,
+        "maxX": 6,
+        "minZ": 10,
+        "maxZ": 20,
+        "kind": "room",
+        "effect": "solid"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f3_towertops",
+      "id": "cov_keep",
+      "value": {
+        "label": "Lord's chamber",
+        "minX": -5,
+        "maxX": 5,
+        "minZ": -6,
+        "maxZ": 2,
+        "kind": "room",
+        "effect": "solid"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "f4_keeproof",
+      "id": "cov_keep",
+      "value": {
+        "label": "Keep roof",
+        "minX": -5,
+        "maxX": 5,
+        "minZ": -6,
+        "maxZ": 2,
+        "kind": "room",
+        "effect": "solid"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_outer01",
+      "value": {
+        "a": {
+          "x": -18,
+          "z": -18
+        },
+        "b": {
+          "x": -10,
+          "z": -18
+        },
+        "role": "exterior",
+        "label": "Curtain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_outer02",
+      "value": {
+        "a": {
+          "x": -10,
+          "z": -18
+        },
+        "b": {
+          "x": -10,
+          "z": -16
+        },
+        "role": "exterior",
+        "label": "Curtain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_outer03",
+      "value": {
+        "a": {
+          "x": -10,
+          "z": -16
+        },
+        "b": {
+          "x": 10,
+          "z": -16
+        },
+        "role": "exterior",
+        "label": "Curtain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_outer04",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": -16
+        },
+        "b": {
+          "x": 10,
+          "z": -18
+        },
+        "role": "exterior",
+        "label": "Curtain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_outer05",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": -18
+        },
+        "b": {
+          "x": 18,
+          "z": -18
+        },
+        "role": "exterior",
+        "label": "Curtain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_outer06",
+      "value": {
+        "a": {
+          "x": 18,
+          "z": -18
+        },
+        "b": {
+          "x": 18,
+          "z": -10
+        },
+        "role": "exterior",
+        "label": "Curtain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_outer07",
+      "value": {
+        "a": {
+          "x": 18,
+          "z": -10
+        },
+        "b": {
+          "x": 16,
+          "z": -10
+        },
+        "role": "exterior",
+        "label": "Curtain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_outer08",
+      "value": {
+        "a": {
+          "x": 16,
+          "z": -10
+        },
+        "b": {
+          "x": 16,
+          "z": 10
+        },
+        "role": "exterior",
+        "label": "Curtain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_outer09",
+      "value": {
+        "a": {
+          "x": 16,
+          "z": 10
+        },
+        "b": {
+          "x": 18,
+          "z": 10
+        },
+        "role": "exterior",
+        "label": "Curtain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_outer10",
+      "value": {
+        "a": {
+          "x": 18,
+          "z": 10
+        },
+        "b": {
+          "x": 18,
+          "z": 18
+        },
+        "role": "exterior",
+        "label": "Curtain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_outer11",
+      "value": {
+        "a": {
+          "x": 18,
+          "z": 18
+        },
+        "b": {
+          "x": 10,
+          "z": 18
+        },
+        "role": "exterior",
+        "label": "Curtain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_outer12",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": 18
+        },
+        "b": {
+          "x": 10,
+          "z": 16
+        },
+        "role": "exterior",
+        "label": "Curtain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_outer13",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": 16
+        },
+        "b": {
+          "x": 6,
+          "z": 16
+        },
+        "role": "exterior",
+        "label": "Curtain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_outer14",
+      "value": {
+        "a": {
+          "x": 6,
+          "z": 16
+        },
+        "b": {
+          "x": 6,
+          "z": 20
+        },
+        "role": "exterior",
+        "label": "Curtain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_outer15",
+      "value": {
+        "a": {
+          "x": 6,
+          "z": 20
+        },
+        "b": {
+          "x": -6,
+          "z": 20
+        },
+        "role": "exterior",
+        "label": "Curtain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_outer16",
+      "value": {
+        "a": {
+          "x": -6,
+          "z": 20
+        },
+        "b": {
+          "x": -6,
+          "z": 16
+        },
+        "role": "exterior",
+        "label": "Curtain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_outer17",
+      "value": {
+        "a": {
+          "x": -6,
+          "z": 16
+        },
+        "b": {
+          "x": -10,
+          "z": 16
+        },
+        "role": "exterior",
+        "label": "Curtain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_outer18",
+      "value": {
+        "a": {
+          "x": -10,
+          "z": 16
+        },
+        "b": {
+          "x": -10,
+          "z": 18
+        },
+        "role": "exterior",
+        "label": "Curtain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_outer19",
+      "value": {
+        "a": {
+          "x": -10,
+          "z": 18
+        },
+        "b": {
+          "x": -18,
+          "z": 18
+        },
+        "role": "exterior",
+        "label": "Curtain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_outer20",
+      "value": {
+        "a": {
+          "x": -18,
+          "z": 18
+        },
+        "b": {
+          "x": -18,
+          "z": 10
+        },
+        "role": "exterior",
+        "label": "Curtain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_outer21",
+      "value": {
+        "a": {
+          "x": -18,
+          "z": 10
+        },
+        "b": {
+          "x": -16,
+          "z": 10
+        },
+        "role": "exterior",
+        "label": "Curtain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_outer22",
+      "value": {
+        "a": {
+          "x": -16,
+          "z": 10
+        },
+        "b": {
+          "x": -16,
+          "z": -10
+        },
+        "role": "exterior",
+        "label": "Curtain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_outer23",
+      "value": {
+        "a": {
+          "x": -16,
+          "z": -10
+        },
+        "b": {
+          "x": -18,
+          "z": -10
+        },
+        "role": "exterior",
+        "label": "Curtain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_outer24",
+      "value": {
+        "a": {
+          "x": -18,
+          "z": -10
+        },
+        "b": {
+          "x": -18,
+          "z": -18
+        },
+        "role": "exterior",
+        "label": "Curtain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_court_n",
+      "value": {
+        "a": {
+          "x": -10,
+          "z": -10
+        },
+        "b": {
+          "x": 10,
+          "z": -10
+        },
+        "role": "exterior",
+        "label": "Courtyard face"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_court_e",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": -10
+        },
+        "b": {
+          "x": 10,
+          "z": 10
+        },
+        "role": "exterior",
+        "label": "Courtyard face"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_court_s",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": 10
+        },
+        "b": {
+          "x": -10,
+          "z": 10
+        },
+        "role": "exterior",
+        "label": "Courtyard face"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_court_w",
+      "value": {
+        "a": {
+          "x": -10,
+          "z": 10
+        },
+        "b": {
+          "x": -10,
+          "z": -10
+        },
+        "role": "exterior",
+        "label": "Courtyard face"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_keep_n",
+      "value": {
+        "a": {
+          "x": -5,
+          "z": -6
+        },
+        "b": {
+          "x": 5,
+          "z": -6
+        },
+        "role": "exterior",
+        "label": "Keep"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_keep_e",
+      "value": {
+        "a": {
+          "x": 5,
+          "z": -6
+        },
+        "b": {
+          "x": 5,
+          "z": 2
+        },
+        "role": "exterior",
+        "label": "Keep"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_keep_s",
+      "value": {
+        "a": {
+          "x": 5,
+          "z": 2
+        },
+        "b": {
+          "x": -5,
+          "z": 2
+        },
+        "role": "exterior",
+        "label": "Keep"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_keep_w",
+      "value": {
+        "a": {
+          "x": -5,
+          "z": 2
+        },
+        "b": {
+          "x": -5,
+          "z": -6
+        },
+        "role": "exterior",
+        "label": "Keep"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_nw_e",
+      "value": {
+        "a": {
+          "x": -10,
+          "z": -16
+        },
+        "b": {
+          "x": -10,
+          "z": -10
+        },
+        "role": "interior",
+        "label": "NW tower / hall"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_nw_s",
+      "value": {
+        "a": {
+          "x": -16,
+          "z": -10
+        },
+        "b": {
+          "x": -10,
+          "z": -10
+        },
+        "role": "interior",
+        "label": "NW tower / storehouse"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_ne_w",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": -16
+        },
+        "b": {
+          "x": 10,
+          "z": -10
+        },
+        "role": "interior",
+        "label": "NE tower / hall"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_ne_s",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": -10
+        },
+        "b": {
+          "x": 16,
+          "z": -10
+        },
+        "role": "interior",
+        "label": "NE tower / barracks"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_se_w",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": 10
+        },
+        "b": {
+          "x": 10,
+          "z": 16
+        },
+        "role": "interior",
+        "label": "SE tower / store"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_se_n",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": 10
+        },
+        "b": {
+          "x": 16,
+          "z": 10
+        },
+        "role": "interior",
+        "label": "SE tower / barracks"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_sw_e",
+      "value": {
+        "a": {
+          "x": -10,
+          "z": 10
+        },
+        "b": {
+          "x": -10,
+          "z": 16
+        },
+        "role": "interior",
+        "label": "SW tower / store"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_sw_n",
+      "value": {
+        "a": {
+          "x": -16,
+          "z": 10
+        },
+        "b": {
+          "x": -10,
+          "z": 10
+        },
+        "role": "interior",
+        "label": "SW tower / stables"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_gate_w",
+      "value": {
+        "a": {
+          "x": -2,
+          "z": 10
+        },
+        "b": {
+          "x": -2,
+          "z": 20
+        },
+        "role": "interior",
+        "label": "Gate tunnel W"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_gate_e",
+      "value": {
+        "a": {
+          "x": 2,
+          "z": 10
+        },
+        "b": {
+          "x": 2,
+          "z": 20
+        },
+        "role": "interior",
+        "label": "Gate tunnel E"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_guard_w",
+      "value": {
+        "a": {
+          "x": -6,
+          "z": 10
+        },
+        "b": {
+          "x": -6,
+          "z": 16
+        },
+        "role": "interior",
+        "label": "Guard room / store W"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_guard_e",
+      "value": {
+        "a": {
+          "x": 6,
+          "z": 10
+        },
+        "b": {
+          "x": 6,
+          "z": 16
+        },
+        "role": "interior",
+        "label": "Guard room / store E"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_east_part",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": 0
+        },
+        "b": {
+          "x": 16,
+          "z": 0
+        },
+        "role": "interior",
+        "label": "Barracks partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "g_west_part",
+      "value": {
+        "a": {
+          "x": -16,
+          "z": 0
+        },
+        "b": {
+          "x": -10,
+          "z": 0
+        },
+        "role": "interior",
+        "label": "Stables partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_nw_ox",
+      "value": {
+        "a": {
+          "x": -18,
+          "z": -10
+        },
+        "b": {
+          "x": -18,
+          "z": -18
+        },
+        "role": "exterior",
+        "label": "NW tower"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_nw_oz",
+      "value": {
+        "a": {
+          "x": -18,
+          "z": -18
+        },
+        "b": {
+          "x": -10,
+          "z": -18
+        },
+        "role": "exterior",
+        "label": "NW tower"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_nw_ix_ext",
+      "value": {
+        "a": {
+          "x": -10,
+          "z": -18
+        },
+        "b": {
+          "x": -10,
+          "z": -13.5
+        },
+        "role": "exterior",
+        "label": "NW tower"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_nw_iz_ext",
+      "value": {
+        "a": {
+          "x": -13.5,
+          "z": -10
+        },
+        "b": {
+          "x": -18,
+          "z": -10
+        },
+        "role": "exterior",
+        "label": "NW tower"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_ne_ox",
+      "value": {
+        "a": {
+          "x": 18,
+          "z": -10
+        },
+        "b": {
+          "x": 18,
+          "z": -18
+        },
+        "role": "exterior",
+        "label": "NE tower"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_ne_oz",
+      "value": {
+        "a": {
+          "x": 18,
+          "z": -18
+        },
+        "b": {
+          "x": 10,
+          "z": -18
+        },
+        "role": "exterior",
+        "label": "NE tower"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_ne_ix_ext",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": -18
+        },
+        "b": {
+          "x": 10,
+          "z": -13.5
+        },
+        "role": "exterior",
+        "label": "NE tower"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_ne_iz_ext",
+      "value": {
+        "a": {
+          "x": 13.5,
+          "z": -10
+        },
+        "b": {
+          "x": 18,
+          "z": -10
+        },
+        "role": "exterior",
+        "label": "NE tower"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_se_ox",
+      "value": {
+        "a": {
+          "x": 18,
+          "z": 10
+        },
+        "b": {
+          "x": 18,
+          "z": 18
+        },
+        "role": "exterior",
+        "label": "SE tower"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_se_oz",
+      "value": {
+        "a": {
+          "x": 18,
+          "z": 18
+        },
+        "b": {
+          "x": 10,
+          "z": 18
+        },
+        "role": "exterior",
+        "label": "SE tower"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_se_ix_ext",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": 18
+        },
+        "b": {
+          "x": 10,
+          "z": 10
+        },
+        "role": "exterior",
+        "label": "SE tower"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_se_iz_ext",
+      "value": {
+        "a": {
+          "x": 13.5,
+          "z": 10
+        },
+        "b": {
+          "x": 18,
+          "z": 10
+        },
+        "role": "exterior",
+        "label": "SE tower"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_sw_ox",
+      "value": {
+        "a": {
+          "x": -18,
+          "z": 10
+        },
+        "b": {
+          "x": -18,
+          "z": 18
+        },
+        "role": "exterior",
+        "label": "SW tower"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_sw_oz",
+      "value": {
+        "a": {
+          "x": -18,
+          "z": 18
+        },
+        "b": {
+          "x": -10,
+          "z": 18
+        },
+        "role": "exterior",
+        "label": "SW tower"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_sw_ix_ext",
+      "value": {
+        "a": {
+          "x": -10,
+          "z": 18
+        },
+        "b": {
+          "x": -10,
+          "z": 10
+        },
+        "role": "exterior",
+        "label": "SW tower"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_sw_iz_ext",
+      "value": {
+        "a": {
+          "x": -13.5,
+          "z": 10
+        },
+        "b": {
+          "x": -18,
+          "z": 10
+        },
+        "role": "exterior",
+        "label": "SW tower"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_nw_ix_int",
+      "value": {
+        "a": {
+          "x": -10,
+          "z": -13.5
+        },
+        "b": {
+          "x": -10,
+          "z": -10
+        },
+        "role": "interior",
+        "label": "NW tower / guest chambers"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_ne_ix_int",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": -13.5
+        },
+        "b": {
+          "x": 10,
+          "z": -10
+        },
+        "role": "interior",
+        "label": "NE tower / chapel"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_nw_iz_int",
+      "value": {
+        "a": {
+          "x": -13.5,
+          "z": -10
+        },
+        "b": {
+          "x": -10,
+          "z": -10
+        },
+        "role": "interior",
+        "label": "NW tower / garrison hall"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_ne_iz_int",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": -10
+        },
+        "b": {
+          "x": 13.5,
+          "z": -10
+        },
+        "role": "interior",
+        "label": "NE tower / armory"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_sw_iz_int",
+      "value": {
+        "a": {
+          "x": -13.5,
+          "z": 10
+        },
+        "b": {
+          "x": -10,
+          "z": 10
+        },
+        "role": "interior",
+        "label": "SW tower / garrison hall"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_se_iz_int",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": 10
+        },
+        "b": {
+          "x": 13.5,
+          "z": 10
+        },
+        "role": "interior",
+        "label": "SE tower / armory"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_north_part",
+      "value": {
+        "a": {
+          "x": 0,
+          "z": -13.5
+        },
+        "b": {
+          "x": 0,
+          "z": -10
+        },
+        "role": "interior",
+        "label": "Guest chambers / chapel"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_north_walk",
+      "value": {
+        "a": {
+          "x": -10,
+          "z": -13.5
+        },
+        "b": {
+          "x": 10,
+          "z": -13.5
+        },
+        "role": "exterior",
+        "label": "Guest chambers / wall walk"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_north_court",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": -10
+        },
+        "b": {
+          "x": -10,
+          "z": -10
+        },
+        "role": "exterior",
+        "label": "Guest chambers / courtyard"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_east_walk",
+      "value": {
+        "a": {
+          "x": 13.5,
+          "z": -10
+        },
+        "b": {
+          "x": 13.5,
+          "z": 10
+        },
+        "role": "exterior",
+        "label": "Armory / wall walk"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_east_court",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": 10
+        },
+        "b": {
+          "x": 10,
+          "z": -10
+        },
+        "role": "exterior",
+        "label": "Armory / courtyard"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_west_walk",
+      "value": {
+        "a": {
+          "x": -13.5,
+          "z": 10
+        },
+        "b": {
+          "x": -13.5,
+          "z": -10
+        },
+        "role": "exterior",
+        "label": "Garrison hall / wall walk"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_west_court",
+      "value": {
+        "a": {
+          "x": -10,
+          "z": -10
+        },
+        "b": {
+          "x": -10,
+          "z": 10
+        },
+        "role": "exterior",
+        "label": "Garrison hall / courtyard"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_gh_n",
+      "value": {
+        "a": {
+          "x": -6,
+          "z": 10
+        },
+        "b": {
+          "x": 6,
+          "z": 10
+        },
+        "role": "exterior",
+        "label": "Winch room"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_gh_e",
+      "value": {
+        "a": {
+          "x": 6,
+          "z": 10
+        },
+        "b": {
+          "x": 6,
+          "z": 20
+        },
+        "role": "exterior",
+        "label": "Winch room"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_gh_s",
+      "value": {
+        "a": {
+          "x": 6,
+          "z": 20
+        },
+        "b": {
+          "x": -6,
+          "z": 20
+        },
+        "role": "exterior",
+        "label": "Winch room"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_gh_w",
+      "value": {
+        "a": {
+          "x": -6,
+          "z": 20
+        },
+        "b": {
+          "x": -6,
+          "z": 10
+        },
+        "role": "exterior",
+        "label": "Winch room"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_keep_n",
+      "value": {
+        "a": {
+          "x": -5,
+          "z": -6
+        },
+        "b": {
+          "x": 5,
+          "z": -6
+        },
+        "role": "exterior",
+        "label": "Keep"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_keep_e",
+      "value": {
+        "a": {
+          "x": 5,
+          "z": -6
+        },
+        "b": {
+          "x": 5,
+          "z": 2
+        },
+        "role": "exterior",
+        "label": "Keep"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_keep_s",
+      "value": {
+        "a": {
+          "x": 5,
+          "z": 2
+        },
+        "b": {
+          "x": -5,
+          "z": 2
+        },
+        "role": "exterior",
+        "label": "Keep"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_keep_w",
+      "value": {
+        "a": {
+          "x": -5,
+          "z": 2
+        },
+        "b": {
+          "x": -5,
+          "z": -6
+        },
+        "role": "exterior",
+        "label": "Keep"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_par_n",
+      "value": {
+        "a": {
+          "x": -10,
+          "z": -16
+        },
+        "b": {
+          "x": 10,
+          "z": -16
+        },
+        "role": "exterior",
+        "label": "North parapet",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_par_e",
+      "value": {
+        "a": {
+          "x": 16,
+          "z": -10
+        },
+        "b": {
+          "x": 16,
+          "z": 10
+        },
+        "role": "exterior",
+        "label": "East parapet",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_par_w",
+      "value": {
+        "a": {
+          "x": -16,
+          "z": 10
+        },
+        "b": {
+          "x": -16,
+          "z": -10
+        },
+        "role": "exterior",
+        "label": "West parapet",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_par_sw",
+      "value": {
+        "a": {
+          "x": -10,
+          "z": 16
+        },
+        "b": {
+          "x": -6,
+          "z": 16
+        },
+        "role": "exterior",
+        "label": "South-west parapet",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f2_ramparts",
+      "id": "r_par_se",
+      "value": {
+        "a": {
+          "x": 6,
+          "z": 16
+        },
+        "b": {
+          "x": 10,
+          "z": 16
+        },
+        "role": "exterior",
+        "label": "South-east parapet",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f3_towertops",
+      "id": "t_nw_n",
+      "value": {
+        "a": {
+          "x": -18,
+          "z": -18
+        },
+        "b": {
+          "x": -10,
+          "z": -18
+        },
+        "role": "exterior",
+        "label": "NW tower top N",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f3_towertops",
+      "id": "t_nw_e",
+      "value": {
+        "a": {
+          "x": -10,
+          "z": -18
+        },
+        "b": {
+          "x": -10,
+          "z": -10
+        },
+        "role": "exterior",
+        "label": "NW tower top E",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f3_towertops",
+      "id": "t_nw_s",
+      "value": {
+        "a": {
+          "x": -10,
+          "z": -10
+        },
+        "b": {
+          "x": -18,
+          "z": -10
+        },
+        "role": "exterior",
+        "label": "NW tower top S",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f3_towertops",
+      "id": "t_nw_w",
+      "value": {
+        "a": {
+          "x": -18,
+          "z": -10
+        },
+        "b": {
+          "x": -18,
+          "z": -18
+        },
+        "role": "exterior",
+        "label": "NW tower top W",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f3_towertops",
+      "id": "t_ne_n",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": -18
+        },
+        "b": {
+          "x": 18,
+          "z": -18
+        },
+        "role": "exterior",
+        "label": "NE tower top N",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f3_towertops",
+      "id": "t_ne_e",
+      "value": {
+        "a": {
+          "x": 18,
+          "z": -18
+        },
+        "b": {
+          "x": 18,
+          "z": -10
+        },
+        "role": "exterior",
+        "label": "NE tower top E",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f3_towertops",
+      "id": "t_ne_s",
+      "value": {
+        "a": {
+          "x": 18,
+          "z": -10
+        },
+        "b": {
+          "x": 10,
+          "z": -10
+        },
+        "role": "exterior",
+        "label": "NE tower top S",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f3_towertops",
+      "id": "t_ne_w",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": -10
+        },
+        "b": {
+          "x": 10,
+          "z": -18
+        },
+        "role": "exterior",
+        "label": "NE tower top W",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f3_towertops",
+      "id": "t_se_n",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": 10
+        },
+        "b": {
+          "x": 18,
+          "z": 10
+        },
+        "role": "exterior",
+        "label": "SE tower top N",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f3_towertops",
+      "id": "t_se_e",
+      "value": {
+        "a": {
+          "x": 18,
+          "z": 10
+        },
+        "b": {
+          "x": 18,
+          "z": 18
+        },
+        "role": "exterior",
+        "label": "SE tower top E",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f3_towertops",
+      "id": "t_se_s",
+      "value": {
+        "a": {
+          "x": 18,
+          "z": 18
+        },
+        "b": {
+          "x": 10,
+          "z": 18
+        },
+        "role": "exterior",
+        "label": "SE tower top S",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f3_towertops",
+      "id": "t_se_w",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": 18
+        },
+        "b": {
+          "x": 10,
+          "z": 10
+        },
+        "role": "exterior",
+        "label": "SE tower top W",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f3_towertops",
+      "id": "t_sw_n",
+      "value": {
+        "a": {
+          "x": -18,
+          "z": 10
+        },
+        "b": {
+          "x": -10,
+          "z": 10
+        },
+        "role": "exterior",
+        "label": "SW tower top N",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f3_towertops",
+      "id": "t_sw_e",
+      "value": {
+        "a": {
+          "x": -10,
+          "z": 10
+        },
+        "b": {
+          "x": -10,
+          "z": 18
+        },
+        "role": "exterior",
+        "label": "SW tower top E",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f3_towertops",
+      "id": "t_sw_s",
+      "value": {
+        "a": {
+          "x": -10,
+          "z": 18
+        },
+        "b": {
+          "x": -18,
+          "z": 18
+        },
+        "role": "exterior",
+        "label": "SW tower top S",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f3_towertops",
+      "id": "t_sw_w",
+      "value": {
+        "a": {
+          "x": -18,
+          "z": 18
+        },
+        "b": {
+          "x": -18,
+          "z": 10
+        },
+        "role": "exterior",
+        "label": "SW tower top W",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f3_towertops",
+      "id": "t_gh_n",
+      "value": {
+        "a": {
+          "x": -6,
+          "z": 10
+        },
+        "b": {
+          "x": 6,
+          "z": 10
+        },
+        "role": "exterior",
+        "label": "Gatehouse top N",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f3_towertops",
+      "id": "t_gh_e",
+      "value": {
+        "a": {
+          "x": 6,
+          "z": 10
+        },
+        "b": {
+          "x": 6,
+          "z": 20
+        },
+        "role": "exterior",
+        "label": "Gatehouse top E",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f3_towertops",
+      "id": "t_gh_s",
+      "value": {
+        "a": {
+          "x": 6,
+          "z": 20
+        },
+        "b": {
+          "x": -6,
+          "z": 20
+        },
+        "role": "exterior",
+        "label": "Gatehouse top S",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f3_towertops",
+      "id": "t_gh_w",
+      "value": {
+        "a": {
+          "x": -6,
+          "z": 20
+        },
+        "b": {
+          "x": -6,
+          "z": 10
+        },
+        "role": "exterior",
+        "label": "Gatehouse top W",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f3_towertops",
+      "id": "t_keep_n",
+      "value": {
+        "a": {
+          "x": -5,
+          "z": -6
+        },
+        "b": {
+          "x": 5,
+          "z": -6
+        },
+        "role": "exterior",
+        "label": "Keep"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f3_towertops",
+      "id": "t_keep_e",
+      "value": {
+        "a": {
+          "x": 5,
+          "z": -6
+        },
+        "b": {
+          "x": 5,
+          "z": 2
+        },
+        "role": "exterior",
+        "label": "Keep"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f3_towertops",
+      "id": "t_keep_s",
+      "value": {
+        "a": {
+          "x": 5,
+          "z": 2
+        },
+        "b": {
+          "x": -5,
+          "z": 2
+        },
+        "role": "exterior",
+        "label": "Keep"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f3_towertops",
+      "id": "t_keep_w",
+      "value": {
+        "a": {
+          "x": -5,
+          "z": 2
+        },
+        "b": {
+          "x": -5,
+          "z": -6
+        },
+        "role": "exterior",
+        "label": "Keep"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f4_keeproof",
+      "id": "k_keep_n",
+      "value": {
+        "a": {
+          "x": -5,
+          "z": -6
+        },
+        "b": {
+          "x": 5,
+          "z": -6
+        },
+        "role": "exterior",
+        "label": "Keep roof N",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f4_keeproof",
+      "id": "k_keep_e",
+      "value": {
+        "a": {
+          "x": 5,
+          "z": -6
+        },
+        "b": {
+          "x": 5,
+          "z": 2
+        },
+        "role": "exterior",
+        "label": "Keep roof E",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f4_keeproof",
+      "id": "k_keep_s",
+      "value": {
+        "a": {
+          "x": 5,
+          "z": 2
+        },
+        "b": {
+          "x": -5,
+          "z": 2
+        },
+        "role": "exterior",
+        "label": "Keep roof S",
+        "height": 1.7
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "f4_keeproof",
+      "id": "k_keep_w",
+      "value": {
+        "a": {
+          "x": -5,
+          "z": 2
+        },
+        "b": {
+          "x": -5,
+          "z": -6
+        },
+        "role": "exterior",
+        "label": "Keep roof W",
+        "height": 1.7
+      }
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-# Building Studio CLI 1.2.5
+# Building Studio CLI 1.3.0
 
 Version 1.2.3 rejects empty or whitespace-only preview numeric arguments with exit code 2 before loading the optional canvas backend. Explicit `--yaw 0` remains valid.
 
@@ -74,8 +74,10 @@ Input/output paths are relative to your current working directory. Calling `/abs
 
 | Command | Behavior |
 | --- | --- |
+| `new --out NEW.json [--name TEXT]` | Writes a deterministic blank one-floor building (the web New building, floor ID `floor_1`) to a new file as a transaction starting point. |
 | `validate FILE...` | Validates original JSON, applies shared normalization to an in-memory clone, then validates again. Reports errors and warnings without changing input. |
 | `inspect FILE...` | Adds per-floor counts/elevations, footprint source/area, manual roof relationships, exported resource counts and separate shell node paths. |
+| `validate`/`inspect FILE... --reachability` | Opt-in route check from open ground through doors, empty passages and stairs (0.1 m grid, 0.25 m walker radius). Unreachable floor areas of at least 1 m² and blocked stair ends become warnings, which `--warnings-as-errors` and `validate --out` include; JSON results add a `reachability` object with per-floor walkable/reached areas. |
 | `inspect FILE... --entities` | Also lists normalized floor IDs/overrides, walls, openings, stairs, platforms, markers, regions and manual roofs for transaction targeting. |
 | `edit FILE --ops JSON --dry-run` | Validates a version-1 transaction; reports separate import/default and authoring diffs without writing. |
 | `edit FILE --ops JSON --out FILE` | Writes a validated, normalized building copy to a new file. See [TRANSACTIONS.md](TRANSACTIONS.md). |
@@ -85,6 +87,7 @@ Input/output paths are relative to your current working directory. Calling `/abs
 | `test [--suite NAME]` | Runs the selected JavaScript checks from the installation directory and reports each script separately. |
 | `godot-check [--godot PATH]` | Runs the bundled Godot scene/physics regressions, using an explicit executable or `GODOT_BIN`. Reports engine version and check counts. |
 | `godot-check --assets DIR` | Checks newly exported scene assets in Godot, using an isolated copy. Verifies loading, mesh/collision resources, material policy and trimmed-roof mesh/collision agreement. |
+| `godot-check --assets DIR --render --out NEW_DIR [--views FILE]` | After the resource checks pass, renders the root scenes with Godot's Compatibility renderer (needs `DISPLAY`, or `xvfb-run` for a virtual display; `--headless` cannot render). Default views: four exterior diagonals, an aerial view and one eye-level view per labelled region (from the exported floor metadata, up to 64). `--views` takes `{"views":[{"name","eye":[x,y,z],"look":[x,y,z],"fov"}]}`. Writes 1280 × 800 PNGs and `renders.json` (views, engine, renderer) to a new directory. Scenes are unmodified: empty materials render as default grey; only a camera, sky, sun and ambient light are added. The web editor's **Render in Godot** uses the same code through `server.mjs` started with `GODOT_BIN`. |
 | `preview FILE --out PNG` | Renders the editor's software 3D view, using optional `@napi-rs/canvas`. Not a Godot screenshot or a browser layout test. |
 | `preview FILE --view floor --floor 2 --out PNG` | Isolates a floor cutaway while retaining full-building stair/roof context during geometry generation. |
 | `preview FILE --view roofs --compare AFTER.json --out PNG` | Compares roofs in two blueprints with a shared camera. Comparison also supports building and floor views. |

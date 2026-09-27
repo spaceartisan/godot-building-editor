@@ -1,0 +1,647 @@
+{
+  "version": 1,
+  "operations": [
+    {
+      "op": "stair.add",
+      "floorId": "floor_1",
+      "id": "st_nw_1",
+      "value": {
+        "label": "NW tower stair (ground)",
+        "x": -16.9,
+        "z": -14,
+        "width": 1.2,
+        "run": 5,
+        "direction": "south",
+        "style": "steps",
+        "steps": 24
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "f2_ramparts",
+      "id": "st_nw_2",
+      "value": {
+        "label": "NW tower stair (roof)",
+        "x": -13.75,
+        "z": -16.9,
+        "width": 1.2,
+        "run": 4.5,
+        "direction": "west",
+        "style": "steps",
+        "steps": 21
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "floor_1",
+      "id": "st_ne_1",
+      "value": {
+        "label": "NE tower stair (ground)",
+        "x": 16.9,
+        "z": -14,
+        "width": 1.2,
+        "run": 5,
+        "direction": "south",
+        "style": "steps",
+        "steps": 24
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "f2_ramparts",
+      "id": "st_ne_2",
+      "value": {
+        "label": "NE tower stair (roof)",
+        "x": 13.75,
+        "z": -16.9,
+        "width": 1.2,
+        "run": 4.5,
+        "direction": "east",
+        "style": "steps",
+        "steps": 21
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "floor_1",
+      "id": "st_se_1",
+      "value": {
+        "label": "SE tower stair (ground)",
+        "x": 16.9,
+        "z": 14,
+        "width": 1.2,
+        "run": 5,
+        "direction": "north",
+        "style": "steps",
+        "steps": 24
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "f2_ramparts",
+      "id": "st_se_2",
+      "value": {
+        "label": "SE tower stair (roof)",
+        "x": 13.75,
+        "z": 16.9,
+        "width": 1.2,
+        "run": 4.5,
+        "direction": "east",
+        "style": "steps",
+        "steps": 21
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "floor_1",
+      "id": "st_sw_1",
+      "value": {
+        "label": "SW tower stair (ground)",
+        "x": -16.9,
+        "z": 14,
+        "width": 1.2,
+        "run": 5,
+        "direction": "north",
+        "style": "steps",
+        "steps": 24
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "f2_ramparts",
+      "id": "st_sw_2",
+      "value": {
+        "label": "SW tower stair (roof)",
+        "x": -13.75,
+        "z": 16.9,
+        "width": 1.2,
+        "run": 4.5,
+        "direction": "west",
+        "style": "steps",
+        "steps": 21
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "floor_1",
+      "id": "st_court_w",
+      "value": {
+        "label": "Courtyard stair west",
+        "x": -8,
+        "z": 7,
+        "width": 1.6,
+        "run": 6,
+        "direction": "south",
+        "style": "steps",
+        "steps": 24
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "floor_1",
+      "id": "st_court_e",
+      "value": {
+        "label": "Courtyard stair east",
+        "x": 8,
+        "z": 7,
+        "width": 1.6,
+        "run": 6,
+        "direction": "south",
+        "style": "steps",
+        "steps": 24
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "f2_ramparts",
+      "id": "st_gate",
+      "value": {
+        "label": "Gatehouse stair",
+        "x": 0,
+        "z": 18.9,
+        "width": 1.2,
+        "run": 4.5,
+        "direction": "east",
+        "style": "steps",
+        "steps": 21
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "floor_1",
+      "id": "st_keep_1",
+      "value": {
+        "label": "Keep stair (undercroft)",
+        "x": -4,
+        "z": -1.75,
+        "width": 1.2,
+        "run": 5,
+        "direction": "north",
+        "style": "steps",
+        "steps": 24
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "f2_ramparts",
+      "id": "st_keep_2",
+      "value": {
+        "label": "Keep stair (great chamber)",
+        "x": 4,
+        "z": -2.75,
+        "width": 1.2,
+        "run": 4.5,
+        "direction": "south",
+        "style": "steps",
+        "steps": 21
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "f3_towertops",
+      "id": "st_keep_3",
+      "value": {
+        "label": "Keep stair (lord's chamber)",
+        "x": -4,
+        "z": -2,
+        "width": 1.2,
+        "run": 4.5,
+        "direction": "north",
+        "style": "steps",
+        "steps": 21
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "f2_ramparts",
+      "id": "rl_nw_hole1",
+      "value": {
+        "a": {
+          "x": -16.1,
+          "z": -11.5
+        },
+        "b": {
+          "x": -16.1,
+          "z": -16.2
+        },
+        "label": "NW stair-hole railing",
+        "height": 1,
+        "style": "picket"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "f3_towertops",
+      "id": "rl_nw_hole2_inner",
+      "value": {
+        "a": {
+          "x": -16,
+          "z": -16.1
+        },
+        "b": {
+          "x": -11.3,
+          "z": -16.1
+        },
+        "label": "NW stair-hole railing",
+        "height": 1,
+        "style": "picket"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "f3_towertops",
+      "id": "rl_nw_hole2_end",
+      "value": {
+        "a": {
+          "x": -11.3,
+          "z": -16.1
+        },
+        "b": {
+          "x": -11.3,
+          "z": -17.7
+        },
+        "label": "NW stair-hole railing",
+        "height": 1,
+        "style": "picket"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "f2_ramparts",
+      "id": "rl_ne_hole1",
+      "value": {
+        "a": {
+          "x": 16.1,
+          "z": -11.5
+        },
+        "b": {
+          "x": 16.1,
+          "z": -16.2
+        },
+        "label": "NE stair-hole railing",
+        "height": 1,
+        "style": "picket"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "f3_towertops",
+      "id": "rl_ne_hole2_inner",
+      "value": {
+        "a": {
+          "x": 16,
+          "z": -16.1
+        },
+        "b": {
+          "x": 11.3,
+          "z": -16.1
+        },
+        "label": "NE stair-hole railing",
+        "height": 1,
+        "style": "picket"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "f3_towertops",
+      "id": "rl_ne_hole2_end",
+      "value": {
+        "a": {
+          "x": 11.3,
+          "z": -16.1
+        },
+        "b": {
+          "x": 11.3,
+          "z": -17.7
+        },
+        "label": "NE stair-hole railing",
+        "height": 1,
+        "style": "picket"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "f2_ramparts",
+      "id": "rl_se_hole1",
+      "value": {
+        "a": {
+          "x": 16.1,
+          "z": 11.5
+        },
+        "b": {
+          "x": 16.1,
+          "z": 16.2
+        },
+        "label": "SE stair-hole railing",
+        "height": 1,
+        "style": "picket"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "f3_towertops",
+      "id": "rl_se_hole2_inner",
+      "value": {
+        "a": {
+          "x": 16,
+          "z": 16.1
+        },
+        "b": {
+          "x": 11.3,
+          "z": 16.1
+        },
+        "label": "SE stair-hole railing",
+        "height": 1,
+        "style": "picket"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "f3_towertops",
+      "id": "rl_se_hole2_end",
+      "value": {
+        "a": {
+          "x": 11.3,
+          "z": 16.1
+        },
+        "b": {
+          "x": 11.3,
+          "z": 17.7
+        },
+        "label": "SE stair-hole railing",
+        "height": 1,
+        "style": "picket"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "f2_ramparts",
+      "id": "rl_sw_hole1",
+      "value": {
+        "a": {
+          "x": -16.1,
+          "z": 11.5
+        },
+        "b": {
+          "x": -16.1,
+          "z": 16.2
+        },
+        "label": "SW stair-hole railing",
+        "height": 1,
+        "style": "picket"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "f3_towertops",
+      "id": "rl_sw_hole2_inner",
+      "value": {
+        "a": {
+          "x": -16,
+          "z": 16.1
+        },
+        "b": {
+          "x": -11.3,
+          "z": 16.1
+        },
+        "label": "SW stair-hole railing",
+        "height": 1,
+        "style": "picket"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "f3_towertops",
+      "id": "rl_sw_hole2_end",
+      "value": {
+        "a": {
+          "x": -11.3,
+          "z": 16.1
+        },
+        "b": {
+          "x": -11.3,
+          "z": 17.7
+        },
+        "label": "SW stair-hole railing",
+        "height": 1,
+        "style": "picket"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "f3_towertops",
+      "id": "rl_gh_side",
+      "value": {
+        "a": {
+          "x": -2.45,
+          "z": 19.7
+        },
+        "b": {
+          "x": -2.45,
+          "z": 18.1
+        },
+        "label": "Gatehouse stair-hole railing",
+        "height": 1,
+        "style": "picket"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "f3_towertops",
+      "id": "rl_gh_long",
+      "value": {
+        "a": {
+          "x": -2.45,
+          "z": 18.1
+        },
+        "b": {
+          "x": 2.25,
+          "z": 18.1
+        },
+        "label": "Gatehouse stair-hole railing",
+        "height": 1,
+        "style": "picket"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "f2_ramparts",
+      "id": "rl_keep_hole1_e",
+      "value": {
+        "a": {
+          "x": -3.2,
+          "z": -4.25
+        },
+        "b": {
+          "x": -3.2,
+          "z": 0.95
+        },
+        "label": "Keep stair-hole railing",
+        "height": 1,
+        "style": "picket"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "f2_ramparts",
+      "id": "rl_keep_hole1_s",
+      "value": {
+        "a": {
+          "x": -3.2,
+          "z": 0.95
+        },
+        "b": {
+          "x": -4.7,
+          "z": 0.95
+        },
+        "label": "Keep stair-hole railing",
+        "height": 1,
+        "style": "picket"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "f3_towertops",
+      "id": "rl_keep_hole2_w",
+      "value": {
+        "a": {
+          "x": 3.2,
+          "z": -0.5
+        },
+        "b": {
+          "x": 3.2,
+          "z": -5.2
+        },
+        "label": "Keep stair-hole railing",
+        "height": 1,
+        "style": "picket"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "f3_towertops",
+      "id": "rl_keep_hole2_n",
+      "value": {
+        "a": {
+          "x": 3.2,
+          "z": -5.2
+        },
+        "b": {
+          "x": 4.7,
+          "z": -5.2
+        },
+        "label": "Keep stair-hole railing",
+        "height": 1,
+        "style": "picket"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "f4_keeproof",
+      "id": "rl_keep_hole3_e",
+      "value": {
+        "a": {
+          "x": -3.2,
+          "z": -4.25
+        },
+        "b": {
+          "x": -3.2,
+          "z": 0.5
+        },
+        "label": "Keep stair-hole railing",
+        "height": 1,
+        "style": "picket"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "f4_keeproof",
+      "id": "rl_keep_hole3_s",
+      "value": {
+        "a": {
+          "x": -3.2,
+          "z": 0.5
+        },
+        "b": {
+          "x": -4.7,
+          "z": 0.5
+        },
+        "label": "Keep stair-hole railing",
+        "height": 1,
+        "style": "picket"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "f2_ramparts",
+      "id": "rl_walk_sw_a",
+      "value": {
+        "a": {
+          "x": -9.7,
+          "z": 10.3
+        },
+        "b": {
+          "x": -8.9,
+          "z": 10.3
+        },
+        "label": "South walk courtyard railing",
+        "height": 1,
+        "style": "picket"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "f2_ramparts",
+      "id": "rl_walk_sw_b",
+      "value": {
+        "a": {
+          "x": -7.1,
+          "z": 10.3
+        },
+        "b": {
+          "x": -6.3,
+          "z": 10.3
+        },
+        "label": "South walk courtyard railing",
+        "height": 1,
+        "style": "picket"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "f2_ramparts",
+      "id": "rl_walk_se_a",
+      "value": {
+        "a": {
+          "x": 9.7,
+          "z": 10.3
+        },
+        "b": {
+          "x": 8.9,
+          "z": 10.3
+        },
+        "label": "South walk courtyard railing",
+        "height": 1,
+        "style": "picket"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "f2_ramparts",
+      "id": "rl_walk_se_b",
+      "value": {
+        "a": {
+          "x": 7.1,
+          "z": 10.3
+        },
+        "b": {
+          "x": 6.3,
+          "z": 10.3
+        },
+        "label": "South walk courtyard railing",
+        "height": 1,
+        "style": "picket"
+      }
+    }
+  ]
+}

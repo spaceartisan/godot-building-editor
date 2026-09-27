@@ -1,0 +1,82 @@
+{
+  "kind": "building-check-report",
+  "formatVersion": 1,
+  "policy": {
+    "warningsAsErrors": false
+  },
+  "ok": true,
+  "counts": {
+    "documents": 1,
+    "errors": 0,
+    "warnings": 4
+  },
+  "results": [
+    {
+      "file": "ravenhold_castle.building.json",
+      "building": {
+        "name": "Ravenhold Castle",
+        "schemaVersion": 9
+      },
+      "validationStage": "prepared-document",
+      "normalized": false,
+      "ok": true,
+      "counts": {
+        "errors": 0,
+        "warnings": 4
+      },
+      "errors": [],
+      "warnings": [
+        {
+          "path": "Floor 2",
+          "message": "Floor 2: 1.4 m² of floor near (-16.74, -17.04) (NW tower) cannot be reached from outside through doors, passages and stairs",
+          "targets": [
+            {
+              "type": "floor",
+              "id": "f2_ramparts"
+            }
+          ],
+          "resolvedTargets": []
+        },
+        {
+          "path": "Floor 2",
+          "message": "Floor 2: 1.3 m² of floor near (16.79, -17.05) (NE tower) cannot be reached from outside through doors, passages and stairs",
+          "targets": [
+            {
+              "type": "floor",
+              "id": "f2_ramparts"
+            }
+          ],
+          "resolvedTargets": []
+        },
+        {
+          "path": "Floor 2",
+          "message": "Floor 2: 1.4 m² of floor near (-16.74, 17.04) (SW tower) cannot be reached from outside through doors, passages and stairs",
+          "targets": [
+            {
+              "type": "floor",
+              "id": "f2_ramparts"
+            }
+          ],
+          "resolvedTargets": []
+        },
+        {
+          "path": "Floor 2",
+          "message": "Floor 2: 1.3 m² of floor near (16.79, 17.05) (SE tower) cannot be reached from outside through doors, passages and stairs",
+          "targets": [
+            {
+              "type": "floor",
+              "id": "f2_ramparts"
+            }
+          ],
+          "resolvedTargets": []
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "scope": "Authoring validation only. A clear report does not certify geometry, collision clearance or playability.",
+    "godot": "not-run",
+    "collisionClearance": "not-verified"
+  },
+  "usage": "Diagnostic snapshot, not a building file. Save the building JSON separately to reproduce or edit it."
+}

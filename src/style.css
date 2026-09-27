@@ -120,6 +120,11 @@ input, select { min-width: 0; }
 #validation-summary { padding: 8px; border-left: 2px solid var(--accent); line-height: 1.5; }
 #validation-summary:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
 #validation-results:empty { display: none; }
+.godot-render-results { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin: 6px 0; }
+.godot-render-results:empty { display: none; }
+.godot-render-results figure { margin: 0; }
+.godot-render-results img { width: 100%; height: auto; display: block; border-radius: 4px; }
+.godot-render-results figcaption { font-size: 11px; overflow-wrap: anywhere; }
 .validation-actions { display: flex; flex-wrap: wrap; gap: 5px; margin: 6px 0 10px; }
 .validation-actions button { max-width: 100%; text-align: left; white-space: normal; overflow-wrap: anywhere; }
 #selection-form:focus { outline: 2px solid var(--accent); outline-offset: 2px; }

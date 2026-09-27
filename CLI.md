@@ -77,6 +77,7 @@ Input/output paths are relative to your current working directory. Calling `/abs
 | `new --out NEW.json [--name TEXT]` | Writes a deterministic blank one-floor building (the web New building, floor ID `floor_1`) to a new file as a transaction starting point. |
 | `validate FILE...` | Validates original JSON, applies shared normalization to an in-memory clone, then validates again. Reports errors and warnings without changing input. |
 | `inspect FILE...` | Adds per-floor counts/elevations, footprint source/area, manual roof relationships, exported resource counts and separate shell node paths. |
+| `validate`/`inspect FILE... --reachability` | Opt-in route check from open ground through doors, empty passages and stairs (0.1 m grid, 0.25 m walker radius). Unreachable floor areas of at least 1 m² and blocked stair ends become warnings, which `--warnings-as-errors` and `validate --out` include; JSON results add a `reachability` object with per-floor walkable/reached areas. |
 | `inspect FILE... --entities` | Also lists normalized floor IDs/overrides, walls, openings, stairs, platforms, markers, regions and manual roofs for transaction targeting. |
 | `edit FILE --ops JSON --dry-run` | Validates a version-1 transaction; reports separate import/default and authoring diffs without writing. |
 | `edit FILE --ops JSON --out FILE` | Writes a validated, normalized building copy to a new file. See [TRANSACTIONS.md](TRANSACTIONS.md). |

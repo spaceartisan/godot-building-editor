@@ -17,7 +17,7 @@ For a new design, start from `node cli.mjs new --out NEW.json --name NAME` (floo
 | Need | Supported route | Limits to remember |
 | --- | --- | --- |
 | Discover plans | `examples --json`, `examples --check --json` | Checks expectations; does not regenerate examples |
-| Diagnose a blueprint | `validate FILE --json`; optional `--out NEW.json` | Reports errors/warnings; normalization is in memory |
+| Diagnose a blueprint | `validate FILE --json`; optional `--out NEW.json`; `--reachability` adds route warnings | Reports errors/warnings; normalization is in memory |
 | Discover editable IDs | `inspect FILE --entities --json` | Lists normalized floor IDs and supported entity inventories; inspect JSON for fields not included |
 | Repeatable building edit | `edit FILE --ops RECIPE --dry-run` then `--out NEW.json` | Version-1 operations only; exact fields in TRANSACTIONS.md |
 | Walls/openings/regions/manual roofs | Add, update, remove transactions; wall endpoint moves | Wall property updates do not move endpoints; manual roofs are building-level objects |
@@ -36,7 +36,7 @@ Core CLI and web serving need Node 20+ and no npm install. Linux is the tested p
 
 ## 3. A complete, repeatable workflow
 
-For new buildings or substantial layout changes, first read [AUTHORING_REVIEW.md](AUTHORING_REVIEW.md). Reserve circulation before detailing, inspect each occupied level and actual surface coverage, and record failed/unverified requirements. Inspect rendered views before delivery. A successful CLI command or zero validation warnings cannot establish that a building is complete or accessible. The supplied castle case study demonstrates this failure and a focused floor-coverage repair.
+For new buildings or substantial layout changes, first read [AUTHORING_REVIEW.md](AUTHORING_REVIEW.md). Reserve circulation before detailing, inspect each occupied level and actual surface coverage, and record failed/unverified requirements. Inspect rendered views before delivery. A successful CLI command or zero default validation warnings cannot establish that a building is complete or accessible; run `validate --reachability` for route evidence and read its remaining limits. The supplied castle case study demonstrates this failure and a focused floor-coverage repair.
 
 Run from the extracted `building-editor` directory. The block uses a newly created output directory and the shipped stair recipe, so its IDs are known to match. Check every exit status and `ok` result before continuing. These commands were exercised when this guide was introduced.
 
@@ -128,6 +128,7 @@ Save JSON reports a download request or a synchronous failure without changing t
 | --- | --- | --- |
 | `validate` / saved checks | Existing schema/authoring rules and warnings | Full geometric correctness or playability |
 | `inspect` | Derived dimensions, coverage, resource counts, shell paths | Watertightness, useful collision everywhere |
+| `validate --reachability` | Floor areas and stairs connected to open ground through doors, passages and stairs, with walker clearance | Headroom, stair comfort, door swing, physics traversal |
 | CLI software PNG | Shared preview geometry and camera framing | Godot lighting or browser layout |
 | DOM editor suites | Actual handler behavior, history, modeled focus intent | Real CSS, responsive sizing, browser focus behavior |
 | Playwright browser suite | The executed live interactions and viewport checks | Engine physics |

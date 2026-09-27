@@ -14,6 +14,7 @@ import { EXAMPLE_CATALOG } from './src/examples.js';
 import { checkExampleExpectation } from './src/example-check.js';
 import { applyTransaction } from './src/transactions.js';
 import { makeEmptyBuilding } from './src/model.js';
+import { reachabilityWarnings } from './src/reachability.js';
 import { attachmentSummary } from './src/roof-diagnostics.js';
 import { runReleaseCheck, assertExternalReport } from './release-check.mjs';
 import { suites } from './test-suites.mjs';
@@ -21,7 +22,7 @@ import { suites } from './test-suites.mjs';
 const root=path.dirname(fileURLToPath(import.meta.url));
 const version=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8')).version;
 const common=['json','quiet','verbose','help'];
-const specs={new:['out','name'],edit:['ops','out','dry-run','warnings-as-errors'],validate:['warnings-as-errors','out'],inspect:['warnings-as-errors','entities'],export:['out','profile','no-collision','no-markers','placeholders','warnings-as-errors'],package:['out','profile','no-collision','no-markers','placeholders','warnings-as-errors','include-json'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof']};
+const specs={new:['out','name'],edit:['ops','out','dry-run','warnings-as-errors'],validate:['warnings-as-errors','out','reachability'],inspect:['warnings-as-errors','entities','reachability'],export:['out','profile','no-collision','no-markers','placeholders','warnings-as-errors'],package:['out','profile','no-collision','no-markers','placeholders','warnings-as-errors','include-json'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof']};
 const values=new Set(['name','ops','out','profile','suite','godot','assets','yaw','pitch','distance','floor','view','compare','overlay','roof','canvas','engine','timeout']);
 class CliError extends Error{constructor(message,code=2){super(message);this.code=code;}}
 const help=`Building Studio ${version}
@@ -30,6 +31,8 @@ Usage: node cli.mjs COMMAND [FILES...] [OPTIONS]
   new --out NEW.json [--name TEXT]   Create a blank one-floor building (floor ID floor_1)
   validate FILE... [--out NEW.json]   Validate; optionally save a check report
   inspect FILE... [--entities]   Inventory; optionally list authoring IDs/fields
+    --reachability      Validate/inspect: warn about floor areas and stairs that
+                        cannot be reached from outside via doors and stairs
   edit FILE --ops JSON --dry-run   Validate a transaction and show its diff
   edit FILE --ops JSON --out FILE  Save the validated edit to a NEW building JSON
   export FILE... --out DIR   Export TSCNs and doors to a NEW directory
@@ -279,8 +282,17 @@ async function execute({command,options,files}){
     const ok=result.ok&&!!checks&&checks.scenes>0&&checks.failures===0;
     return {command,ok,engineVersion,checks,mode:'fixtures',scope:'Bundled example scenes and authored collision probes',results:[result],exitCode:ok?0:1};
   }
-  const {loaded,exitCode}=documents(command==='preview'&&options.compare?[...files,path.resolve(options.compare)]:files,options['warnings-as-errors']);
-  const response={command,ok:exitCode===0,results:loaded.map(publicDocument),exitCode};
+  let {loaded,exitCode}=documents(command==='preview'&&options.compare?[...files,path.resolve(options.compare)]:files,options['warnings-as-errors']);
+  if(options.reachability){
+    // Opt-in route check: its findings join the document warnings, so strict
+    // mode and saved check reports treat them like any other warning.
+    for(const doc of loaded)if(doc.building&&!doc.errors.length){
+      const {result,warnings}=reachabilityWarnings(doc.building);
+      doc.reachability=result;doc.warnings=[...doc.warnings,...warnings];
+      doc.ok=!options['warnings-as-errors']||!doc.warnings.length;if(!doc.ok)exitCode=Math.max(exitCode,1);
+    }
+  }
+  const response={command,ok:exitCode===0,results:loaded.map(d=>({...publicDocument(d),...(d.reachability?{reachability:d.reachability}:{})})),exitCode};
   if(command==='validate'){
     if(options.out){
       const out=destination(options.out);

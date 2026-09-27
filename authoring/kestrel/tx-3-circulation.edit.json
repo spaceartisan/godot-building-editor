@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "operations": [
+    {
+      "op": "stair.add",
+      "floorId": "floor_1",
+      "id": "st_main",
+      "value": {
+        "label": "Main companionway",
+        "x": -11,
+        "z": -4.2,
+        "width": 1.4,
+        "run": 5,
+        "direction": "east",
+        "style": "steps",
+        "steps": 20
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "deck_2",
+      "id": "rail_stair_inboard",
+      "value": {
+        "label": "Companionway rail inboard",
+        "a": {
+          "x": -13.5,
+          "z": -3.5
+        },
+        "b": {
+          "x": -8.5,
+          "z": -3.5
+        },
+        "style": "two_rail"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "deck_2",
+      "id": "rail_stair_aft",
+      "value": {
+        "label": "Companionway rail aft",
+        "a": {
+          "x": -13.5,
+          "z": -4.9
+        },
+        "b": {
+          "x": -13.5,
+          "z": -3.5
+        },
+        "style": "two_rail"
+      }
+    }
+  ]
+}

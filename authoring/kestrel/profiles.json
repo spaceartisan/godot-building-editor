@@ -1,0 +1,238 @@
+{
+  "wallTypes": [
+    {
+      "id": "hull",
+      "label": "Tumblehome hull",
+      "stations": [
+        {
+          "height": 0,
+          "offset": 0,
+          "thickness": 0.25
+        },
+        {
+          "height": 0.18,
+          "offset": -0.35,
+          "thickness": 0.25
+        },
+        {
+          "height": 0.55,
+          "offset": -0.35,
+          "thickness": 0.25
+        },
+        {
+          "height": 1,
+          "offset": 0,
+          "thickness": 0.25
+        }
+      ]
+    },
+    {
+      "id": "corridor",
+      "label": "Hex corridor",
+      "stations": [
+        {
+          "height": 0,
+          "offset": 0,
+          "thickness": 0.25
+        },
+        {
+          "height": 0.4,
+          "offset": -0.2,
+          "thickness": 0.25
+        },
+        {
+          "height": 0.62,
+          "offset": -0.2,
+          "thickness": 0.25
+        },
+        {
+          "height": 1,
+          "offset": 0,
+          "thickness": 0.25
+        }
+      ]
+    }
+  ],
+  "openingShapes": [
+    {
+      "id": "hatch",
+      "label": "Octagon hatch",
+      "points": [
+        {
+          "x": 0.22,
+          "y": 0
+        },
+        {
+          "x": 0.78,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0.16
+        },
+        {
+          "x": 1,
+          "y": 0.84
+        },
+        {
+          "x": 0.78,
+          "y": 1
+        },
+        {
+          "x": 0.22,
+          "y": 1
+        },
+        {
+          "x": 0,
+          "y": 0.84
+        },
+        {
+          "x": 0,
+          "y": 0.16
+        }
+      ]
+    },
+    {
+      "id": "airlock",
+      "label": "Airlock outline",
+      "points": [
+        {
+          "x": 0.16,
+          "y": 0
+        },
+        {
+          "x": 0.84,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0.2
+        },
+        {
+          "x": 1,
+          "y": 0.8
+        },
+        {
+          "x": 0.88,
+          "y": 1
+        },
+        {
+          "x": 0.12,
+          "y": 1
+        },
+        {
+          "x": 0,
+          "y": 0.8
+        },
+        {
+          "x": 0,
+          "y": 0.2
+        }
+      ]
+    },
+    {
+      "id": "blast",
+      "label": "Blast door",
+      "points": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0.8
+        },
+        {
+          "x": 0.85,
+          "y": 1
+        },
+        {
+          "x": 0.15,
+          "y": 1
+        },
+        {
+          "x": 0,
+          "y": 0.8
+        }
+      ]
+    }
+  ],
+  "assignments": [
+    {
+      "floorId": "floor_1",
+      "wallId": "d1_hull1",
+      "wallTypeId": "hull",
+      "inwardSide": "auto"
+    },
+    {
+      "floorId": "floor_1",
+      "wallId": "d1_hull2",
+      "wallTypeId": "hull",
+      "inwardSide": "auto"
+    },
+    {
+      "floorId": "floor_1",
+      "wallId": "d1_hull3",
+      "wallTypeId": "hull",
+      "inwardSide": "auto"
+    },
+    {
+      "floorId": "floor_1",
+      "wallId": "d1_hull4",
+      "wallTypeId": "hull",
+      "inwardSide": "auto"
+    },
+    {
+      "floorId": "floor_1",
+      "wallId": "d1_hull5",
+      "wallTypeId": "hull",
+      "inwardSide": "auto"
+    },
+    {
+      "floorId": "floor_1",
+      "wallId": "d1_hull6",
+      "wallTypeId": "hull",
+      "inwardSide": "auto"
+    },
+    {
+      "floorId": "floor_1",
+      "wallId": "d1_corr_port",
+      "wallTypeId": "corridor",
+      "inwardSide": "right"
+    },
+    {
+      "floorId": "floor_1",
+      "wallId": "d1_corr_stbd",
+      "wallTypeId": "corridor",
+      "inwardSide": "left"
+    },
+    {
+      "floorId": "deck_2",
+      "wallId": "d2_hull1",
+      "wallTypeId": "hull",
+      "inwardSide": "auto"
+    },
+    {
+      "floorId": "deck_2",
+      "wallId": "d2_hull5",
+      "wallTypeId": "hull",
+      "inwardSide": "auto"
+    },
+    {
+      "floorId": "deck_2",
+      "wallId": "d2_corr_port",
+      "wallTypeId": "corridor",
+      "inwardSide": "right"
+    },
+    {
+      "floorId": "deck_2",
+      "wallId": "d2_corr_stbd",
+      "wallTypeId": "corridor",
+      "inwardSide": "left"
+    }
+  ]
+}

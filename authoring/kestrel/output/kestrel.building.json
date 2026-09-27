@@ -1,0 +1,1324 @@
+{
+  "version": 10,
+  "name": "Kestrel-class courier",
+  "exportProfile": "generic",
+  "wallHeight": 3,
+  "wallThickness": 0.25,
+  "floorThickness": 0.18,
+  "gridSize": 0.5,
+  "roof": {
+    "type": "flat",
+    "pitch": 35,
+    "overhang": 0
+  },
+  "roofSections": [],
+  "manualFloors": [],
+  "manualCeilings": [],
+  "ceiling": {
+    "thickness": 0.12
+  },
+  "windowMesh": {
+    "enabled": true,
+    "frameWidth": 0.08,
+    "frameDepth": 0.12,
+    "glassThickness": 0.018
+  },
+  "doorMesh": {
+    "enabled": true,
+    "frameWidth": 0.09,
+    "frameDepth": 0.14,
+    "panelThickness": 0.045,
+    "detailDepth": 0.018
+  },
+  "floors": [
+    {
+      "id": "floor_1",
+      "label": "Deck 1: engineering and cargo",
+      "walls": [
+        {
+          "label": "Deck 1 hull 1",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -18,
+            "z": -7
+          },
+          "b": {
+            "x": 12,
+            "z": -7
+          },
+          "id": "d1_hull1",
+          "wallTypeId": "hull"
+        },
+        {
+          "label": "Deck 1 hull 2",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 12,
+            "z": -7
+          },
+          "b": {
+            "x": 20,
+            "z": -2
+          },
+          "id": "d1_hull2",
+          "wallTypeId": "hull"
+        },
+        {
+          "label": "Deck 1 hull 3",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 20,
+            "z": -2
+          },
+          "b": {
+            "x": 20,
+            "z": 2
+          },
+          "id": "d1_hull3",
+          "wallTypeId": "hull"
+        },
+        {
+          "label": "Deck 1 hull 4",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 20,
+            "z": 2
+          },
+          "b": {
+            "x": 12,
+            "z": 7
+          },
+          "id": "d1_hull4",
+          "wallTypeId": "hull"
+        },
+        {
+          "label": "Deck 1 hull 5",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 12,
+            "z": 7
+          },
+          "b": {
+            "x": -18,
+            "z": 7
+          },
+          "id": "d1_hull5",
+          "wallTypeId": "hull"
+        },
+        {
+          "label": "Deck 1 hull 6",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -18,
+            "z": 7
+          },
+          "b": {
+            "x": -18,
+            "z": -7
+          },
+          "id": "d1_hull6",
+          "wallTypeId": "hull"
+        },
+        {
+          "label": "Cargo bulkhead",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": -6,
+            "z": -7
+          },
+          "b": {
+            "x": -6,
+            "z": 7
+          },
+          "id": "d1_cargo_bulkhead"
+        },
+        {
+          "label": "Sensor bay bulkhead",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": 10,
+            "z": -7
+          },
+          "b": {
+            "x": 10,
+            "z": 7
+          },
+          "id": "d1_bow_bulkhead"
+        },
+        {
+          "label": "Deck 1 corridor port aft stub",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": -6,
+            "z": -1.25
+          },
+          "b": {
+            "x": -5.4,
+            "z": -1.25
+          },
+          "id": "d1_corr_port_stub_aft"
+        },
+        {
+          "label": "Deck 1 corridor port",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": -5.4,
+            "z": -1.25
+          },
+          "b": {
+            "x": 9.4,
+            "z": -1.25
+          },
+          "id": "d1_corr_port",
+          "wallTypeId": "corridor",
+          "inwardSide": "right"
+        },
+        {
+          "label": "Deck 1 corridor port forward stub",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": 9.4,
+            "z": -1.25
+          },
+          "b": {
+            "x": 10,
+            "z": -1.25
+          },
+          "id": "d1_corr_port_stub_fwd"
+        },
+        {
+          "label": "Deck 1 corridor starboard aft stub",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": -6,
+            "z": 1.25
+          },
+          "b": {
+            "x": -5.4,
+            "z": 1.25
+          },
+          "id": "d1_corr_stbd_stub_aft"
+        },
+        {
+          "label": "Deck 1 corridor starboard",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": -5.4,
+            "z": 1.25
+          },
+          "b": {
+            "x": 9.4,
+            "z": 1.25
+          },
+          "id": "d1_corr_stbd",
+          "wallTypeId": "corridor",
+          "inwardSide": "left"
+        },
+        {
+          "label": "Deck 1 corridor starboard forward stub",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": 9.4,
+            "z": 1.25
+          },
+          "b": {
+            "x": 10,
+            "z": 1.25
+          },
+          "id": "d1_corr_stbd_stub_fwd"
+        },
+        {
+          "label": "Engineering / reactor",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": 3,
+            "z": -7
+          },
+          "b": {
+            "x": 3,
+            "z": -1.25
+          },
+          "id": "d1_eng_reactor"
+        },
+        {
+          "label": "Storage / airlock",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": 1,
+            "z": 1.25
+          },
+          "b": {
+            "x": 1,
+            "z": 7
+          },
+          "id": "d1_store_airlock"
+        },
+        {
+          "label": "Airlock / life support",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": 5,
+            "z": 1.25
+          },
+          "b": {
+            "x": 5,
+            "z": 7
+          },
+          "id": "d1_airlock_life"
+        }
+      ],
+      "openings": [
+        {
+          "label": "Aft cargo ramp",
+          "doorStyle": "empty",
+          "type": "door",
+          "wallId": "d1_hull6",
+          "width": 4.4,
+          "height": 2.9,
+          "shapeId": "blast",
+          "t": 0.5,
+          "id": "o_cargo_ramp"
+        },
+        {
+          "label": "Outer airlock hatch",
+          "doorStyle": "empty",
+          "type": "door",
+          "wallId": "d1_hull5",
+          "width": 1.6,
+          "height": 2.4,
+          "shapeId": "airlock",
+          "t": 0.3,
+          "id": "o_airlock_outer"
+        },
+        {
+          "label": "Cargo bay blast door",
+          "doorStyle": "empty",
+          "type": "door",
+          "wallId": "d1_cargo_bulkhead",
+          "width": 2,
+          "height": 2.6,
+          "shapeId": "blast",
+          "t": 0.5,
+          "id": "o_cargo_corridor"
+        },
+        {
+          "label": "Cargo / engineering hatch",
+          "doorStyle": "room",
+          "type": "door",
+          "wallId": "d1_cargo_bulkhead",
+          "width": 1.2,
+          "height": 2.2,
+          "shapeId": "hatch",
+          "t": 0.196428571,
+          "id": "o_cargo_engineering"
+        },
+        {
+          "label": "Cargo / storage hatch",
+          "doorStyle": "room",
+          "type": "door",
+          "wallId": "d1_cargo_bulkhead",
+          "width": 1.2,
+          "height": 2.2,
+          "shapeId": "hatch",
+          "t": 0.803571429,
+          "id": "o_cargo_storage"
+        },
+        {
+          "label": "Engineering hatch",
+          "doorStyle": "empty",
+          "type": "door",
+          "wallId": "d1_corr_port",
+          "width": 1.2,
+          "height": 2.2,
+          "shapeId": "hatch",
+          "t": 0.331081081,
+          "id": "o_engineering"
+        },
+        {
+          "label": "Reactor hatch",
+          "doorStyle": "empty",
+          "type": "door",
+          "wallId": "d1_corr_port",
+          "width": 1.2,
+          "height": 2.2,
+          "shapeId": "hatch",
+          "t": 0.804054054,
+          "id": "o_reactor"
+        },
+        {
+          "label": "Storage hatch",
+          "doorStyle": "empty",
+          "type": "door",
+          "wallId": "d1_corr_stbd",
+          "width": 1.2,
+          "height": 2.2,
+          "shapeId": "hatch",
+          "t": 0.195945946,
+          "id": "o_storage"
+        },
+        {
+          "label": "Inner airlock hatch",
+          "doorStyle": "empty",
+          "type": "door",
+          "wallId": "d1_corr_stbd",
+          "width": 1.6,
+          "height": 2.4,
+          "shapeId": "airlock",
+          "t": 0.567567568,
+          "id": "o_airlock_inner"
+        },
+        {
+          "label": "Life support hatch",
+          "doorStyle": "empty",
+          "type": "door",
+          "wallId": "d1_corr_stbd",
+          "width": 1.2,
+          "height": 2.2,
+          "shapeId": "hatch",
+          "t": 0.871621622,
+          "id": "o_life"
+        },
+        {
+          "label": "Sensor bay hatch",
+          "doorStyle": "room",
+          "type": "door",
+          "wallId": "d1_bow_bulkhead",
+          "width": 1.4,
+          "height": 2.3,
+          "shapeId": "hatch",
+          "t": 0.5,
+          "id": "o_sensor"
+        },
+        {
+          "label": "Cargo bay port porthole",
+          "sill": 0.7,
+          "windowStyle": "plain",
+          "type": "window",
+          "wallId": "d1_hull1",
+          "width": 1.2,
+          "height": 1,
+          "t": 0.2,
+          "id": "w_port_01"
+        },
+        {
+          "label": "Engineering porthole",
+          "sill": 0.7,
+          "windowStyle": "plain",
+          "type": "window",
+          "wallId": "d1_hull1",
+          "width": 1.2,
+          "height": 1,
+          "t": 0.55,
+          "id": "w_port_02"
+        },
+        {
+          "label": "Reactor room porthole",
+          "sill": 0.7,
+          "windowStyle": "plain",
+          "type": "window",
+          "wallId": "d1_hull1",
+          "width": 1.2,
+          "height": 1,
+          "t": 0.816666667,
+          "id": "w_port_03"
+        },
+        {
+          "label": "Cargo bay starboard porthole",
+          "sill": 0.7,
+          "windowStyle": "plain",
+          "type": "window",
+          "wallId": "d1_hull5",
+          "width": 1.2,
+          "height": 1,
+          "t": 0.8,
+          "id": "w_port_04"
+        },
+        {
+          "label": "Storage porthole",
+          "sill": 0.7,
+          "windowStyle": "plain",
+          "type": "window",
+          "wallId": "d1_hull5",
+          "width": 1.2,
+          "height": 1,
+          "t": 0.483333333,
+          "id": "w_port_05"
+        },
+        {
+          "label": "Life support porthole",
+          "sill": 0.7,
+          "windowStyle": "plain",
+          "type": "window",
+          "wallId": "d1_hull5",
+          "width": 1.2,
+          "height": 1,
+          "t": 0.15,
+          "id": "w_port_06"
+        }
+      ],
+      "lights": [],
+      "stairs": [
+        {
+          "id": "st_main",
+          "label": "Main companionway",
+          "x": -11,
+          "z": -4.2,
+          "width": 1.4,
+          "run": 5,
+          "direction": "east",
+          "style": "steps",
+          "steps": 20,
+          "blockBelow": true
+        }
+      ],
+      "slabs": [],
+      "regions": [
+        {
+          "id": "r_cargo",
+          "label": "Cargo bay",
+          "minX": -18,
+          "maxX": -6,
+          "minZ": -7,
+          "maxZ": 7,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "r_engineering",
+          "label": "Engineering",
+          "minX": -6,
+          "maxX": 3,
+          "minZ": -7,
+          "maxZ": -1.25,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "r_reactor",
+          "label": "Reactor room",
+          "minX": 3,
+          "maxX": 10,
+          "minZ": -7,
+          "maxZ": -1.25,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "r_d1_corridor",
+          "label": "Deck 1 corridor",
+          "minX": -6,
+          "maxX": 10,
+          "minZ": -1.25,
+          "maxZ": 1.25,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "r_storage",
+          "label": "Storage",
+          "minX": -6,
+          "maxX": 1,
+          "minZ": 1.25,
+          "maxZ": 7,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "r_airlock",
+          "label": "Airlock",
+          "minX": 1,
+          "maxX": 5,
+          "minZ": 1.25,
+          "maxZ": 7,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "r_life",
+          "label": "Life support",
+          "minX": 5,
+          "maxX": 10,
+          "minZ": 1.25,
+          "maxZ": 7,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "r_sensor",
+          "label": "Sensor bay",
+          "minX": 10,
+          "maxX": 20,
+          "minZ": -7,
+          "maxZ": 7,
+          "kind": "room",
+          "effect": "label"
+        }
+      ],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": true,
+      "wallHeight": 3.2
+    },
+    {
+      "id": "deck_2",
+      "label": "Deck 2: crew",
+      "walls": [
+        {
+          "label": "Deck 2 hull 1",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -14,
+            "z": -5.5
+          },
+          "b": {
+            "x": 10,
+            "z": -5.5
+          },
+          "id": "d2_hull1",
+          "wallTypeId": "hull"
+        },
+        {
+          "label": "Deck 2 hull 2",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 10,
+            "z": -5.5
+          },
+          "b": {
+            "x": 16,
+            "z": -1.5
+          },
+          "id": "d2_hull2"
+        },
+        {
+          "label": "Deck 2 hull 3",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 16,
+            "z": -1.5
+          },
+          "b": {
+            "x": 16,
+            "z": 1.5
+          },
+          "id": "d2_hull3"
+        },
+        {
+          "label": "Deck 2 hull 4",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 16,
+            "z": 1.5
+          },
+          "b": {
+            "x": 10,
+            "z": 5.5
+          },
+          "id": "d2_hull4"
+        },
+        {
+          "label": "Deck 2 hull 5",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 10,
+            "z": 5.5
+          },
+          "b": {
+            "x": -14,
+            "z": 5.5
+          },
+          "id": "d2_hull5",
+          "wallTypeId": "hull"
+        },
+        {
+          "label": "Deck 2 hull 6",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -14,
+            "z": 5.5
+          },
+          "b": {
+            "x": -14,
+            "z": -5.5
+          },
+          "id": "d2_hull6"
+        },
+        {
+          "label": "Lounge bulkhead",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": -6,
+            "z": -5.5
+          },
+          "b": {
+            "x": -6,
+            "z": 5.5
+          },
+          "id": "d2_lounge_bulkhead"
+        },
+        {
+          "label": "Bridge bulkhead",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": 9,
+            "z": -5.5
+          },
+          "b": {
+            "x": 9,
+            "z": 5.5
+          },
+          "id": "d2_bridge_bulkhead"
+        },
+        {
+          "label": "Deck 2 corridor port aft stub",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": -6,
+            "z": -1.25
+          },
+          "b": {
+            "x": -5.4,
+            "z": -1.25
+          },
+          "id": "d2_corr_port_stub_aft"
+        },
+        {
+          "label": "Deck 2 corridor port",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": -5.4,
+            "z": -1.25
+          },
+          "b": {
+            "x": 8.4,
+            "z": -1.25
+          },
+          "id": "d2_corr_port",
+          "wallTypeId": "corridor",
+          "inwardSide": "right"
+        },
+        {
+          "label": "Deck 2 corridor port forward stub",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": 8.4,
+            "z": -1.25
+          },
+          "b": {
+            "x": 9,
+            "z": -1.25
+          },
+          "id": "d2_corr_port_stub_fwd"
+        },
+        {
+          "label": "Deck 2 corridor starboard aft stub",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": -6,
+            "z": 1.25
+          },
+          "b": {
+            "x": -5.4,
+            "z": 1.25
+          },
+          "id": "d2_corr_stbd_stub_aft"
+        },
+        {
+          "label": "Deck 2 corridor starboard",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": -5.4,
+            "z": 1.25
+          },
+          "b": {
+            "x": 8.4,
+            "z": 1.25
+          },
+          "id": "d2_corr_stbd",
+          "wallTypeId": "corridor",
+          "inwardSide": "left"
+        },
+        {
+          "label": "Deck 2 corridor starboard forward stub",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": 8.4,
+            "z": 1.25
+          },
+          "b": {
+            "x": 9,
+            "z": 1.25
+          },
+          "id": "d2_corr_stbd_stub_fwd"
+        },
+        {
+          "label": "Quarters 1 / 2",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": -1.5,
+            "z": -5.5
+          },
+          "b": {
+            "x": -1.5,
+            "z": -1.25
+          },
+          "id": "d2_q1_q2"
+        },
+        {
+          "label": "Quarters 2 / 3",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": 3.75,
+            "z": -5.5
+          },
+          "b": {
+            "x": 3.75,
+            "z": -1.25
+          },
+          "id": "d2_q2_q3"
+        },
+        {
+          "label": "Mess / med bay",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": 2,
+            "z": 1.25
+          },
+          "b": {
+            "x": 2,
+            "z": 5.5
+          },
+          "id": "d2_mess_med"
+        }
+      ],
+      "openings": [
+        {
+          "label": "Lounge blast door",
+          "doorStyle": "empty",
+          "type": "door",
+          "wallId": "d2_lounge_bulkhead",
+          "width": 2,
+          "height": 2.5,
+          "shapeId": "blast",
+          "t": 0.5,
+          "id": "o_lounge_corridor"
+        },
+        {
+          "label": "Lounge / mess arch",
+          "doorStyle": "empty",
+          "type": "door",
+          "wallId": "d2_lounge_bulkhead",
+          "width": 2.4,
+          "height": 2.4,
+          "shapeId": "airlock",
+          "t": 0.809090909,
+          "id": "o_lounge_mess"
+        },
+        {
+          "label": "Quarters 1 hatch",
+          "doorStyle": "empty",
+          "type": "door",
+          "wallId": "d2_corr_port",
+          "width": 1.1,
+          "height": 2.2,
+          "shapeId": "hatch",
+          "t": 0.119565217,
+          "id": "o_q1"
+        },
+        {
+          "label": "Quarters 2 hatch",
+          "doorStyle": "empty",
+          "type": "door",
+          "wallId": "d2_corr_port",
+          "width": 1.1,
+          "height": 2.2,
+          "shapeId": "hatch",
+          "t": 0.472826087,
+          "id": "o_q2"
+        },
+        {
+          "label": "Captain's quarters hatch",
+          "doorStyle": "empty",
+          "type": "door",
+          "wallId": "d2_corr_port",
+          "width": 1.1,
+          "height": 2.2,
+          "shapeId": "hatch",
+          "t": 0.855072464,
+          "id": "o_q3"
+        },
+        {
+          "label": "Mess hatch",
+          "doorStyle": "empty",
+          "type": "door",
+          "wallId": "d2_corr_stbd",
+          "width": 1.6,
+          "height": 2.3,
+          "shapeId": "airlock",
+          "t": 0.282608696,
+          "id": "o_mess"
+        },
+        {
+          "label": "Med bay hatch",
+          "doorStyle": "empty",
+          "type": "door",
+          "wallId": "d2_corr_stbd",
+          "width": 1.4,
+          "height": 2.3,
+          "shapeId": "hatch",
+          "t": 0.789855072,
+          "id": "o_med"
+        },
+        {
+          "label": "Bridge hatch",
+          "doorStyle": "room",
+          "type": "door",
+          "wallId": "d2_bridge_bulkhead",
+          "width": 1.4,
+          "height": 2.3,
+          "shapeId": "hatch",
+          "t": 0.5,
+          "id": "o_bridge"
+        },
+        {
+          "label": "Observation window",
+          "sill": 0.8,
+          "windowStyle": "plain",
+          "type": "window",
+          "wallId": "d2_hull6",
+          "width": 6,
+          "height": 1.4,
+          "t": 0.5,
+          "id": "w_lounge_aft"
+        },
+        {
+          "label": "Bridge port canopy",
+          "sill": 1,
+          "windowStyle": "plain",
+          "type": "window",
+          "wallId": "d2_hull2",
+          "width": 4,
+          "height": 1.2,
+          "t": 0.5,
+          "id": "w_bridge_port"
+        },
+        {
+          "label": "Bridge bow canopy",
+          "sill": 1,
+          "windowStyle": "plain",
+          "type": "window",
+          "wallId": "d2_hull3",
+          "width": 2.4,
+          "height": 1.2,
+          "t": 0.5,
+          "id": "w_bridge_bow"
+        },
+        {
+          "label": "Bridge starboard canopy",
+          "sill": 1,
+          "windowStyle": "plain",
+          "type": "window",
+          "wallId": "d2_hull4",
+          "width": 4,
+          "height": 1.2,
+          "t": 0.5,
+          "id": "w_bridge_stbd"
+        },
+        {
+          "label": "Lounge port porthole",
+          "sill": 0.65,
+          "windowStyle": "plain",
+          "type": "window",
+          "wallId": "d2_hull1",
+          "width": 1.2,
+          "height": 0.95,
+          "t": 0.166666667,
+          "id": "w_port_07"
+        },
+        {
+          "label": "Quarters 1 porthole",
+          "sill": 0.65,
+          "windowStyle": "plain",
+          "type": "window",
+          "wallId": "d2_hull1",
+          "width": 1.2,
+          "height": 0.95,
+          "t": 0.42708333299999995,
+          "id": "w_port_08"
+        },
+        {
+          "label": "Quarters 2 porthole",
+          "sill": 0.65,
+          "windowStyle": "plain",
+          "type": "window",
+          "wallId": "d2_hull1",
+          "width": 1.2,
+          "height": 0.95,
+          "t": 0.629166667,
+          "id": "w_port_09"
+        },
+        {
+          "label": "Captain's quarters porthole",
+          "sill": 0.65,
+          "windowStyle": "plain",
+          "type": "window",
+          "wallId": "d2_hull1",
+          "width": 1.2,
+          "height": 0.95,
+          "t": 0.85,
+          "id": "w_port_10"
+        },
+        {
+          "label": "Lounge starboard porthole",
+          "sill": 0.65,
+          "windowStyle": "plain",
+          "type": "window",
+          "wallId": "d2_hull5",
+          "width": 1.2,
+          "height": 0.95,
+          "t": 0.833333333,
+          "id": "w_port_11"
+        },
+        {
+          "label": "Mess porthole",
+          "sill": 0.65,
+          "windowStyle": "plain",
+          "type": "window",
+          "wallId": "d2_hull5",
+          "width": 1.2,
+          "height": 0.95,
+          "t": 0.5,
+          "id": "w_port_12"
+        },
+        {
+          "label": "Med bay porthole",
+          "sill": 0.65,
+          "windowStyle": "plain",
+          "type": "window",
+          "wallId": "d2_hull5",
+          "width": 1.2,
+          "height": 0.95,
+          "t": 0.1875,
+          "id": "w_port_13"
+        }
+      ],
+      "lights": [],
+      "stairs": [],
+      "slabs": [],
+      "regions": [
+        {
+          "id": "r_lounge",
+          "label": "Observation lounge",
+          "minX": -14,
+          "maxX": -6,
+          "minZ": -5.5,
+          "maxZ": 5.5,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "r_d2_corridor",
+          "label": "Deck 2 corridor",
+          "minX": -6,
+          "maxX": 9,
+          "minZ": -1.25,
+          "maxZ": 1.25,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "r_q1",
+          "label": "Crew quarters 1",
+          "minX": -6,
+          "maxX": -1.5,
+          "minZ": -5.5,
+          "maxZ": -1.25,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "r_q2",
+          "label": "Crew quarters 2",
+          "minX": -1.5,
+          "maxX": 3.75,
+          "minZ": -5.5,
+          "maxZ": -1.25,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "r_q3",
+          "label": "Captain's quarters",
+          "minX": 3.75,
+          "maxX": 9,
+          "minZ": -5.5,
+          "maxZ": -1.25,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "r_mess",
+          "label": "Mess",
+          "minX": -6,
+          "maxX": 2,
+          "minZ": 1.25,
+          "maxZ": 5.5,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "r_med",
+          "label": "Med bay",
+          "minX": 2,
+          "maxX": 9,
+          "minZ": 1.25,
+          "maxZ": 5.5,
+          "kind": "room",
+          "effect": "label"
+        },
+        {
+          "id": "r_bridge",
+          "label": "Bridge",
+          "minX": 9,
+          "maxX": 16,
+          "minZ": -5.5,
+          "maxZ": 5.5,
+          "kind": "room",
+          "effect": "label"
+        }
+      ],
+      "platforms": [],
+      "railings": [
+        {
+          "label": "Companionway rail inboard",
+          "a": {
+            "x": -13.5,
+            "z": -3.5
+          },
+          "b": {
+            "x": -8.5,
+            "z": -3.5
+          },
+          "height": 1,
+          "style": "two_rail",
+          "id": "rail_stair_inboard"
+        },
+        {
+          "label": "Companionway rail aft",
+          "a": {
+            "x": -13.5,
+            "z": -4.9
+          },
+          "b": {
+            "x": -13.5,
+            "z": -3.5
+          },
+          "height": 1,
+          "style": "two_rail",
+          "id": "rail_stair_aft"
+        }
+      ],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": true
+    }
+  ],
+  "wallTypes": [
+    {
+      "id": "hull",
+      "label": "Tumblehome hull",
+      "stations": [
+        {
+          "height": 0,
+          "offset": 0,
+          "thickness": 0.25
+        },
+        {
+          "height": 0.18,
+          "offset": -0.35,
+          "thickness": 0.25
+        },
+        {
+          "height": 0.55,
+          "offset": -0.35,
+          "thickness": 0.25
+        },
+        {
+          "height": 1,
+          "offset": 0,
+          "thickness": 0.25
+        }
+      ]
+    },
+    {
+      "id": "corridor",
+      "label": "Hex corridor",
+      "stations": [
+        {
+          "height": 0,
+          "offset": 0,
+          "thickness": 0.25
+        },
+        {
+          "height": 0.4,
+          "offset": -0.2,
+          "thickness": 0.25
+        },
+        {
+          "height": 0.62,
+          "offset": -0.2,
+          "thickness": 0.25
+        },
+        {
+          "height": 1,
+          "offset": 0,
+          "thickness": 0.25
+        }
+      ]
+    }
+  ],
+  "openingShapes": [
+    {
+      "id": "hatch",
+      "label": "Octagon hatch",
+      "points": [
+        {
+          "x": 0.22,
+          "y": 0
+        },
+        {
+          "x": 0.78,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0.16
+        },
+        {
+          "x": 1,
+          "y": 0.84
+        },
+        {
+          "x": 0.78,
+          "y": 1
+        },
+        {
+          "x": 0.22,
+          "y": 1
+        },
+        {
+          "x": 0,
+          "y": 0.84
+        },
+        {
+          "x": 0,
+          "y": 0.16
+        }
+      ]
+    },
+    {
+      "id": "airlock",
+      "label": "Airlock outline",
+      "points": [
+        {
+          "x": 0.16,
+          "y": 0
+        },
+        {
+          "x": 0.84,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0.2
+        },
+        {
+          "x": 1,
+          "y": 0.8
+        },
+        {
+          "x": 0.88,
+          "y": 1
+        },
+        {
+          "x": 0.12,
+          "y": 1
+        },
+        {
+          "x": 0,
+          "y": 0.8
+        },
+        {
+          "x": 0,
+          "y": 0.2
+        }
+      ]
+    },
+    {
+      "id": "blast",
+      "label": "Blast door",
+      "points": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0.8
+        },
+        {
+          "x": 0.85,
+          "y": 1
+        },
+        {
+          "x": 0.15,
+          "y": 1
+        },
+        {
+          "x": 0,
+          "y": 0.8
+        }
+      ]
+    }
+  ]
+}

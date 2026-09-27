@@ -802,9 +802,15 @@ export function openingAnchor(building,opening){
 export function buildProfileMeshData(building){
   const meshes=Object.fromEntries(['outside','inside','exteriorEdges','sideA','sideB','interiorEdges'].map(k=>[k,meshWriter()]));
   const solids=profileWallSolids(building,exteriorWallOutsideSign,isExteriorWall);
+  // The story-seam skirt's underside lies exactly on the lower story's slab
+  // underside, so it would z-fight with that ceiling. The Standard wall path
+  // never emits it; skip it here too (collision is unaffected).
+  const skirt=Number(building.storyFloorSkirt??building.exteriorFloorSkirt)||0;
+  const skirtUnderside=face=>skirt>EPS&&face.normal.y<-1+1e-6&&face.points.every(p=>Math.abs(p.y+skirt)<1e-6);
   for(const solid of solids){
     const wall=building.walls[solid.wallIndex],length=wallLength(wall),raw={x:-(wall.b.z-wall.a.z)/length,z:(wall.b.x-wall.a.x)/length},sign=exteriorWallOutsideSign(building,wall);
     for(const face of solid.faces){
+      if(skirtUnderside(face))continue;
       let key=solid.exterior?'exteriorEdges':'interiorEdges';
       if(face.tag!=='edge')key=solid.exterior?((face.normal.x*raw.x+face.normal.z*raw.z)*sign>0?'outside':'inside'):(face.normal.x*raw.x+face.normal.z*raw.z<0?'sideA':'sideB');
       unionFaceWriter(meshes[key],solid.ownerIndex,solids).face(face.points,face.uvs,face.normal);

@@ -1,0 +1,37 @@
+{
+  "kind": "building-check-report",
+  "formatVersion": 1,
+  "policy": {
+    "warningsAsErrors": true
+  },
+  "ok": true,
+  "counts": {
+    "documents": 1,
+    "errors": 0,
+    "warnings": 0
+  },
+  "results": [
+    {
+      "file": "kestrel.building.json",
+      "building": {
+        "name": "Kestrel-class courier",
+        "schemaVersion": 10
+      },
+      "validationStage": "prepared-document",
+      "normalized": false,
+      "ok": true,
+      "counts": {
+        "errors": 0,
+        "warnings": 0
+      },
+      "errors": [],
+      "warnings": []
+    }
+  ],
+  "verification": {
+    "scope": "Authoring validation only. A clear report does not certify geometry, collision clearance or playability.",
+    "godot": "not-run",
+    "collisionClearance": "not-verified"
+  },
+  "usage": "Diagnostic snapshot, not a building file. Save the building JSON separately to reproduce or edit it."
+}

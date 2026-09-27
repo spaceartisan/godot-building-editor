@@ -8,6 +8,13 @@ The deliverable is a building `.tscn` with its door `.tscn` dependencies. No gam
 
 Start with [QUICKSTART.md](QUICKSTART.md) for the web workflow, Godot import steps and all 11 CLI recipes. Detailed operation fields live in [TRANSACTIONS.md](TRANSACTIONS.md).
 
+## Since 1.3.0: Kestrel starship stress test
+
+An AI built a two-deck starship interior ([authoring/kestrel](authoring/kestrel/README.md)) using custom wall profiles (flared hull, hexagonal corridors) and custom doorway shapes (hatches, airlocks, blast doors). Its [FINDINGS.md](authoring/kestrel/FINDINGS.md) lists the next steps. The top items are CLI operations for wall types, doorway shapes and lights, a ceiling step under upper-story setbacks, and route checks for sealed interiors. Fixed in this pass:
+
+- **Z-fighting on lower-story ceilings (Godot export).** Buildings with shaped walls or shaped openings no longer emit the story-seam skirt underside, which lay exactly on the lower story's ceiling and flickered in Godot. The Standard wall path never emitted it. Collision is unchanged, and no bundled example scene changed.
+- **Readable interior renders.** `godot-check --render` and the web **Render in Godot** share a script that now adds a short-range camera headlamp and a clear render-only material on `Glass` surfaces. Sealed rooms are visible and windows show what they look onto. Scenes are still unmodified.
+
 ## Added in 1.3.0: AI authoring fixes from the Ravenhold castle exercise
 
 An AI built a four-level castle through the CLI ([authoring/ravenhold](authoring/ravenhold/README.md)) and recorded where the workflow failed ([FINDINGS.md](authoring/ravenhold/FINDINGS.md)). This release addresses those findings:

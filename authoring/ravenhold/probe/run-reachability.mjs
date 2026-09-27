@@ -1,5 +1,7 @@
 // Runs reachability.gd against an exported asset directory.
-// Usage: node authoring/ravenhold/probe/run-reachability.mjs ASSET_DIR GODOT_BIN OUT_JSON
+// Usage: node authoring/ravenhold/probe/run-reachability.mjs ASSET_DIR GODOT_BIN OUT_JSON [TARGETS_JSON]
+// Without TARGETS_JSON the Ravenhold targets below are used. TARGETS_JSON is
+// {start:[x,y,z], targets:[{name, at:[x,y,z], from?:[x,y,z], maxLength?}]}.
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -7,7 +9,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const [assets, godot, out] = process.argv.slice(2);
+const [assets, godot, out, targetsFile] = process.argv.slice(2);
 if (!assets || !godot || !out || fs.existsSync(out)) { console.error('usage: run-reachability.mjs ASSET_DIR GODOT_BIN NEW_OUT_JSON'); process.exit(2); }
 
 // World targets per floor (elevations 0 / 4.18 / 7.86 / 11.54). Start inside the gate tunnel.
@@ -34,7 +36,8 @@ for (const k of ['NW', 'NE', 'SE', 'SW']) {
 }
 targets.push(L('Winch room -> gatehouse top', byName['Winch room'], byName['Gatehouse top'], 20));
 targets.push(L('Keep undercroft -> keep roof', byName['Keep undercroft'], byName['Keep roof'], 50));
-const cfg = { scene: null, start: [0, 0, 17], agent: { radius: 0.3, height: 1.8, max_climb: 0.3, max_slope: 46 }, targets };
+const custom = targetsFile ? JSON.parse(fs.readFileSync(targetsFile, 'utf8')) : null;
+const cfg = { scene: null, start: custom?.start ?? [0, 0, 17], agent: { radius: 0.3, height: 1.8, max_climb: 0.3, max_slope: 46 }, targets: custom?.targets ?? targets };
 cfg.scene = fs.readdirSync(assets).find(f => f.endsWith('.tscn'));
 if (!cfg.scene) { console.error('no building .tscn in asset dir'); process.exit(3); }
 

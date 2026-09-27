@@ -1,7 +1,10 @@
 extends SceneTree
 # Renders screenshots of exported building scenes in Godot itself.
 # Scenes are loaded unmodified (empty material slots render as Godot's default
-# grey); only a camera, sky, sun and ambient light are added for viewing.
+# grey); only a camera, sky, sun, ambient light and a camera headlamp are
+# added for viewing. The headlamp (a short-range omni light that travels with
+# the camera) lets eye-level views show enclosed rooms that the sun cannot
+# reach; it falls off before exterior camera distances.
 # res://render.json: {"scenes": ["assets/x.tscn"], "views": [...] | null, "extraViews": [...],
 #   "width": 1280, "height": 800, "maxRegionViews": 64}
 # Without explicit views, each scene gets four exterior diagonals, an aerial
@@ -41,6 +44,12 @@ func _initialize() -> void:
 	camera.far = 1000.0
 	get_root().add_child(camera)
 	camera.make_current()
+	var headlamp := OmniLight3D.new()
+	headlamp.omni_range = 16.0
+	headlamp.omni_attenuation = 1.2
+	headlamp.light_energy = 1.4
+	headlamp.position = Vector3(0, 0.35, 0)
+	camera.add_child(headlamp)
 	for scene_path in cfg["scenes"]:
 		var prefix: String = scene_path.get_file().get_basename()
 		var multiple: bool = cfg["scenes"].size() > 1
@@ -125,6 +134,20 @@ func _apply_surface_colors(root: Node) -> void:
 			if materials.has(surface_name):
 				mi.set_surface_override_material(i, materials[surface_name])
 
+# Empty material slots render opaque, which hides what a window looks onto.
+# Render-only: exported "Glass" surfaces get a clear tinted material.
+func _apply_glass(root: Node) -> void:
+	var glass := StandardMaterial3D.new()
+	glass.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	glass.albedo_color = Color(0.7, 0.85, 0.95, 0.18)
+	glass.cull_mode = BaseMaterial3D.CULL_DISABLED
+	for node in root.find_children("*", "MeshInstance3D", true, false):
+		var mi := node as MeshInstance3D
+		if mi.mesh is ArrayMesh:
+			for i in mi.mesh.get_surface_count():
+				if (mi.mesh as ArrayMesh).surface_get_name(i) == "Glass":
+					mi.set_surface_override_material(i, glass)
+
 func _load_job() -> void:
 	if current:
 		current.queue_free()
@@ -133,6 +156,7 @@ func _load_job() -> void:
 	get_root().add_child(current)
 	if cfg.get("colorMode", "") == "surfaces":
 		_apply_surface_colors(current)
+	_apply_glass(current)
 	current_path = job["scene"]
 	job["views"] = (cfg["views"] if cfg["views"] != null else _auto_views(current)) + cfg.get("extraViews", [])
 	job["view"] = 0

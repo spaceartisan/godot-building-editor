@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { buildExteriorMeshData } from './src/exporter.js';
+import { buildExteriorMeshData, buildProfileMeshData } from './src/exporter.js';
 import { floorView, makeEmptyBuilding, makeFloor } from './src/model.js';
 import { prepareDocument } from './src/diagnostics.js';
 
@@ -8,8 +8,8 @@ import { prepareDocument } from './src/diagnostics.js';
 // skirt at corners, and open parapet chains flipping outside/inside faces.
 const wall=(id,a,b,extra={})=>({id,a:{x:a[0],z:a[1]},b:{x:b[0],z:b[1]},role:'exterior',height:null,label:'',...extra});
 const loop=(p,x0,z0,x1,z1)=>[[x0,z0,x1,z0],[x1,z0,x1,z1],[x1,z1,x0,z1],[x0,z1,x0,z0]].map(([a,c,d,e],i)=>wall(`${p}${i}`,[a,c],[d,e]));
-function building(floors,thickness=.5){
-  const b=makeEmptyBuilding();b.wallThickness=thickness;b.roof={...b.roof,type:'none'};
+function building(floors,thickness=.5,extra={}){
+  const b={...makeEmptyBuilding(),...extra};b.wallThickness=thickness;b.roof={...b.roof,type:'none'};
   b.floors=floors.map((walls,i)=>({...makeFloor(`F${i+1}`),id:`f${i+1}`,walls}));
   return prepareDocument(b).building;
 }
@@ -43,4 +43,17 @@ const near=(a,b,tol=1e-6)=>Math.abs(a-b)<=tol;
   assert.ok(westInside.length>0,'west wall plaster faces into the room (x = +0.25)');
   assert.equal(triangles(m.inside).filter(t=>t.every(p=>near(p.x,-.25))).length,0,'no plaster on the outer face');
   console.log('PASS outside side: open parapet chains do not flip closed-loop walls');
+}
+{
+  // Shaped-wall path (Kestrel starship): the story-seam skirt underside lies on
+  // the lower story's ceiling plane and z-fought with it in Godot. Neither the
+  // exterior nor an interior partition may emit it; the skirt sides remain.
+  const flare={id:'flare',label:'Flare',stations:[{height:0,offset:0,thickness:.25},{height:.2,offset:-.3,thickness:.25},{height:.8,offset:-.3,thickness:.25},{height:1,offset:0,thickness:.25}]};
+  const upper=[...loop('u',-4,-3,4,3).map(w=>({...w,wallTypeId:'flare'})),wall('p',[0,-3],[0,3],{role:'interior'})];
+  const b=building([loop('l',-5,-4,5,4),upper],.25,{wallTypes:[flare]}),v=floorView(b,1),skirt=v.storyFloorSkirt,m=buildProfileMeshData(v);
+  assert.ok(skirt>0);
+  const underside=t=>t.every(p=>near(p.y,-skirt));
+  for(const key of ['exteriorEdges','interiorEdges'])assert.equal(sum(m[key],underside),0,`${key}: no skirt underside at y = -${skirt}`);
+  assert.ok(sum(m.outside,t=>t.every(p=>p.y<=1e-9))>0,'skirt band siding is still emitted');
+  console.log('PASS shaped story skirt: no underside coplanar with the lower ceiling');
 }

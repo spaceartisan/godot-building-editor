@@ -1,4 +1,4 @@
-# Building Studio 1.2.4 — quickstart
+# Building Studio 1.2.5 — quickstart
 
 If the local server reports that its port is already in use, stop the existing server or launch with `PORT=5174 node server.mjs` on Linux. `PORT=0 node server.mjs` selects an available port and prints the URL. Without `PORT`, the default is 5173.
 

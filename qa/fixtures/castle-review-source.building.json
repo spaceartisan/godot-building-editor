@@ -1,0 +1,2248 @@
+{
+  "version": 9,
+  "name": "Cool Castle",
+  "exportProfile": "generic",
+  "wallHeight": 2.8,
+  "wallThickness": 0.22,
+  "floorThickness": 0.22,
+  "gridSize": 0.5,
+  "roof": {
+    "type": "none",
+    "pitch": 35,
+    "overhang": 0
+  },
+  "roofSections": [],
+  "manualFloors": [],
+  "manualCeilings": [],
+  "ceiling": {
+    "thickness": 0.12
+  },
+  "windowMesh": {
+    "enabled": true,
+    "frameWidth": 0.08,
+    "frameDepth": 0.12,
+    "glassThickness": 0.018
+  },
+  "doorMesh": {
+    "enabled": true,
+    "frameWidth": 0.09,
+    "frameDepth": 0.14,
+    "panelThickness": 0.045,
+    "detailDepth": 0.018
+  },
+  "floors": [
+    {
+      "id": "floor_gate",
+      "label": "Gate Level",
+      "walls": [
+        {
+          "id": "f1_outer_wall_1",
+          "a": {
+            "x": -7.5,
+            "z": -10
+          },
+          "b": {
+            "x": -2,
+            "z": -10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_outer_wall_2",
+          "a": {
+            "x": -2,
+            "z": -10
+          },
+          "b": {
+            "x": -2,
+            "z": -14
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_outer_wall_3",
+          "a": {
+            "x": -2,
+            "z": -14
+          },
+          "b": {
+            "x": 2,
+            "z": -14
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_outer_wall_4",
+          "a": {
+            "x": 2,
+            "z": -14
+          },
+          "b": {
+            "x": 2,
+            "z": -10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_outer_wall_5",
+          "a": {
+            "x": 2,
+            "z": -10
+          },
+          "b": {
+            "x": 7.5,
+            "z": -10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_outer_wall_6",
+          "a": {
+            "x": 7.5,
+            "z": -10
+          },
+          "b": {
+            "x": 7.5,
+            "z": -12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_outer_wall_7",
+          "a": {
+            "x": 7.5,
+            "z": -12.5
+          },
+          "b": {
+            "x": 12.5,
+            "z": -12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_outer_wall_8",
+          "a": {
+            "x": 12.5,
+            "z": -12.5
+          },
+          "b": {
+            "x": 12.5,
+            "z": -7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_outer_wall_9",
+          "a": {
+            "x": 12.5,
+            "z": -7.5
+          },
+          "b": {
+            "x": 10,
+            "z": -7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_outer_wall_10",
+          "a": {
+            "x": 10,
+            "z": -7.5
+          },
+          "b": {
+            "x": 10,
+            "z": 7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_outer_wall_11",
+          "a": {
+            "x": 10,
+            "z": 7.5
+          },
+          "b": {
+            "x": 12.5,
+            "z": 7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_outer_wall_12",
+          "a": {
+            "x": 12.5,
+            "z": 7.5
+          },
+          "b": {
+            "x": 12.5,
+            "z": 12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_outer_wall_13",
+          "a": {
+            "x": 12.5,
+            "z": 12.5
+          },
+          "b": {
+            "x": 7.5,
+            "z": 12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_outer_wall_14",
+          "a": {
+            "x": 7.5,
+            "z": 12.5
+          },
+          "b": {
+            "x": 7.5,
+            "z": 10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_outer_wall_15",
+          "a": {
+            "x": 7.5,
+            "z": 10
+          },
+          "b": {
+            "x": -7.5,
+            "z": 10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_outer_wall_16",
+          "a": {
+            "x": -7.5,
+            "z": 10
+          },
+          "b": {
+            "x": -7.5,
+            "z": 12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_outer_wall_17",
+          "a": {
+            "x": -7.5,
+            "z": 12.5
+          },
+          "b": {
+            "x": -12.5,
+            "z": 12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_outer_wall_18",
+          "a": {
+            "x": -12.5,
+            "z": 12.5
+          },
+          "b": {
+            "x": -12.5,
+            "z": 7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_outer_wall_19",
+          "a": {
+            "x": -12.5,
+            "z": 7.5
+          },
+          "b": {
+            "x": -10,
+            "z": 7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_outer_wall_20",
+          "a": {
+            "x": -10,
+            "z": 7.5
+          },
+          "b": {
+            "x": -10,
+            "z": -7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_outer_wall_21",
+          "a": {
+            "x": -10,
+            "z": -7.5
+          },
+          "b": {
+            "x": -12.5,
+            "z": -7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_outer_wall_22",
+          "a": {
+            "x": -12.5,
+            "z": -7.5
+          },
+          "b": {
+            "x": -12.5,
+            "z": -12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_outer_wall_23",
+          "a": {
+            "x": -12.5,
+            "z": -12.5
+          },
+          "b": {
+            "x": -7.5,
+            "z": -12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_outer_wall_24",
+          "a": {
+            "x": -7.5,
+            "z": -12.5
+          },
+          "b": {
+            "x": -7.5,
+            "z": -10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_keep_wall_1",
+          "a": {
+            "x": -3,
+            "z": -3
+          },
+          "b": {
+            "x": 3,
+            "z": -3
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_keep_wall_2",
+          "a": {
+            "x": 3,
+            "z": -3
+          },
+          "b": {
+            "x": 3,
+            "z": 3
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_keep_wall_3",
+          "a": {
+            "x": 3,
+            "z": 3
+          },
+          "b": {
+            "x": -3,
+            "z": 3
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f1_keep_wall_4",
+          "a": {
+            "x": -3,
+            "z": 3
+          },
+          "b": {
+            "x": -3,
+            "z": -3
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        }
+      ],
+      "openings": [
+        {
+          "id": "f1_gate",
+          "type": "door",
+          "wallId": "f1_outer_wall_3",
+          "t": 0.5,
+          "width": 2.6,
+          "height": 3.2,
+          "label": "Main Gate",
+          "doorStyle": "exterior"
+        },
+        {
+          "id": "f1_keep_door",
+          "type": "door",
+          "wallId": "f1_keep_wall_1",
+          "t": 0.5,
+          "width": 1.4,
+          "height": 2.2,
+          "label": "Keep Door",
+          "doorStyle": "room"
+        }
+      ],
+      "lights": [],
+      "stairs": [],
+      "slabs": [],
+      "regions": [
+        {
+          "id": "f1_envelope",
+          "label": "Curtain wall",
+          "kind": "wing",
+          "effect": "solid",
+          "minX": -12.5,
+          "maxX": 12.5,
+          "minZ": -14,
+          "maxZ": 12.5,
+          "polygon": [
+            {
+              "x": -7.5,
+              "z": -10
+            },
+            {
+              "x": -2,
+              "z": -10
+            },
+            {
+              "x": -2,
+              "z": -14
+            },
+            {
+              "x": 2,
+              "z": -14
+            },
+            {
+              "x": 2,
+              "z": -10
+            },
+            {
+              "x": 7.5,
+              "z": -10
+            },
+            {
+              "x": 7.5,
+              "z": -12.5
+            },
+            {
+              "x": 12.5,
+              "z": -12.5
+            },
+            {
+              "x": 12.5,
+              "z": -7.5
+            },
+            {
+              "x": 10,
+              "z": -7.5
+            },
+            {
+              "x": 10,
+              "z": 7.5
+            },
+            {
+              "x": 12.5,
+              "z": 7.5
+            },
+            {
+              "x": 12.5,
+              "z": 12.5
+            },
+            {
+              "x": 7.5,
+              "z": 12.5
+            },
+            {
+              "x": 7.5,
+              "z": 10
+            },
+            {
+              "x": -7.5,
+              "z": 10
+            },
+            {
+              "x": -7.5,
+              "z": 12.5
+            },
+            {
+              "x": -12.5,
+              "z": 12.5
+            },
+            {
+              "x": -12.5,
+              "z": 7.5
+            },
+            {
+              "x": -10,
+              "z": 7.5
+            },
+            {
+              "x": -10,
+              "z": -7.5
+            },
+            {
+              "x": -12.5,
+              "z": -7.5
+            },
+            {
+              "x": -12.5,
+              "z": -12.5
+            },
+            {
+              "x": -7.5,
+              "z": -12.5
+            }
+          ]
+        },
+        {
+          "id": "f1_courtyard",
+          "label": "Inner courtyard",
+          "kind": "courtyard",
+          "effect": "void",
+          "minX": -5,
+          "maxX": 5,
+          "minZ": -5,
+          "maxZ": 5,
+          "polygon": [
+            {
+              "x": -5,
+              "z": -5
+            },
+            {
+              "x": 5,
+              "z": -5
+            },
+            {
+              "x": 5,
+              "z": 5
+            },
+            {
+              "x": -5,
+              "z": 5
+            }
+          ]
+        },
+        {
+          "id": "f1_keep_region",
+          "label": "Great keep",
+          "kind": "room",
+          "effect": "solid",
+          "minX": -3,
+          "maxX": 3,
+          "minZ": -3,
+          "maxZ": 3,
+          "polygon": [
+            {
+              "x": -3,
+              "z": -3
+            },
+            {
+              "x": 3,
+              "z": -3
+            },
+            {
+              "x": 3,
+              "z": 3
+            },
+            {
+              "x": -3,
+              "z": 3
+            }
+          ]
+        }
+      ],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": true,
+      "wallHeight": 3.6
+    },
+    {
+      "id": "floor_wallwalk",
+      "label": "Wall Walk",
+      "walls": [
+        {
+          "id": "f2_outer_wall_1",
+          "a": {
+            "x": -7.5,
+            "z": -10
+          },
+          "b": {
+            "x": -2,
+            "z": -10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_outer_wall_2",
+          "a": {
+            "x": -2,
+            "z": -10
+          },
+          "b": {
+            "x": -2,
+            "z": -14
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_outer_wall_3",
+          "a": {
+            "x": -2,
+            "z": -14
+          },
+          "b": {
+            "x": 2,
+            "z": -14
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_outer_wall_4",
+          "a": {
+            "x": 2,
+            "z": -14
+          },
+          "b": {
+            "x": 2,
+            "z": -10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_outer_wall_5",
+          "a": {
+            "x": 2,
+            "z": -10
+          },
+          "b": {
+            "x": 7.5,
+            "z": -10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_outer_wall_6",
+          "a": {
+            "x": 7.5,
+            "z": -10
+          },
+          "b": {
+            "x": 7.5,
+            "z": -12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_outer_wall_7",
+          "a": {
+            "x": 7.5,
+            "z": -12.5
+          },
+          "b": {
+            "x": 12.5,
+            "z": -12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_outer_wall_8",
+          "a": {
+            "x": 12.5,
+            "z": -12.5
+          },
+          "b": {
+            "x": 12.5,
+            "z": -7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_outer_wall_9",
+          "a": {
+            "x": 12.5,
+            "z": -7.5
+          },
+          "b": {
+            "x": 10,
+            "z": -7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_outer_wall_10",
+          "a": {
+            "x": 10,
+            "z": -7.5
+          },
+          "b": {
+            "x": 10,
+            "z": 7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_outer_wall_11",
+          "a": {
+            "x": 10,
+            "z": 7.5
+          },
+          "b": {
+            "x": 12.5,
+            "z": 7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_outer_wall_12",
+          "a": {
+            "x": 12.5,
+            "z": 7.5
+          },
+          "b": {
+            "x": 12.5,
+            "z": 12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_outer_wall_13",
+          "a": {
+            "x": 12.5,
+            "z": 12.5
+          },
+          "b": {
+            "x": 7.5,
+            "z": 12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_outer_wall_14",
+          "a": {
+            "x": 7.5,
+            "z": 12.5
+          },
+          "b": {
+            "x": 7.5,
+            "z": 10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_outer_wall_15",
+          "a": {
+            "x": 7.5,
+            "z": 10
+          },
+          "b": {
+            "x": -7.5,
+            "z": 10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_outer_wall_16",
+          "a": {
+            "x": -7.5,
+            "z": 10
+          },
+          "b": {
+            "x": -7.5,
+            "z": 12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_outer_wall_17",
+          "a": {
+            "x": -7.5,
+            "z": 12.5
+          },
+          "b": {
+            "x": -12.5,
+            "z": 12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_outer_wall_18",
+          "a": {
+            "x": -12.5,
+            "z": 12.5
+          },
+          "b": {
+            "x": -12.5,
+            "z": 7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_outer_wall_19",
+          "a": {
+            "x": -12.5,
+            "z": 7.5
+          },
+          "b": {
+            "x": -10,
+            "z": 7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_outer_wall_20",
+          "a": {
+            "x": -10,
+            "z": 7.5
+          },
+          "b": {
+            "x": -10,
+            "z": -7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_outer_wall_21",
+          "a": {
+            "x": -10,
+            "z": -7.5
+          },
+          "b": {
+            "x": -12.5,
+            "z": -7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_outer_wall_22",
+          "a": {
+            "x": -12.5,
+            "z": -7.5
+          },
+          "b": {
+            "x": -12.5,
+            "z": -12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_outer_wall_23",
+          "a": {
+            "x": -12.5,
+            "z": -12.5
+          },
+          "b": {
+            "x": -7.5,
+            "z": -12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_outer_wall_24",
+          "a": {
+            "x": -7.5,
+            "z": -12.5
+          },
+          "b": {
+            "x": -7.5,
+            "z": -10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_keep_wall_1",
+          "a": {
+            "x": -3,
+            "z": -3
+          },
+          "b": {
+            "x": 3,
+            "z": -3
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_keep_wall_2",
+          "a": {
+            "x": 3,
+            "z": -3
+          },
+          "b": {
+            "x": 3,
+            "z": 3
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_keep_wall_3",
+          "a": {
+            "x": 3,
+            "z": 3
+          },
+          "b": {
+            "x": -3,
+            "z": 3
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f2_keep_wall_4",
+          "a": {
+            "x": -3,
+            "z": 3
+          },
+          "b": {
+            "x": -3,
+            "z": -3
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        }
+      ],
+      "openings": [],
+      "lights": [],
+      "stairs": [],
+      "slabs": [],
+      "regions": [
+        {
+          "id": "f2_envelope",
+          "label": "Wall walk",
+          "kind": "wing",
+          "effect": "solid",
+          "minX": -12.5,
+          "maxX": 12.5,
+          "minZ": -14,
+          "maxZ": 12.5,
+          "polygon": [
+            {
+              "x": -7.5,
+              "z": -10
+            },
+            {
+              "x": -2,
+              "z": -10
+            },
+            {
+              "x": -2,
+              "z": -14
+            },
+            {
+              "x": 2,
+              "z": -14
+            },
+            {
+              "x": 2,
+              "z": -10
+            },
+            {
+              "x": 7.5,
+              "z": -10
+            },
+            {
+              "x": 7.5,
+              "z": -12.5
+            },
+            {
+              "x": 12.5,
+              "z": -12.5
+            },
+            {
+              "x": 12.5,
+              "z": -7.5
+            },
+            {
+              "x": 10,
+              "z": -7.5
+            },
+            {
+              "x": 10,
+              "z": 7.5
+            },
+            {
+              "x": 12.5,
+              "z": 7.5
+            },
+            {
+              "x": 12.5,
+              "z": 12.5
+            },
+            {
+              "x": 7.5,
+              "z": 12.5
+            },
+            {
+              "x": 7.5,
+              "z": 10
+            },
+            {
+              "x": -7.5,
+              "z": 10
+            },
+            {
+              "x": -7.5,
+              "z": 12.5
+            },
+            {
+              "x": -12.5,
+              "z": 12.5
+            },
+            {
+              "x": -12.5,
+              "z": 7.5
+            },
+            {
+              "x": -10,
+              "z": 7.5
+            },
+            {
+              "x": -10,
+              "z": -7.5
+            },
+            {
+              "x": -12.5,
+              "z": -7.5
+            },
+            {
+              "x": -12.5,
+              "z": -12.5
+            },
+            {
+              "x": -7.5,
+              "z": -12.5
+            }
+          ]
+        },
+        {
+          "id": "f2_courtyard",
+          "label": "Open courtyard",
+          "kind": "courtyard",
+          "effect": "void",
+          "minX": -5,
+          "maxX": 5,
+          "minZ": -5,
+          "maxZ": 5,
+          "polygon": [
+            {
+              "x": -5,
+              "z": -5
+            },
+            {
+              "x": 5,
+              "z": -5
+            },
+            {
+              "x": 5,
+              "z": 5
+            },
+            {
+              "x": -5,
+              "z": 5
+            }
+          ]
+        },
+        {
+          "id": "f2_keep_region",
+          "label": "Keep upper hall",
+          "kind": "room",
+          "effect": "solid",
+          "minX": -3,
+          "maxX": 3,
+          "minZ": -3,
+          "maxZ": 3,
+          "polygon": [
+            {
+              "x": -3,
+              "z": -3
+            },
+            {
+              "x": 3,
+              "z": -3
+            },
+            {
+              "x": 3,
+              "z": 3
+            },
+            {
+              "x": -3,
+              "z": 3
+            }
+          ]
+        }
+      ],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": true,
+      "wallHeight": 2.8
+    },
+    {
+      "id": "floor_towers",
+      "label": "Tower Level",
+      "walls": [
+        {
+          "id": "f3_sw_wall_1",
+          "a": {
+            "x": -12.5,
+            "z": -12.5
+          },
+          "b": {
+            "x": -7.5,
+            "z": -12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f3_sw_wall_2",
+          "a": {
+            "x": -7.5,
+            "z": -12.5
+          },
+          "b": {
+            "x": -7.5,
+            "z": -7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f3_sw_wall_3",
+          "a": {
+            "x": -7.5,
+            "z": -7.5
+          },
+          "b": {
+            "x": -12.5,
+            "z": -7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f3_sw_wall_4",
+          "a": {
+            "x": -12.5,
+            "z": -7.5
+          },
+          "b": {
+            "x": -12.5,
+            "z": -12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f3_se_wall_1",
+          "a": {
+            "x": 7.5,
+            "z": -12.5
+          },
+          "b": {
+            "x": 12.5,
+            "z": -12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f3_se_wall_2",
+          "a": {
+            "x": 12.5,
+            "z": -12.5
+          },
+          "b": {
+            "x": 12.5,
+            "z": -7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f3_se_wall_3",
+          "a": {
+            "x": 12.5,
+            "z": -7.5
+          },
+          "b": {
+            "x": 7.5,
+            "z": -7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f3_se_wall_4",
+          "a": {
+            "x": 7.5,
+            "z": -7.5
+          },
+          "b": {
+            "x": 7.5,
+            "z": -12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f3_ne_wall_1",
+          "a": {
+            "x": 7.5,
+            "z": 7.5
+          },
+          "b": {
+            "x": 12.5,
+            "z": 7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f3_ne_wall_2",
+          "a": {
+            "x": 12.5,
+            "z": 7.5
+          },
+          "b": {
+            "x": 12.5,
+            "z": 12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f3_ne_wall_3",
+          "a": {
+            "x": 12.5,
+            "z": 12.5
+          },
+          "b": {
+            "x": 7.5,
+            "z": 12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f3_ne_wall_4",
+          "a": {
+            "x": 7.5,
+            "z": 12.5
+          },
+          "b": {
+            "x": 7.5,
+            "z": 7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f3_nw_wall_1",
+          "a": {
+            "x": -12.5,
+            "z": 7.5
+          },
+          "b": {
+            "x": -7.5,
+            "z": 7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f3_nw_wall_2",
+          "a": {
+            "x": -7.5,
+            "z": 7.5
+          },
+          "b": {
+            "x": -7.5,
+            "z": 12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f3_nw_wall_3",
+          "a": {
+            "x": -7.5,
+            "z": 12.5
+          },
+          "b": {
+            "x": -12.5,
+            "z": 12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f3_nw_wall_4",
+          "a": {
+            "x": -12.5,
+            "z": 12.5
+          },
+          "b": {
+            "x": -12.5,
+            "z": 7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f3_gate_wall_1",
+          "a": {
+            "x": -2,
+            "z": -14
+          },
+          "b": {
+            "x": 2,
+            "z": -14
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f3_gate_wall_2",
+          "a": {
+            "x": 2,
+            "z": -14
+          },
+          "b": {
+            "x": 2,
+            "z": -10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f3_gate_wall_3",
+          "a": {
+            "x": 2,
+            "z": -10
+          },
+          "b": {
+            "x": -2,
+            "z": -10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f3_gate_wall_4",
+          "a": {
+            "x": -2,
+            "z": -10
+          },
+          "b": {
+            "x": -2,
+            "z": -14
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f3_keep_wall_1",
+          "a": {
+            "x": -3,
+            "z": -3
+          },
+          "b": {
+            "x": 3,
+            "z": -3
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f3_keep_wall_2",
+          "a": {
+            "x": 3,
+            "z": -3
+          },
+          "b": {
+            "x": 3,
+            "z": 3
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f3_keep_wall_3",
+          "a": {
+            "x": 3,
+            "z": 3
+          },
+          "b": {
+            "x": -3,
+            "z": 3
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f3_keep_wall_4",
+          "a": {
+            "x": -3,
+            "z": 3
+          },
+          "b": {
+            "x": -3,
+            "z": -3
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        }
+      ],
+      "openings": [],
+      "lights": [],
+      "stairs": [],
+      "slabs": [],
+      "regions": [
+        {
+          "id": "f3_sw",
+          "label": "Southwest tower",
+          "kind": "wing",
+          "effect": "solid",
+          "minX": -12.5,
+          "maxX": -7.5,
+          "minZ": -12.5,
+          "maxZ": -7.5,
+          "polygon": [
+            {
+              "x": -12.5,
+              "z": -12.5
+            },
+            {
+              "x": -7.5,
+              "z": -12.5
+            },
+            {
+              "x": -7.5,
+              "z": -7.5
+            },
+            {
+              "x": -12.5,
+              "z": -7.5
+            }
+          ]
+        },
+        {
+          "id": "f3_se",
+          "label": "Southeast tower",
+          "kind": "wing",
+          "effect": "solid",
+          "minX": 7.5,
+          "maxX": 12.5,
+          "minZ": -12.5,
+          "maxZ": -7.5,
+          "polygon": [
+            {
+              "x": 7.5,
+              "z": -12.5
+            },
+            {
+              "x": 12.5,
+              "z": -12.5
+            },
+            {
+              "x": 12.5,
+              "z": -7.5
+            },
+            {
+              "x": 7.5,
+              "z": -7.5
+            }
+          ]
+        },
+        {
+          "id": "f3_ne",
+          "label": "Northeast tower",
+          "kind": "wing",
+          "effect": "solid",
+          "minX": 7.5,
+          "maxX": 12.5,
+          "minZ": 7.5,
+          "maxZ": 12.5,
+          "polygon": [
+            {
+              "x": 7.5,
+              "z": 7.5
+            },
+            {
+              "x": 12.5,
+              "z": 7.5
+            },
+            {
+              "x": 12.5,
+              "z": 12.5
+            },
+            {
+              "x": 7.5,
+              "z": 12.5
+            }
+          ]
+        },
+        {
+          "id": "f3_nw",
+          "label": "Northwest tower",
+          "kind": "wing",
+          "effect": "solid",
+          "minX": -12.5,
+          "maxX": -7.5,
+          "minZ": 7.5,
+          "maxZ": 12.5,
+          "polygon": [
+            {
+              "x": -12.5,
+              "z": 7.5
+            },
+            {
+              "x": -7.5,
+              "z": 7.5
+            },
+            {
+              "x": -7.5,
+              "z": 12.5
+            },
+            {
+              "x": -12.5,
+              "z": 12.5
+            }
+          ]
+        },
+        {
+          "id": "f3_gate",
+          "label": "Gatehouse crown",
+          "kind": "wing",
+          "effect": "solid",
+          "minX": -2,
+          "maxX": 2,
+          "minZ": -14,
+          "maxZ": -10,
+          "polygon": [
+            {
+              "x": -2,
+              "z": -14
+            },
+            {
+              "x": 2,
+              "z": -14
+            },
+            {
+              "x": 2,
+              "z": -10
+            },
+            {
+              "x": -2,
+              "z": -10
+            }
+          ]
+        },
+        {
+          "id": "f3_keep",
+          "label": "Keep tower",
+          "kind": "room",
+          "effect": "solid",
+          "minX": -3,
+          "maxX": 3,
+          "minZ": -3,
+          "maxZ": 3,
+          "polygon": [
+            {
+              "x": -3,
+              "z": -3
+            },
+            {
+              "x": 3,
+              "z": -3
+            },
+            {
+              "x": 3,
+              "z": 3
+            },
+            {
+              "x": -3,
+              "z": 3
+            }
+          ]
+        }
+      ],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": true,
+      "wallHeight": 2.8
+    },
+    {
+      "id": "floor_parapet",
+      "label": "Parapets",
+      "walls": [
+        {
+          "id": "f4_sw_wall_1",
+          "a": {
+            "x": -12.5,
+            "z": -12.5
+          },
+          "b": {
+            "x": -7.5,
+            "z": -12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f4_sw_wall_2",
+          "a": {
+            "x": -7.5,
+            "z": -12.5
+          },
+          "b": {
+            "x": -7.5,
+            "z": -7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f4_sw_wall_3",
+          "a": {
+            "x": -7.5,
+            "z": -7.5
+          },
+          "b": {
+            "x": -12.5,
+            "z": -7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f4_sw_wall_4",
+          "a": {
+            "x": -12.5,
+            "z": -7.5
+          },
+          "b": {
+            "x": -12.5,
+            "z": -12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f4_se_wall_1",
+          "a": {
+            "x": 7.5,
+            "z": -12.5
+          },
+          "b": {
+            "x": 12.5,
+            "z": -12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f4_se_wall_2",
+          "a": {
+            "x": 12.5,
+            "z": -12.5
+          },
+          "b": {
+            "x": 12.5,
+            "z": -7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f4_se_wall_3",
+          "a": {
+            "x": 12.5,
+            "z": -7.5
+          },
+          "b": {
+            "x": 7.5,
+            "z": -7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f4_se_wall_4",
+          "a": {
+            "x": 7.5,
+            "z": -7.5
+          },
+          "b": {
+            "x": 7.5,
+            "z": -12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f4_ne_wall_1",
+          "a": {
+            "x": 7.5,
+            "z": 7.5
+          },
+          "b": {
+            "x": 12.5,
+            "z": 7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f4_ne_wall_2",
+          "a": {
+            "x": 12.5,
+            "z": 7.5
+          },
+          "b": {
+            "x": 12.5,
+            "z": 12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f4_ne_wall_3",
+          "a": {
+            "x": 12.5,
+            "z": 12.5
+          },
+          "b": {
+            "x": 7.5,
+            "z": 12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f4_ne_wall_4",
+          "a": {
+            "x": 7.5,
+            "z": 12.5
+          },
+          "b": {
+            "x": 7.5,
+            "z": 7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f4_nw_wall_1",
+          "a": {
+            "x": -12.5,
+            "z": 7.5
+          },
+          "b": {
+            "x": -7.5,
+            "z": 7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f4_nw_wall_2",
+          "a": {
+            "x": -7.5,
+            "z": 7.5
+          },
+          "b": {
+            "x": -7.5,
+            "z": 12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f4_nw_wall_3",
+          "a": {
+            "x": -7.5,
+            "z": 12.5
+          },
+          "b": {
+            "x": -12.5,
+            "z": 12.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f4_nw_wall_4",
+          "a": {
+            "x": -12.5,
+            "z": 12.5
+          },
+          "b": {
+            "x": -12.5,
+            "z": 7.5
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f4_gate_wall_1",
+          "a": {
+            "x": -2,
+            "z": -14
+          },
+          "b": {
+            "x": 2,
+            "z": -14
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f4_gate_wall_2",
+          "a": {
+            "x": 2,
+            "z": -14
+          },
+          "b": {
+            "x": 2,
+            "z": -10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f4_gate_wall_3",
+          "a": {
+            "x": 2,
+            "z": -10
+          },
+          "b": {
+            "x": -2,
+            "z": -10
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f4_gate_wall_4",
+          "a": {
+            "x": -2,
+            "z": -10
+          },
+          "b": {
+            "x": -2,
+            "z": -14
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f4_keep_wall_1",
+          "a": {
+            "x": -3,
+            "z": -3
+          },
+          "b": {
+            "x": 3,
+            "z": -3
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f4_keep_wall_2",
+          "a": {
+            "x": 3,
+            "z": -3
+          },
+          "b": {
+            "x": 3,
+            "z": 3
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f4_keep_wall_3",
+          "a": {
+            "x": 3,
+            "z": 3
+          },
+          "b": {
+            "x": -3,
+            "z": 3
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        },
+        {
+          "id": "f4_keep_wall_4",
+          "a": {
+            "x": -3,
+            "z": 3
+          },
+          "b": {
+            "x": -3,
+            "z": -3
+          },
+          "label": "",
+          "role": "exterior",
+          "height": null
+        }
+      ],
+      "openings": [],
+      "lights": [],
+      "stairs": [],
+      "slabs": [],
+      "regions": [
+        {
+          "id": "f4_sw",
+          "label": "Southwest parapet",
+          "kind": "wing",
+          "effect": "solid",
+          "minX": -12.5,
+          "maxX": -7.5,
+          "minZ": -12.5,
+          "maxZ": -7.5,
+          "polygon": [
+            {
+              "x": -12.5,
+              "z": -12.5
+            },
+            {
+              "x": -7.5,
+              "z": -12.5
+            },
+            {
+              "x": -7.5,
+              "z": -7.5
+            },
+            {
+              "x": -12.5,
+              "z": -7.5
+            }
+          ]
+        },
+        {
+          "id": "f4_se",
+          "label": "Southeast parapet",
+          "kind": "wing",
+          "effect": "solid",
+          "minX": 7.5,
+          "maxX": 12.5,
+          "minZ": -12.5,
+          "maxZ": -7.5,
+          "polygon": [
+            {
+              "x": 7.5,
+              "z": -12.5
+            },
+            {
+              "x": 12.5,
+              "z": -12.5
+            },
+            {
+              "x": 12.5,
+              "z": -7.5
+            },
+            {
+              "x": 7.5,
+              "z": -7.5
+            }
+          ]
+        },
+        {
+          "id": "f4_ne",
+          "label": "Northeast parapet",
+          "kind": "wing",
+          "effect": "solid",
+          "minX": 7.5,
+          "maxX": 12.5,
+          "minZ": 7.5,
+          "maxZ": 12.5,
+          "polygon": [
+            {
+              "x": 7.5,
+              "z": 7.5
+            },
+            {
+              "x": 12.5,
+              "z": 7.5
+            },
+            {
+              "x": 12.5,
+              "z": 12.5
+            },
+            {
+              "x": 7.5,
+              "z": 12.5
+            }
+          ]
+        },
+        {
+          "id": "f4_nw",
+          "label": "Northwest parapet",
+          "kind": "wing",
+          "effect": "solid",
+          "minX": -12.5,
+          "maxX": -7.5,
+          "minZ": 7.5,
+          "maxZ": 12.5,
+          "polygon": [
+            {
+              "x": -12.5,
+              "z": 7.5
+            },
+            {
+              "x": -7.5,
+              "z": 7.5
+            },
+            {
+              "x": -7.5,
+              "z": 12.5
+            },
+            {
+              "x": -12.5,
+              "z": 12.5
+            }
+          ]
+        },
+        {
+          "id": "f4_gate",
+          "label": "Gatehouse parapet",
+          "kind": "wing",
+          "effect": "solid",
+          "minX": -2,
+          "maxX": 2,
+          "minZ": -14,
+          "maxZ": -10,
+          "polygon": [
+            {
+              "x": -2,
+              "z": -14
+            },
+            {
+              "x": 2,
+              "z": -14
+            },
+            {
+              "x": 2,
+              "z": -10
+            },
+            {
+              "x": -2,
+              "z": -10
+            }
+          ]
+        },
+        {
+          "id": "f4_keep",
+          "label": "Keep parapet",
+          "kind": "room",
+          "effect": "solid",
+          "minX": -3,
+          "maxX": 3,
+          "minZ": -3,
+          "maxZ": 3,
+          "polygon": [
+            {
+              "x": -3,
+              "z": -3
+            },
+            {
+              "x": 3,
+              "z": -3
+            },
+            {
+              "x": 3,
+              "z": 3
+            },
+            {
+              "x": -3,
+              "z": 3
+            }
+          ]
+        }
+      ],
+      "platforms": [],
+      "railings": [],
+      "roofSections": [],
+      "autoFloor": true,
+      "autoCeiling": false,
+      "wallHeight": 1.4
+    }
+  ]
+}

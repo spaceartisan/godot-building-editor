@@ -1,4 +1,4 @@
-# Building Studio — Building Editor 1.2.4
+# Building Studio — Building Editor 1.2.5
 
 For LLMs and coding agents, start with [AGENTS.md](AGENTS.md) and [LLM_GUIDE.md](LLM_GUIDE.md): supported capabilities, an executable workflow, geometry conventions, source map and verification limits. Current development is focused on web/CLI cleanup; architectural expansion is deferred.
 
@@ -7,6 +7,10 @@ A lightweight web editor for quickly authoring reusable Godot 4 building scenes:
 The deliverable is a building `.tscn` with its door `.tscn` dependencies. No game project or runtime generator is exported. Separate outward/inward shell meshes, interior wall side meshes, and per-story mesh organization are intentional for material and per-mesh lighting control; updates preserve these boundaries.
 
 Start with [QUICKSTART.md](QUICKSTART.md) for the web workflow, Godot import steps and all 11 CLI recipes. Detailed operation fields live in [TRANSACTIONS.md](TRANSACTIONS.md).
+
+## Cleanup in 1.2.5: AI authoring review
+
+[AUTHORING_REVIEW.md](AUTHORING_REVIEW.md) adds a concrete review process for circulation, floor coverage, courtyard ground, visual design and honest completion claims. A supplied castle is retained as a negative QA fixture: it passes schema validation but has missing lower keep floors and no stairs. The regression test verifies void precedence and a focused coverage repair without changing the exporter or rebuilding the castle.
 
 ## Cleanup in 1.2.4: local server startup
 

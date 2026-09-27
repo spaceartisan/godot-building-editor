@@ -2,6 +2,8 @@
 
 ## Current direction: cleanup
 
+- [x] 1.2.5: add evidence-based AI building review and a castle void/keep regression case; distinguish valid data from a complete accessible design.
+
 - [x] 1.2.4: validate local server port configuration and explain occupied-port startup failures.
 
 - [x] 1.2.3: restore rejected placement numbers, enforce supported ranges and integer stair counts, and reject blank CLI preview numbers.

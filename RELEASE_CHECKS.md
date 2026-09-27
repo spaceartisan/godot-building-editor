@@ -1,6 +1,6 @@
-# Release checks (1.2.4)
+# Release checks (1.2.5)
 
-The 1.2.4 cleanup package includes a fresh `release-report.json` for its source snapshot. Earlier documentation-only packages used a separately labeled baseline report.
+The 1.2.5 cleanup package includes a fresh `release-report.json` for its source snapshot. Earlier documentation-only packages used a separately labeled baseline report.
 
 The existing CLI suite now covers literal option-like filenames and usage-error output routing. The existing validation-feedback suite covers Save JSON status/failures and shared object-URL cleanup for JSON, report and Godot ZIP downloads, including DOM exceptions. These are handler tests; live-browser download completion is not claimed. The core registry remains 37 scripts.
 
@@ -72,7 +72,7 @@ Ordinary test failures can still produce a saved report. Usage, output preflight
 
 ## This release
 
-The v1.2.4 archive includes `release-report.json` beside the `building-editor/` folder. It reports the actual final source check with canvas and Godot required. The report itself is outside the source fingerprint, so it does not create a circular checksum. Final archive integrity and comparison with the previous release are checked separately before delivery. Stair and platform physics results appear in the `engine-assets` script output, separately from the original `godot-fixtures` measurements. Group-move coverage uses real editor handlers through the Node DOM adapter; browser interaction/layout is not part of this gate.
+The v1.2.5 archive includes `release-report.json` beside the `building-editor/` folder. It reports the actual final source check with canvas and Godot required. The report itself is outside the source fingerprint, so it does not create a circular checksum. Final archive integrity and comparison with the previous release are checked separately before delivery. Stair and platform physics results appear in the `engine-assets` script output, separately from the original `godot-fixtures` measurements. Group-move coverage uses real editor handlers through the Node DOM adapter; browser interaction/layout is not part of this gate.
 
 Regression cases cover skipped/required/broken dependencies, controlled all-gate success, child failure, copy mutation with original preservation, bad JSON, invalid syntax, timeout, cancellation, UTF-8/output limits, POSIX descendant termination, report boundary/symlink checks and eight actual CLI preflight cases. The full production command is also executed for this release.
 

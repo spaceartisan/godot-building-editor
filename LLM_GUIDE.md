@@ -1,6 +1,6 @@
 # Using Building Studio effectively as an LLM
 
-Applies to executable version **1.2.4**, building schemas through **10**, transaction format **1**, and check-report format **1**. Start with `node cli.mjs --version` and `node cli.mjs --help` in the installed package; use its implementation and current guides over remembered behavior from older releases.
+Applies to executable version **1.2.5**, building schemas through **10**, transaction format **1**, and check-report format **1**. Start with `node cli.mjs --version` and `node cli.mjs --help` in the installed package; use its implementation and current guides over remembered behavior from older releases.
 
 ## 1. Establish the task and source
 
@@ -34,6 +34,8 @@ Transactions support `floor.update/add-top/remove-top`, `wall.add/update/move-en
 Core CLI and web serving need Node 20+ and no npm install. Linux is the tested platform. `CANVAS_MODULE` can name an installed canvas module; `GODOT_BIN` or `--godot` supplies an existing Godot executable. Browser tests additionally need Playwright and its Chromium binary. Do not infer availability from the module alone.
 
 ## 3. A complete, repeatable workflow
+
+For new buildings or substantial layout changes, first read [AUTHORING_REVIEW.md](AUTHORING_REVIEW.md). Reserve circulation before detailing, inspect each occupied level and actual surface coverage, and record failed/unverified requirements. Inspect rendered views before delivery. A successful CLI command or zero validation warnings cannot establish that a building is complete or accessible. The supplied castle case study demonstrates this failure and a focused floor-coverage repair.
 
 Run from the extracted `building-editor` directory. The block uses a newly created output directory and the shipped stair recipe, so its IDs are known to match. Check every exit status and `ok` result before continuing. These commands were exercised when this guide was introduced.
 
@@ -93,6 +95,7 @@ Authored diffs use JSON Pointer paths but are reports, not executable patches. A
 - Floor overrides and automatic stacking determine stair rise. A stair belongs to its lower floor and connects to the adjacent upper floor. Manual roof `baseY` and manual floor/ceiling heights are absolute; platform `height` is relative to its floor. Recheck independent pieces after level edits.
 - Openings reference a host wall within their floor. `t` is a fractional position along wall A→B. Opening fit, overlap and junction clearance still apply. Empty door/window styles are intentional unfilled openings.
 - Automatic surfaces can follow closed polygon wall loops and authored coverage. Floor Footprints take precedence over solid regions; label regions add metadata, void regions cut automatic surfaces. Region effects do not rewrite independent roofs/slabs, platforms, stairs or walls.
+- All voids are subtracted after solid coverage is combined. A solid keep inside a courtyard void loses its automatic floors too; changing region order or adding a Floor Footprint cannot override the void. Shape the cutout around the keep or use an intentional independent surface, and separately plan courtyard ground and vertical access.
 - Automatic Hip roofs support convex footprints; continuous concave valleys remain unsupported. Independent manual roofs/slabs use rectangular footprints. Do not confuse clipping an existing roof with generating a new valley or dormer.
 - Roof `hostRoofId` is a one-way trim relationship. Host chains/cycles are unsupported. The child may receive no additional cut or be removed entirely; read the attachment diagnostics. Gable fills are separate from attachment slab trimming. Use [ROOF_DIAGNOSTICS.md](ROOF_DIAGNOSTICS.md) and attachment overlays.
 - Wall-profile stations use normalized height 0–1, metre offsets and horizontal thickness. Positive offset means inward; negative means outward. `inwardSide` selects auto/left/right relative to wall A→B. Inspect the web inward arrow when orientation is ambiguous. Shared type edits affect every referencing wall.

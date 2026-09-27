@@ -46,6 +46,11 @@ fi
 if [ -n "$godot" ]; then
   run node cli.mjs godot-check --assets "$out/assets" --godot "$godot" --require-collision --json > "$out/godot-check.json"
   run node "$here/probe/run-reachability.mjs" "$out/assets" "$godot" "$out/reachability.json"
+  if command -v xvfb-run >/dev/null; then
+    run node "$here/probe/run-render-views.mjs" "$out/assets" "$godot" "$out/godot-renders"
+  else
+    echo "Godot renders skipped: xvfb-run unavailable" >&2
+  fi
 else
   echo "Godot checks skipped: pass GODOT_BIN" >&2
 fi

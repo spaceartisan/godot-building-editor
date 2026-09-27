@@ -85,9 +85,16 @@ The landing check samples one point per side of the stair. It doesn't check whet
 
 The cheap connectivity graph in F1 would cover the first gap. Headroom would need a separate sampled check.
 
+### F9. Visual review doesn't show the Godot export
+
+The workflow's visual review (LLM_GUIDE §3, AUTHORING_REVIEW §4) uses the CLI `preview`, a software approximation. What matters is how the exported `.tscn` looks in Godot, and `godot-check` never renders it.
+
+For this review, `probe/run-render-views.mjs` rendered the unmodified export in Godot 4.5.1. It used the Compatibility renderer through Mesa under Xvfb, took about 10 seconds for 17 views, and gave eye-level interior views that the CLI preview can't produce.
+
+**Suggested fix:** add a Godot render mode, for example `godot-check --assets DIR --render VIEWS.json --out NEW_DIR`. Views could default to opposite exteriors plus one eye-level shot per labelled region. Point AUTHORING_REVIEW at those images rather than the software preview. Keep `preview` as a quick approximation. Its gaps, such as no way to focus on part of a building and no orthographic plan view, matter less once Godot renders are available.
+
 ## Low impact and papercuts
 
-- **F9. Preview can't focus on part of a building.** `preview` always auto-fits the whole floor or building around its centre. Corner towers can't be inspected up close, and there is no orthographic plan view: pitch −1.5 gives a near-plan with perspective skew that makes merlons look staggered. A `--target x,z` option plus `--ortho`, and an overlay of region labels and IDs, would make floor reviews much more useful to an AI reading images.
 - **F10. The canvas dependency has no install route.** The docs say to "install `@napi-rs/canvas` locally", but `package.json` has no optional dependency for it. For this exercise it was installed in a separate directory and passed as `CANVAS_MODULE=.../index.js`.
 - **F11. Reports embed absolute machine paths.** `validate --out` (`file`) and `godot-check` (`preflight.root`) record absolute paths, so committed evidence leaks the author's directory layout and isn't portable.
 - **F12. Creating a configured roof takes two operations.** `roof.add` accepts only bounds, so each configured roof needs a follow-up `roof.update` (see `tx-4`).

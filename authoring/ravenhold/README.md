@@ -2,7 +2,9 @@
 
 An enterable four-level castle blockout, built only from the documented CLI workflow ([LLM_GUIDE.md](../../LLM_GUIDE.md) and [AUTHORING_REVIEW.md](../../AUTHORING_REVIEW.md)) plus two small, scoped JSON edits for settings that no transaction can change. This is a test of the workflow. It is **not** added to the example catalog or the regression fixtures. Tool issues found along the way are listed in [FINDINGS.md](FINDINGS.md).
 
-![South-east exterior](previews/v2-exterior-se.png)
+![South-east exterior rendered by Godot 4.5.1](godot-renders/exterior-se.png)
+
+The images in `godot-renders/` come from Godot rendering the exported `.tscn` unmodified: empty materials show as Godot's default grey, and only a camera, sun and ambient light were added. They are the primary visual evidence. The `previews/` images come from the CLI's software preview, which is only an approximation; they were used for plan-style floor checks.
 
 ## Brief and assumptions
 
@@ -41,9 +43,10 @@ The final model has 362 walls, 91 openings (33 of them doors), 14 stairs, 3 inde
 | `generate-transactions.mjs` | Generates the five transaction recipes from one layout description |
 | `tx-1-levels` … `tx-5-circulation.edit.json` | The version-1 transaction recipes actually applied, in order |
 | `prepare-base.mjs`, `mark-open-boundary.mjs` | The two scoped JSON edits (see FINDINGS F2/F3) |
-| `probe/` | Godot navmesh reachability probe (see FINDINGS F1) |
+| `probe/` | Godot navmesh reachability probe (see FINDINGS F1) and the Godot render script |
 | `build.sh` | Rebuilds everything above from `examples/courtyard_regions.building.json` |
-| `previews/` | Software renders used for review (v1 = before the circulation fix) |
+| `godot-renders/` | 17 Godot renders of the exported scene: exteriors, the gate approach, eye-level interiors, walks and roofs |
+| `previews/` | CLI software-preview approximations used for plan-style floor checks (v1 = before the circulation fix) |
 
 To reproduce everything from the editor root, pass a new work directory:
 
@@ -64,7 +67,7 @@ A clean rebuild reproduced the committed building JSON and every scene byte-for-
 
 ## Review evidence (AUTHORING_REVIEW §2)
 
-Environment: Linux, Node 22.22.2, @napi-rs/canvas (software previews), Godot 4.5.1 stable (headless). Godot 4.7 was not available. A live browser was not run; the web-load check used the DOM harness.
+Environment: Linux, Node 22.22.2, @napi-rs/canvas (software previews), Godot 4.5.1 stable (headless for checks; Compatibility/OpenGL 3 through Mesa under Xvfb for renders). Godot 4.7 was not available. A live browser was not run; the web-load check used the DOM harness.
 
 | Review item | Status | Evidence |
 | --- | --- | --- |
@@ -76,7 +79,8 @@ Environment: Linux, Node 22.22.2, @napi-rs/canvas (software previews), Godot 4.5
 | Intended floors | Verified | `inspect` coverage is 1184, 831, 420 and 74 m², matching the authored regions minus the stair openings. Plan renders show no holes except the stair openings. |
 | Courtyard | Verified | Ground slab (floor 1 solid region). No ceiling or roof above it: floor 1 `autoCeiling` is false and the roof type is `none`. |
 | Walks and parapets | Verified in geometry | Continuous walks, passing through the tower rooms. Crenellated parapets (1.7 m merlons, 1.0 m crenels) on outer edges. 1.0 m guards on the south walks' courtyard edge, left open where the stairs arrive. |
-| Architectural brief | Verified visually | Opposite exterior views, a front view and a low north-east view (`previews/`) show the gatehouse, towers, keep, courtyard and roofs |
+| Architectural brief | Verified in Godot renders | Opposite exterior views, the gate approach and an aerial view of the courtyard (`godot-renders/`) show the gatehouse, towers, keep, crenellations and roofs |
+| Interiors as exported | Verified in Godot renders | 11 eye-level views: gate tunnel, courtyard, great hall, barracks, tower rooms with stairs and guards, walks, chapel, keep chamber, tower top and keep roof. No gaps, z-fighting or missing surfaces were seen. The floor "bumps" at doorways are the 0.5 m wall reveals under the door frames. |
 | Export | Verified | `export`: 34 scenes. `godot-check --require-collision` (Godot 4.5.1): 873 collision shapes, 0 failures, 0 material surfaces. |
 | Web editor round trip | Verified (DOM harness) | Loaded through the web handlers with 0 errors. Web export is byte-identical to the CLI scene and all 33 door scenes. |
 | Character traversal | Partly verified | A navmesh approximation (0.3 m radius, 1.8 m height, 0.3 m step, 46° slope, door panels treated as open) was run in Godot 4.5.1. This is **not** a CharacterBody3D walk test: door swing, stair step collision feel and headroom along each flight remain unverified. |
@@ -92,4 +96,5 @@ Environment: Linux, Node 22.22.2, @napi-rs/canvas (software previews), Godot 4.5
 - All walls share the building's single 0.5 m thickness, so parapets and stair guards are as thick as the curtain wall (FINDINGS F6).
 - The upper-range roofs are simple gables with no gable fill (`gableEnds: none`). They rely on the abutting tower walls and parapets, which rise above the ridge, to close their ends.
 - There is no terrain outside the walls. The gate opens onto nothing until the scene is placed on game terrain.
+- The Godot renders use a software rasterizer with an added sun and ambient light. Lighting in a game scene will differ.
 - Stair flights are fairly steep (about 40°, 0.175 m risers on 0.21 m treads) to fit inside 8 m towers.

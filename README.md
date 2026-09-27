@@ -17,6 +17,10 @@ An AI built a four-level castle through the CLI ([authoring/ravenhold](authoring
 - **Godot renders.** `godot-check --assets DIR --render --out NEW_DIR` renders the exported scenes in Godot: exteriors, aerial and eye-level region views, or custom `--views`. It needs `DISPLAY` or `xvfb-run`.
 - **Parapets, guards and openings.** `wall.crenellate` adds crenels to a wall as empty window openings, `railing.add/update/remove` edit railings, and `opening.add/update` accept a world point `at: {x, z}` instead of `t`.
 - **Reviewable diffs.** Adding or removing ID'd objects reports per-ID `add`/`remove` entries instead of restating whole arrays.
+- **Exterior shell fixes (Godot export).**
+  - Thick exterior walls no longer show EdgeFaces strips at convex corners, or holes in the story-seam skirt there. Where a wall's side face and a neighbour's end cap share a plane, the side face now always wins, regardless of wall order.
+  - Open wall chains, such as parapets ending against a tower, no longer flip which side of other exterior walls is OutsideFaces.
+  - Collision is unchanged. Bundled example scenes were regenerated with `generate-examples.mjs`; their building JSON is unchanged.
 - **Fewer false warnings.** On floors with solid regions or Floor Footprints, only free-standing exterior wall ends warn, with wall targets.
 - **Docs and papercuts.**
   - Saved check reports use relative paths.
@@ -32,6 +36,7 @@ Every addition is available in both the web editor and the CLI, through the same
 | Route check | `validate`/`inspect --reachability` | **Include route check** under Godot Export: warnings with **Show floor**/**Show stair**, a red plan outline of unreachable areas, and inclusion in the check report |
 | Godot renders | `godot-check --assets DIR --render --out NEW_DIR [--views FILE]` | **Render in Godot**: gallery, ZIP download and optional current 3D view. Uses the local server started with `GODOT_BIN`. |
 | Crenellation | `wall.crenellate` | Wall panel: crenel/merlon width, depth, **Add crenels** |
+| Surface-colour renders | `godot-check --render --surface-colors` | **Color surfaces by type** |
 | Railings | `railing.add/update/remove` | Railing tool and railing panel |
 | Opening placement | `opening.add` with `t` or `at` | Click placement on a wall |
 

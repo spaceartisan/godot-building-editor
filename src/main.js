@@ -926,13 +926,13 @@ async function renderInGodot(){
   button.disabled=true;report('Rendering the current export in Godot…');
   let response,body;
   try{
-    response=await fetch('/api/godot-render',{method:'POST',headers:{'Content-Type':'application/json','X-Building-Editor':'1'},body:JSON.stringify({files,extraViews})});
+    response=await fetch('/api/godot-render',{method:'POST',headers:{'Content-Type':'application/json','X-Building-Editor':'1'},body:JSON.stringify({files,extraViews,colorMode:$('#render-surface-colors-toggle').checked?'surfaces':'materials'})});
     body=await response.json();
   }catch{
     report('Godot rendering needs the local editor server: start it with GODOT_BIN=/path/to/godot node server.mjs and open the editor from that address.');return;
   }finally{button.disabled=false;}
   if(!response.ok||!body?.ok){report(`Godot render failed: ${body?.error||`HTTP ${response.status}`}`);return;}
-  lastRenders={base:f.base,engineVersion:body.engineVersion,renderer:body.renderer,views:body.views,images:body.images};
+  lastRenders={base:f.base,colorMode:body.colorMode,engineVersion:body.engineVersion,renderer:body.renderer,views:body.views,images:body.images};
   const gallery=$('#godot-render-results');gallery.replaceChildren();
   for(const image of body.images){
     const figure=document.createElement('figure'),img=document.createElement('img'),caption=document.createElement('figcaption');
@@ -947,7 +947,7 @@ $('#download-renders-btn').addEventListener('click',()=>{
   if(!lastRenders)return;
   try{
     const decode=b64=>Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
-    const manifest={engineVersion:lastRenders.engineVersion,renderer:lastRenders.renderer,views:lastRenders.views,note:'Scenes loaded unmodified (empty materials render as default grey); only camera, sky, sun and ambient light were added.'};
+    const manifest={engineVersion:lastRenders.engineVersion,colorMode:lastRenders.colorMode,renderer:lastRenders.renderer,views:lastRenders.views,note:'Scenes loaded unmodified (empty materials render as default grey); only camera, sky, sun and ambient light were added.'};
     downloadBinary(`${lastRenders.base}_godot_renders.zip`,makeStoredZip([...lastRenders.images.map(i=>({name:i.file,data:decode(i.png)})),{name:'renders.json',data:JSON.stringify(manifest,null,2)+'\n'}]));
     setStatus('Godot renders download requested.');
   }catch(err){setStatus(`Render download failed: ${err.message}`);}

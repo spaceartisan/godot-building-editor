@@ -24,6 +24,7 @@ try{
   assert.match(run(['godot-check','--render'],2).error,/requires --assets and --out/);
   assert.match(run(['godot-check','--assets','x','--out','y'],2).error,/require --render/);
   assert.match(run(['godot-check','--assets','x','--views','v.json'],2).error,/require --render/);
+  assert.match(run(['godot-check','--assets','x','--surface-colors'],2).error,/require --render/);
   fs.mkdirSync(path.join(temp,'exists'));
   run(['export',path.join(root,'examples/twostory.building.json'),'--out','assets'],0);
   assert.match(run(['godot-check','--assets','assets','--render','--out','exists','--godot','/nonexistent/godot'],3).error,/Destination already exists/,'destination is checked before Godot runs');

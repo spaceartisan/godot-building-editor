@@ -115,6 +115,22 @@ For this review, a one-off render script rendered the unmodified export in Godot
 
 **Status: fixed.** `godot-check --assets DIR --render --out NEW_DIR [--views FILE]` renders the checked scenes in Godot (`DISPLAY` or `xvfb-run`). By default it takes four exterior diagonals, an aerial view and eye-level views per labelled region. The web editor's **Render in Godot** does the same through `server.mjs` started with `GODOT_BIN`, optionally adding the current 3D preview camera. AUTHORING_REVIEW, LLM_GUIDE and PREVIEWS now point at Godot renders; the software preview is described as an approximation.
 
+### F14. Exterior shell seams at thick-wall corners (found in Godot)
+
+Reported from the Godot scene: with 0.5 m walls, tower corners showed teal EdgeFaces strips instead of siding, with holes where the strips crossed story seams. Colouring surfaces by type (`--surface-colors`) also showed the keep's rampart-level walls and the upper range rooms' walk- and courtyard-facing walls with InsideFaces on the outside.
+
+Causes:
+
+- At an exterior corner, both wall boxes extend to the outer corner, so one wall's end cap is coplanar with the other's siding. The union clipper settled that tie by wall order, sometimes keeping the cap and dropping the siding. The skirt band has no caps, so there it left a hole.
+- The outside-side test ray-casts over all exterior walls on the floor. Open parapet chains add crossings and flip the parity.
+
+**Status: fixed** in the shared exporter:
+
+- Coplanar ties prefer side faces over end caps.
+- The outside test uses only exterior walls on closed loops, falling back to all exterior walls when a floor has none.
+
+`exterior-shell-tests.mjs` fails on the old exporter and passes now. Godot renders in `godot-renders/surface-colors/` show the corrected corners, seams and orientation. Collision is unchanged.
+
 ## Low impact and papercuts
 
 - **F10. The canvas dependency has no install route.** The docs say to "install `@napi-rs/canvas` locally", but `package.json` has no optional dependency for it. For this exercise it was installed in a separate directory and passed as `CANVAS_MODULE=.../index.js`. **Status: fixed.** PREVIEWS and the missing-canvas error give an install command and accept a package directory.

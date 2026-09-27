@@ -489,11 +489,34 @@ function hasEndpointWallJoin(building, wall, atStart) {
   return false;
 }
 
+// Exterior walls that lie on closed endpoint-connected loops. Open chains
+// (parapets ending against a tower, free-standing screens) would otherwise add
+// stray crossings to the even/odd test and flip the outside side of unrelated
+// walls. Floors without any closed loop keep every exterior wall, as before.
+const loopWallCache=new WeakMap();
+function exteriorLoopWalls(building){
+  const cached=loopWallCache.get(building);
+  if(cached&&cached.walls===building.walls)return cached.result;
+  const exterior=building.walls.filter(w=>isExteriorWall(building,w)&&wallLength(w)>EPS);
+  const key=p=>`${Math.round(p.x/JOIN_EPS)},${Math.round(p.z/JOIN_EPS)}`;
+  const degree=new Map(),alive=new Set(exterior);
+  for(const w of exterior)for(const p of [w.a,w.b])degree.set(key(p),(degree.get(key(p))||0)+1);
+  for(let changed=true;changed;){
+    changed=false;
+    for(const w of alive)if(degree.get(key(w.a))<2||degree.get(key(w.b))<2){
+      alive.delete(w);for(const p of [w.a,w.b])degree.set(key(p),degree.get(key(p))-1);changed=true;
+    }
+  }
+  const result=alive.size?[...alive]:exterior;
+  loopWallCache.set(building,{walls:building.walls,result});
+  return result;
+}
+
 export function pointInExteriorFootprint(building, point) {
   // Even/odd ray casting works directly on the unordered exterior wall set,
   // so concave L/U-shaped footprints do not require a pre-sorted polygon loop.
   let inside=false;
-  for(const edge of building.walls.filter(w=>isExteriorWall(building,w))){
+  for(const edge of exteriorLoopWalls(building)){
     const a=edge.a,b=edge.b;
     if(Math.abs(a.z-b.z)<EPS) continue;
     const crosses=(a.z>point.z)!==(b.z>point.z);
@@ -558,26 +581,26 @@ function addExteriorWallBoxToMeshes(outsideWriter, insideWriter, edgeWriter, bui
   const outsideSign=exteriorWallOutsideSign(building,wall);
 
   if(outsideSign<0){
-    outsideWriter.face(minusFace,minusUv,{x:-n.x,y:0,z:-n.z});
-    insideWriter.face(plusFace,plusUv,{x:n.x,y:0,z:n.z});
+    outsideWriter.face(minusFace,minusUv,{x:-n.x,y:0,z:-n.z},'side');
+    insideWriter.face(plusFace,plusUv,{x:n.x,y:0,z:n.z},'side');
   }else{
-    outsideWriter.face(plusFace,plusUv,{x:n.x,y:0,z:n.z});
-    insideWriter.face(minusFace,minusUv,{x:-n.x,y:0,z:-n.z});
+    outsideWriter.face(plusFace,plusUv,{x:n.x,y:0,z:n.z},'side');
+    insideWriter.face(minusFace,minusUv,{x:-n.x,y:0,z:-n.z},'side');
   }
 
   // Horizontal thickness faces and opening reveals/jambs deliberately live in
   // their own mesh. Assigning siding to OutsideFaces or plaster to InsideFaces
   // therefore cannot repaint the wall thickness around windows and doors.
-  edgeWriter.face([a1m,b1m,b1p,a1p],[{u:s0,v:-ht},{u:s1,v:-ht},{u:s1,v:ht},{u:s0,v:ht}],{x:0,y:1,z:0});
-  edgeWriter.face([a0m,a0p,b0p,b0m],[{u:s0,v:-ht},{u:s0,v:ht},{u:s1,v:ht},{u:s1,v:-ht}],{x:0,y:-1,z:0});
+  edgeWriter.face([a1m,b1m,b1p,a1p],[{u:s0,v:-ht},{u:s1,v:-ht},{u:s1,v:ht},{u:s0,v:ht}],{x:0,y:1,z:0},'cap');
+  edgeWriter.face([a0m,a0p,b0p,b0m],[{u:s0,v:-ht},{u:s0,v:ht},{u:s1,v:ht},{u:s1,v:-ht}],{x:0,y:-1,z:0},'cap');
 
   const startsAtEndpoint=seg.start<=EPS || seg.start<0;
   const endsAtEndpoint=seg.end>=L-EPS || seg.end>L;
   {
-    edgeWriter.face([a0m,a1m,a1p,a0p],[{u:-ht,v:y0},{u:-ht,v:y1},{u:ht,v:y1},{u:ht,v:y0}],{x:-d.x,y:0,z:-d.z});
+    edgeWriter.face([a0m,a1m,a1p,a0p],[{u:-ht,v:y0},{u:-ht,v:y1},{u:ht,v:y1},{u:ht,v:y0}],{x:-d.x,y:0,z:-d.z},'end');
   }
   {
-    edgeWriter.face([b0m,b0p,b1p,b1m],[{u:-ht,v:y0},{u:ht,v:y0},{u:ht,v:y1},{u:-ht,v:y1}],{x:d.x,y:0,z:d.z});
+    edgeWriter.face([b0m,b0p,b1p,b1m],[{u:-ht,v:y0},{u:ht,v:y0},{u:ht,v:y1},{u:-ht,v:y1}],{x:d.x,y:0,z:d.z},'end');
   }
 }
 
@@ -610,11 +633,11 @@ function addExteriorStorySkirt(outsideWriter, insideWriter, building, wall, dept
   // hole when viewing the same exterior wall from indoors.
   outsideWriter.face(
     faceAtSide(outsideSide),uv,
-    {x:n.x*outsideSide,y:0,z:n.z*outsideSide}
+    {x:n.x*outsideSide,y:0,z:n.z*outsideSide},'side'
   );
   insideWriter.face(
     faceAtSide(-outsideSide),uv,
-    {x:-n.x*outsideSide,y:0,z:-n.z*outsideSide}
+    {x:-n.x*outsideSide,y:0,z:-n.z*outsideSide},'side'
   );
 }
 
@@ -635,8 +658,8 @@ function addInteriorStorySkirt(sideAWriter, sideBWriter, building, wall, depth) 
   const p=(c,side,y)=>({x:c.x+n.x*ht*side,y,z:c.z+n.z*ht*side});
   const a0m=p(a,-1,y0),b0m=p(b,-1,y0),a1m=p(a,-1,y1),b1m=p(b,-1,y1);
   const a0p=p(a,1,y0),b0p=p(b,1,y0),a1p=p(a,1,y1),b1p=p(b,1,y1);
-  sideAWriter.face([a0m,b0m,b1m,a1m],[{u:s0,v:y0},{u:s1,v:y0},{u:s1,v:y1},{u:s0,v:y1}],{x:-n.x,y:0,z:-n.z});
-  sideBWriter.face([a0p,a1p,b1p,b0p],[{u:s0,v:y0},{u:s0,v:y1},{u:s1,v:y1},{u:s1,v:y0}],{x:n.x,y:0,z:n.z});
+  sideAWriter.face([a0m,b0m,b1m,a1m],[{u:s0,v:y0},{u:s1,v:y0},{u:s1,v:y1},{u:s0,v:y1}],{x:-n.x,y:0,z:-n.z},'side');
+  sideBWriter.face([a0p,a1p,b1p,b0p],[{u:s0,v:y0},{u:s0,v:y1},{u:s1,v:y1},{u:s1,v:y0}],{x:n.x,y:0,z:n.z},'side');
 }
 
 function addStorySkirtToUnifiedWallMesh(writer, building, wall, depth) {
@@ -865,13 +888,13 @@ function addInteriorWallBoxToMeshes(sideAWriter, sideBWriter, edgeWriter, buildi
   const s0=seg.start,s1=seg.end,y0=seg.bottom,y1=seg.top;if(s1-s0<EPS||y1-y0<EPS)return;
   const centerAt=s=>({x:wall.a.x+d.x*s,z:wall.a.z+d.z*s}),a=centerAt(s0),b=centerAt(s1),p=(c,side,y)=>({x:c.x+n.x*ht*side,y,z:c.z+n.z*ht*side});
   const a0m=p(a,-1,y0),b0m=p(b,-1,y0),a1m=p(a,-1,y1),b1m=p(b,-1,y1),a0p=p(a,1,y0),b0p=p(b,1,y0),a1p=p(a,1,y1),b1p=p(b,1,y1);
-  sideAWriter.face([a0m,b0m,b1m,a1m],[{u:s0,v:y0},{u:s1,v:y0},{u:s1,v:y1},{u:s0,v:y1}],{x:-n.x,y:0,z:-n.z});
-  sideBWriter.face([a0p,a1p,b1p,b0p],[{u:s0,v:y0},{u:s0,v:y1},{u:s1,v:y1},{u:s1,v:y0}],{x:n.x,y:0,z:n.z});
-  edgeWriter.face([a1m,b1m,b1p,a1p],[{u:s0,v:-ht},{u:s1,v:-ht},{u:s1,v:ht},{u:s0,v:ht}],{x:0,y:1,z:0});
-  edgeWriter.face([a0m,a0p,b0p,b0m],[{u:s0,v:-ht},{u:s0,v:ht},{u:s1,v:ht},{u:s1,v:-ht}],{x:0,y:-1,z:0});
+  sideAWriter.face([a0m,b0m,b1m,a1m],[{u:s0,v:y0},{u:s1,v:y0},{u:s1,v:y1},{u:s0,v:y1}],{x:-n.x,y:0,z:-n.z},'side');
+  sideBWriter.face([a0p,a1p,b1p,b0p],[{u:s0,v:y0},{u:s0,v:y1},{u:s1,v:y1},{u:s1,v:y0}],{x:n.x,y:0,z:n.z},'side');
+  edgeWriter.face([a1m,b1m,b1p,a1p],[{u:s0,v:-ht},{u:s1,v:-ht},{u:s1,v:ht},{u:s0,v:ht}],{x:0,y:1,z:0},'cap');
+  edgeWriter.face([a0m,a0p,b0p,b0m],[{u:s0,v:-ht},{u:s0,v:ht},{u:s1,v:ht},{u:s1,v:-ht}],{x:0,y:-1,z:0},'cap');
   const startsAtEndpoint=seg.start<=EPS||seg.start<0,endsAtEndpoint=seg.end>=L-EPS||seg.end>L;
-  edgeWriter.face([a0m,a1m,a1p,a0p],[{u:-ht,v:y0},{u:-ht,v:y1},{u:ht,v:y1},{u:ht,v:y0}],{x:-d.x,y:0,z:-d.z});
-  edgeWriter.face([b0m,b0p,b1p,b1m],[{u:-ht,v:y0},{u:ht,v:y0},{u:ht,v:y1},{u:-ht,v:y1}],{x:d.x,y:0,z:d.z});
+  edgeWriter.face([a0m,a1m,a1p,a0p],[{u:-ht,v:y0},{u:-ht,v:y1},{u:ht,v:y1},{u:ht,v:y0}],{x:-d.x,y:0,z:-d.z},'end');
+  edgeWriter.face([b0m,b0p,b1p,b1m],[{u:-ht,v:y0},{u:ht,v:y0},{u:ht,v:y1},{u:-ht,v:y1}],{x:d.x,y:0,z:d.z},'end');
 }
 
 export function buildInteriorSplitMeshData(building) {

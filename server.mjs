@@ -38,8 +38,8 @@ async function api(req,res,rel){
     let body;try{body=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{return json(res,400,{ok:false,error:'Invalid JSON'});}
     rendering=true;
     try{
-      const result=await renderSceneFiles({executable:process.env.GODOT_BIN,files:body?.files,views:body?.views??null,extraViews:body?.extraViews??[]});
-      return json(res,200,{ok:true,engineVersion:availability.engineVersion,renderer:result.renderer,virtualDisplay:result.virtualDisplay,views:result.manifest,
+      const result=await renderSceneFiles({executable:process.env.GODOT_BIN,files:body?.files,views:body?.views??null,extraViews:body?.extraViews??[],colorMode:body?.colorMode??'materials'});
+      return json(res,200,{ok:true,engineVersion:availability.engineVersion,colorMode:result.colorMode,renderer:result.renderer,virtualDisplay:result.virtualDisplay,views:result.manifest,
         images:result.entries.map(e=>({file:e.name,png:e.data.toString('base64')}))});
     }catch(e){return json(res,e instanceof RenderError&&e.code===2?400:500,{ok:false,error:e.message});}
     finally{rendering=false;}

@@ -24,6 +24,9 @@ try{
   assert.notDeepEqual(fs.readFileSync(path.join(temp,'auto/exterior-ne.png')),fs.readFileSync(path.join(temp,'auto/aerial.png')));
   fs.writeFileSync(path.join(temp,'views.json'),JSON.stringify({views:[{name:'gate',eye:[0,1.7,12],look:[0,1.5,0],fov:60}]}));
   const custom=run(['godot-check','--assets','assets','--render','--out','custom','--views','views.json']);
+  const colored=run(['godot-check','--assets','assets','--render','--surface-colors','--out','colored','--views','views.json']);
+  assert.equal(JSON.parse(fs.readFileSync(path.join(temp,'colored/renders.json'),'utf8')).colorMode,'surfaces');
+  assert.notDeepEqual(fs.readFileSync(path.join(temp,'colored/gate.png')),fs.readFileSync(path.join(temp,'custom/gate.png')),'surface colours change the pixels');
   assert.deepEqual(custom.render.files,['gate.png']);
   run(['godot-check','--assets','assets','--render','--out','custom'],3);
   console.log(`PASS render engine: ${names.length} automatic views and 1 custom view rendered by ${auto.engineVersion}`);

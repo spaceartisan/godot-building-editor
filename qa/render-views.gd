@@ -98,12 +98,41 @@ func _auto_views(root: Node3D) -> Array:
 			region_views += 1
 	return views
 
+# Diagnostic mode: colour each exported surface by its name so shell seams,
+# holes and misplaced faces stand out (scene files are not modified).
+const SURFACE_COLORS := {
+	"OutsideFaces": Color(0.55, 0.55, 0.57), "InsideFaces": Color(0.95, 0.45, 0.75),
+	"EdgeFaces": Color(0.1, 0.85, 0.85), "SideAFaces": Color(1.0, 0.6, 0.2), "SideBFaces": Color(0.95, 0.9, 0.25),
+	"TopFaces": Color(0.35, 0.8, 0.35), "BottomFaces": Color(0.3, 0.45, 0.95), "RoofFaces": Color(0.6, 0.35, 0.2),
+	"RoofSideFaces": Color(0.75, 0.5, 0.3), "RoomFaces": Color(0.55, 0.4, 0.85)
+}
+func _apply_surface_colors(root: Node) -> void:
+	var materials := {}
+	for key in SURFACE_COLORS:
+		var m := StandardMaterial3D.new()
+		m.albedo_color = SURFACE_COLORS[key]
+		materials[key] = m
+	for node in root.find_children("*", "MeshInstance3D", true, false):
+		var mi := node as MeshInstance3D
+		if mi.mesh == null:
+			continue
+		for i in mi.mesh.get_surface_count():
+			var surface_name := ""
+			if mi.mesh is ArrayMesh:
+				surface_name = (mi.mesh as ArrayMesh).surface_get_name(i)
+			if not materials.has(surface_name):
+				surface_name = str(mi.name)
+			if materials.has(surface_name):
+				mi.set_surface_override_material(i, materials[surface_name])
+
 func _load_job() -> void:
 	if current:
 		current.queue_free()
 	var job = jobs[index]
 	current = (load("res://" + job["scene"]) as PackedScene).instantiate()
 	get_root().add_child(current)
+	if cfg.get("colorMode", "") == "surfaces":
+		_apply_surface_colors(current)
 	current_path = job["scene"]
 	job["views"] = (cfg["views"] if cfg["views"] != null else _auto_views(current)) + cfg.get("extraViews", [])
 	job["view"] = 0

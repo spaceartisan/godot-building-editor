@@ -23,7 +23,7 @@ import { suites } from './test-suites.mjs';
 const root=path.dirname(fileURLToPath(import.meta.url));
 const version=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8')).version;
 const common=['json','quiet','verbose','help'];
-const specs={new:['out','name'],edit:['ops','out','dry-run','warnings-as-errors'],validate:['warnings-as-errors','out','reachability'],inspect:['warnings-as-errors','entities','reachability'],export:['out','profile','no-collision','no-markers','placeholders','warnings-as-errors'],package:['out','profile','no-collision','no-markers','placeholders','warnings-as-errors','include-json'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision','render','views','out'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof']};
+const specs={new:['out','name'],edit:['ops','out','dry-run','warnings-as-errors'],validate:['warnings-as-errors','out','reachability'],inspect:['warnings-as-errors','entities','reachability'],export:['out','profile','no-collision','no-markers','placeholders','warnings-as-errors'],package:['out','profile','no-collision','no-markers','placeholders','warnings-as-errors','include-json'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision','render','views','out','surface-colors'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof']};
 const values=new Set(['name','views','ops','out','profile','suite','godot','assets','yaw','pitch','distance','floor','view','compare','overlay','roof','canvas','engine','timeout']);
 class CliError extends Error{constructor(message,code=2){super(message);this.code=code;}}
 const help=`Building Studio ${version}
@@ -51,6 +51,9 @@ Usage: node cli.mjs COMMAND [FILES...] [OPTIONS]
     --render --out NEW_DIR [--views FILE]  Also render the checked scenes in
                         Godot (needs DISPLAY or xvfb-run): exterior, aerial and
                         eye-level region views unless FILE lists views
+    --surface-colors    With --render: colour surfaces by type (OutsideFaces
+                        grey, InsideFaces pink, EdgeFaces teal, SideA/B
+                        orange/yellow, slab tops/bottoms green/blue, roofs brown)
 
 Global: --json (one result on stdout), --quiet, --verbose, --help, --version
 Validate/inspect/export/package/edit: --warnings-as-errors
@@ -109,8 +112,8 @@ function parse(args){
   if(options.profile&&!['generic','get_probed'].includes(options.profile))throw new CliError('Unknown export profile');
   if(options.suite&&!Object.hasOwn(suites,options.suite))throw new CliError(`Unknown test suite: ${options.suite}`);
   if(command==='godot-check'&&(options['allow-materials']||options['require-collision'])&&!options.assets)throw new CliError('--allow-materials and --require-collision require --assets');
-  if(command==='godot-check'&&(options.render||options.views||options.out)){
-    if(!options.render)throw new CliError('--views and --out require --render');
+  if(command==='godot-check'&&(options.render||options.views||options.out||options['surface-colors'])){
+    if(!options.render)throw new CliError('--views, --out and --surface-colors require --render');
     if(!options.assets||!options.out)throw new CliError('--render requires --assets and --out');
   }
   return {command,options,files:[...new Set(files)]};
@@ -288,8 +291,8 @@ async function execute({command,options,files}){
       let render=null;
       // Render only scenes that passed the resource checks.
       if(renderOut&&ok){
-        const rendered=renderPreparedScenes({executable:executable.includes('/')||executable.includes('\\')?path.resolve(executable):executable,prepared,views});
-        const manifest={engineVersion,renderer:rendered.renderer,virtualDisplay:rendered.virtualDisplay,scenes:rendered.roots,views:rendered.manifest,
+        const rendered=renderPreparedScenes({executable:executable.includes('/')||executable.includes('\\')?path.resolve(executable):executable,prepared,views,colorMode:options['surface-colors']?'surfaces':'materials'});
+        const manifest={engineVersion,colorMode:rendered.colorMode,renderer:rendered.renderer,virtualDisplay:rendered.virtualDisplay,scenes:rendered.roots,views:rendered.manifest,
           note:'Scenes loaded unmodified (empty materials render as default grey); only camera, sky, sun and ambient light were added. Lighting in a game scene will differ.'};
         writeDirectory(renderOut,[...rendered.entries,{name:'renders.json',data:JSON.stringify(manifest,null,2)+'\n'}]);
         render={output:renderOut,images:rendered.entries.length,renderer:rendered.renderer,virtualDisplay:rendered.virtualDisplay,files:rendered.manifest.map(v=>v.file)};

@@ -74,6 +74,8 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   assert.deepEqual(sent,[{name:expected.tscnName,text:expected.tscn},...expected.doors.map(d=>({name:d.filename,text:d.tscn}))],'posts exactly the web export');
   const extra=JSON.parse(calls[0].init.body).extraViews;
   assert.equal(extra.length,1);assert.equal(extra[0].name,'current-view');assert.equal(extra[0].fov,65);
+  assert.equal(JSON.parse(calls[0].init.body).colorMode,'materials','default: unmodified materials');
+  {const t=$r('#render-surface-colors-toggle');t.checked=true;await $r('#godot-render-btn').click();assert.equal(JSON.parse(calls.at(-1).init.body).colorMode,'surfaces','surface colours requested');t.checked=false;}
   assert.ok([...extra[0].eye,...extra[0].look].every(Number.isFinite),'current preview camera is sent as a view');
   const gallery=$r('#godot-render-results').children;
   assert.deepEqual(gallery.map(f=>f.children[1].textContent),['aerial','floor-01-hall']);

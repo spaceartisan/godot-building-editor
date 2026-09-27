@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "operations": [
+    {
+      "op": "platform.add",
+      "floorId": "floor_1",
+      "id": "west_deck",
+      "value": {
+        "label": "West deck",
+        "kind": "deck",
+        "minX": -8,
+        "maxX": -6,
+        "minZ": -2,
+        "maxZ": 2
+      }
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "operations": [
+    {"op":"floor.remove-top","id":"third","removeContents":true,"removeAffectedStairs":true}
+  ]
+}

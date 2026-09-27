@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "operations": [
+    {
+      "op": "platform.update",
+      "floorId": "floor_1",
+      "id": "platforms_8",
+      "value": {
+        "label": "East deck",
+        "kind": "deck",
+        "maxX": 8
+      }
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "operations": [
+    {"op":"roof.update","id":"roofSections_8","value":{"baseY":30}}
+  ]
+}

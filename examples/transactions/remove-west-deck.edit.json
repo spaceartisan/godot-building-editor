@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "operations": [
+    { "op": "platform.remove", "floorId": "floor_1", "id": "west_deck" }
+  ]
+}

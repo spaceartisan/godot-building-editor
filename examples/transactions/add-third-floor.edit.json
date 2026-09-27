@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "operations": [
+    {"op":"floor.add-top","id":"third","aboveFloorId":"floor_9","value":{"label":"Third floor","autoCeiling":false}},
+    {"op":"wall.add","floorId":"third","id":"third-north","value":{"a":{"x":-5,"z":-5},"b":{"x":5,"z":-5},"role":"exterior"}},
+    {"op":"wall.add","floorId":"third","id":"third-east","value":{"a":{"x":5,"z":-5},"b":{"x":5,"z":5},"role":"exterior"}},
+    {"op":"wall.add","floorId":"third","id":"third-south","value":{"a":{"x":5,"z":5},"b":{"x":-5,"z":5},"role":"exterior"}},
+    {"op":"wall.add","floorId":"third","id":"third-west","value":{"a":{"x":-5,"z":5},"b":{"x":-5,"z":-5},"role":"exterior"}},
+    {"op":"wall.add","floorId":"third","id":"third-partition","value":{"a":{"x":-2,"z":-5},"b":{"x":-2,"z":5},"role":"interior"}},
+    {"op":"opening.add","floorId":"third","id":"third-passage","value":{"type":"door","wallId":"third-partition","t":0.5,"width":1.2,"height":2.2,"doorStyle":"empty"}},
+    {"op":"region.add","floorId":"third","id":"third-room","value":{"minX":-5,"maxX":5,"minZ":-5,"maxZ":5,"kind":"room","effect":"label","label":"Upper workspace"}},
+    {"op":"stair.add","floorId":"floor_9","id":"third-stair","value":{"x":1,"z":0,"width":1.2,"run":4,"direction":"north"}}
+  ]
+}

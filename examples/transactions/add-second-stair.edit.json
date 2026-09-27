@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "operations": [
+    {"op": "stair.add", "floorId": "floor_1", "id": "second_stair", "value": {"label": "Second stair", "x": 3, "z": 0, "width": 1.2, "run": 4.8, "direction": "south", "style": "steps", "steps": 16, "blockBelow": false}}
+  ]
+}

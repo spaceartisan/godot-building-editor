@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "operations": [
+    {"op": "stair.remove", "floorId": "floor_1", "id": "second_stair"}
+  ]
+}

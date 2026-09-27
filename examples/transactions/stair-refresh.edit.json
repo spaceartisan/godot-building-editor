@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "operations": [
+    {
+      "op": "stair.update",
+      "floorId": "floor_1",
+      "id": "stairs_8",
+      "value": {"label": "Open east stair", "x": 1.25, "z": 0.25, "width": 1.6, "run": 5.2, "direction": "east", "style": "steps", "steps": 16, "blockBelow": false}
+    }
+  ]
+}

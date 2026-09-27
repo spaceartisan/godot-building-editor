@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "operations": [
+    {
+      "op": "floor.update",
+      "id": "floor_2obiv6",
+      "value": {"label": "Ground floor", "elevation": -0.5, "wallHeight": 4.4, "floorThickness": 0.22}
+    },
+    {
+      "op": "floor.update",
+      "id": "floor_bx8d8g",
+      "value": {"label": "Upper floor", "elevation": null, "wallHeight": 3.6, "floorThickness": 0.24}
+    }
+  ]
+}

@@ -24,14 +24,14 @@ For a new design, start from `node cli.mjs new --out NEW.json --name NAME` (floo
 | Building settings | `building.update` (name, default dimensions, wall thickness, automatic roof, ceiling, profile) | Window/door mesh settings remain web/JSON fields |
 | Floors | Existing dimensions/labels/surface switches/boundary mode, add/remove top floor | Basement/middle insertion, duplication and reordering are web controls |
 | Stairs/platforms | Add, update, remove transactions | Stairs connect adjacent floors; independent pieces do not automatically follow platform edits |
-| Wall/door shapes | Web dialogs or authored JSON; transactions assign an existing door `shapeId` | No dedicated shared-shape-library transaction operations |
+| Wall/door shapes | Web dialogs; `wallType.add/update/remove`, `openingShape.add/update/remove`, `wall.add/update` `wallTypeId`/`inwardSide`/`inwardToward`, opening `shapeId` | Doorway shapes are door-only and must reach the floor |
 | Parapets and guards | `wall.crenellate` (crenels as empty windows), `railing.add/update/remove` | Wall thickness remains building-wide |
 | Lights/markers/manual slabs | Web controls or supported JSON fields | No corresponding dedicated transaction commands in this version |
 | Inspect appearance | Web 3D preview; CLI `preview` with floor/roof views, comparisons and overlays | Optional canvas dependency for PNGs; no CLI plan/collision-overlay mode |
 | Generate Godot assets | `export FILE --out NEW_DIR`, `package FILE --out NEW.zip` | Retain relative door dependencies; materials empty by default |
 | Verify exported assets | `godot-check --assets DIR --godot PATH`; add `--render --out NEW_DIR` for Godot screenshots | Resource checks, not character traversal certification; rendering needs a display or xvfb-run |
 
-Transactions support `building.update`, `floor.update/add-top/remove-top`, `wall.add/update/move-endpoint/crenellate/remove`, and `railing`, `opening`, `roof`, `region`, `stair`, `platform` add/update/remove. Do not extrapolate new operation names from this pattern. Read the operation table for supported `value` fields and removal flags. In particular, retained wall-profile fields do not imply `wall.update` accepts them.
+Transactions support `building.update`, `floor.update/add-top/remove-top`, `wall.add/update/move-endpoint/crenellate/remove`, and `railing`, `light`, `opening`, `roof`, `region`, `stair`, `platform`, `wallType`, `openingShape` add/update/remove. Do not extrapolate new operation names from this pattern. Read the operation table for supported `value` fields and removal flags.
 
 Core CLI and web serving need Node 20+ and no npm install. Linux is the tested platform. `CANVAS_MODULE` can name an installed canvas module; `GODOT_BIN` or `--godot` supplies an existing Godot executable. Browser tests additionally need Playwright and its Chromium binary. Do not infer availability from the module alone.
 
@@ -102,7 +102,7 @@ Authored diffs use JSON Pointer paths but are reports, not executable patches. A
 - Automatic elevation includes the new floor's slab: a 4.0 m ground story with 0.18 m slabs puts the next floor at 4.18 m, and its wall top at 4.18 m + wall height. Independent roof `baseY` is absolute, so read resolved values from the dry run's `structuralChanges` or `inspect` before placing roofs on a story.
 - Automatic Hip roofs support convex footprints; continuous concave valleys remain unsupported. Independent manual roofs/slabs use rectangular footprints. Do not confuse clipping an existing roof with generating a new valley or dormer.
 - Roof `hostRoofId` is a one-way trim relationship. Host chains/cycles are unsupported. The child may receive no additional cut or be removed entirely; read the attachment diagnostics. Gable fills are separate from attachment slab trimming. Use [ROOF_DIAGNOSTICS.md](ROOF_DIAGNOSTICS.md) and attachment overlays.
-- Wall-profile stations use normalized height 0–1, metre offsets and horizontal thickness. Positive offset means inward; negative means outward. `inwardSide` selects auto/left/right relative to wall A→B. Inspect the web inward arrow when orientation is ambiguous. Shared type edits affect every referencing wall.
+- Wall-profile stations use normalized height 0–1, metre offsets and horizontal thickness. Positive offset means inward; negative means outward. `inwardSide` selects auto/left/right relative to wall A→B; in transactions, prefer `inwardToward: {x, z}` (a point on the inward side). `inspect --entities` reports each shaped wall's resolved inward direction (`profileInward`), and the web editor shows an inward arrow. Shared type edits affect every referencing wall.
 - Profile endpoints displaced from the standard slab boundary can need separate surface fitting. Supported Standard-to-shaped branches require clearance and at least a 30° smaller angle. Shaped-to-shaped branches and multiple branches at an attachment are not supported.
 - Shared doorway outlines use normalized front-view points, 3–32 noncrossing corners and a flat bottom. Custom single panels/frames need a straight constant-thickness wall segment over their height; empty passages can cross profile bends. Shaped paired doors/windows and bent frames remain unsupported.
 - Separate shell meshes and per-story organization are deliberate light-budget controls. Preserve their boundaries, surface names, IDs and collision correspondence. Empty material slots are expected. The generic profile is reusable; preserve an existing GET PROBED profile unless the user requests conversion.
@@ -131,7 +131,7 @@ Save JSON reports a download request or a synchronous failure without changing t
 | --- | --- | --- |
 | `validate` / saved checks | Existing schema/authoring rules and warnings | Full geometric correctness or playability |
 | `inspect` | Derived dimensions, coverage, resource counts, shell paths | Watertightness, useful collision everywhere |
-| `validate --reachability` | Floor areas and stairs connected to open ground through doors, passages and stairs, with walker clearance | Headroom, stair comfort, door swing, physics traversal |
+| `validate --reachability [--from "x,z[,floorId]"]` | Floor areas and stairs connected to open ground, or to interior start points, through doors, passages and stairs, with walker clearance and shaped-wall profiles | Headroom, stair comfort, door swing, physics traversal |
 | CLI software PNG | Shared preview geometry and camera framing (approximation) | Godot lighting or browser layout |
 | `godot-check --assets --render` | How the exported scene renders in Godot with default materials and a neutral sun/sky | Game lighting, materials or post-processing; physics |
 | DOM editor suites | Actual handler behavior, history, modeled focus intent | Real CSS, responsive sizing, browser focus behavior |

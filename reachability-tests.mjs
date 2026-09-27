@@ -7,7 +7,7 @@ import { spawnSync } from 'node:child_process';
 import { applyTransaction } from './src/transactions.js';
 import { prepareDocument } from './src/diagnostics.js';
 import { makeEmptyBuilding } from './src/model.js';
-import { analyzeReachability } from './src/reachability.js';
+import { analyzeReachability, parseRouteStarts, reachabilityWarnings } from './src/reachability.js';
 
 // Static route check: open ground -> doors/passages -> stairs -> every floor area.
 const root=path.dirname(fileURLToPath(import.meta.url));
@@ -75,4 +75,45 @@ const sealed=build(room('floor_1','w'));
     const inspected=run(['inspect',fixture,'--reachability'],0);assert.equal(inspected.results[0].reachability.floors.length,4);
     console.log('PASS CLI --reachability: opt-in warnings, strict failure, saved report and inspect result');
   }finally{fs.rmSync(temp,{recursive:true,force:true});}
+}
+{
+  // Route start points (Kestrel K4): a sealed interior is checked from inside.
+  const starts=parseRouteStarts('0,0',sealed);
+  assert.deepEqual(starts,[{x:0,z:0,floorId:'floor_1'}],'floor defaults to the ground floor');
+  const r=analyzeReachability(sealed,{starts});
+  assert.equal(r.ok,true,JSON.stringify(r.unreachable));assert.equal(r.floors[0].reachedArea,r.floors[0].walkableArea);
+  // A start inside a wall is reported, not silently ignored.
+  const bad=reachabilityWarnings(sealed,{starts:parseRouteStarts('4,0',sealed)});
+  assert.match(bad.warnings[0].message,/route start \(4, 0\) is not on walkable floor/);assert.match(bad.warnings[1].message,/cannot be reached from outside or the route start/);
+  // Several starts, explicit floors, and shared parse errors.
+  const two=build([{op:'floor.add-top',id:'up',aboveFloorId:'floor_1'},...room('up','u')],sealed);
+  assert.equal(analyzeReachability(two,{starts:parseRouteStarts('0,0; 1,1,up',two)}).ok,true);
+  assert.equal(analyzeReachability(two,{starts:parseRouteStarts('0,0',two)}).ok,false,'the upper floor still needs its own route or start');
+  assert.deepEqual(parseRouteStarts('  ',sealed),[]);
+  assert.throws(()=>parseRouteStarts('1',sealed),/expected x,z or x,z,floorId/);
+  assert.throws(()=>parseRouteStarts('1,2,nope',sealed),/unknown floor ID nope/);
+  const file=path.join(fs.mkdtempSync(path.join(os.tmpdir(),'route-start-')),'sealed.json');fs.writeFileSync(file,JSON.stringify(sealed));
+  const cli=args=>spawnSync(process.execPath,[path.join(root,'cli.mjs'),'validate',file,...args,'--json'],{encoding:'utf8'});
+  const out=JSON.parse(cli(['--reachability','--from','0,0','--warnings-as-errors']).stdout);
+  assert.equal(out.ok,true);assert.deepEqual(out.results[0].reachability.starts,[{x:0,z:0,floorId:'floor_1',ok:true}]);
+  assert.equal(cli(['--from','0,0']).status,2,'--from requires --reachability');
+  console.log('PASS route start: sealed interiors from inside, reported bad starts, several floors, CLI --from');
+}
+{
+  // Shaped walls (Kestrel K5): a profile leaning into a corridor narrows it
+  // at body height. Corridor walls 1.2 m apart: Standard walls leave 1.02 m;
+  // leaning 0.35 m in from each side leaves 0.32 m, less than the walker.
+  const corridor=(profiled)=>{
+    const ops=[{op:'wall.add',floorId:'floor_1',id:'cn',value:{a:{x:-2,z:-.6},b:{x:2,z:-.6}}},{op:'wall.add',floorId:'floor_1',id:'cs',value:{a:{x:-2,z:.6},b:{x:2,z:.6}}},
+      {op:'wall.add',floorId:'floor_1',id:'bn',value:{a:{x:-2,z:-3},b:{x:-2,z:-.6}}},{op:'wall.add',floorId:'floor_1',id:'bs',value:{a:{x:-2,z:.6},b:{x:-2,z:3}}},
+      door('floor_1','d','w3',{x:-4,z:0})];
+    const b=build(ops,sealed);
+    if(profiled){b.wallTypes=[{id:'lean',label:'Lean',stations:[{height:0,offset:0,thickness:.18},{height:.2,offset:.35,thickness:.18},{height:.8,offset:.35,thickness:.18},{height:1,offset:0,thickness:.18}]}];
+      Object.assign(b.floors[0].walls.find(w=>w.id==='cn'),{wallTypeId:'lean',inwardSide:'right'});Object.assign(b.floors[0].walls.find(w=>w.id==='cs'),{wallTypeId:'lean',inwardSide:'left'});}
+    return analyzeReachability(b);
+  };
+  assert.equal(corridor(false).ok,true,'Standard corridor walls leave room to pass');
+  const narrowed=corridor(true);
+  assert.equal(narrowed.ok,false,'inward-leaning profiles block the corridor');
+  console.log('PASS profile barriers: inward-leaning shaped walls narrow the route at body height');
 }

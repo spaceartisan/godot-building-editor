@@ -1,6 +1,9 @@
 import { floorView, floorElevation, stairFootprint, rectValid } from './model.js';
 import { inspectFloorCoverage } from './diagnostics.js';
 import { areaPoints } from './polygon-areas.js';
+import { wallTypeFor, sampleWallType } from './wall-types.js';
+import { profileWallState } from './wall-profile-geometry.js';
+import { exteriorWallOutsideSign, isExteriorWall } from './exporter.js';
 
 // Static route check on the authored model: can a person walk from open ground
 // outside the building to every walkable floor area through doors, empty
@@ -10,7 +13,36 @@ import { areaPoints } from './polygon-areas.js';
 // railings are inflated by the walker radius, doors reopen their clear span,
 // and stairs link their lower entrance to their upper arrival. A connectivity
 // approximation for review, not a physics or headroom simulation.
-export const REACHABILITY_DEFAULTS={cell:.1,radius:.25,minArea:1,margin:2};
+export const REACHABILITY_DEFAULTS={cell:.1,radius:.25,minArea:1,margin:2,bodyHeight:1.8};
+
+// Route start points for interiors with no opening to the outside (a sealed
+// ship, a bunker): "x,z" or "x,z,floorId", several separated by ";". The
+// floor defaults to the ground floor. Shared by the CLI --from option and the
+// web route-start field. Empty text means no start points.
+export function parseRouteStarts(text,building){
+  const items=String(text??'').split(';').map(v=>v.trim()).filter(Boolean);
+  if(items.length>32)throw new Error('Route start: use at most 32 points');
+  return items.map(item=>{
+    const parts=item.split(',').map(v=>v.trim());
+    if(parts.length<2||parts.length>3||parts.slice(0,2).some(v=>v===''||!Number.isFinite(Number(v))))throw new Error(`Route start "${item}": expected x,z or x,z,floorId`);
+    const floorId=parts[2]||building.floors?.[groundIndex(building)]?.id;
+    if(!(building.floors||[]).some(f=>f.id===floorId))throw new Error(`Route start "${item}": unknown floor ID ${parts[2]}`);
+    return {x:Number(parts[0]),z:Number(parts[1]),floorId};
+  });
+}
+
+// How far a wall's material reaches on each side of its plan centreline
+// (along the profile's inward normal n) between the floor and body height.
+// Standard walls reach half the thickness both ways.
+function wallReach(view,wall,bodyHeight){
+  const half=Math.max(.02,Number(view.wallThickness)||.18)/2,type=wallTypeFor(view,wall);
+  if(!type)return {n:null,pos:half,neg:half};
+  const state=profileWallState(view,wall,exteriorWallOutsideSign,isExteriorWall),top=Math.min(state.height,bodyHeight);
+  const heights=[0,top,...type.stations.map(q=>q.height*state.height).filter(y=>y<top)];
+  let pos=-Infinity,neg=-Infinity;
+  for(const y of heights){const q=sampleWallType(type,y/state.height,view.wallThickness);pos=Math.max(pos,q.offset+q.thickness/2);neg=Math.max(neg,-q.offset+q.thickness/2);}
+  return {n:state.n,pos,neg};
+}
 
 function inside(r,p){
   if(!r.polygon)return p.x>=r.minX&&p.x<=r.maxX&&p.z>=r.minZ&&p.z<=r.maxZ;
@@ -31,7 +63,7 @@ function groundIndex(building){
 }
 
 export function analyzeReachability(building,options={}){
-  const {cell,radius,minArea,margin}={...REACHABILITY_DEFAULTS,...options};
+  const {cell,radius,minArea,margin,bodyHeight,starts=[]}={...REACHABILITY_DEFAULTS,...options};
   const floors=building.floors||[];
   if(!floors.length)return {ok:true,settings:{cell,radius,minArea},floors:[],unreachable:[],stairIssues:[]};
   const ground=groundIndex(building);
@@ -72,15 +104,21 @@ export function analyzeReachability(building,options={}){
     for(const s of view.stairs)forCells(stairFootprint(s),k=>{grid[k]=0;});
     // Walls and railings block, inflated by the walker radius; doors and
     // empty passages reopen their clear span.
-    const thickness=Math.max(.02,Number(view.wallThickness)||.18);
-    const barriers=[...view.walls.map(w=>({w,half:thickness/2,doors:view.openings.filter(o=>o.type==='door'&&o.wallId===w.id)})),...(view.railings||[]).map(w=>({w,half:.04,doors:[]}))];
-    for(const {w,half,doors} of barriers){
+    // Shaped walls use their profile's reach on each side up to body height,
+    // so a profile leaning into a corridor narrows it here too.
+    const barriers=[...view.walls.map(w=>({w,...wallReach(view,w,bodyHeight),doors:view.openings.filter(o=>o.type==='door'&&o.wallId===w.id)})),...(view.railings||[]).map(w=>({w,n:null,pos:.04,neg:.04,doors:[]}))];
+    for(const {w,n:normal,pos,neg,doors} of barriers){
       const dx=w.b.x-w.a.x,dz=w.b.z-w.a.z,length=Math.hypot(dx,dz);if(length<1e-6)continue;
-      const reach=half+radius,spans=doors.map(o=>{const c=o.t*length,h=Math.max(0,(Number(o.width)||0)/2-radius);return [c-h,c+h];});
+      const reach=Math.max(pos,neg)+radius,spans=doors.map(o=>{const c=o.t*length,h=Math.max(0,(Number(o.width)||0)/2-radius);return [c-h,c+h];});
       forCells({minX:Math.min(w.a.x,w.b.x)-reach,maxX:Math.max(w.a.x,w.b.x)+reach,minZ:Math.min(w.a.z,w.b.z)-reach,maxZ:Math.max(w.a.z,w.b.z)+reach},(k,p)=>{
         const s=((p.x-w.a.x)*dx+(p.z-w.a.z)*dz)/length,sc=Math.max(0,Math.min(length,s));
         const qx=w.a.x+dx*sc/length,qz=w.a.z+dz*sc/length;
-        if(Math.hypot(p.x-qx,p.z-qz)>=reach)return;
+        if(normal){
+          // Signed offset across the wall along its inward normal; ends stay round.
+          const across=(p.x-qx)*normal.x+(p.z-qz)*normal.z,along=Math.hypot(p.x-qx-across*normal.x,p.z-qz-across*normal.z);
+          const side=across>=0?pos:neg,beyond=Math.max(0,Math.abs(across)-side);
+          if(Math.hypot(beyond,along)>=radius)return;
+        }else if(Math.hypot(p.x-qx,p.z-qz)>=reach)return;
         if(spans.some(([a,b])=>s>a&&s<b))return;
         grid[k]=0;
       });
@@ -114,6 +152,8 @@ export function analyzeReachability(building,options={}){
   const push=g=>{if(!reached[g]&&walkable[Math.floor(g/n)][g%n]){reached[g]=1;queue[tail++]=g;}};
   for(let i=0;i<nx;i++){push(ground*n+i);push(ground*n+(nz-1)*nx+i);}
   for(let j=0;j<nz;j++){push(ground*n+j*nx);push(ground*n+j*nx+nx-1);}
+  // Optional interior start points; one that is not on walkable floor is reported.
+  const startReport=starts.map(s=>{const fi=floors.findIndex(f=>f.id===s.floorId),k=fi<0?-1:cellOf(s);const ok=k>=0&&!!walkable[fi][k];if(ok)push(fi*n+k);return {...s,ok};});
   while(head<tail){
     const g=queue[head++],fi=Math.floor(g/n),k=g%n,i=k%nx,j=(k-i)/nx;
     if(i>0)push(g-1);if(i<nx-1)push(g+1);if(j>0)push(g-nx);if(j<nz-1)push(g+nx);
@@ -150,16 +190,18 @@ export function analyzeReachability(building,options={}){
     }
     report.push({floorId:f.id,label:f.label||`Floor ${fi+1}`,index:fi+1,ground:fi===ground,walkableArea:Math.round(walkableCells*cellArea*100)/100,reachedArea:Math.round(reachedCells*cellArea*100)/100});
   });
-  return {ok:!unreachable.length,settings:{cell,radius,minArea},floors:report,unreachable,stairIssues,
-    note:'Static connectivity from open ground through doors, empty passages and stairs; walls/railings are inflated by the walker radius. Not a physics, headroom or door-swing check.'};
+  return {ok:!unreachable.length&&startReport.every(s=>s.ok),settings:{cell,radius,minArea,bodyHeight},starts:startReport,floors:report,unreachable,stairIssues,
+    note:'Static connectivity from open ground (and any route start points) through doors, empty passages and stairs; walls/railings are inflated by the walker radius, shaped walls by their profile up to body height. Not a physics, headroom or door-swing check.'};
 }
 
 // Validation-style warnings for callers that opt in (CLI validate --reachability).
 export function reachabilityWarnings(building,options){
   const result=analyzeReachability(building,options),warnings=[];
+  const from=result.starts.length?' or the route start':'';
+  for(const s of result.starts.filter(s=>!s.ok))warnings.push({path:`Floor ${floorIndexOf(building,s.floorId)}`,message:`Floor ${floorIndexOf(building,s.floorId)}: route start (${s.x}, ${s.z}) is not on walkable floor (inside a wall, stair or railing clearance, or off the floor)`,targets:[{type:'floor',floorId:s.floorId}]});
   for(const u of result.unreachable){
     const where=u.regionLabels.length?` (${u.regionLabels.join(', ')})`:'';
-    warnings.push({path:`Floor ${u.floorIndex}`,message:`Floor ${u.floorIndex}: ${u.area.toFixed(1)} m² of floor near (${u.centroid.x}, ${u.centroid.z})${where} cannot be reached from outside through doors, passages and stairs`,targets:[{type:'floor',floorId:u.floorId}]});
+    warnings.push({path:`Floor ${u.floorIndex}`,message:`Floor ${u.floorIndex}: ${u.area.toFixed(1)} m² of floor near (${u.centroid.x}, ${u.centroid.z})${where} cannot be reached from outside${from} through doors, passages and stairs`,targets:[{type:'floor',floorId:u.floorId}]});
   }
   for(const s of result.stairIssues){
     const text={'no-upper-floor':'has no upper floor','lower-entrance-blocked':'lower entrance is blocked or has no floor','upper-arrival-blocked':'upper arrival is blocked or has no floor'}[s.issue];

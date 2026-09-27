@@ -57,3 +57,25 @@ const near=(a,b,tol=1e-6)=>Math.abs(a-b)<=tol;
   assert.ok(sum(m.outside,t=>t.every(p=>p.y<=1e-9))>0,'skirt band siding is still emitted');
   console.log('PASS shaped story skirt: no underside coplanar with the lower ceiling');
 }
+{
+  // Non-right-angle junctions (Standard walls): ends are mitered against their
+  // angular neighbours. Before, each end was extended by half the thickness
+  // along its axis, which left nubs whose end caps showed as EdgeFaces strips
+  // at obtuse corners and three-way junctions (found in interior surface-colour
+  // renders of editable_junctions and on the octagon outline examples).
+  const vertical=t=>{const u={x:t[1].x-t[0].x,y:t[1].y-t[0].y,z:t[1].z-t[0].z},v={x:t[2].x-t[0].x,y:t[2].y-t[0].y,z:t[2].z-t[0].z};const c={x:u.y*v.z-u.z*v.y,y:u.z*v.x-u.x*v.z,z:u.x*v.y-u.y*v.x};return Math.abs(c.y)<1e-9*Math.hypot(c.x,c.y,c.z)+1e-12;};
+  const nearJ=(x,z,r)=>t=>t.every(p=>Math.hypot(p.x-x,p.z-z)<r);
+  // Octagon outline: every corner turns 45 degrees.
+  const oct=[[-4,1],[-4,-1],[-1,-4],[1,-4],[4,-1],[4,1],[1,4],[-1,4]];
+  const o=building([oct.map((p,i)=>wall(`o${i}`,p,oct[(i+1)%oct.length]))],.18),om=buildExteriorMeshData(floorView(o,0));
+  assert.equal(sum(om.edges,t=>vertical(t)&&oct.some(([x,z])=>nearJ(x,z,.3)(t))),0,'no end caps at octagon corners');
+  const perimeter=oct.reduce((s,p,i)=>{const q=oct[(i+1)%oct.length];return s+Math.hypot(q[0]-p[0],q[1]-p[1]);},0);
+  // Outer face length of a regular-angle polygon: centreline + 2*(t/2)*tan(22.5deg) per corner.
+  const outer=perimeter+oct.length*2*.09*Math.tan(Math.PI/8);
+  assert.ok(near(sum(om.outside),outer*2.8,1e-6),`octagon siding closes exactly: ${sum(om.outside)} vs ${outer*2.8}`);
+  // Y junction of three interior walls inside a room.
+  const {buildInteriorSplitMeshData}=await import('./src/exporter.js');
+  const y=building([[...loop('r',-5,-5,5,5),wall('w6',[-4,0],[1,0],{role:'interior'}),wall('w7',[1,0],[0,4],{role:'interior'}),wall('w8',[1,0],[0,-3],{role:'interior'})]],.18),ym=buildInteriorSplitMeshData(floorView(y,0));
+  assert.equal(sum(ym.edges,t=>vertical(t)&&nearJ(1,0,.4)(t)),0,'no end caps at the Y junction');
+  console.log('PASS junction miters: no nubs at obtuse corners or three-way junctions; siding closes');
+}

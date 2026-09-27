@@ -47,8 +47,8 @@
             "x": 12,
             "z": -7
           },
-          "id": "d1_hull1",
-          "wallTypeId": "hull"
+          "wallTypeId": "hull",
+          "id": "d1_hull1"
         },
         {
           "label": "Deck 1 hull 2",
@@ -62,8 +62,8 @@
             "x": 20,
             "z": -2
           },
-          "id": "d1_hull2",
-          "wallTypeId": "hull"
+          "wallTypeId": "hull",
+          "id": "d1_hull2"
         },
         {
           "label": "Deck 1 hull 3",
@@ -77,8 +77,8 @@
             "x": 20,
             "z": 2
           },
-          "id": "d1_hull3",
-          "wallTypeId": "hull"
+          "wallTypeId": "hull",
+          "id": "d1_hull3"
         },
         {
           "label": "Deck 1 hull 4",
@@ -92,8 +92,8 @@
             "x": 12,
             "z": 7
           },
-          "id": "d1_hull4",
-          "wallTypeId": "hull"
+          "wallTypeId": "hull",
+          "id": "d1_hull4"
         },
         {
           "label": "Deck 1 hull 5",
@@ -107,8 +107,8 @@
             "x": -18,
             "z": 7
           },
-          "id": "d1_hull5",
-          "wallTypeId": "hull"
+          "wallTypeId": "hull",
+          "id": "d1_hull5"
         },
         {
           "label": "Deck 1 hull 6",
@@ -122,8 +122,8 @@
             "x": -18,
             "z": -7
           },
-          "id": "d1_hull6",
-          "wallTypeId": "hull"
+          "wallTypeId": "hull",
+          "id": "d1_hull6"
         },
         {
           "label": "Cargo bulkhead",
@@ -179,9 +179,9 @@
             "x": 9.4,
             "z": -1.25
           },
-          "id": "d1_corr_port",
           "wallTypeId": "corridor",
-          "inwardSide": "right"
+          "inwardSide": "right",
+          "id": "d1_corr_port"
         },
         {
           "label": "Deck 1 corridor port forward stub",
@@ -223,9 +223,9 @@
             "x": 9.4,
             "z": 1.25
           },
-          "id": "d1_corr_stbd",
           "wallTypeId": "corridor",
-          "inwardSide": "left"
+          "inwardSide": "left",
+          "id": "d1_corr_stbd"
         },
         {
           "label": "Deck 1 corridor starboard forward stub",
@@ -473,7 +473,217 @@
           "id": "w_port_06"
         }
       ],
-      "lights": [],
+      "lights": [
+        {
+          "label": "Cargo bay light 1",
+          "position": {
+            "x": -12,
+            "y": 2.85,
+            "z": -3.5
+          },
+          "color": {
+            "a": 1,
+            "r": 0.82,
+            "g": 0.9,
+            "b": 1
+          },
+          "energy": 1.1,
+          "range": 12.5,
+          "shadows": false,
+          "group": "building_lights",
+          "id": "light_cargo_1"
+        },
+        {
+          "label": "Cargo bay light 2",
+          "position": {
+            "x": -12,
+            "y": 2.85,
+            "z": 3.5
+          },
+          "color": {
+            "a": 1,
+            "r": 0.82,
+            "g": 0.9,
+            "b": 1
+          },
+          "energy": 1.1,
+          "range": 12.5,
+          "shadows": false,
+          "group": "building_lights",
+          "id": "light_cargo_2"
+        },
+        {
+          "label": "Engineering light",
+          "position": {
+            "x": -1.5,
+            "y": 2.85,
+            "z": -4.125
+          },
+          "color": {
+            "a": 1,
+            "r": 0.82,
+            "g": 0.9,
+            "b": 1
+          },
+          "energy": 1.1,
+          "range": 7.2,
+          "shadows": false,
+          "group": "building_lights",
+          "id": "light_engineering"
+        },
+        {
+          "label": "Reactor room light",
+          "position": {
+            "x": 6.5,
+            "y": 2.85,
+            "z": -4.125
+          },
+          "color": {
+            "a": 1,
+            "r": 0.82,
+            "g": 0.9,
+            "b": 1
+          },
+          "energy": 1.1,
+          "range": 7.2,
+          "shadows": false,
+          "group": "building_lights",
+          "id": "light_reactor"
+        },
+        {
+          "label": "Deck 1 corridor light 1",
+          "position": {
+            "x": -2,
+            "y": 2.85,
+            "z": 0
+          },
+          "color": {
+            "a": 1,
+            "r": 0.82,
+            "g": 0.9,
+            "b": 1
+          },
+          "energy": 1.1,
+          "range": 5.9,
+          "shadows": false,
+          "group": "building_lights",
+          "id": "light_d1_corridor_1"
+        },
+        {
+          "label": "Deck 1 corridor light 2",
+          "position": {
+            "x": 6,
+            "y": 2.85,
+            "z": 0
+          },
+          "color": {
+            "a": 1,
+            "r": 0.82,
+            "g": 0.9,
+            "b": 1
+          },
+          "energy": 1.1,
+          "range": 5.9,
+          "shadows": false,
+          "group": "building_lights",
+          "id": "light_d1_corridor_2"
+        },
+        {
+          "label": "Storage light",
+          "position": {
+            "x": -2.5,
+            "y": 2.85,
+            "z": 4.125
+          },
+          "color": {
+            "a": 1,
+            "r": 0.82,
+            "g": 0.9,
+            "b": 1
+          },
+          "energy": 1.1,
+          "range": 7.2,
+          "shadows": false,
+          "group": "building_lights",
+          "id": "light_storage"
+        },
+        {
+          "label": "Airlock light",
+          "position": {
+            "x": 3,
+            "y": 2.85,
+            "z": 4.125
+          },
+          "color": {
+            "a": 1,
+            "r": 0.82,
+            "g": 0.9,
+            "b": 1
+          },
+          "energy": 1.1,
+          "range": 5.6,
+          "shadows": false,
+          "group": "building_lights",
+          "id": "light_airlock"
+        },
+        {
+          "label": "Life support light",
+          "position": {
+            "x": 7.5,
+            "y": 2.85,
+            "z": 4.125
+          },
+          "color": {
+            "a": 1,
+            "r": 0.82,
+            "g": 0.9,
+            "b": 1
+          },
+          "energy": 1.1,
+          "range": 6.1,
+          "shadows": false,
+          "group": "building_lights",
+          "id": "light_life"
+        },
+        {
+          "label": "Sensor bay light 1",
+          "position": {
+            "x": 15,
+            "y": 2.85,
+            "z": -3.5
+          },
+          "color": {
+            "a": 1,
+            "r": 0.82,
+            "g": 0.9,
+            "b": 1
+          },
+          "energy": 1.1,
+          "range": 12.5,
+          "shadows": false,
+          "group": "building_lights",
+          "id": "light_sensor_1"
+        },
+        {
+          "label": "Sensor bay light 2",
+          "position": {
+            "x": 15,
+            "y": 2.85,
+            "z": 3.5
+          },
+          "color": {
+            "a": 1,
+            "r": 0.82,
+            "g": 0.9,
+            "b": 1
+          },
+          "energy": 1.1,
+          "range": 12.5,
+          "shadows": false,
+          "group": "building_lights",
+          "id": "light_sensor_2"
+        }
+      ],
       "stairs": [
         {
           "id": "st_main",
@@ -594,8 +804,8 @@
             "x": 10,
             "z": -5.5
           },
-          "id": "d2_hull1",
-          "wallTypeId": "hull"
+          "wallTypeId": "hull",
+          "id": "d2_hull1"
         },
         {
           "label": "Deck 2 hull 2",
@@ -651,8 +861,8 @@
             "x": -14,
             "z": 5.5
           },
-          "id": "d2_hull5",
-          "wallTypeId": "hull"
+          "wallTypeId": "hull",
+          "id": "d2_hull5"
         },
         {
           "label": "Deck 2 hull 6",
@@ -722,9 +932,9 @@
             "x": 8.4,
             "z": -1.25
           },
-          "id": "d2_corr_port",
           "wallTypeId": "corridor",
-          "inwardSide": "right"
+          "inwardSide": "right",
+          "id": "d2_corr_port"
         },
         {
           "label": "Deck 2 corridor port forward stub",
@@ -766,9 +976,9 @@
             "x": 8.4,
             "z": 1.25
           },
-          "id": "d2_corr_stbd",
           "wallTypeId": "corridor",
-          "inwardSide": "left"
+          "inwardSide": "left",
+          "id": "d2_corr_stbd"
         },
         {
           "label": "Deck 2 corridor starboard forward stub",
@@ -1038,7 +1248,217 @@
           "id": "w_port_13"
         }
       ],
-      "lights": [],
+      "lights": [
+        {
+          "label": "Observation lounge light 1",
+          "position": {
+            "x": -10,
+            "y": 2.65,
+            "z": -2.75
+          },
+          "color": {
+            "a": 1,
+            "r": 0.82,
+            "g": 0.9,
+            "b": 1
+          },
+          "energy": 1.1,
+          "range": 10.4,
+          "shadows": false,
+          "group": "building_lights",
+          "id": "light_lounge_1"
+        },
+        {
+          "label": "Observation lounge light 2",
+          "position": {
+            "x": -10,
+            "y": 2.65,
+            "z": 2.75
+          },
+          "color": {
+            "a": 1,
+            "r": 0.82,
+            "g": 0.9,
+            "b": 1
+          },
+          "energy": 1.1,
+          "range": 10.4,
+          "shadows": false,
+          "group": "building_lights",
+          "id": "light_lounge_2"
+        },
+        {
+          "label": "Deck 2 corridor light 1",
+          "position": {
+            "x": -2.25,
+            "y": 2.65,
+            "z": 0
+          },
+          "color": {
+            "a": 1,
+            "r": 0.82,
+            "g": 0.9,
+            "b": 1
+          },
+          "energy": 1.1,
+          "range": 5.9,
+          "shadows": false,
+          "group": "building_lights",
+          "id": "light_d2_corridor_1"
+        },
+        {
+          "label": "Deck 2 corridor light 2",
+          "position": {
+            "x": 5.25,
+            "y": 2.65,
+            "z": 0
+          },
+          "color": {
+            "a": 1,
+            "r": 0.82,
+            "g": 0.9,
+            "b": 1
+          },
+          "energy": 1.1,
+          "range": 5.9,
+          "shadows": false,
+          "group": "building_lights",
+          "id": "light_d2_corridor_2"
+        },
+        {
+          "label": "Crew quarters 1 light",
+          "position": {
+            "x": -3.75,
+            "y": 2.65,
+            "z": -3.375
+          },
+          "color": {
+            "a": 1,
+            "r": 0.82,
+            "g": 0.9,
+            "b": 1
+          },
+          "energy": 1.1,
+          "range": 5,
+          "shadows": false,
+          "group": "building_lights",
+          "id": "light_q1"
+        },
+        {
+          "label": "Crew quarters 2 light",
+          "position": {
+            "x": 1.125,
+            "y": 2.65,
+            "z": -3.375
+          },
+          "color": {
+            "a": 1,
+            "r": 0.82,
+            "g": 0.9,
+            "b": 1
+          },
+          "energy": 1.1,
+          "range": 5.4,
+          "shadows": false,
+          "group": "building_lights",
+          "id": "light_q2"
+        },
+        {
+          "label": "Captain's quarters light",
+          "position": {
+            "x": 6.375,
+            "y": 2.65,
+            "z": -3.375
+          },
+          "color": {
+            "a": 1,
+            "r": 0.82,
+            "g": 0.9,
+            "b": 1
+          },
+          "energy": 1.1,
+          "range": 5.4,
+          "shadows": false,
+          "group": "building_lights",
+          "id": "light_q3"
+        },
+        {
+          "label": "Mess light",
+          "position": {
+            "x": -2,
+            "y": 2.65,
+            "z": 3.375
+          },
+          "color": {
+            "a": 1,
+            "r": 0.82,
+            "g": 0.9,
+            "b": 1
+          },
+          "energy": 1.1,
+          "range": 6.6,
+          "shadows": false,
+          "group": "building_lights",
+          "id": "light_mess"
+        },
+        {
+          "label": "Med bay light",
+          "position": {
+            "x": 5.5,
+            "y": 2.65,
+            "z": 3.375
+          },
+          "color": {
+            "a": 1,
+            "r": 0.82,
+            "g": 0.9,
+            "b": 1
+          },
+          "energy": 1.1,
+          "range": 6.6,
+          "shadows": false,
+          "group": "building_lights",
+          "id": "light_med"
+        },
+        {
+          "label": "Bridge light 1",
+          "position": {
+            "x": 12.5,
+            "y": 2.65,
+            "z": -2.75
+          },
+          "color": {
+            "a": 1,
+            "r": 0.82,
+            "g": 0.9,
+            "b": 1
+          },
+          "energy": 1.1,
+          "range": 10.4,
+          "shadows": false,
+          "group": "building_lights",
+          "id": "light_bridge_1"
+        },
+        {
+          "label": "Bridge light 2",
+          "position": {
+            "x": 12.5,
+            "y": 2.65,
+            "z": 2.75
+          },
+          "color": {
+            "a": 1,
+            "r": 0.82,
+            "g": 0.9,
+            "b": 1
+          },
+          "energy": 1.1,
+          "range": 10.4,
+          "shadows": false,
+          "group": "building_lights",
+          "id": "light_bridge_2"
+        }
+      ],
       "stairs": [],
       "slabs": [],
       "regions": [
@@ -1161,7 +1581,6 @@
   ],
   "wallTypes": [
     {
-      "id": "hull",
       "label": "Tumblehome hull",
       "stations": [
         {
@@ -1184,10 +1603,10 @@
           "offset": 0,
           "thickness": 0.25
         }
-      ]
+      ],
+      "id": "hull"
     },
     {
-      "id": "corridor",
       "label": "Hex corridor",
       "stations": [
         {
@@ -1210,12 +1629,12 @@
           "offset": 0,
           "thickness": 0.25
         }
-      ]
+      ],
+      "id": "corridor"
     }
   ],
   "openingShapes": [
     {
-      "id": "hatch",
       "label": "Octagon hatch",
       "points": [
         {
@@ -1250,10 +1669,10 @@
           "x": 0,
           "y": 0.16
         }
-      ]
+      ],
+      "id": "hatch"
     },
     {
-      "id": "airlock",
       "label": "Airlock outline",
       "points": [
         {
@@ -1288,10 +1707,10 @@
           "x": 0,
           "y": 0.2
         }
-      ]
+      ],
+      "id": "airlock"
     },
     {
-      "id": "blast",
       "label": "Blast door",
       "points": [
         {
@@ -1318,7 +1737,8 @@
           "x": 0,
           "y": 0.8
         }
-      ]
+      ],
+      "id": "blast"
     }
   ]
 }

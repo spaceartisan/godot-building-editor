@@ -5,7 +5,7 @@ import { polygonSlabFaces } from './polygon-geometry.js';
 import { areaPoints, unionPolygonAreas, subtractPolygonAreas } from './polygon-areas.js';
 import { roofBoxParts, roofInteriorBlockers, roofAttachmentBlockers, trimRoofBox, trimmedGableEnds } from './roof-geometry.js';
 import { automaticRoofRectangles, automaticRoofSections, boundsOfAutomaticRoof, boundsOfBuilding, boundsOfStructuralFloor, constrainedOpening, exposedStructuralFloorRectangles, floorElevation, floorView, findWall, manualCeilingRectanglesAtLevel, manualFloorRectanglesAtLevel, pointOnWall, rectValid, roofSectionsForFloor, stairFootprint, storyHeight, structuralFloorRectangles, subtractRectAreas, splitWallIntoSolidSegments, validateOpeningLayout, wallLength } from './model.js';
-import { wallSolidPlanes, unionFaceWriter } from './wall-union.js';
+import { wallSolidPlanes, unionFaceWriter, junctionMiters } from './wall-union.js';
 import { stairOpeningFootprint } from './model.js';
 import { assertValidBuilding } from './validation.js';
 import { exportProfile, lightGroupFor } from './profiles.js';
@@ -43,7 +43,35 @@ export function isExteriorWall(building, wall) {
   );
 }
 
-function endpointJoinOffset(building, wall, atStart) {
+// Mesh-only junction miters (see junctionMiters); collision keeps the box
+// extension below.
+const miterCache=new WeakMap();
+function wallMiters(building,wall){
+  let byWall=miterCache.get(building);if(!byWall){byWall=new Map();miterCache.set(building,byWall);}
+  if(!byWall.has(wall))byWall.set(wall,junctionMiters(building.walls,wall,building.wallThickness,JOIN_EPS));
+  return byWall.get(wall);
+}
+function ownMiterPlanes(building,wall){const m=wallMiters(building,wall);return [...(m.a?.planes||[]),...(m.b?.planes||[])];}
+// Vertical miter faces closing a mitered segment end (EdgeFaces, kind 'end').
+function writeMiterFaces(edgeWriter,building,wall,raw){
+  const m=wallMiters(building,wall),L=wallLength(wall);
+  for(const [end,touches] of [['a',raw.start<=EPS],['b',raw.end>=L-EPS]]){
+    if(!m[end]||!touches)continue;
+    for(const side of m[end].sides){
+      const {from,to}=side,n=side.plane.n,len=Math.hypot(to.x-from.x,to.z-from.z);if(len<1e-7)continue;
+      // The mesh writer orders the winding from the supplied normal.
+      const pts=[{x:from.x,y:raw.bottom,z:from.z},{x:to.x,y:raw.bottom,z:to.z},{x:to.x,y:raw.top,z:to.z},{x:from.x,y:raw.top,z:from.z}];
+      const uvs=[{u:0,v:raw.bottom},{u:len,v:raw.bottom},{u:len,v:raw.top},{u:0,v:raw.top}];
+      edgeWriter.face(pts,uvs,{x:n.x,y:0,z:n.z},'end');
+    }
+  }
+}
+
+function endpointJoinOffset(building, wall, atStart, mesh = false) {
+  if (mesh) {
+    const m = wallMiters(building, wall)[atStart ? 'a' : 'b'];
+    if (m) return atStart ? -m.ext : m.ext;
+  }
   const p = atStart ? wall.a : wall.b;
   const L = wallLength(wall);
   if (L < EPS) return 0;
@@ -94,10 +122,10 @@ function endpointJoinOffset(building, wall, atStart) {
   return 0;
 }
 
-function adjustedSegment(building, wall, seg) {
+function adjustedSegment(building, wall, seg, mesh = false) {
   const L = wallLength(wall);
-  const startJoinOffset = endpointJoinOffset(building, wall, true);
-  const endJoinOffset = endpointJoinOffset(building, wall, false);
+  const startJoinOffset = endpointJoinOffset(building, wall, true, mesh);
+  const endJoinOffset = endpointJoinOffset(building, wall, false, mesh);
   const s0 = seg.start + (seg.start <= EPS ? startJoinOffset : 0);
   const s1 = seg.end + (seg.end >= L - EPS ? endJoinOffset : 0);
   return { ...seg, start:s0, end:s1 };
@@ -613,8 +641,8 @@ function addExteriorStorySkirt(outsideWriter, insideWriter, building, wall, dept
   const ht=building.wallThickness/2;
   // Match the normal wall corner/T-junction extension rules so the cover meets
   // cleanly at exterior corners without changing the actual wall collision.
-  const s0=endpointJoinOffset(building,wall,true);
-  const s1=L+endpointJoinOffset(building,wall,false);
+  const s0=endpointJoinOffset(building,wall,true,true);
+  const s1=L+endpointJoinOffset(building,wall,false,true);
   if(s1-s0<EPS)return;
   const centerAt=s=>({x:wall.a.x+d.x*s,z:wall.a.z+d.z*s});
   const a=centerAt(s0),b=centerAt(s1);
@@ -650,8 +678,8 @@ function addInteriorStorySkirt(sideAWriter, sideBWriter, building, wall, depth) 
   const ht=building.wallThickness/2;
   // Use the same endpoint extension/trim rules as the wall above so the seam
   // filler does not introduce little gaps at corners or T-junctions.
-  const s0=endpointJoinOffset(building,wall,true);
-  const s1=L+endpointJoinOffset(building,wall,false);
+  const s0=endpointJoinOffset(building,wall,true,true);
+  const s1=L+endpointJoinOffset(building,wall,false,true);
   if(s1-s0<EPS)return;
   const centerAt=s=>({x:wall.a.x+d.x*s,z:wall.a.z+d.z*s});
   const a=centerAt(s0),b=centerAt(s1),y0=-skirt,y1=0;
@@ -824,7 +852,8 @@ function wallUnionSolids(building) {
     const segments=splitWallIntoSolidSegments(building,wall);
     const skirt=Number(building.storyFloorSkirt ?? building.exteriorFloorSkirt)||0;
     if(skirt>EPS)segments.push({start:0,end:wallLength(wall),bottom:-skirt,top:0});
-    return segments.map(raw=>({ownerIndex,planes:wallSolidPlanes(wall,adjustedSegment(building,wall,raw),building.wallThickness)}));
+    const miters=ownMiterPlanes(building,wall);
+    return segments.map(raw=>({ownerIndex,planes:[...wallSolidPlanes(wall,adjustedSegment(building,wall,raw,true),building.wallThickness),...miters]}));
   });
 }
 
@@ -845,10 +874,11 @@ export function buildExteriorMeshData(building) {
   const storySkirt=Math.max(0,Number(building.storyFloorSkirt ?? building.exteriorFloorSkirt)||0);
   const solids=profiled?[]:wallUnionSolids(building);
   for(const wall of profiled?[]:exteriorWalls) {
-    const clipped=[outside,inside,edges].map(w=>unionFaceWriter(w,building.walls.indexOf(wall),solids));
+    const clipped=[outside,inside,edges].map(w=>unionFaceWriter(w,building.walls.indexOf(wall),solids,ownMiterPlanes(building,wall)));
     for(const raw of splitWallIntoSolidSegments(building,wall)) {
-      const seg=adjustedSegment(building,wall,raw);
+      const seg=adjustedSegment(building,wall,raw,true);
       addExteriorWallBoxToMeshes(...clipped,building,wall,seg);
+      writeMiterFaces(clipped[2],building,wall,raw);
     }
     if(storySkirt>EPS) addExteriorStorySkirt(clipped[0],clipped[1],building,wall,storySkirt);
   }
@@ -909,8 +939,8 @@ export function buildInteriorSplitMeshData(building) {
   const storySkirt=Math.max(0,Number(building.storyFloorSkirt ?? building.exteriorFloorSkirt)||0);
   const solids=wallUnionSolids(building);
   for(const wall of building.walls.filter(w=>!isExteriorWall(building,w))){
-    const clipped=[sideA,sideB,edges].map(w=>unionFaceWriter(w,building.walls.indexOf(wall),solids));
-    for(const raw of splitWallIntoSolidSegments(building,wall))addInteriorWallBoxToMeshes(...clipped,building,wall,adjustedSegment(building,wall,raw));
+    const clipped=[sideA,sideB,edges].map(w=>unionFaceWriter(w,building.walls.indexOf(wall),solids,ownMiterPlanes(building,wall)));
+    for(const raw of splitWallIntoSolidSegments(building,wall)){addInteriorWallBoxToMeshes(...clipped,building,wall,adjustedSegment(building,wall,raw,true));writeMiterFaces(clipped[2],building,wall,raw);}
     if(storySkirt>EPS)addInteriorStorySkirt(clipped[0],clipped[1],building,wall,storySkirt);
   }
   for(const mesh of [sideA,sideB,edges])offsetWallUvs(mesh,building);

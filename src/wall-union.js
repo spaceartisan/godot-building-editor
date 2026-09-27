@@ -4,6 +4,11 @@ const EPS=1e-7;
 const dot=(a,b)=>a.x*b.x+a.y*b.y+a.z*b.z;
 const mix=(a,b,t)=>Object.fromEntries(Object.keys(a).map(k=>[k,a[k]+(b[k]-a[k])*t]));
 
+function polyArea(poly){
+  let x=0,y=0,z=0;
+  for(let i=1;i+1<poly.length;i++){const a=poly[0],b=poly[i],c=poly[i+1],u={x:b.x-a.x,y:b.y-a.y,z:b.z-a.z},v={x:c.x-a.x,y:c.y-a.y,z:c.z-a.z};x+=u.y*v.z-u.z*v.y;y+=u.z*v.x-u.x*v.z;z+=u.x*v.y-u.y*v.x;}
+  return Math.hypot(x,y,z)/2;
+}
 function split(poly,plane){
   const inside=[],outside=[];
   for(let i=0;i<poly.length;i++){
@@ -54,9 +59,11 @@ export function wallSolidPlanes(wall,seg,thickness){
     {n:{x:0,y:1,z:0},d:seg.top,kind:'cap'},{n:{x:0,y:-1,z:0},d:-seg.bottom,kind:'cap'}];
 }
 
-export function unionFaceWriter(writer,ownerIndex,solids){
+// ownPlanes clip the wall's own faces first (junction miters).
+export function unionFaceWriter(writer,ownerIndex,solids,ownPlanes=[]){
   return {face(points,uvs,normal,kind){
     let pieces=[points.map((p,i)=>({...p,u:uvs[i].u,v:uvs[i].v}))];
+    if(ownPlanes.length){pieces=pieces.map(p=>clipToPlanes(p,ownPlanes)).filter(p=>polyArea(p)>1e-10);if(!pieces.length)return;}
     for(const solid of solids){
       if(solid.ownerIndex===ownerIndex)continue;
       pieces=pieces.flatMap(p=>subtract(p,solid.planes,normal,solid.ownerIndex<ownerIndex,kind));
@@ -64,4 +71,53 @@ export function unionFaceWriter(writer,ownerIndex,solids){
     }
     for(const poly of pieces)writer.face(poly.map(({x,y,z})=>({x,y,z})),poly.map(({u,v})=>({u,v})),normal);
   }};
+}
+
+// Keep only the part of a polygon inside every plane (dot(p,n) <= d).
+export function clipToPlanes(poly,planes){
+  let remaining=poly;
+  for(const plane of planes){if(remaining.length<3)return [];remaining=split(remaining,plane).inside;}
+  return remaining.length>=3?remaining:[];
+}
+
+// Endpoint junctions whose angles are not all multiples of 90 degrees: each
+// wall end is mitered against its angular neighbours (the bisector planes
+// through the junction point), so wall boxes neither leave a nub nor a notch
+// at the outer apex. Right-angle junctions keep the established box
+// extension. Junctions where another wall passes through (T) are unchanged.
+// Returns {a, b}, each null or {ext, planes, sides:[{plane, from, to}]}.
+export function junctionMiters(walls,wall,thickness,joinEps=1e-4){
+  const out={a:null,b:null},L=Math.hypot(wall.b.x-wall.a.x,wall.b.z-wall.a.z);
+  if(L<1e-9)return out;
+  const ht=thickness/2,TAU=2*Math.PI,near=(p,q)=>Math.hypot(p.x-q.x,p.z-q.z)<=joinEps;
+  for(const end of ['a','b']){
+    const J=wall[end],far=wall[end==='a'?'b':'a'],u={x:(far.x-J.x)/L,z:(far.z-J.z)/L};
+    const dirs=[];let passes=false;
+    for(const q of walls){
+      if(q===wall||q.id===wall.id)continue;
+      const qL=Math.hypot(q.b.x-q.a.x,q.b.z-q.a.z);if(qL<1e-9)continue;
+      const other=near(q.a,J)?q.b:near(q.b,J)?q.a:null;
+      if(other){dirs.push({x:(other.x-J.x)/qL,z:(other.z-J.z)/qL});continue;}
+      const t=((J.x-q.a.x)*(q.b.x-q.a.x)+(J.z-q.a.z)*(q.b.z-q.a.z))/(qL*qL);
+      if(t>0&&t<1&&Math.hypot(q.a.x+(q.b.x-q.a.x)*t-J.x,q.a.z+(q.b.z-q.a.z)*t-J.z)<=joinEps)passes=true;
+    }
+    if(passes||!dirs.length)continue;
+    const base=Math.atan2(u.z,u.x),rel=v=>((Math.atan2(v.z,v.x)-base)%TAU+TAU)%TAU;
+    const angles=dirs.map(rel).filter(r=>r>1e-6&&r<TAU-1e-6).sort((x,y)=>x-y);
+    if(angles.length!==dirs.length)continue; // overlapping collinear walls: leave to validation
+    const all=[0,...angles,TAU],gaps=all.slice(1).map((r,i)=>r-all[i]);
+    if(gaps.every(g=>Math.abs(g/(Math.PI/2)-Math.round(g/(Math.PI/2)))<1e-6))continue;
+    const rot=(v,a)=>({x:v.x*Math.cos(a)-v.z*Math.sin(a),z:v.x*Math.sin(a)+v.z*Math.cos(a)});
+    const sides=[],planes=[];let ext=0;
+    for(const [s,phi] of [[1,angles[0]],[-1,TAU-angles[angles.length-1]]]){
+      const b=rot(u,s*phi/2),m=rot(b,s*Math.PI/2),ns=rot(u,s*Math.PI/2);
+      const t=-ht*(ns.x*m.x+ns.z*m.z)/(u.x*m.x+u.z*m.z);
+      const X={x:J.x+ns.x*ht+u.x*t,z:J.z+ns.z*ht+u.z*t};
+      ext=Math.max(ext,-t);
+      const plane={n:{x:m.x,y:0,z:m.z},d:m.x*J.x+m.z*J.z,kind:'end'};
+      planes.push(plane);sides.push({plane,from:X,to:{x:J.x,z:J.z},side:s});
+    }
+    out[end]={ext:Math.min(Math.max(0,ext),20*ht)+1e-6,planes,sides};
+  }
+  return out;
 }

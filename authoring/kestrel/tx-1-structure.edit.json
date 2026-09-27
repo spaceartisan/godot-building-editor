@@ -31,6 +31,179 @@
       }
     },
     {
+      "op": "wallType.add",
+      "id": "hull",
+      "value": {
+        "label": "Tumblehome hull",
+        "stations": [
+          {
+            "height": 0,
+            "offset": 0,
+            "thickness": 0.25
+          },
+          {
+            "height": 0.18,
+            "offset": -0.35,
+            "thickness": 0.25
+          },
+          {
+            "height": 0.55,
+            "offset": -0.35,
+            "thickness": 0.25
+          },
+          {
+            "height": 1,
+            "offset": 0,
+            "thickness": 0.25
+          }
+        ]
+      }
+    },
+    {
+      "op": "wallType.add",
+      "id": "corridor",
+      "value": {
+        "label": "Hex corridor",
+        "stations": [
+          {
+            "height": 0,
+            "offset": 0,
+            "thickness": 0.25
+          },
+          {
+            "height": 0.4,
+            "offset": -0.2,
+            "thickness": 0.25
+          },
+          {
+            "height": 0.62,
+            "offset": -0.2,
+            "thickness": 0.25
+          },
+          {
+            "height": 1,
+            "offset": 0,
+            "thickness": 0.25
+          }
+        ]
+      }
+    },
+    {
+      "op": "openingShape.add",
+      "id": "hatch",
+      "value": {
+        "label": "Octagon hatch",
+        "points": [
+          {
+            "x": 0.22,
+            "y": 0
+          },
+          {
+            "x": 0.78,
+            "y": 0
+          },
+          {
+            "x": 1,
+            "y": 0.16
+          },
+          {
+            "x": 1,
+            "y": 0.84
+          },
+          {
+            "x": 0.78,
+            "y": 1
+          },
+          {
+            "x": 0.22,
+            "y": 1
+          },
+          {
+            "x": 0,
+            "y": 0.84
+          },
+          {
+            "x": 0,
+            "y": 0.16
+          }
+        ]
+      }
+    },
+    {
+      "op": "openingShape.add",
+      "id": "airlock",
+      "value": {
+        "label": "Airlock outline",
+        "points": [
+          {
+            "x": 0.16,
+            "y": 0
+          },
+          {
+            "x": 0.84,
+            "y": 0
+          },
+          {
+            "x": 1,
+            "y": 0.2
+          },
+          {
+            "x": 1,
+            "y": 0.8
+          },
+          {
+            "x": 0.88,
+            "y": 1
+          },
+          {
+            "x": 0.12,
+            "y": 1
+          },
+          {
+            "x": 0,
+            "y": 0.8
+          },
+          {
+            "x": 0,
+            "y": 0.2
+          }
+        ]
+      }
+    },
+    {
+      "op": "openingShape.add",
+      "id": "blast",
+      "value": {
+        "label": "Blast door",
+        "points": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 1,
+            "y": 0
+          },
+          {
+            "x": 1,
+            "y": 0.8
+          },
+          {
+            "x": 0.85,
+            "y": 1
+          },
+          {
+            "x": 0.15,
+            "y": 1
+          },
+          {
+            "x": 0,
+            "y": 0.8
+          }
+        ]
+      }
+    },
+    {
       "op": "wall.add",
       "floorId": "floor_1",
       "id": "d1_hull1",
@@ -44,7 +217,8 @@
           "z": -7
         },
         "role": "exterior",
-        "label": "Deck 1 hull 1"
+        "label": "Deck 1 hull 1",
+        "wallTypeId": "hull"
       }
     },
     {
@@ -61,7 +235,8 @@
           "z": -2
         },
         "role": "exterior",
-        "label": "Deck 1 hull 2"
+        "label": "Deck 1 hull 2",
+        "wallTypeId": "hull"
       }
     },
     {
@@ -78,7 +253,8 @@
           "z": 2
         },
         "role": "exterior",
-        "label": "Deck 1 hull 3"
+        "label": "Deck 1 hull 3",
+        "wallTypeId": "hull"
       }
     },
     {
@@ -95,7 +271,8 @@
           "z": 7
         },
         "role": "exterior",
-        "label": "Deck 1 hull 4"
+        "label": "Deck 1 hull 4",
+        "wallTypeId": "hull"
       }
     },
     {
@@ -112,7 +289,8 @@
           "z": 7
         },
         "role": "exterior",
-        "label": "Deck 1 hull 5"
+        "label": "Deck 1 hull 5",
+        "wallTypeId": "hull"
       }
     },
     {
@@ -129,7 +307,8 @@
           "z": -7
         },
         "role": "exterior",
-        "label": "Deck 1 hull 6"
+        "label": "Deck 1 hull 6",
+        "wallTypeId": "hull"
       }
     },
     {
@@ -197,7 +376,12 @@
           "z": -1.25
         },
         "role": "interior",
-        "label": "Deck 1 corridor port"
+        "label": "Deck 1 corridor port",
+        "wallTypeId": "corridor",
+        "inwardToward": {
+          "x": 2,
+          "z": 0
+        }
       }
     },
     {
@@ -248,7 +432,12 @@
           "z": 1.25
         },
         "role": "interior",
-        "label": "Deck 1 corridor starboard"
+        "label": "Deck 1 corridor starboard",
+        "wallTypeId": "corridor",
+        "inwardToward": {
+          "x": 2,
+          "z": 0
+        }
       }
     },
     {
@@ -333,7 +522,8 @@
           "z": -5.5
         },
         "role": "exterior",
-        "label": "Deck 2 hull 1"
+        "label": "Deck 2 hull 1",
+        "wallTypeId": "hull"
       }
     },
     {
@@ -401,7 +591,8 @@
           "z": 5.5
         },
         "role": "exterior",
-        "label": "Deck 2 hull 5"
+        "label": "Deck 2 hull 5",
+        "wallTypeId": "hull"
       }
     },
     {
@@ -486,7 +677,12 @@
           "z": -1.25
         },
         "role": "interior",
-        "label": "Deck 2 corridor port"
+        "label": "Deck 2 corridor port",
+        "wallTypeId": "corridor",
+        "inwardToward": {
+          "x": 1.5,
+          "z": 0
+        }
       }
     },
     {
@@ -537,7 +733,12 @@
           "z": 1.25
         },
         "role": "interior",
-        "label": "Deck 2 corridor starboard"
+        "label": "Deck 2 corridor starboard",
+        "wallTypeId": "corridor",
+        "inwardToward": {
+          "x": 1.5,
+          "z": 0
+        }
       }
     },
     {

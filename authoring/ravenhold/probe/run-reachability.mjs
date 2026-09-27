@@ -54,7 +54,8 @@ try {
   if (!/"navPolygons":[1-9]/.test(line)) { console.error('probe setup failed:\n' + r.stdout + r.stderr); process.exit(3); }
   const report = { engine: spawnSync(godot, ['--headless', '--version'], { encoding: 'utf8' }).stdout.trim(), ...JSON.parse(line.slice(18)) };
   fs.writeFileSync(out, JSON.stringify(report, null, 2) + '\n');
-  for (const t of report.results) console.log(`${t.ok ? 'PASS' : 'FAIL'}  ${t.name}${t.maxLength && t.ok ? ` (${t.pathLength.toFixed(1)} m)` : ''}${t.ok ? '' : `  (floorCovered=${t.floorCovered} pathArrives=${t.pathArrives} length=${t.pathLength.toFixed(1)}${t.maxLength ? ` max=${t.maxLength}` : ''})`}`);
+  if (!report.startCovered) console.log(`WARN  start is ${report.startSnapDistance.toFixed(2)} m from the navmesh; every target from it fails`);
+  for (const t of report.results) console.log(`${t.ok ? 'PASS' : 'FAIL'}  ${t.name}${t.maxLength && t.ok ? ` (${t.pathLength.toFixed(1)} m)` : ''}${t.ok ? '' : `  (floorCovered=${t.floorCovered} originCovered=${t.originCovered} (snap ${t.originSnapDistance.toFixed(2)} m) pathArrives=${t.pathArrives} length=${t.pathLength.toFixed(1)}${t.maxLength ? ` max=${t.maxLength}` : ''})`}`);
   console.log(`unreachable: ${report.unreachable} / ${report.results.length}; nav polygons ${report.navPolygons}; door panels removed ${report.doorPanelsRemoved}`);
   process.exit(report.unreachable ? 1 : 0);
 } finally { fs.rmSync(temp, { recursive: true, force: true }); }

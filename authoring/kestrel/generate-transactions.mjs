@@ -1,12 +1,11 @@
 // Generates the Kestrel-class starship interior recipes.
 // Run from the editor root: node authoring/kestrel/generate-transactions.mjs
-// Writes tx-*.edit.json and profiles.json next to this script.
+// Writes tx-*.edit.json next to this script.
 // Plan units are metres. The bow points to +X; port is -Z, starboard +Z.
 //
-// Steps (see build.sh):
-//   new -> tx-1-structure -> apply-profiles.mjs (scoped JSON edit: wall types,
-//   doorway shapes and wall-type assignment have no CLI operations yet, FINDINGS K1)
-//   -> tx-2-openings -> tx-3-circulation
+// Steps (see build.sh): new -> tx-1-structure -> tx-2-openings -> tx-3-circulation.
+// Wall types and doorway shapes are created with wallType.add/openingShape.add
+// and assigned in wall.add (wallTypeId, inwardToward).
 import { writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -42,22 +41,22 @@ const openingShapes = [
 ];
 
 // ------------------------------------------------------------------ walls
-const walls = [], assignments = [];
-function wall(floorId, id, a, b, role, label, profile = null, inwardSide = 'auto') {
+const walls = [];
+// inwardToward: a plan point on the side the profile's positive offset faces.
+function wall(floorId, id, a, b, role, label, profile = null, inwardToward = null) {
   if (walls.some(w => w.id === id)) throw new Error(`duplicate wall ${id}`);
-  walls.push({ floorId, id, a: P(...a), b: P(...b), role, label });
-  if (profile) assignments.push({ floorId, wallId: id, wallTypeId: profile, inwardSide });
+  walls.push({ floorId, id, a: P(...a), b: P(...b), role, label, ...(profile ? { wallTypeId: profile } : {}), ...(inwardToward ? { inwardToward: P(...inwardToward) } : {}) });
 }
 function loop(floorId, key, pts, label, profiles) {
   pts.forEach((p, i) => wall(floorId, `${key}${i + 1}`, p, pts[(i + 1) % pts.length], 'exterior', `${label} ${i + 1}`, profiles[i]));
 }
 // A corridor wall: a hex-profile run with a short Standard stub at each end,
 // because a shaped wall may not end midway along a bulkhead (FINDINGS K4).
-// Port walls face the corridor on their right (+Z), starboard on their left.
+// The profile's inward side faces the corridor centreline (z = 0).
 function corridor(floorId, key, z, x0, x1, label) {
-  const side = z < 0 ? 'right' : 'left', stub = 0.6;
+  const stub = 0.6;
   wall(floorId, `${key}_stub_aft`, [x0, z], [x0 + stub, z], 'interior', `${label} aft stub`);
-  wall(floorId, `${key}`, [x0 + stub, z], [x1 - stub, z], 'interior', label, 'corridor', side);
+  wall(floorId, `${key}`, [x0 + stub, z], [x1 - stub, z], 'interior', label, 'corridor', [(x0 + x1) / 2, 0]);
   wall(floorId, `${key}_stub_fwd`, [x1 - stub, z], [x1, z], 'interior', `${label} forward stub`);
 }
 
@@ -109,11 +108,11 @@ tx('tx-1-structure.edit.json', [
   { op: 'building.update', value: { name: 'Kestrel-class courier', wallThickness: T, wallHeight: 3, floorThickness: 0.18, roof: { type: 'flat', overhang: 0 } } },
   { op: 'floor.update', id: D1, value: { label: 'Deck 1: engineering and cargo', wallHeight: 3.2 } },
   { op: 'floor.add-top', id: D2, aboveFloorId: D1, value: { label: 'Deck 2: crew' } },
-  ...walls.map(({ floorId, id, a, b, role, label }) => ({ op: 'wall.add', floorId, id, value: { a, b, role, label } })),
+  ...wallTypes.map(({ id, label, stations }) => ({ op: 'wallType.add', id, value: { label, stations } })),
+  ...openingShapes.map(({ id, label, points }) => ({ op: 'openingShape.add', id, value: { label, points } })),
+  ...walls.map(({ floorId, id, ...value }) => ({ op: 'wall.add', floorId, id, value })),
   ...regions.map(([floorId, id, label, minX, maxX, minZ, maxZ]) => ({ op: 'region.add', floorId, id, value: { label, minX, maxX, minZ, maxZ } })),
 ]);
-save('profiles.json', { wallTypes, openingShapes, assignments });
-console.log(`profiles.json: ${wallTypes.length} wall types, ${openingShapes.length} doorway shapes, ${assignments.length} assignments`);
 
 // ------------------------------------------------------------------ openings
 const openings = [];
@@ -170,3 +169,19 @@ tx('tx-3-circulation.edit.json', [
   { op: 'railing.add', floorId: D2, id: 'rail_stair_inboard', value: { label: 'Companionway rail inboard', a: P(hole.minX, hole.maxZ), b: P(hole.maxX, hole.maxZ), style: 'two_rail' } },
   { op: 'railing.add', floorId: D2, id: 'rail_stair_aft', value: { label: 'Companionway rail aft', a: P(hole.minX, hole.minZ), b: P(hole.minX, hole.maxZ), style: 'two_rail' } },
 ]);
+
+// ------------------------------------------------------------------ lighting
+// Cool ceiling lights: one per room (more along the corridors and in the cargo
+// bay), 0.35 m under the ceiling, no shadows. Range covers the room.
+const ceiling = { [D1]: 3.2 - 0.35, [D2]: 3.0 - 0.35 };
+const lights = [];
+for (const [floorId, id, label, minX, maxX, minZ, maxZ] of regions) {
+  const lx = maxX - minX, lz = maxZ - minZ, count = Math.max(1, Math.round(Math.max(lx, lz) / 7));
+  for (let i = 0; i < count; i++) {
+    const t = (i + 0.5) / count, x = lx >= lz ? minX + lx * t : (minX + maxX) / 2, z = lx >= lz ? (minZ + maxZ) / 2 : minZ + lz * t;
+    lights.push({ op: 'light.add', floorId, id: `light_${id.slice(2)}${count > 1 ? `_${i + 1}` : ''}`, value: {
+      label: `${label} light${count > 1 ? ` ${i + 1}` : ''}`, position: { x, y: ceiling[floorId], z },
+      color: { r: 0.82, g: 0.9, b: 1 }, energy: 1.1, range: Math.round(Math.max(4, Math.hypot(Math.min(lx, 7), lz) * 0.8) * 10) / 10, shadows: false } });
+  }
+}
+tx('tx-4-lighting.edit.json', lights);

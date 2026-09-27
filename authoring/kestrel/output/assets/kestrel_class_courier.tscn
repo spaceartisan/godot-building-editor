@@ -1080,6 +1080,85 @@ rotation = Vector3(0, -1.5708, 0)
 position = Vector3(10, 0, 0)
 rotation = Vector3(0, -1.5708, 0)
 
+[node name="Lights" type="Node3D" parent="Floor_01"]
+
+[node name="Light_001_Cargo_bay_light_1" type="OmniLight3D" parent="Floor_01/Lights" groups=["building_lights"]]
+position = Vector3(-12, 2.85, -3.5)
+light_color = Color(0.82, 0.9, 1, 1)
+light_energy = 1.1
+shadow_enabled = false
+omni_range = 12.5
+
+[node name="Light_002_Cargo_bay_light_2" type="OmniLight3D" parent="Floor_01/Lights" groups=["building_lights"]]
+position = Vector3(-12, 2.85, 3.5)
+light_color = Color(0.82, 0.9, 1, 1)
+light_energy = 1.1
+shadow_enabled = false
+omni_range = 12.5
+
+[node name="Light_003_Engineering_light" type="OmniLight3D" parent="Floor_01/Lights" groups=["building_lights"]]
+position = Vector3(-1.5, 2.85, -4.125)
+light_color = Color(0.82, 0.9, 1, 1)
+light_energy = 1.1
+shadow_enabled = false
+omni_range = 7.2
+
+[node name="Light_004_Reactor_room_light" type="OmniLight3D" parent="Floor_01/Lights" groups=["building_lights"]]
+position = Vector3(6.5, 2.85, -4.125)
+light_color = Color(0.82, 0.9, 1, 1)
+light_energy = 1.1
+shadow_enabled = false
+omni_range = 7.2
+
+[node name="Light_005_Deck_1_corridor_light_1" type="OmniLight3D" parent="Floor_01/Lights" groups=["building_lights"]]
+position = Vector3(-2, 2.85, 0)
+light_color = Color(0.82, 0.9, 1, 1)
+light_energy = 1.1
+shadow_enabled = false
+omni_range = 5.9
+
+[node name="Light_006_Deck_1_corridor_light_2" type="OmniLight3D" parent="Floor_01/Lights" groups=["building_lights"]]
+position = Vector3(6, 2.85, 0)
+light_color = Color(0.82, 0.9, 1, 1)
+light_energy = 1.1
+shadow_enabled = false
+omni_range = 5.9
+
+[node name="Light_007_Storage_light" type="OmniLight3D" parent="Floor_01/Lights" groups=["building_lights"]]
+position = Vector3(-2.5, 2.85, 4.125)
+light_color = Color(0.82, 0.9, 1, 1)
+light_energy = 1.1
+shadow_enabled = false
+omni_range = 7.2
+
+[node name="Light_008_Airlock_light" type="OmniLight3D" parent="Floor_01/Lights" groups=["building_lights"]]
+position = Vector3(3, 2.85, 4.125)
+light_color = Color(0.82, 0.9, 1, 1)
+light_energy = 1.1
+shadow_enabled = false
+omni_range = 5.6
+
+[node name="Light_009_Life_support_light" type="OmniLight3D" parent="Floor_01/Lights" groups=["building_lights"]]
+position = Vector3(7.5, 2.85, 4.125)
+light_color = Color(0.82, 0.9, 1, 1)
+light_energy = 1.1
+shadow_enabled = false
+omni_range = 6.1
+
+[node name="Light_010_Sensor_bay_light_1" type="OmniLight3D" parent="Floor_01/Lights" groups=["building_lights"]]
+position = Vector3(15, 2.85, -3.5)
+light_color = Color(0.82, 0.9, 1, 1)
+light_energy = 1.1
+shadow_enabled = false
+omni_range = 12.5
+
+[node name="Light_011_Sensor_bay_light_2" type="OmniLight3D" parent="Floor_01/Lights" groups=["building_lights"]]
+position = Vector3(15, 2.85, 3.5)
+light_color = Color(0.82, 0.9, 1, 1)
+light_energy = 1.1
+shadow_enabled = false
+omni_range = 12.5
+
 [node name="ShapedWallCollision" type="CollisionShape3D" parent="Floor_01/Collision"]
 shape = SubResource("ProfileWallShape_7")
 
@@ -1406,6 +1485,85 @@ shape = SubResource("WindowShape_39")
 [node name="Door_001_Bridge_hatch" parent="Floor_02/Geometry/Doors" instance=ExtResource("F02_DoorScene_001")]
 position = Vector3(9, 0, 0)
 rotation = Vector3(0, -1.5708, 0)
+
+[node name="Lights" type="Node3D" parent="Floor_02"]
+
+[node name="Light_001_Observation_lounge_light_1" type="OmniLight3D" parent="Floor_02/Lights" groups=["building_lights"]]
+position = Vector3(-10, 2.65, -2.75)
+light_color = Color(0.82, 0.9, 1, 1)
+light_energy = 1.1
+shadow_enabled = false
+omni_range = 10.4
+
+[node name="Light_002_Observation_lounge_light_2" type="OmniLight3D" parent="Floor_02/Lights" groups=["building_lights"]]
+position = Vector3(-10, 2.65, 2.75)
+light_color = Color(0.82, 0.9, 1, 1)
+light_energy = 1.1
+shadow_enabled = false
+omni_range = 10.4
+
+[node name="Light_003_Deck_2_corridor_light_1" type="OmniLight3D" parent="Floor_02/Lights" groups=["building_lights"]]
+position = Vector3(-2.25, 2.65, 0)
+light_color = Color(0.82, 0.9, 1, 1)
+light_energy = 1.1
+shadow_enabled = false
+omni_range = 5.9
+
+[node name="Light_004_Deck_2_corridor_light_2" type="OmniLight3D" parent="Floor_02/Lights" groups=["building_lights"]]
+position = Vector3(5.25, 2.65, 0)
+light_color = Color(0.82, 0.9, 1, 1)
+light_energy = 1.1
+shadow_enabled = false
+omni_range = 5.9
+
+[node name="Light_005_Crew_quarters_1_light" type="OmniLight3D" parent="Floor_02/Lights" groups=["building_lights"]]
+position = Vector3(-3.75, 2.65, -3.375)
+light_color = Color(0.82, 0.9, 1, 1)
+light_energy = 1.1
+shadow_enabled = false
+omni_range = 5.0
+
+[node name="Light_006_Crew_quarters_2_light" type="OmniLight3D" parent="Floor_02/Lights" groups=["building_lights"]]
+position = Vector3(1.125, 2.65, -3.375)
+light_color = Color(0.82, 0.9, 1, 1)
+light_energy = 1.1
+shadow_enabled = false
+omni_range = 5.4
+
+[node name="Light_007_Captains_quarters_light" type="OmniLight3D" parent="Floor_02/Lights" groups=["building_lights"]]
+position = Vector3(6.375, 2.65, -3.375)
+light_color = Color(0.82, 0.9, 1, 1)
+light_energy = 1.1
+shadow_enabled = false
+omni_range = 5.4
+
+[node name="Light_008_Mess_light" type="OmniLight3D" parent="Floor_02/Lights" groups=["building_lights"]]
+position = Vector3(-2, 2.65, 3.375)
+light_color = Color(0.82, 0.9, 1, 1)
+light_energy = 1.1
+shadow_enabled = false
+omni_range = 6.6
+
+[node name="Light_009_Med_bay_light" type="OmniLight3D" parent="Floor_02/Lights" groups=["building_lights"]]
+position = Vector3(5.5, 2.65, 3.375)
+light_color = Color(0.82, 0.9, 1, 1)
+light_energy = 1.1
+shadow_enabled = false
+omni_range = 6.6
+
+[node name="Light_010_Bridge_light_1" type="OmniLight3D" parent="Floor_02/Lights" groups=["building_lights"]]
+position = Vector3(12.5, 2.65, -2.75)
+light_color = Color(0.82, 0.9, 1, 1)
+light_energy = 1.1
+shadow_enabled = false
+omni_range = 10.4
+
+[node name="Light_011_Bridge_light_2" type="OmniLight3D" parent="Floor_02/Lights" groups=["building_lights"]]
+position = Vector3(12.5, 2.65, 2.75)
+light_color = Color(0.82, 0.9, 1, 1)
+light_energy = 1.1
+shadow_enabled = false
+omni_range = 10.4
 
 [node name="ShapedWallCollision" type="CollisionShape3D" parent="Floor_02/Collision"]
 shape = SubResource("ProfileWallShape_40")

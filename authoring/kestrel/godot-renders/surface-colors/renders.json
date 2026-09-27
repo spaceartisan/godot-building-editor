@@ -218,5 +218,5 @@
       "scene": "assets/kestrel_class_courier.tscn"
     }
   ],
-  "note": "Scenes loaded unmodified (empty materials render as default grey); only camera, sky, sun and ambient light were added. Lighting in a game scene will differ."
+  "note": "Scenes loaded unmodified (empty materials render as default grey); only camera, sky, sun, ambient light and a camera headlamp were added; exported Glass surfaces render with a clear material. Lighting in a game scene will differ."
 }

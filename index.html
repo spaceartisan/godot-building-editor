@@ -393,6 +393,7 @@
           <button id="validate-btn">Check building</button>
           <button id="download-check-report-btn" type="button" title="Download current errors, warnings and object references as JSON">Download check report</button>
           <label class="checkbox" title="Also check that every floor area and stair can be reached from open ground through doors, empty passages and stairs (0.25 m walker clearance). Same check as the CLI validate --reachability."><input id="route-check-toggle" type="checkbox" /> Include route check</label>
+          <label title="Optional interior start points for the route check, for buildings with no opening to the outside (a sealed ship or bunker): x,z or x,z,floorId, several separated by ;. The floor defaults to the ground floor. Same as the CLI --from option.">Route start (optional)<input id="route-start" type="text" placeholder="x,z[,floorId]; …" autocomplete="off" spellcheck="false" /></label>
           <p class="muted compact-help">Reports describe the current checks. Save the building JSON separately for editing.</p>
           <p id="validation-summary" class="muted compact-help" role="status" aria-live="polite" aria-atomic="true" tabindex="-1"></p>
           <ul id="validation-results" class="muted"></ul>
@@ -403,7 +404,7 @@
           <p class="muted">Exports a building <code>.tscn</code> plus separate door scenes. Floors, ceilings and roofs can be generated automatically or supplemented/replaced with independent absolute-height manual surfaces. Walls, stairs, platforms and supports are baked for Godot while material-facing surfaces remain independently assignable where appropriate.</p>
           <button id="godot-render-btn" type="button" title="Render the current export in Godot with default materials. Needs the local server started with GODOT_BIN.">Render in Godot</button>
           <p class="muted compact-help">Renders the unmodified export with Godot through the local server (<code>GODOT_BIN=/path/to/godot node server.mjs</code>), using the same views as <code>godot-check --render</code>: exterior diagonals, aerial and eye-level views of labelled regions.</p>
-          <label class="checkbox" title="Diagnostic colours by surface type: OutsideFaces grey, InsideFaces pink, EdgeFaces teal, interior SideA/SideB orange/yellow, slab tops/bottoms green/blue, roofs brown. Same as godot-check --render --surface-colors."><input id="render-surface-colors-toggle" type="checkbox" /> Color surfaces by type</label>
+          <label class="checkbox" title="Diagnostic colours by surface type: OutsideFaces grey, InsideFaces pink, exterior EdgeFaces teal, interior SideA/SideB orange/yellow, interior EdgeFaces red, slab tops/bottoms green/blue, roofs brown. Same as godot-check --render --surface-colors."><input id="render-surface-colors-toggle" type="checkbox" /> Color surfaces by type</label>
           <label class="checkbox" title="Add a Godot render from the current 3D preview camera (whole building, not the preview's floor cutaway)."><input id="render-current-view-toggle" type="checkbox" checked /> Include current 3D view</label>
           <p id="godot-render-status" class="muted compact-help" role="status" aria-live="polite"></p>
           <div id="godot-render-results" class="godot-render-results"></div>

@@ -1,0 +1,467 @@
+{
+  "version": 1,
+  "operations": [
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "light_cargo_1",
+      "value": {
+        "label": "Cargo bay light 1",
+        "position": {
+          "x": -12,
+          "y": 2.85,
+          "z": -3.5
+        },
+        "color": {
+          "r": 0.82,
+          "g": 0.9,
+          "b": 1
+        },
+        "energy": 1.1,
+        "range": 12.5,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "light_cargo_2",
+      "value": {
+        "label": "Cargo bay light 2",
+        "position": {
+          "x": -12,
+          "y": 2.85,
+          "z": 3.5
+        },
+        "color": {
+          "r": 0.82,
+          "g": 0.9,
+          "b": 1
+        },
+        "energy": 1.1,
+        "range": 12.5,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "light_engineering",
+      "value": {
+        "label": "Engineering light",
+        "position": {
+          "x": -1.5,
+          "y": 2.85,
+          "z": -4.125
+        },
+        "color": {
+          "r": 0.82,
+          "g": 0.9,
+          "b": 1
+        },
+        "energy": 1.1,
+        "range": 7.2,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "light_reactor",
+      "value": {
+        "label": "Reactor room light",
+        "position": {
+          "x": 6.5,
+          "y": 2.85,
+          "z": -4.125
+        },
+        "color": {
+          "r": 0.82,
+          "g": 0.9,
+          "b": 1
+        },
+        "energy": 1.1,
+        "range": 7.2,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "light_d1_corridor_1",
+      "value": {
+        "label": "Deck 1 corridor light 1",
+        "position": {
+          "x": -2,
+          "y": 2.85,
+          "z": 0
+        },
+        "color": {
+          "r": 0.82,
+          "g": 0.9,
+          "b": 1
+        },
+        "energy": 1.1,
+        "range": 5.9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "light_d1_corridor_2",
+      "value": {
+        "label": "Deck 1 corridor light 2",
+        "position": {
+          "x": 6,
+          "y": 2.85,
+          "z": 0
+        },
+        "color": {
+          "r": 0.82,
+          "g": 0.9,
+          "b": 1
+        },
+        "energy": 1.1,
+        "range": 5.9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "light_storage",
+      "value": {
+        "label": "Storage light",
+        "position": {
+          "x": -2.5,
+          "y": 2.85,
+          "z": 4.125
+        },
+        "color": {
+          "r": 0.82,
+          "g": 0.9,
+          "b": 1
+        },
+        "energy": 1.1,
+        "range": 7.2,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "light_airlock",
+      "value": {
+        "label": "Airlock light",
+        "position": {
+          "x": 3,
+          "y": 2.85,
+          "z": 4.125
+        },
+        "color": {
+          "r": 0.82,
+          "g": 0.9,
+          "b": 1
+        },
+        "energy": 1.1,
+        "range": 5.6,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "light_life",
+      "value": {
+        "label": "Life support light",
+        "position": {
+          "x": 7.5,
+          "y": 2.85,
+          "z": 4.125
+        },
+        "color": {
+          "r": 0.82,
+          "g": 0.9,
+          "b": 1
+        },
+        "energy": 1.1,
+        "range": 6.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "light_sensor_1",
+      "value": {
+        "label": "Sensor bay light 1",
+        "position": {
+          "x": 15,
+          "y": 2.85,
+          "z": -3.5
+        },
+        "color": {
+          "r": 0.82,
+          "g": 0.9,
+          "b": 1
+        },
+        "energy": 1.1,
+        "range": 12.5,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "light_sensor_2",
+      "value": {
+        "label": "Sensor bay light 2",
+        "position": {
+          "x": 15,
+          "y": 2.85,
+          "z": 3.5
+        },
+        "color": {
+          "r": 0.82,
+          "g": 0.9,
+          "b": 1
+        },
+        "energy": 1.1,
+        "range": 12.5,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "deck_2",
+      "id": "light_lounge_1",
+      "value": {
+        "label": "Observation lounge light 1",
+        "position": {
+          "x": -10,
+          "y": 2.65,
+          "z": -2.75
+        },
+        "color": {
+          "r": 0.82,
+          "g": 0.9,
+          "b": 1
+        },
+        "energy": 1.1,
+        "range": 10.4,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "deck_2",
+      "id": "light_lounge_2",
+      "value": {
+        "label": "Observation lounge light 2",
+        "position": {
+          "x": -10,
+          "y": 2.65,
+          "z": 2.75
+        },
+        "color": {
+          "r": 0.82,
+          "g": 0.9,
+          "b": 1
+        },
+        "energy": 1.1,
+        "range": 10.4,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "deck_2",
+      "id": "light_d2_corridor_1",
+      "value": {
+        "label": "Deck 2 corridor light 1",
+        "position": {
+          "x": -2.25,
+          "y": 2.65,
+          "z": 0
+        },
+        "color": {
+          "r": 0.82,
+          "g": 0.9,
+          "b": 1
+        },
+        "energy": 1.1,
+        "range": 5.9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "deck_2",
+      "id": "light_d2_corridor_2",
+      "value": {
+        "label": "Deck 2 corridor light 2",
+        "position": {
+          "x": 5.25,
+          "y": 2.65,
+          "z": 0
+        },
+        "color": {
+          "r": 0.82,
+          "g": 0.9,
+          "b": 1
+        },
+        "energy": 1.1,
+        "range": 5.9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "deck_2",
+      "id": "light_q1",
+      "value": {
+        "label": "Crew quarters 1 light",
+        "position": {
+          "x": -3.75,
+          "y": 2.65,
+          "z": -3.375
+        },
+        "color": {
+          "r": 0.82,
+          "g": 0.9,
+          "b": 1
+        },
+        "energy": 1.1,
+        "range": 5,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "deck_2",
+      "id": "light_q2",
+      "value": {
+        "label": "Crew quarters 2 light",
+        "position": {
+          "x": 1.125,
+          "y": 2.65,
+          "z": -3.375
+        },
+        "color": {
+          "r": 0.82,
+          "g": 0.9,
+          "b": 1
+        },
+        "energy": 1.1,
+        "range": 5.4,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "deck_2",
+      "id": "light_q3",
+      "value": {
+        "label": "Captain's quarters light",
+        "position": {
+          "x": 6.375,
+          "y": 2.65,
+          "z": -3.375
+        },
+        "color": {
+          "r": 0.82,
+          "g": 0.9,
+          "b": 1
+        },
+        "energy": 1.1,
+        "range": 5.4,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "deck_2",
+      "id": "light_mess",
+      "value": {
+        "label": "Mess light",
+        "position": {
+          "x": -2,
+          "y": 2.65,
+          "z": 3.375
+        },
+        "color": {
+          "r": 0.82,
+          "g": 0.9,
+          "b": 1
+        },
+        "energy": 1.1,
+        "range": 6.6,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "deck_2",
+      "id": "light_med",
+      "value": {
+        "label": "Med bay light",
+        "position": {
+          "x": 5.5,
+          "y": 2.65,
+          "z": 3.375
+        },
+        "color": {
+          "r": 0.82,
+          "g": 0.9,
+          "b": 1
+        },
+        "energy": 1.1,
+        "range": 6.6,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "deck_2",
+      "id": "light_bridge_1",
+      "value": {
+        "label": "Bridge light 1",
+        "position": {
+          "x": 12.5,
+          "y": 2.65,
+          "z": -2.75
+        },
+        "color": {
+          "r": 0.82,
+          "g": 0.9,
+          "b": 1
+        },
+        "energy": 1.1,
+        "range": 10.4,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "deck_2",
+      "id": "light_bridge_2",
+      "value": {
+        "label": "Bridge light 2",
+        "position": {
+          "x": 12.5,
+          "y": 2.65,
+          "z": 2.75
+        },
+        "color": {
+          "r": 0.82,
+          "g": 0.9,
+          "b": 1
+        },
+        "energy": 1.1,
+        "range": 10.4,
+        "shadows": false
+      }
+    }
+  ]
+}

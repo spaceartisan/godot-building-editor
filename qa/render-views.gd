@@ -101,9 +101,15 @@ func _auto_views(root: Node3D) -> Array:
 			var cz := (float(region["minZ"]) + float(region["maxZ"])) / 2.0
 			var along_x := float(region["maxX"]) - float(region["minX"]) >= float(region["maxZ"]) - float(region["minZ"])
 			var half := (float(region["maxX"]) - float(region["minX"]) if along_x else float(region["maxZ"]) - float(region["minZ"])) / 2.0
-			var eye := Vector3(cx - (half * 0.6 if along_x else 0.0), y + 1.65, cz - (0.0 if along_x else half * 0.6))
 			var look := Vector3(cx + (half if along_x else 0.0), y + 1.4, cz + (0.0 if along_x else half))
-			views.append({"name": "floor-%02d-%s" % [fi + 1, _slug(label)], "eye": [eye.x, eye.y, eye.z], "look": [look.x, look.y, look.z], "fov": 75.0})
+			# Candidate eye points back from the far wall; _aim uses the first one
+			# not inside collision (a stair flight, railing or wall).
+			var candidates := []
+			for back in [0.6, 0.4, 0.8, 0.2, 0.0]:
+				for side in [0.0, 0.3, -0.3]:
+					var e := Vector3(cx - (half * back if along_x else side * half), y + 1.65, cz - (side * half if along_x else half * back))
+					candidates.append([e.x, e.y, e.z])
+			views.append({"name": "floor-%02d-%s" % [fi + 1, _slug(label)], "eye": candidates[0], "look": [look.x, look.y, look.z], "fov": 75.0, "candidates": candidates})
 			region_views += 1
 	return views
 
@@ -113,8 +119,19 @@ const SURFACE_COLORS := {
 	"OutsideFaces": Color(0.55, 0.55, 0.57), "InsideFaces": Color(0.95, 0.45, 0.75),
 	"EdgeFaces": Color(0.1, 0.85, 0.85), "SideAFaces": Color(1.0, 0.6, 0.2), "SideBFaces": Color(0.95, 0.9, 0.25),
 	"TopFaces": Color(0.35, 0.8, 0.35), "BottomFaces": Color(0.3, 0.45, 0.95), "RoofFaces": Color(0.6, 0.35, 0.2),
-	"RoofSideFaces": Color(0.75, 0.5, 0.3), "RoomFaces": Color(0.55, 0.4, 0.85)
+	"RoofSideFaces": Color(0.75, 0.5, 0.3), "RoomFaces": Color(0.55, 0.4, 0.85),
+	# Interior-wall EdgeFaces get their own colour so interior seams and caps
+	# are not confused with exterior ones.
+	"InteriorEdgeFaces": Color(0.9, 0.15, 0.2)
 }
+func _under(node: Node, ancestor_name: String) -> bool:
+	var p := node.get_parent()
+	while p != null:
+		if str(p.name) == ancestor_name:
+			return true
+		p = p.get_parent()
+	return false
+
 func _apply_surface_colors(root: Node) -> void:
 	var materials := {}
 	for key in SURFACE_COLORS:
@@ -125,12 +142,15 @@ func _apply_surface_colors(root: Node) -> void:
 		var mi := node as MeshInstance3D
 		if mi.mesh == null:
 			continue
+		var interior := _under(mi, "InteriorWalls")
 		for i in mi.mesh.get_surface_count():
 			var surface_name := ""
 			if mi.mesh is ArrayMesh:
 				surface_name = (mi.mesh as ArrayMesh).surface_get_name(i)
 			if not materials.has(surface_name):
 				surface_name = str(mi.name)
+			if interior and surface_name == "EdgeFaces":
+				surface_name = "InteriorEdgeFaces"
 			if materials.has(surface_name):
 				mi.set_surface_override_material(i, materials[surface_name])
 
@@ -161,7 +181,23 @@ func _load_job() -> void:
 	job["views"] = (cfg["views"] if cfg["views"] != null else _auto_views(current)) + cfg.get("extraViews", [])
 	job["view"] = 0
 
+func _blocked(p: Vector3) -> bool:
+	var space := camera.get_world_3d().direct_space_state
+	for dy in [0.0, -0.8, -1.4]:
+		var q := PhysicsPointQueryParameters3D.new()
+		q.position = p + Vector3(0, dy, 0)
+		if not space.intersect_point(q, 1).is_empty():
+			return true
+	return false
+
 func _aim(view) -> void:
+	if view.has("candidates"):
+		for c in view["candidates"]:
+			var p := Vector3(c[0], c[1], c[2])
+			if not _blocked(p):
+				view["eye"] = c
+				break
+		view.erase("candidates")
 	camera.fov = float(view.get("fov", 60.0))
 	camera.global_position = Vector3(view["eye"][0], view["eye"][1], view["eye"][2])
 	var target := Vector3(view["look"][0], view["look"][1], view["look"][2])
@@ -177,6 +213,9 @@ func _process(_delta: float) -> bool:
 	if wait == 0:
 		if not jobs[index].has("views"):
 			_load_job()
+			# Let physics register the scene's collision before choosing eye points.
+			wait = -3
+			return false
 		_aim(jobs[index]["views"][jobs[index]["view"]])
 	if wait < 6:
 		return false

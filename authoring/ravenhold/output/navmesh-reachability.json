@@ -29,6 +29,8 @@
       "maxLength": null,
       "name": "Courtyard",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 10.9999990463257,
       "snap": [
@@ -36,6 +38,7 @@
         0.0699999928474426,
         6
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -48,6 +51,8 @@
       "maxLength": null,
       "name": "Great hall",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 34.0607503138017,
       "snap": [
@@ -55,6 +60,7 @@
         0.0699999928474426,
         -13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -67,6 +73,8 @@
       "maxLength": null,
       "name": "Barracks north",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 27.4892545293551,
       "snap": [
@@ -74,6 +82,7 @@
         0.0699999928474426,
         -5
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -86,6 +95,8 @@
       "maxLength": null,
       "name": "Barracks south",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 21.6326810733881,
       "snap": [
@@ -93,6 +104,7 @@
         0.0699999928474426,
         5
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -105,6 +117,8 @@
       "maxLength": null,
       "name": "Storehouse",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 27.4199327360839,
       "snap": [
@@ -112,6 +126,7 @@
         0.0699999928474426,
         -5
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -124,6 +139,8 @@
       "maxLength": null,
       "name": "Stables",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 21.4827672550455,
       "snap": [
@@ -131,6 +148,7 @@
         0.0699999928474426,
         5
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -143,6 +161,8 @@
       "maxLength": null,
       "name": "West guard room",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 4.81983068585396,
       "snap": [
@@ -150,6 +170,7 @@
         0.0699999928474426,
         15
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -162,6 +183,8 @@
       "maxLength": null,
       "name": "East guard room",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 4.7848087400198,
       "snap": [
@@ -169,6 +192,7 @@
         0.0699999928474426,
         15
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -181,6 +205,8 @@
       "maxLength": null,
       "name": "South-west store",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 9.29196778684855,
       "snap": [
@@ -188,6 +214,7 @@
         0.0699999928474426,
         13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -200,6 +227,8 @@
       "maxLength": null,
       "name": "South-east store",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 9.25694604218006,
       "snap": [
@@ -207,6 +236,7 @@
         0.0699999928474426,
         13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -219,6 +249,8 @@
       "maxLength": null,
       "name": "Keep undercroft",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 19.0439472477883,
       "snap": [
@@ -226,6 +258,7 @@
         0.0699999928474426,
         -2
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -238,6 +271,8 @@
       "maxLength": null,
       "name": "NW tower ground",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 33.3731560502201,
       "snap": [
@@ -245,6 +280,7 @@
         0.0699999928474426,
         -13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -257,6 +293,8 @@
       "maxLength": null,
       "name": "NE tower ground",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 33.4196405455004,
       "snap": [
@@ -264,6 +302,7 @@
         0.0699999928474426,
         -13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -276,6 +315,8 @@
       "maxLength": null,
       "name": "SE tower ground",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 27.5579961889889,
       "snap": [
@@ -283,6 +324,7 @@
         0.0699999928474426,
         13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -295,6 +337,8 @@
       "maxLength": null,
       "name": "SW tower ground",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 27.4004852818325,
       "snap": [
@@ -302,6 +346,7 @@
         0.0699999928474426,
         13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -314,6 +359,8 @@
       "maxLength": null,
       "name": "North wall walk",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 61.8613361425232,
       "snap": [
@@ -321,6 +368,7 @@
         4.26999998092651,
         -14.75
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -333,6 +381,8 @@
       "maxLength": null,
       "name": "East wall walk",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 41.8521246251184,
       "snap": [
@@ -340,6 +390,7 @@
         4.26999998092651,
         0
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -352,6 +403,8 @@
       "maxLength": null,
       "name": "West wall walk",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 41.8982494189404,
       "snap": [
@@ -359,6 +412,7 @@
         4.26999998092651,
         0
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -371,6 +425,8 @@
       "maxLength": null,
       "name": "South-west walk",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 25.7914519654587,
       "snap": [
@@ -378,6 +434,7 @@
         4.26999998092651,
         13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -390,6 +447,8 @@
       "maxLength": null,
       "name": "South-east walk",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 25.788746552309,
       "snap": [
@@ -397,6 +456,7 @@
         4.26999998092651,
         13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -409,6 +469,8 @@
       "maxLength": null,
       "name": "Guest chambers",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 58.8452515881509,
       "snap": [
@@ -416,6 +478,7 @@
         4.26999998092651,
         -11.75
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -428,6 +491,8 @@
       "maxLength": null,
       "name": "Chapel",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 58.8773938051891,
       "snap": [
@@ -435,6 +500,7 @@
         4.26999998092651,
         -11.75
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -447,6 +513,8 @@
       "maxLength": null,
       "name": "Armory",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 42.7103093189653,
       "snap": [
@@ -454,6 +522,7 @@
         4.26999998092651,
         0
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -466,6 +535,8 @@
       "maxLength": null,
       "name": "Garrison hall",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 42.688685500063,
       "snap": [
@@ -473,6 +544,7 @@
         4.26999998092651,
         0
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -485,6 +557,8 @@
       "maxLength": null,
       "name": "Winch room",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 29.4606715494301,
       "snap": [
@@ -492,6 +566,7 @@
         4.26999998092651,
         14
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -504,6 +579,8 @@
       "maxLength": null,
       "name": "Keep great chamber",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 30.5043366253376,
       "snap": [
@@ -511,6 +588,7 @@
         4.26999998092651,
         -2
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -523,6 +601,8 @@
       "maxLength": null,
       "name": "NW tower rampart room",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 48.4488613139838,
       "snap": [
@@ -530,6 +610,7 @@
         4.26999998092651,
         -13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -542,6 +623,8 @@
       "maxLength": null,
       "name": "NE tower rampart room",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 48.467638292117,
       "snap": [
@@ -549,6 +632,7 @@
         4.26999998092651,
         -13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -561,6 +645,8 @@
       "maxLength": null,
       "name": "SE tower rampart room",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 29.2831033912953,
       "snap": [
@@ -568,6 +654,7 @@
         4.26999998092651,
         13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -580,6 +667,8 @@
       "maxLength": null,
       "name": "SW tower rampart room",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 29.3407881194726,
       "snap": [
@@ -587,6 +676,7 @@
         4.26999998092651,
         13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -599,6 +689,8 @@
       "maxLength": null,
       "name": "NW tower top",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 62.0435557886958,
       "snap": [
@@ -606,6 +698,7 @@
         7.92000007629395,
         -13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -618,6 +711,8 @@
       "maxLength": null,
       "name": "NE tower top",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 62.1378334767651,
       "snap": [
@@ -625,6 +720,7 @@
         7.92000007629395,
         -13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -637,6 +733,8 @@
       "maxLength": null,
       "name": "SE tower top",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 40.5630934594665,
       "snap": [
@@ -644,6 +742,7 @@
         7.92000007629395,
         13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -656,6 +755,8 @@
       "maxLength": null,
       "name": "SW tower top",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 40.4751727292314,
       "snap": [
@@ -663,6 +764,7 @@
         7.92000007629395,
         13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -675,6 +777,8 @@
       "maxLength": null,
       "name": "Gatehouse top",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 44.2984302127734,
       "snap": [
@@ -682,6 +786,7 @@
         7.92000007629395,
         14
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -694,6 +799,8 @@
       "maxLength": null,
       "name": "Keep lord's chamber",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 42.3057550340891,
       "snap": [
@@ -701,6 +808,7 @@
         7.92000007629395,
         -2
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -713,6 +821,8 @@
       "maxLength": null,
       "name": "Keep roof",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 56.5919024050236,
       "snap": [
@@ -720,6 +830,7 @@
         11.6199998855591,
         -2
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -732,6 +843,8 @@
       "maxLength": 20,
       "name": "NW rampart room -> NW tower top",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 14.6128995269537,
       "snap": [
@@ -739,6 +852,7 @@
         7.92000007629395,
         -13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -751,6 +865,8 @@
       "maxLength": 20,
       "name": "NW rampart room -> NW tower ground",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 15.5025182068348,
       "snap": [
@@ -758,6 +874,7 @@
         0.0699999928474426,
         -13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -770,6 +887,8 @@
       "maxLength": 20,
       "name": "NE rampart room -> NE tower top",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 13.9646242726594,
       "snap": [
@@ -777,6 +896,7 @@
         7.92000007629395,
         -13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -789,6 +909,8 @@
       "maxLength": 20,
       "name": "NE rampart room -> NE tower ground",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 15.4747921526432,
       "snap": [
@@ -796,6 +918,7 @@
         0.0699999928474426,
         -13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -808,6 +931,8 @@
       "maxLength": 20,
       "name": "SE rampart room -> SE tower top",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 13.9535646997392,
       "snap": [
@@ -815,6 +940,7 @@
         7.92000007629395,
         13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -827,6 +953,8 @@
       "maxLength": 20,
       "name": "SE rampart room -> SE tower ground",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 15.7100991308689,
       "snap": [
@@ -834,6 +962,7 @@
         0.0699999928474426,
         13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -846,6 +975,8 @@
       "maxLength": 20,
       "name": "SW rampart room -> SW tower top",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 13.8800995834172,
       "snap": [
@@ -853,6 +984,7 @@
         7.92000007629395,
         13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -865,6 +997,8 @@
       "maxLength": 20,
       "name": "SW rampart room -> SW tower ground",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 15.5018794983625,
       "snap": [
@@ -872,6 +1006,7 @@
         0.0699999928474426,
         13
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -884,6 +1019,8 @@
       "maxLength": 20,
       "name": "Winch room -> gatehouse top",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 18.0666973292828,
       "snap": [
@@ -891,6 +1028,7 @@
         7.92000007629395,
         14
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     },
     {
@@ -903,6 +1041,8 @@
       "maxLength": 50,
       "name": "Keep undercroft -> keep roof",
       "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
       "pathArrives": true,
       "pathLength": 43.2891100794077,
       "snap": [
@@ -910,6 +1050,7 @@
         11.6199998855591,
         -2
       ],
+      "targetSnapDistance": 0,
       "withinMaxLength": true
     }
   ],
@@ -918,10 +1059,12 @@
     0,
     17
   ],
+  "startCovered": true,
   "startSnap": [
     0,
     0.0699999928474426,
     17
   ],
+  "startSnapDistance": 0,
   "unreachable": 0
 }

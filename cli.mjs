@@ -8,14 +8,15 @@ import { createRequire } from 'node:module';
 import { prepareDocument, inspectBuilding } from './src/diagnostics.js';
 import { createCheckReport } from './src/check-report.js';
 import { parseJsonText } from './src/document.js';
-import { exportGodotFiles, makeStoredZip } from './src/exporter.js';
+import { exportGodotFiles, makeStoredZip, exteriorWallOutsideSign, isExteriorWall } from './src/exporter.js';
+import { profileWallState } from './src/wall-profile-geometry.js';
 import { prepareAssetDirectory, AssetCheckError } from './asset-check.mjs';
 import { renderPreparedScenes, parseViews, RenderError } from './godot-render.mjs';
 import { EXAMPLE_CATALOG } from './src/examples.js';
 import { checkExampleExpectation } from './src/example-check.js';
 import { applyTransaction } from './src/transactions.js';
-import { makeEmptyBuilding } from './src/model.js';
-import { reachabilityWarnings } from './src/reachability.js';
+import { makeEmptyBuilding, floorView } from './src/model.js';
+import { reachabilityWarnings, parseRouteStarts } from './src/reachability.js';
 import { attachmentSummary } from './src/roof-diagnostics.js';
 import { runReleaseCheck, assertExternalReport } from './release-check.mjs';
 import { suites } from './test-suites.mjs';
@@ -23,8 +24,13 @@ import { suites } from './test-suites.mjs';
 const root=path.dirname(fileURLToPath(import.meta.url));
 const version=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8')).version;
 const common=['json','quiet','verbose','help'];
-const specs={new:['out','name'],edit:['ops','out','dry-run','warnings-as-errors'],validate:['warnings-as-errors','out','reachability'],inspect:['warnings-as-errors','entities','reachability'],export:['out','profile','no-collision','no-markers','placeholders','warnings-as-errors'],package:['out','profile','no-collision','no-markers','placeholders','warnings-as-errors','include-json'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision','render','views','out','surface-colors'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof']};
-const values=new Set(['name','views','ops','out','profile','suite','godot','assets','yaw','pitch','distance','floor','view','compare','overlay','roof','canvas','engine','timeout']);
+// Resolved plan direction of each shaped wall's positive (inward) offset.
+function profileInward(building,floor){
+  const i=building.floors.indexOf(floor),view=floorView(building,i);
+  return (view.walls||[]).filter(w=>w.wallTypeId).map(w=>{const n=profileWallState(view,w,exteriorWallOutsideSign,isExteriorWall).n;return {wallId:w.id,inwardSide:w.inwardSide||'auto',inward:{x:Math.round(n.x*1e6)/1e6+0,z:Math.round(n.z*1e6)/1e6+0}};});
+}
+const specs={new:['out','name'],edit:['ops','out','dry-run','warnings-as-errors'],validate:['warnings-as-errors','out','reachability','from'],inspect:['warnings-as-errors','entities','reachability','from'],export:['out','profile','no-collision','no-markers','placeholders','warnings-as-errors'],package:['out','profile','no-collision','no-markers','placeholders','warnings-as-errors','include-json'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision','render','views','out','surface-colors'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof']};
+const values=new Set(['from','name','views','ops','out','profile','suite','godot','assets','yaw','pitch','distance','floor','view','compare','overlay','roof','canvas','engine','timeout']);
 class CliError extends Error{constructor(message,code=2){super(message);this.code=code;}}
 const help=`Building Studio ${version}
 Usage: node cli.mjs COMMAND [FILES...] [OPTIONS]
@@ -34,6 +40,8 @@ Usage: node cli.mjs COMMAND [FILES...] [OPTIONS]
   inspect FILE... [--entities]   Inventory; optionally list authoring IDs/fields
     --reachability      Validate/inspect: warn about floor areas and stairs that
                         cannot be reached from outside via doors and stairs
+    --from "X,Z[,FLOOR_ID][;...]"  With --reachability: also start the route
+                        from these interior points (sealed ships, bunkers)
   edit FILE --ops JSON --dry-run   Validate a transaction and show its diff
   edit FILE --ops JSON --out FILE  Save the validated edit to a NEW building JSON
   export FILE... --out DIR   Export TSCNs and doors to a NEW directory
@@ -52,8 +60,9 @@ Usage: node cli.mjs COMMAND [FILES...] [OPTIONS]
                         Godot (needs DISPLAY or xvfb-run): exterior, aerial and
                         eye-level region views unless FILE lists views
     --surface-colors    With --render: colour surfaces by type (OutsideFaces
-                        grey, InsideFaces pink, EdgeFaces teal, SideA/B
-                        orange/yellow, slab tops/bottoms green/blue, roofs brown)
+                        grey, InsideFaces pink, exterior EdgeFaces teal,
+                        interior SideA/B orange/yellow, interior EdgeFaces
+                        red, slab tops/bottoms green/blue, roofs brown)
 
 Global: --json (one result on stdout), --quiet, --verbose, --help, --version
 Validate/inspect/export/package/edit: --warnings-as-errors
@@ -293,7 +302,7 @@ async function execute({command,options,files}){
       if(renderOut&&ok){
         const rendered=renderPreparedScenes({executable:executable.includes('/')||executable.includes('\\')?path.resolve(executable):executable,prepared,views,colorMode:options['surface-colors']?'surfaces':'materials'});
         const manifest={engineVersion,colorMode:rendered.colorMode,renderer:rendered.renderer,virtualDisplay:rendered.virtualDisplay,scenes:rendered.roots,views:rendered.manifest,
-          note:'Scenes loaded unmodified (empty materials render as default grey); only camera, sky, sun and ambient light were added. Lighting in a game scene will differ.'};
+          note:'Scenes loaded unmodified (empty materials render as default grey); only camera, sky, sun, ambient light and a camera headlamp were added; exported Glass surfaces render with a clear material. Lighting in a game scene will differ.'};
         writeDirectory(renderOut,[...rendered.entries,{name:'renders.json',data:JSON.stringify(manifest,null,2)+'\n'}]);
         render={output:renderOut,images:rendered.entries.length,renderer:rendered.renderer,virtualDisplay:rendered.virtualDisplay,files:rendered.manifest.map(v=>v.file)};
       }
@@ -305,11 +314,13 @@ async function execute({command,options,files}){
     return {command,ok,engineVersion,checks,mode:'fixtures',scope:'Bundled example scenes and authored collision probes',results:[result],exitCode:ok?0:1};
   }
   let {loaded,exitCode}=documents(command==='preview'&&options.compare?[...files,path.resolve(options.compare)]:files,options['warnings-as-errors']);
+  if(options.from&&!options.reachability)throw new CliError('--from requires --reachability');
   if(options.reachability){
     // Opt-in route check: its findings join the document warnings, so strict
     // mode and saved check reports treat them like any other warning.
     for(const doc of loaded)if(doc.building&&!doc.errors.length){
-      const {result,warnings}=reachabilityWarnings(doc.building);
+      let starts;try{starts=parseRouteStarts(options.from,doc.building);}catch(e){throw new CliError(e.message);}
+      const {result,warnings}=reachabilityWarnings(doc.building,{starts});
       doc.reachability=result;doc.warnings=[...doc.warnings,...warnings];
       doc.ok=!options['warnings-as-errors']||!doc.warnings.length;if(!doc.ok)exitCode=Math.max(exitCode,1);
     }
@@ -328,7 +339,7 @@ async function execute({command,options,files}){
   if(command==='inspect'){
     response.results.forEach((r,i)=>{if(loaded[i].building&&!loaded[i].errors.length){
       const b=loaded[i].building;r.inspection=inspectBuilding(b);
-      if(options.entities)r.entities={floors:b.floors.map(f=>({id:f.id,label:f.label,overrides:{elevation:f.elevation??null,wallHeight:f.wallHeight??null,floorThickness:f.floorThickness??null},walls:f.walls,openings:f.openings,regions:f.regions,stairs:f.stairs,platforms:f.platforms,railings:f.railings||[],markers:f.markers||[]})),roofs:b.roofSections};
+      if(options.entities)r.entities={floors:b.floors.map(f=>({id:f.id,label:f.label,overrides:{elevation:f.elevation??null,wallHeight:f.wallHeight??null,floorThickness:f.floorThickness??null},walls:f.walls,openings:f.openings,regions:f.regions,stairs:f.stairs,platforms:f.platforms,railings:f.railings||[],lights:f.lights||[],markers:f.markers||[],profileInward:profileInward(b,f)})),roofs:b.roofSections,wallTypes:b.wallTypes||[],openingShapes:b.openingShapes||[]};
     }});return response;
   }
   if(exitCode)return response; // All input documents must pass before any write.
@@ -402,7 +413,9 @@ function human(result,verbose){
         '  Shell mesh instances: '+Object.entries(i.export.shells).map(([k,v])=>`${k}=${v.length}`).join(', '),`  ${i.export.verification}`);
     }
     if(r.entities){
-      for(const f of r.entities.floors){lines.push(`  Floor ID ${f.id} (${f.label})`, `    overrides: ${JSON.stringify(f.overrides)} (null = automatic/default)`);for(const k of ['walls','openings','regions','stairs','platforms','markers'])for(const entity of f[k])lines.push(`    ${k}: ${JSON.stringify(entity)}`);}
+      for(const t of r.entities.wallTypes)lines.push(`  wallType: ${JSON.stringify(t)}`);
+      for(const s of r.entities.openingShapes)lines.push(`  openingShape: ${JSON.stringify(s)}`);
+      for(const f of r.entities.floors){lines.push(`  Floor ID ${f.id} (${f.label})`, `    overrides: ${JSON.stringify(f.overrides)} (null = automatic/default)`);for(const k of ['walls','openings','regions','stairs','platforms','railings','lights','markers'])for(const entity of f[k])lines.push(`    ${k}: ${JSON.stringify(entity)}`);for(const q of f.profileInward)lines.push(`    profile inward: ${q.wallId} (${q.inwardSide}) → ${JSON.stringify(q.inward)}`);}
       for(const roof of r.entities.roofs)lines.push(`  roof: ${JSON.stringify(roof)}`);
     }
     if(verbose||!r.ok){if(r.stdout)lines.push(r.stdout.trimEnd());if(r.stderr)lines.push(r.stderr.trimEnd());if(r.error)lines.push(r.error);}

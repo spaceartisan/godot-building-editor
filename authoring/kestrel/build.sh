@@ -9,11 +9,9 @@ mkdir -p "$work"
 node $k/generate-transactions.mjs
 node cli.mjs new --out "$work/0-new.building.json" --name Kestrel
 node cli.mjs edit "$work/0-new.building.json" --ops $k/tx-1-structure.edit.json --out "$work/1-structure.building.json" --warnings-as-errors --quiet
-# Scoped JSON edit: wall types, doorway shapes, wall-type assignment (FINDINGS K1).
-node $k/apply-profiles.mjs "$work/1-structure.building.json" $k/profiles.json "$work/2-profiles.building.json"
-node cli.mjs validate "$work/2-profiles.building.json" --warnings-as-errors --quiet
-node cli.mjs edit "$work/2-profiles.building.json" --ops $k/tx-2-openings.edit.json --out "$work/3-openings.building.json" --warnings-as-errors --quiet
-node cli.mjs edit "$work/3-openings.building.json" --ops $k/tx-3-circulation.edit.json --out "$work/kestrel.building.json" --warnings-as-errors --quiet
+node cli.mjs edit "$work/1-structure.building.json" --ops $k/tx-2-openings.edit.json --out "$work/2-openings.building.json" --warnings-as-errors --quiet
+node cli.mjs edit "$work/2-openings.building.json" --ops $k/tx-3-circulation.edit.json --out "$work/3-circulation.building.json" --warnings-as-errors --quiet
+node cli.mjs edit "$work/3-circulation.building.json" --ops $k/tx-4-lighting.edit.json --out "$work/kestrel.building.json" --warnings-as-errors --quiet
 node cli.mjs validate "$work/kestrel.building.json" --warnings-as-errors --reachability --out "$work/checks.json"
 node cli.mjs export "$work/kestrel.building.json" --out "$work/assets" --warnings-as-errors --quiet
 if [ -n "$godot" ]; then

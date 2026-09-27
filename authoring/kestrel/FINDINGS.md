@@ -1,6 +1,21 @@
 # Kestrel findings: next steps for the tool
 
-These findings come from authoring the [Kestrel](README.md) with the CLI workflow and reviewing its Godot export. They are ordered by how much they would help AI authoring of walkable interiors. K0 was fixed in this pass. The others are proposed next steps, not yet implemented.
+These findings come from authoring the [Kestrel](README.md) with the CLI workflow and reviewing its Godot export. They are ordered by how much they would help AI authoring of walkable interiors. The K0 items were found and fixed while building the ship. Most of K1–K12 were then implemented in a follow-up pass; each carries its status.
+
+| Finding | Status |
+| --- | --- |
+| K1 CLI wall types, doorway shapes, assignment | **Fixed:** `wallType.*`, `openingShape.*`, `wall.add/update` `wallTypeId`/`inwardSide`/`inwardToward`; the Kestrel is now built with CLI commands only |
+| K2 Ceiling step under setbacks | Open: changes exported scenes for setback buildings, so it needs a decision |
+| K3 Lights from the CLI | **Fixed:** `light.add/update/remove`; the Kestrel now has 22 lights |
+| K4 Route check inside sealed vessels | **Fixed:** `--from` and the web **Route start** field |
+| K5 Route check ignores profiles | **Fixed:** shaped walls block by their profile's reach up to body height |
+| K6 Shaped wall ends need Standard stubs | Open |
+| K7 Doorway shapes door-only | Open |
+| K8 No ladders/lifts | Open |
+| K9 `inwardSide` hard to author | **Fixed:** `inwardToward` and `inspect --entities` `profileInward` |
+| K10 Eye-level views inside objects | **Fixed:** cameras use the first collision-free candidate point |
+| K11 Absolute profile station thickness | Open |
+| K12 Probe snap distances | **Fixed:** the probe fails starts and targets more than 0.6 m from the navmesh |
 
 **What worked well:**
 
@@ -36,7 +51,36 @@ Fix: `buildProfileMeshData` now skips the skirt underside (`src/exporter.js`). C
 
 `authoring/ravenhold/probe/run-reachability.mjs` accepts an optional targets file (`probe-targets.json` here).
 
-## Open: proposed next steps
+### K0d. Interior-wall surface check: nubs at non-right-angle junctions (fixed)
+
+Interior walls got their own surface-colour check. `--surface-colors` now paints interior-wall EdgeFaces red, distinct from exterior teal, while SideA stays orange and SideB yellow. Cameras were aimed at both faces and both ends of every interior wall: 272 views across 11 examples and 132 across the Kestrel. A numeric check confirmed that every SideA/SideB triangle in all examples and Ravenhold sits on the correct side of its wall.
+
+One real defect turned up:
+
+- **Cause:** in the Standard wall path, each wall end at a corner was extended by half the wall thickness along its own axis. That is exact only at 90°.
+- **Effect at obtuse corners and three-way junctions:**
+  - the extension overshot the neighbour's outer face;
+  - it left a small nub whose end cap showed as a red (interior) or teal (exterior) strip.
+- **Where:** the Y junction in `editable_junctions`, and every 135° corner of the octagonal outlines in `polygon_regions` and `round_bounding`.
+
+**Fix:** a new shared `junctionMiters` in `src/wall-union.js` handles junctions whose angles are not all multiples of 90°. There, wall ends are mitered against their angular neighbours, on the bisector planes through the junction point.
+
+- **Unchanged:** right-angle junctions and T-junctions keep the old box extension and their scene bytes. Collision boxes are unchanged.
+- **Examples:** only the three affected example scenes changed, and only in mesh data. They were regenerated with `generate-examples.mjs`.
+- **Tests:** a regression case in `exterior-shell-tests.mjs` fails before the fix and passes after it. It checks:
+  - no end caps at octagon corners;
+  - octagon siding area equals the exact mitered outline;
+  - no end caps at the Y junction.
+- **Hole check:** a ray-cast hole check around every Standard junction gave identical results before and after.
+
+Evidence: `godot-renders/interior-check/junction-miters-before-after.png`.
+
+Two things in the review look like defects but are not:
+
+- **Kestrel corridor ends:** red lens-shaped strips where each hexagonal corridor wall meets its straight end stub. They are the real step between the two profiles (K6). The other Kestrel partitions fit their shaped hosts cleanly.
+- **`editable_junctions` floor:** jagged pink patches on the floor. That building has no roof or ceiling, so they are sunlight through the stair opening with aliased shadow edges, not geometry.
+
+## Findings K1–K12
 
 ### K1. No CLI operations for wall types, doorway shapes or wall-type assignment (parity gap)
 
@@ -57,6 +101,8 @@ This breaks the rule that every capability is available in both web and CLI. Als
 - Bump the schema version automatically.
 - List the definitions in `inspect --entities`.
 
+**Status: fixed.** `wallType.add/update/remove` and `openingShape.add/update/remove` use the web dialogs' records and removal rules and the shared validators, and `wall.add/update` accept `wallTypeId`, `inwardSide` and `inwardToward`. `inspect --entities` lists the definitions. The Kestrel's `apply-profiles.mjs` is gone: the CLI-only rebuild produces an identical building and byte-identical scenes. Tests: `profile-transaction-tests.mjs` and web parity (dialog delete and inward direction equal the operations).
+
 ### K2. Automatic ceilings step 0.12 m below the upper floor's slab
 
 The automatic ceiling in exposed areas spans `wallHeight − ceiling.thickness … wallHeight`. The upper floor's slab starts at `wallHeight`. Wherever an upper story is smaller than the one below, the room's ceiling drops 0.12 m, with an edge band at the boundary.
@@ -72,11 +118,15 @@ Floors carry `lights`, which the web editor places and the exporter writes, but 
 
 **Next step:** `light.add/update/remove` transactions, with the same fields as the web editor.
 
+**Status: fixed.** `light.add/update/remove` take the web light panel's fields and defaults (`light-transaction-tests.mjs`, web parity in `web-parity-tests.mjs`). The Kestrel's `tx-4-lighting` adds 22 lights.
+
 ### K4. The route check cannot start inside a sealed vessel
 
 `--reachability` floods only from open ground outside the ground floor. The user's own spaceship (`spaceship.building.json`, one deck, 65 walls, 19 empty doorways) has 668.48 m² walkable and 0 m² reached. Every room is reported unreachable because the ship has no exterior opening, which is intended for a sealed ship. The Kestrel passes only because its cargo ramp and airlock are open empty doorways.
 
 **Next step:** a start option, such as `--from x,z[,floorId]` or a saved spawn marker, in both the CLI and the web **Include route check**.
+
+**Status: fixed.** `validate/inspect --reachability --from "x,z[,floorId][;...]"` and the web **Route start** field share `parseRouteStarts`. With `--from "-18,0"`, all 668.48 m² of the user's spaceship is reached. A start that is not on walkable floor is reported, and the web plan marks each start point.
 
 ### K5. The route check ignores wall profiles
 
@@ -85,6 +135,8 @@ Floors carry `lights`, which the web editor places and the exporter writes, but 
 The Kestrel's profiles lean outboard or away from the walkways, so its result is sound. A ship built with the inward `hull` preset could pass with 0.7 m corridors that are unusable in practice.
 
 **Next step:** inflate walls by their largest inward offset between the floor and walker height (about 1.8 m).
+
+**Status: fixed.** Shaped walls now block by their profile's reach on each side, sampled between the floor and 1.8 m. In the regression case, a 1.2 m corridor with inward-leaning walls is correctly impassable. The Kestrel's walkable areas dropped slightly (399.45 → 394.63 m² and 228.62 → 224.16 m²) because the corridor walls bulge 0.2 m into the cabins, and everything is still reached.
 
 ### K6. Shaped walls cannot end on another wall, so corridors need Standard stubs
 
@@ -113,11 +165,15 @@ The Kestrel's 3.38 m deck rise needs a 5 m run and a 7.7 m² slab opening, a lar
 - Accept `inwardToward: {x, z}` in the future wall operations (K1).
 - Report each shaped wall's resolved inward normal in `inspect --entities`.
 
+**Status: fixed.** `inwardToward: {x, z}` resolves to `left`/`right`, and `inspect --entities` reports `profileInward`, each shaped wall's resolved inward direction.
+
 ### K10. Automatic eye-level render views can sit inside objects
 
 The automatic cargo-bay view placed its camera inside the stair flight. Views are offset from the region centre with no regard for stairs or railings.
 
 **Next step:** pick eye points from the reachability grid, or nudge them out of stair and railing footprints.
+
+**Status: fixed.** Each automatic region view tries up to 15 candidate eye points and uses the first that a physics point query finds clear at eye, chest and knee height. The cargo-bay camera now stands beside the stair.
 
 ### K11. Profile station thickness is absolute
 
@@ -130,3 +186,5 @@ To avoid the warning that a profile "changes the floor/top edge", end stations n
 The probe reported "outside → airlock" as 2.6 m for a 6 m walk. There's no terrain outside the ship, so the start point snaps to the nearest navmesh point, which is the hatch threshold.
 
 **Next step:** report the snap distance for each start and target, and fail when it exceeds a tolerance.
+
+**Status: fixed.** The probe reports snap distances and fails a start, leg origin or target more than 0.6 m (horizontally) or 0.35 m (vertically) from the navmesh. This exposed that the original Kestrel start and airlock leg began outside the hull, 3–4 m from any navmesh. Both now start inside, and the Kestrel (18/18) and Ravenhold (47/47) pass.

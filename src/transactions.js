@@ -1,7 +1,7 @@
 import { regionPolygonProblem, regionBounds } from './regions.js';
 import { prepareDocument, resolvedFloorDimensions, inspectStair, inspectPlatform, inspectFloorCoverage } from './diagnostics.js';
 import { validateBuilding } from './validation.js';
-import { floorView, makeRegion, makeRoofSection, makeStair, makePlatform, rectValid, REGION_KINDS, REGION_EFFECTS, validateOpeningLayout } from './model.js';
+import { floorView, makeRegion, makeRoofSection, makeStair, makePlatform, makeRailing, wallLength, rectValid, REGION_KINDS, REGION_EFFECTS, validateOpeningLayout } from './model.js';
 import { proposeEndpointMove } from './wall-edit.js';
 import { wallSegmentProblem, proposePlatformUpdate } from './authoring.js';
 import {proposeFloorStackEdit} from './floor-stack.js';
@@ -28,9 +28,12 @@ const fields={
   platform:['label',...rectKeys,'kind','height','covered'],
   stair:['label','x','z','width','run','direction','style','steps','blockBelow'],
   wall:['label','role','height','a','b'],
+  railing:['label','a','b','height','style'],
   opening:['label','type','wallId','t','at','width','height','sill','doorStyle','windowStyle','shapeId'],
   roof:['label',...rectKeys,'type','direction','baseY','pitch','overhang','gableEnds','hostRoofId','edgeModes'],
-  region:['label',...rectKeys,'kind','effect','polygon']
+  region:['label',...rectKeys,'kind','effect','polygon'],
+  // Not an operation family: wall.crenellate value fields.
+  crenellation:['crenelWidth','merlonWidth','depth','idPrefix']
 };
 function checkValue(kind,value,action,where){
   let allowed=fields[kind];
@@ -69,6 +72,12 @@ function checkValue(kind,value,action,where){
       else if(key==='boundaryMode')choice(v,['closed','intentional_open'],p);
       else if(v!==null)number(v,p,key==='elevation'?-1e6:key==='wallHeight'?.2:.001,key==='elevation'?1e6:key==='wallHeight'?1000:100);
     }
+    else if(kind==='railing'&&key==='height')number(v,p,.4,100);
+    else if(kind==='railing'&&key==='style')choice(v,['two_rail','picket','cross_brace'],p);
+    else if(kind==='crenellation'){
+      if(key==='idPrefix'){text(v,p);if(!/^[A-Za-z0-9_-]{1,48}$/.test(v))fail('idPrefix must be 1–48 letters, digits, - or _',p);}
+      else number(v,p,key==='depth'?.1:.2,key==='depth'?100:1000);
+    }
     else if(key==='polygon'){const problem=regionPolygonProblem(v);if(problem)fail(problem,p);}
     else if(key==='a'||key==='b'||key==='at')point(v,p);
     else if(key==='role')choice(v,['exterior','interior'],p);
@@ -92,7 +101,8 @@ function checkValue(kind,value,action,where){
     else number(v,p);
   }
   if(kind==='opening'&&Object.hasOwn(value,'t')&&Object.hasOwn(value,'at'))fail('Use either t or at, not both',where);
-  if(action==='add')for(const required of kind==='stair'?['x','z','width','run','direction']:kind==='wall'?['a','b']:kind==='opening'?['type','wallId',Object.hasOwn(value,'at')?'at':'t','width','height']:kind==='region'&&value.polygon?['polygon']:rectKeys)
+  if(kind==='crenellation')for(const required of ['crenelWidth','merlonWidth','depth'])if(!Object.hasOwn(value,required))fail(`Missing required field: ${required}`,where);
+  if(action==='add')for(const required of kind==='stair'?['x','z','width','run','direction']:kind==='wall'||kind==='railing'?['a','b']:kind==='opening'?['type','wallId',Object.hasOwn(value,'at')?'at':'t','width','height']:kind==='region'&&value.polygon?['polygon']:rectKeys)
     if(!Object.hasOwn(value,required))fail(`Missing required field: ${required}`,where);
 }
 
@@ -105,7 +115,11 @@ export function validateTransaction(transaction){
     const p=`operations/${index}`;
     if(!object(op)||typeof op.op!=='string')fail('Expected an operation object with an op name',p);
     const [kind,action,...extra]=op.op.split('.');
-    if(extra.length||!Object.hasOwn(fields,kind)||!(kind==='floor'?['update','add-top','remove-top']:kind==='building'?['update']:['add','update','remove',...(kind==='wall'?['move-endpoint']:[])]).includes(action))fail(`Unknown operation: ${op.op}`,p);
+    if(extra.length||!Object.hasOwn(fields,kind)||!(kind==='floor'?['update','add-top','remove-top']:kind==='building'?['update']:['add','update','remove',...(kind==='wall'?['move-endpoint','crenellate']:[])]).includes(action))fail(`Unknown operation: ${op.op}`,p);
+    if(kind==='wall'&&action==='crenellate'){
+      keys(op,['op','id','floorId','value'],p);text(op.id,`${p}/id`);text(op.floorId,`${p}/floorId`);
+      checkValue('crenellation',op.value,'crenellate',`${p}/value`);return;
+    }
     if(kind==='building'){keys(op,['op','value'],p);checkValue(kind,op.value,action,`${p}/value`);return;}
     if(kind==='floor'&&action!=='update'){
       keys(op,['op','id',...(action==='add-top'?['aboveFloorId','value']:['removeContents','removeAffectedStairs'])],p);text(op.id,`${p}/id`);
@@ -198,7 +212,7 @@ function applyOperation(building,op,index){
   }
   const fi=kind==='roof'?-1:building.floors.findIndex(f=>f.id===op.floorId);
   if(kind!=='roof'&&fi<0)fail(`Unknown floor ID: ${op.floorId}`,p);
-  const floor=building.floors[fi],collection={wall:'walls',opening:'openings',roof:'roofSections',region:'regions',stair:'stairs',platform:'platforms'}[kind];
+  const floor=building.floors[fi],collection={wall:'walls',railing:'railings',opening:'openings',roof:'roofSections',region:'regions',stair:'stairs',platform:'platforms'}[kind];
   const list=kind==='roof'?building.roofSections:floor[collection],item=list.find(v=>v.id===op.id);
   if(action==='add'&&item)fail(`ID already exists: ${op.id}`,p);
   if(action!=='add'&&!item)fail(`Unknown ${kind} ID: ${op.id}`,p);
@@ -213,6 +227,23 @@ function applyOperation(building,op,index){
   }
   if(kind==='stair'&&action!=='remove'&&!building.floors[fi+1])fail('Stair add/update requires an adjacent upper floor',p);
   if(action==='remove'){list.splice(list.indexOf(item),1);return;}
+  if(action==='crenellate'){
+    // Evenly spaced top-open crenels as ordinary empty window openings, with
+    // merlons at both ends. Openings keep deterministic IDs and stay editable.
+    const {crenelWidth,merlonWidth,depth}=op.value,prefix=op.value.idPrefix??`${item.id}-crenel`,length=wallLength(item);
+    const height=item.height??floorView(building,fi).wallHeight;
+    if(depth>=height)fail(`Crenel depth ${depth} m must be less than the wall height ${height} m`,`${p}/value/depth`);
+    const count=Math.floor((length-merlonWidth)/(crenelWidth+merlonWidth));
+    if(count<1)fail(`Wall ${item.id} (${Number(length.toFixed(3))} m) is too short for one ${crenelWidth} m crenel between ${merlonWidth} m merlons`,`${p}/value`);
+    const margin=(length-count*crenelWidth-(count-1)*merlonWidth)/2;
+    for(let i=0;i<count;i++){
+      const id=`${prefix}-${i+1}`;
+      if(floor.openings.some(o=>o.id===id))fail(`ID already exists: ${id}`,p);
+      const t=Math.round((margin+crenelWidth/2+i*(crenelWidth+merlonWidth))/length*1e9)/1e9;
+      floor.openings.push({label:'Crenel',sill:height-depth,windowStyle:'empty',type:'window',wallId:item.id,t,width:crenelWidth,height:depth,id});
+    }
+    return;
+  }
   if(action==='move-endpoint'){
     const result=proposeEndpointMove(building,fi,op.id,op.end,op.point,{connected:op.connected!==false});
     if(!result.ok)fail(result.reason,p);building.floors[fi]=result.floor;return;
@@ -235,6 +266,7 @@ function applyOperation(building,op,index){
   if(action==='add'){
     let defaults;
     if(kind==='wall')defaults={label:'',role:'interior',height:null};
+    else if(kind==='railing'){const r=makeRailing(value.a,value.b,value.label||'Railing',value.height??1,value.style||'two_rail');delete r.id;defaults=r;}
     else if(kind==='stair')defaults=makeStair({x:0,z:0},{x:0,z:-value.run},value.width,value.style||'ramp',value.steps??12,value.label||'');
     else if(kind==='opening')defaults={label:value.type==='door'?'Door':'Window',...(value.type==='window'?{sill:.9,windowStyle:'plain'}:{doorStyle:'room'})};
     else {
@@ -248,6 +280,10 @@ function applyOperation(building,op,index){
   if(kind==='region'&&updated.polygon)Object.assign(updated,regionBounds(updated.polygon));
   if(kind==='roof'&&updated.hostRoofId===null)delete updated.hostRoofId;
   if(kind==='roof'||kind==='region')if(!rectValid(updated))fail('Rectangle must have positive width and depth of at least 0.1 m each',p);
+  if(kind==='railing'){
+    if(wallLength(updated)<=.15)fail('Railing segments must be longer than 0.15 m',p);
+    if(updated.height>floorView(building,fi).wallHeight)fail('Railing height exceeds the story height',p);
+  }
   if(kind==='wall'){
     const problem=wallSegmentProblem(updated.a,updated.b,list.filter(v=>v!==updated));
     if(problem)fail(problem,p);

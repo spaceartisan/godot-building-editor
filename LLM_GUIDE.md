@@ -25,12 +25,13 @@ For a new design, start from `node cli.mjs new --out NEW.json --name NAME` (floo
 | Floors | Existing dimensions/labels/surface switches/boundary mode, add/remove top floor | Basement/middle insertion, duplication and reordering are web controls |
 | Stairs/platforms | Add, update, remove transactions | Stairs connect adjacent floors; independent pieces do not automatically follow platform edits |
 | Wall/door shapes | Web dialogs or authored JSON; transactions assign an existing door `shapeId` | No dedicated shared-shape-library transaction operations |
+| Parapets and guards | `wall.crenellate` (crenels as empty windows), `railing.add/update/remove` | Wall thickness remains building-wide |
 | Lights/markers/manual slabs | Web controls or supported JSON fields | No corresponding dedicated transaction commands in this version |
 | Inspect appearance | Web 3D preview; CLI `preview` with floor/roof views, comparisons and overlays | Optional canvas dependency for PNGs; no CLI plan/collision-overlay mode |
 | Generate Godot assets | `export FILE --out NEW_DIR`, `package FILE --out NEW.zip` | Retain relative door dependencies; materials empty by default |
 | Verify exported assets | `godot-check --assets DIR --godot PATH`; add `--render --out NEW_DIR` for Godot screenshots | Resource checks, not character traversal certification; rendering needs a display or xvfb-run |
 
-Transactions support `building.update`, `floor.update/add-top/remove-top`, `wall.add/update/move-endpoint/remove`, and `opening`, `roof`, `region`, `stair`, `platform` add/update/remove. Do not extrapolate new operation names from this pattern. Read the operation table for supported `value` fields and removal flags. In particular, retained wall-profile fields do not imply `wall.update` accepts them.
+Transactions support `building.update`, `floor.update/add-top/remove-top`, `wall.add/update/move-endpoint/crenellate/remove`, and `railing`, `opening`, `roof`, `region`, `stair`, `platform` add/update/remove. Do not extrapolate new operation names from this pattern. Read the operation table for supported `value` fields and removal flags. In particular, retained wall-profile fields do not imply `wall.update` accepts them.
 
 Core CLI and web serving need Node 20+ and no npm install. Linux is the tested platform. `CANVAS_MODULE` can name an installed canvas module; `GODOT_BIN` or `--godot` supplies an existing Godot executable. Browser tests additionally need Playwright and its Chromium binary. Do not infer availability from the module alone.
 

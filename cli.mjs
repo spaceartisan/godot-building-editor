@@ -324,7 +324,7 @@ async function execute({command,options,files}){
   if(command==='inspect'){
     response.results.forEach((r,i)=>{if(loaded[i].building&&!loaded[i].errors.length){
       const b=loaded[i].building;r.inspection=inspectBuilding(b);
-      if(options.entities)r.entities={floors:b.floors.map(f=>({id:f.id,label:f.label,overrides:{elevation:f.elevation??null,wallHeight:f.wallHeight??null,floorThickness:f.floorThickness??null},walls:f.walls,openings:f.openings,regions:f.regions,stairs:f.stairs,platforms:f.platforms,markers:f.markers||[]})),roofs:b.roofSections};
+      if(options.entities)r.entities={floors:b.floors.map(f=>({id:f.id,label:f.label,overrides:{elevation:f.elevation??null,wallHeight:f.wallHeight??null,floorThickness:f.floorThickness??null},walls:f.walls,openings:f.openings,regions:f.regions,stairs:f.stairs,platforms:f.platforms,railings:f.railings||[],markers:f.markers||[]})),roofs:b.roofSections};
     }});return response;
   }
   if(exitCode)return response; // All input documents must pass before any write.

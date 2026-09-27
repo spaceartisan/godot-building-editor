@@ -39,7 +39,7 @@ The optional `expectedSourceSha256` is a 64-character lowercase SHA-256 of the e
 
 ## Operations
 
-All operations except `building.update` require `op` and `id`; `building.update` has no ID or floor and accepts only `value`. Walls, openings, regions, stairs and platforms also require `floorId`. Floor operations use the floor's own `id` and reject `floorId`; manual roofs also reject `floorId`. Add requires a new ID; update/remove require an existing ID in that collection. Existing object IDs are retained. Array order is retained except for explicit additions/removals.
+All operations except `building.update` require `op` and `id`; `building.update` has no ID or floor and accepts only `value`. Walls, railings, openings, regions, stairs and platforms also require `floorId`. Floor operations use the floor's own `id` and reject `floorId`; manual roofs also reject `floorId`. Add requires a new ID; update/remove require an existing ID in that collection. Existing object IDs are retained. Array order is retained except for explicit additions/removals.
 
 | Operation | Additional fields | Behavior |
 | --- | --- | --- |
@@ -56,6 +56,10 @@ All operations except `building.update` require `op` and `id`; `building.update`
 | `wall.add` | `value` with `a`, `b`; optional `label`, `role`, `height` | Adds a wall. Defaults: interior role, full-story height (`null`), empty label. Overlapping collinear segments are rejected. |
 | `wall.update` | `value` containing `label`, `role` and/or `height` | Changes properties while retaining endpoints and ID. Height may be `null` or a number from 0.1 m through the story height. |
 | `wall.move-endpoint` | `end` (`a`/`b`), `point` (`x`, `z`), optional boolean `connected` | Shares the editor's move proposal. Connected endpoints move by default. `connected:false` explicitly detaches the selected endpoint. Unsafe junction breaks, new crossings and openings that need resizing reject the move. Permitted opening-position adjustments appear in the diff. |
+| `wall.crenellate` | `value` with `crenelWidth` (0.2–1,000 m), `merlonWidth` (0.2–1,000 m), `depth` (0.1–100 m); optional `idPrefix` | Adds evenly spaced top-open crenels to an existing wall as ordinary `empty` window openings (sill = wall height − depth, height = depth), centred along the wall with merlons of at least `merlonWidth` at both ends. IDs are `<idPrefix or wallId-crenel>-1…N`; existing IDs or overlapping openings reject the edit. The openings remain individually editable. |
+| `railing.add` | `value` with `a`, `b`; optional `label`, `height` (0.4 m to the story height), `style` (`two_rail`, `picket`, `cross_brace`) | Adds a railing with mesh and collision. Defaults: `Railing`, 1 m, `two_rail`. Segments must exceed 0.15 m. Railings block routes in `--reachability`. |
+| `railing.update` | `value` with `label`, `a`, `b`, `height` and/or `style` | Updates an existing railing, including its endpoints. |
+| `railing.remove` | None | Removes only that railing. |
 | `wall.remove` | None | Removes only that wall. Any retained opening referencing it blocks the final transaction. |
 | `opening.add` | `value` with `type`, `wallId`, `t` or `at`, `width`, `height` | Adds a door/window. `t` is fractional position along its host wall (0–1). Alternatively `at: {x, z}` gives the opening centre as a world point; it is projected onto the host wall centreline (points up to half the wall thickness away, i.e. on a wall face, are accepted), stored as `t` rounded to 1e-9, and rejected if it projects beyond either wall end. Window defaults: 0.9 m sill, plain style. Door default: room style. |
 | `opening.update` | `value` with supported fields below | Updates an existing opening without changing ID/type. Can explicitly reassign `wallId` within the same story. |

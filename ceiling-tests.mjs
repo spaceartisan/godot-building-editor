@@ -35,3 +35,15 @@ const base=tx([{op:'building.update',value:{roof:{type:'flat'}}},...loop('floor_
   assert.ok(Math.abs(area(storyCeilingRectangles(noFloor,0))-48)<1e-6,'only the uncovered half gets a ceiling when the upper floor has no slab');
   console.log('PASS ceiling openings: stair openings and slab-less upper floors stay open; voids above keep their ceiling');
 }
+{
+  // Both automatic surfaces stay optional per story.
+  const ceilings=b=>(exportGodotFiles(b).tscn.match(/\[node name="Ceiling" type="MeshInstance3D" parent="Floor_0(\d)/g)||[]).map(m=>m.at(-1));
+  const floors=b=>(exportGodotFiles(b).tscn.match(/\[node name="FloorSlab" type="MeshInstance3D" parent="Floor_0(\d)/g)||[]).map(m=>m.at(-1));
+  assert.deepEqual(ceilings(base),['1','2']);assert.deepEqual(floors(base),['1','2']);
+  assert.deepEqual(ceilings(tx([{op:'floor.update',id:'floor_1',value:{autoCeiling:false}}],base)),['2'],'autoCeiling:false removes that story\'s ceiling');
+  assert.deepEqual(ceilings(tx([{op:'floor.update',id:'up',value:{autoCeiling:false}}],base)),['1']);
+  const noUpperFloor=tx([{op:'floor.update',id:'up',value:{autoFloor:false}}],base);
+  assert.deepEqual(floors(noUpperFloor),['1'],'autoFloor:false removes that story\'s slab');
+  assert.deepEqual(floors(tx([{op:'floor.update',id:'floor_1',value:{autoFloor:false}}],base)),['2']);
+  console.log('PASS optional surfaces: autoFloor and autoCeiling still switch each story\'s slab and ceiling off');
+}

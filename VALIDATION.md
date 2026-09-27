@@ -39,7 +39,7 @@ Architectural editor and scene-asset export package. No gameplay project or runt
 1. Crossings and T-junctions use clipped union boundaries, including rotated walls and height differences. Duplicate coplanar faces have one owner. Exposed caps above half-height junctions remain closed.
 2. Per-floor wall heights, slab thicknesses and absolute/automatic elevations drive export, preview and stair rise. Old plans retain default spacing. Non-increasing elevations block export; mismatched vertical spacing produces a warning.
 3. Deleting a top floor removes its incoming flight; undo restores both. Independent manual surfaces retain absolute positions, with an alignment warning after relevant edits.
-4. Intentional exterior openings are explicit metadata. Unmarked open ends, branches and rectangular-footprint fallback produce distinct warnings.
+4. Intentional exterior openings are explicit metadata. On floors whose coverage comes from wall loops, unmarked open ends, branches and rectangular-footprint fallback produce distinct warnings. On floors with explicit coverage (solid regions or Floor Footprints) branches are expected, and only exterior ends that touch no other wall (centreline or face) warn, naming those walls as targets.
 5. Automatic/manual gables have triangular collision. Manual gables expose separate outside/inside/edge mesh instances. No wall collision crosses the barn entrance.
 6. Generic exports use generic door collision layers and omit the game-specific interaction area. GET PROBED retains its original door contract and stock light/window groups. Custom light groups survive profile changes.
 7. Named material slots are empty by default. Optional placeholder colors retain the previous simple materials.

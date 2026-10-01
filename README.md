@@ -90,6 +90,7 @@ Every addition is available in both the web editor and the CLI, through the same
 | Wall splitting | `wall.split` (`at` or `distance`) | Wall panel: **Split at (m from A)**, **Split wall** |
 | Stair-opening guards | `stair.guard` | Stair panel: **Guard opening above** |
 | Opening placement | `opening.add` with `t` or `at` | Click placement on a wall |
+| Polygon and hip roofs | `roof.add/update` with `polygon`, type `hip` | Roof panel: **Footprint** from a polygon region, **Hip** type |
 | Shared door scenes | `export`/`package --share-door-scenes` | Godot Export: **Share identical door scenes** |
 
 Default validation, example expectations and existing scene exports are unchanged.

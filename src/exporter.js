@@ -1,7 +1,7 @@
 import { wallTypeFor, sampleWallType } from './wall-types.js';
 import { openingShapeFor, shapedDoorLayout } from './opening-shapes.js';
 import { profileWallState, profileWallSolids } from './wall-profile-geometry.js';
-import { polygonSlabFaces } from './polygon-geometry.js';
+import { polygonSlabFaces, offsetConvexArea } from './polygon-geometry.js';
 import { areaPoints, unionPolygonAreas, subtractPolygonAreas } from './polygon-areas.js';
 import { roofBoxParts, roofInteriorBlockers, roofAttachmentBlockers, trimRoofBox, trimmedGableEnds } from './roof-geometry.js';
 import { higherFloorBlockerRectangles, exteriorFootprintRectangles, unionRectAreas, automaticRoofRectangles, automaticRoofSections, boundsOfAutomaticRoof, boundsOfBuilding, boundsOfStructuralFloor, constrainedOpening, floorElevation, floorView, findWall, manualCeilingRectanglesAtLevel, manualFloorRectanglesAtLevel, pointOnWall, rectValid, roofSectionsForFloor, stairFootprint, storyHeight, structuralFloorRectangles, subtractRectAreas, splitWallIntoSolidSegments, validateOpeningLayout, wallLength } from './model.js';
@@ -1329,7 +1329,7 @@ export function storyCeilingRectangles(building, fi) {
   const exposed=subtractRectAreas(subtractRectAreas(structural,blockers),outline);
   if(!exposed.length)return ceiling;
   const independent=[
-    ...(building.roofSections||[]).filter(r=>rectValid(r)&&Number(r.baseY)>=storyTop-tolerance).map(r=>{const o=Math.max(0,Number(r.overhang)||0);return {minX:r.minX-o,maxX:r.maxX+o,minZ:r.minZ-o,maxZ:r.maxZ+o};}),
+    ...(building.roofSections||[]).filter(r=>rectValid(r)&&Number(r.baseY)>=storyTop-tolerance).map(r=>{const o=Math.max(0,Number(r.overhang)||0);if(r.polygon)return o>0?offsetConvexArea(r,o):{minX:r.minX,maxX:r.maxX,minZ:r.minZ,maxZ:r.maxZ,polygon:r.polygon};return {minX:r.minX-o,maxX:r.maxX+o,minZ:r.minZ-o,maxZ:r.maxZ+o};}),
     ...[...(building.manualCeilings||[]),...(building.manualFloors||[])].filter(r=>rectValid(r)&&Number(r.topY)>=storyTop-tolerance).map(r=>({minX:r.minX,maxX:r.maxX,minZ:r.minZ,maxZ:r.maxZ}))];
   const sky=independent.length?subtractRectAreas(exposed,unionRectAreas(independent)):exposed;
   return sky.length?subtractRectAreas(ceiling,sky):ceiling;
@@ -2010,7 +2010,7 @@ shape = SubResource("${shapeId}")`);}
     for(let ri=0;ri<manualRoofs.length;ri++){
       const rs=manualRoofs[ri],idx=String(ri+1).padStart(3,'0'),cx=(rs.minX+rs.maxX)/2,cz=(rs.minZ+rs.maxZ)/2,w=rs.maxX-rs.minX,d=rs.maxZ-rs.minZ;
       if(w<=.05||d<=.05)continue;
-      const type=['gable','shed','flat'].includes(rs.type)?rs.type:'gable',dir=rs.direction==='z'?'z':'x';
+      const type=['gable','shed','flat','hip'].includes(rs.type)?rs.type:'gable',dir=rs.direction==='z'?'z':'x';
       const baseY=Number.isFinite(Number(rs.baseY))?Number(rs.baseY):(Number(building.wallHeight)||2.8);
       const pitch=Math.max(5,Math.min(70,Number(rs.pitch)||Number(building.roof?.pitch)||35))*Math.PI/180;
       const parent='ManualRoofs',collisionParent=options.collision?'ManualRoofCollision':null;

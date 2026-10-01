@@ -20,6 +20,12 @@ function rotate(v,r={}){
 // Untouched export boxes retain their names and dimensions.
 export function roofBoxParts(rs,roof,baseY,index=0,manual=false){
   if(!manual&&((rs.type||roof.type)==='hip'||(rs.polygon&&(rs.type||roof.type)==='flat')))return polygonRoofParts(rs,roof,baseY,index);
+  // Manual hip roofs and polygon footprints share the automatic polygon path,
+  // with the manual roof's own overhang and pitch (Halcyon: angled entrance bay).
+  if(manual&&(rs.type==='hip'||rs.polygon)){
+    const overhang=Math.max(0,Number.isFinite(Number(rs.overhang))?Number(rs.overhang):Number(roof.overhang)||0);
+    return polygonRoofParts(rs,{overhang,pitch:Number(rs.pitch)||Number(roof.pitch)||35},baseY,index,`ManualRoof_${String(index+1).padStart(3,'0')}`);
+  }
   const type=rs.type||roof.type,dir=rs.direction==='z'?'z':'x',t=.12;
   const w=rs.maxX-rs.minX,d=rs.maxZ-rs.minZ,cx=(rs.minX+rs.maxX)/2,cz=(rs.minZ+rs.maxZ)/2;
   if(w<=.05||d<=.05)return [];

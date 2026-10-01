@@ -380,7 +380,7 @@ export class Preview3D{
     // Independent manual roofs use absolute height rather than floor ownership.
     for(let ri=0;ri<(b.roofSections||[]).length;ri++){
       const rs=b.roofSections[ri];if(!rectValid(rs))continue;const start=objs.length;
-      const type=['gable','shed','flat'].includes(rs.type)?rs.type:'gable',dir=rs.direction==='z'?'z':'x',baseY=Number.isFinite(Number(rs.baseY))?Number(rs.baseY):(Number(b.wallHeight)||2.8);
+      const type=['gable','shed','flat','hip'].includes(rs.type)?rs.type:'gable',dir=rs.direction==='z'?'z':'x',baseY=Number.isFinite(Number(rs.baseY))?Number(rs.baseY):(Number(b.wallHeight)||2.8);
       const p=Math.max(5,Math.min(70,Number(rs.pitch)||Number(b.roof?.pitch)||35))*Math.PI/180;
       const cx=(rs.minX+rs.maxX)/2,cz=(rs.minZ+rs.maxZ)/2,w=rs.maxX-rs.minX,d=rs.maxZ-rs.minZ;if(w<=.05||d<=.05)continue;
       const blockers=[...roofInteriorBlockers(b,rs,baseY),...roofAttachmentBlockers(b,rs)];

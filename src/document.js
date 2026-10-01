@@ -109,7 +109,7 @@ export function normalizeBuilding(data,{idFactory=uid}={}){
   }
   const roofSeen=new Set();
   data.roofSections=data.roofSections.filter(r=>{
-    r.id ||= idFactory('roof');r.label ||= 'Roof Section';r.type=['gable','shed','flat'].includes(r.type)?r.type:'gable';r.direction=r.direction==='z'?'z':'x';
+    r.id ||= idFactory('roof');r.label ||= 'Roof Section';r.type=['gable','shed','flat','hip'].includes(r.type)?r.type:'gable';r.direction=r.direction==='z'?'z':'x';
     r.minX=Number(r.minX)||0;r.maxX=Number(r.maxX)||0;r.minZ=Number(r.minZ)||0;r.maxZ=Number(r.maxZ)||0;
     r.baseY=Number.isFinite(Number(r.baseY))?Number(r.baseY):(Number(data.wallHeight)||2.8);
     r.pitch=Math.max(5,Math.min(70,Number(r.pitch)||Number(data.roof?.pitch)||35));r.overhang=Math.max(0,Number.isFinite(Number(r.overhang))?Number(r.overhang):Number(data.roof?.overhang)||0);

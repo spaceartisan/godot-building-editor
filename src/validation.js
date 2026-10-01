@@ -5,6 +5,7 @@ import {exteriorWallOutsideSign,isExteriorWall} from './exporter.js';
 import {wallTypeProblem,wallTypeFor,wallTypeOpeningProblem,sampleWallType} from './wall-types.js';
 import { regionPolygonProblem, regionBounds } from './regions.js';
 import { containsArea } from './polygon-areas.js';
+import { manualRoofOutlineProblem, roofPolygonBounds } from './roof-outline.js';
 import { REGION_KINDS, REGION_EFFECTS, floorElevation, floorWallHeight, floorSlabThickness, floorView, structuralFloorRectangles, exteriorFootprintIssue, stairFootprint, stairOpeningFootprint, wallLength, wallHeightFor, projectToWall, validateOpeningLayout, rectValid } from './model.js';
 import { roofAttachmentDiagnostics, attachmentWarnings } from './roof-diagnostics.js';
 import {markerProblem} from './markers.js';
@@ -70,7 +71,7 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
           if(name==='regions'&&obj.polygon!==undefined){
             const problem=regionPolygonProblem(obj.polygon);if(problem)error(p,problem);
             else {const bounds=regionBounds(obj.polygon);for(const k of Object.keys(bounds))if(obj[k]!==undefined&&Math.abs(obj[k]-bounds[k])>1e-5)error(p,'Polygon bounds must match its corners.');}
-          }else if(obj.polygon!==undefined)error(p,'Authored polygons are supported for regions only.');
+          }else if(obj.polygon!==undefined&&name!=='roofSections')error(p,'Authored polygons are supported for regions and manual roofs only.');
           for(const axis of ['minX','maxX','minZ','maxZ'])number(obj[axis],`${p}.${axis}`,-1e6,1e6,true);
           if(obj.maxX<=obj.minX||obj.maxZ<=obj.minZ)error(p,'rectangle must have positive area');
         }
@@ -119,6 +120,9 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
   };
   collections(building,['manualFloors','manualCeilings','roofSections'],'building');
   if(Array.isArray(building.roofSections))for(const roof of building.roofSections){
+    // Polygon and hip footprints (Halcyon): shared outline rules; polygon bounds must match.
+    {const problem=manualRoofOutlineProblem(roof,building.roofSections);if(problem)error('roofSections',`${roof?.label||roof?.id}: ${problem}`,[{type:'roofSection',id:roof?.id}]);
+     if(!problem&&roof?.polygon){const b=roofPolygonBounds(roof.polygon);if(['minX','maxX','minZ','maxZ'].some(k=>Math.abs(b[k]-roof[k])>1e-6))error('roofSections',`${roof.label||roof.id}: roof bounds must match its polygon corners`,[{type:'roofSection',id:roof.id}]);}}
     if(!roof?.hostRoofId)continue;
     const host=building.roofSections.find(r=>r?.id===roof.hostRoofId);
     const targets=[{type:'roofSection',id:roof.id},...(host?[{type:'roofSection',id:host.id}]:[])];

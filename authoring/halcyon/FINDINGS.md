@@ -19,6 +19,7 @@ Halcyon and the limit probes (see [README](README.md)) were run on 1.4.0 at `412
 | H11 | Railings around stair openings had to be placed by hand on a hidden 0.06 m margin. Halcyon's hand-placed rails missed one open side. | Medium | **Fixed**: `stair.guard` (web: **Guard opening above**) |
 | H12 | Smooth shaped curves were limited to about 64 segments at a 12 m radius | Low | **Fixed**: the short-wall rule charges each end only what its join cuts |
 | H16 | With roof `none`, the ceiling's top face lay in the wall caps' plane under the walls and z-fought with them when seen from above | Medium (visual, top-down views) | **Fixed** |
+| H17 | Manual roofs were rectangles only, so the bay roof overhung the angled bay walls | Low (visual) | **Fixed**: convex polygon footprints for flat and hip roofs; `hip` manual roofs |
 | H13 | Coordinates far from the origin lose precision in Godot without a warning | Low | **Fixed**: a warning beyond 10 km |
 | H14 | A loop that stops a millimetre short got the generic open-ends warning | Low | **Fixed**: the warning names the near miss |
 | H15 | A `floor.duplicate` dry run printed the whole copied floor as one 18.7 KB line | Low | **Fixed**: long values are summarised |
@@ -141,9 +142,15 @@ Found while checking H12. Every automatic ceiling's top face sat exactly at wall
 - **Effect:** the ceiling's top surface (`RoofSideFaces`) changed in three supplied scenes: `examples/roof_attachment.tscn`, `independent_roof_demo.tscn` and `manual_surface_demo.tscn`. They were regenerated with `generate-examples.mjs`; nothing else in any fixture changed.
 - **Test:** `ceiling-tests.mjs`.
 
-## Not changed
+### H17: Rectangular manual roofs
 
-- **Rectangular manual roofs.** The entrance bay's roof can't follow its angled walls because manual roofs are rectangles. Polygon roofs would be architectural expansion (ROADMAP).
+The entrance bay's roof could only be a rectangle, so its corners overhung the angled bay walls. Manual roofs now take a convex `polygon` footprint for flat and hip roofs, and `hip` is a manual roof type.
+
+- **Shared code:** the rules live in `src/roof-outline.js` (convex, 3–256 corners, flat or hip, no host attachment or edge modes) and are used by validation, transactions and the web roof panel. Geometry uses the automatic roof's existing polygon path (`polygonRoofParts`) with the manual roof's own overhang and pitch.
+- **Routes:** the CLI takes `polygon` and type `hip` on `roof.add`/`roof.update`, and `polygon: null` returns the roof to its rectangle. In the web editor, the roof panel's **Footprint** select copies the outline of a polygon region on any floor, and **Hip** is a type. The plan draws the polygon outline.
+- **Also polygon-aware:** the open-sky ceiling cover (H3) and the automatic-roof override at a manual roof's level now use the polygon, not its bounds.
+- **Halcyon:** the bay roof follows the bay walls (`godot-renders/surface-colors/` and `entrance-bay.png`).
+- **Tests:** `parity-transaction-tests.mjs` (bounds from corners, roof geometry inside the outline plus overhang, one hip face per polygon edge, every rejection, back to a rectangle), `web-parity-tests.mjs` (Footprint equals `roof.update`, Hip, shared rejection, undo) and `asset-engine-tests.mjs` (polygon and hip roofs load in Godot with collision).
 
 ## Limits that held
 

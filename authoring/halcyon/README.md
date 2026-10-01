@@ -70,5 +70,4 @@ Environment: Linux, Node 22.22.2, Godot 4.5.1 stable. Checks ran headless; rende
 ## Known limits of this blockout
 
 - There's no terrain. The basements show above ground in exterior renders.
-- The bay roof is a rectangle, because manual roofs can't follow the angled bay walls. Its corners overhang the angled walls.
 - The towers stand on the podium roof with no transfer structure below them. L2 has no walls under the tower walls.

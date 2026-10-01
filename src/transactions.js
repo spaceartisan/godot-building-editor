@@ -10,6 +10,7 @@ import {markerProblem} from './markers.js';
 import {proposeGroupMove} from './group-edit.js';
 import {wallTypeProblem,followWallThickness} from './wall-types.js';
 import {openingShapeProblem} from './opening-shapes.js';
+import {MANUAL_ROOF_TYPES,manualRoofOutlineProblem} from './roof-outline.js';
 
 // Versioned authoring commands, not arbitrary JSON patches. All work is done on
 // a private clone; callers only receive a building when the entire edit passes.
@@ -48,7 +49,7 @@ const fields={
   manualFloor:['label',...rectKeys,'topY','thickness'],
   manualCeiling:['label',...rectKeys,'topY','thickness'],
   opening:['label','type','wallId','t','at','width','height','sill','doorStyle','windowStyle','shapeId'],
-  roof:['label',...rectKeys,'type','direction','baseY','pitch','overhang','gableEnds','hostRoofId','edgeModes'],
+  roof:['label',...rectKeys,'polygon','type','direction','baseY','pitch','overhang','gableEnds','hostRoofId','edgeModes'],
   region:['label',...rectKeys,'kind','effect','polygon'],
   // Not an operation family: wall.crenellate value fields.
   crenellation:['crenelWidth','merlonWidth','depth','idPrefix']
@@ -118,10 +119,10 @@ function checkValue(kind,value,action,where){
       if(key==='idPrefix'){text(v,p);if(!/^[A-Za-z0-9_-]{1,48}$/.test(v))fail('idPrefix must be 1–48 letters, digits, - or _',p);}
       else number(v,p,key==='depth'?.1:.2,key==='depth'?100:1000);
     }
-    else if(key==='polygon'){const problem=regionPolygonProblem(v);if(problem)fail(problem,p);}
+    else if(key==='polygon'){if(kind==='roof'&&v===null)continue;const problem=regionPolygonProblem(v);if(problem)fail(kind==='roof'?problem.replace('A polygon region','A polygon roof').replace('Region corners','Roof corners').replace('Region width','Roof width'):problem,p);}
     else if(key==='a'||key==='b'||key==='at')point(v,p);
     else if(key==='role')choice(v,['exterior','interior'],p);
-    else if(key==='type')choice(v,kind==='roof'?['gable','shed','flat']:['door','window'],p);
+    else if(key==='type')choice(v,kind==='roof'?MANUAL_ROOF_TYPES:['door','window'],p);
     else if(key==='direction')choice(v,['x','z'],p);
     else if(key==='gableEnds')choice(v,['both','min','max','none'],p);
     else if(key==='kind')choice(v,REGION_KINDS,p);
@@ -147,7 +148,7 @@ function checkValue(kind,value,action,where){
   if(action==='add'&&kind==='light'&&!Object.hasOwn(value,'position'))fail('Missing required field: position',where);
   if(action==='add'&&kind==='marker'&&!Object.hasOwn(value,'position'))fail('Missing required field: position',where);
   if(action==='add'&&(kind==='manualFloor'||kind==='manualCeiling'))for(const required of [...rectKeys,'topY'])if(!Object.hasOwn(value,required))fail(`Missing required field: ${required}`,where);
-  if(action==='add'&&!['wallType','openingShape','light','marker','manualFloor','manualCeiling'].includes(kind))for(const required of kind==='stair'?['x','z','width','run','direction']:kind==='wall'||kind==='railing'?['a','b']:kind==='opening'?['type','wallId',Object.hasOwn(value,'at')?'at':'t','width','height']:kind==='region'&&value.polygon?['polygon']:rectKeys)
+  if(action==='add'&&!['wallType','openingShape','light','marker','manualFloor','manualCeiling'].includes(kind))for(const required of kind==='stair'?['x','z','width','run','direction']:kind==='wall'||kind==='railing'?['a','b']:kind==='opening'?['type','wallId',Object.hasOwn(value,'at')?'at':'t','width','height']:(kind==='region'||kind==='roof')&&value.polygon?['polygon']:rectKeys)
     if(!Object.hasOwn(value,required))fail(`Missing required field: ${required}`,where);
 }
 
@@ -377,7 +378,7 @@ function applyOperation(building,op,index){
     // In the X/Z plan, "left of A -> B" is the negative-cross side (see profileWallState).
     value.inwardSide=cross<0?'left':'right';delete value.inwardToward;
   }
-  if(kind==='region'&&item?.polygon&&!value.polygon&&rectKeys.some(k=>Object.hasOwn(value,k)))fail('Edit polygon corners instead of rectangular bounds.',p);
+  if((kind==='region'||kind==='roof')&&item?.polygon&&!value.polygon&&value.polygon!==null&&rectKeys.some(k=>Object.hasOwn(value,k)))fail('Edit polygon corners instead of rectangular bounds.',p);
   if(action==='add'){
     let defaults;
     if(kind==='wall')defaults={label:'',role:'interior',height:null};
@@ -388,14 +389,16 @@ function applyOperation(building,op,index){
     else if(kind==='stair')defaults=makeStair({x:0,z:0},{x:0,z:-value.run},value.width,value.style||'ramp',value.steps??12,value.label||'');
     else if(kind==='opening')defaults={label:value.type==='door'?'Door':'Window',...(value.type==='window'?{sill:.9,windowStyle:'plain'}:{doorStyle:'room'})};
     else {
-      const bounds=kind==='region'&&value.polygon?regionBounds(value.polygon):value;
+      const bounds=(kind==='region'||kind==='roof')&&value.polygon?regionBounds(value.polygon):value;
       const a={x:bounds.minX,z:bounds.minZ},b={x:bounds.maxX,z:bounds.maxZ};
       defaults=kind==='roof'?makeRoofSection(a,b):makeRegion(a,b);
     }
     list.push({...defaults,...value,id:op.id});
   }else Object.assign(item,value);
   const updated=list.find(v=>v.id===op.id);
-  if(kind==='region'&&updated.polygon)Object.assign(updated,regionBounds(updated.polygon));
+  if((kind==='region'||kind==='roof')&&updated.polygon)Object.assign(updated,regionBounds(updated.polygon));
+  if(kind==='roof'&&updated.polygon===null)delete updated.polygon;
+  if(kind==='roof'){const problem=manualRoofOutlineProblem(updated,building.roofSections);if(problem)fail(problem,p);}
   if(kind==='roof'&&updated.hostRoofId===null)delete updated.hostRoofId;
   if(kind==='roof'||kind==='region')if(!rectValid(updated))fail('Rectangle must have positive width and depth of at least 0.1 m each',p);
   if(kind==='slab'&&(!rectValid(updated)||updated.minX>updated.maxX||updated.minZ>updated.maxZ))fail('Rectangle needs minX < maxX and minZ < maxZ, at least 0.1 m each',p);

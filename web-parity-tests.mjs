@@ -101,6 +101,29 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   console.log('PASS web shared door scenes: opt-in toggle, render posts the same files as --share-door-scenes');
 }
 {
+  // Halcyon: a manual roof's Footprint can follow a convex polygon region's
+  // outline (roof.update polygon), and Hip is a roof type; same results as the CLI.
+  const fs=await import('node:fs');
+  const halcyon=JSON.parse(fs.readFileSync(new URL('./authoring/halcyon/output/halcyon.building.json',import.meta.url),'utf8'));
+  const flatBay=tx([{op:'roof.update',id:'roof_bay',value:{polygon:null,minX:-10,maxX:10}}],halcyon);
+  await e.loadBuildingData(structuredClone(flatBay));e.chooseSelection({type:'roofSection',id:'roof_bay'});
+  const footprint=$('#roof-footprint');assert.equal(footprint.value,'','starts rectangular');
+  footprint.value='floor_1/r_bay';await footprint.dispatch('change');
+  const bayPolygon=flatBay.floors[2].regions.find(r=>r.id==='r_bay').polygon;
+  assert.deepEqual(e.snapshot().roofSections,tx([{op:'roof.update',id:'roof_bay',value:{polygon:bayPolygon}}],flatBay).roofSections,'web footprint equals roof.update polygon');
+  assert.match($('#status-text').textContent,/Roof footprint follows Entrance bay/);
+  e.chooseSelection({type:'roofSection',id:'roof_bay'});await change(property('Type'),'hip');
+  assert.equal(e.snapshot().roofSections.find(r=>r.id==='roof_bay').type,'hip');
+  e.chooseSelection({type:'roofSection',id:'roof_bay'});await change(property('Type'),'gable');
+  assert.equal(e.snapshot().roofSections.find(r=>r.id==='roof_bay').type,'hip','gable on a polygon footprint is refused');
+  assert.match($('#status-text').textContent,/must be flat or hip/);
+  e.chooseSelection({type:'roofSection',id:'roof_bay'});const back=$('#roof-footprint');back.value='';await back.dispatch('change');
+  assert.equal(e.snapshot().roofSections.find(r=>r.id==='roof_bay').polygon,undefined,'Rectangle removes the polygon');
+  await $('#undo-btn').click();assert.ok(e.snapshot().roofSections.find(r=>r.id==='roof_bay').polygon,'undo restores it');
+  assert.deepEqual(e.errors,[]);
+  console.log('PASS web polygon roofs: Footprint follows a region outline like roof.update, Hip type, shared rejection, undo');
+}
+{
   // Route check: same warnings as validate --reachability, opt-in, navigable, in reports.
   const { reachabilityWarnings } = await import('./src/reachability.js');
   const fs = await import('node:fs');

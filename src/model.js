@@ -247,7 +247,7 @@ export function makeRoofSection(a, b, type = 'gable', direction = 'x', label = '
   const r = makeRectArea(a, b, label);
   return {
     ...r,
-    type: ['gable','shed','flat'].includes(type) ? type : 'gable',
+    type: ['gable','shed','flat','hip'].includes(type) ? type : 'gable',
     direction: direction === 'z' ? 'z' : 'x',
     baseY: Number.isFinite(Number(baseY)) ? Number(baseY) : 2.8,
     pitch: Math.max(5, Math.min(70, Number(pitch) || 35)),
@@ -563,7 +563,8 @@ export function subtractRectAreas(baseRects=[], blockerRects=[]) {
 export function manualSurfaceRectanglesAtLevel(building, kind, topY, tolerance = 0.05) {
   const list=kind==='ceiling'?(building.manualCeilings||[]):(building.manualFloors||[]);
   const target=Number(topY)||0;
-  return unionRectAreas(list.filter(r=>rectValid(r)&&Math.abs((Number(r.topY)||0)-target)<=tolerance).map(r=>({minX:r.minX,maxX:r.maxX,minZ:r.minZ,maxZ:r.maxZ})));
+  return unionRectAreas(list.filter(r=>rectValid(r)&&Math.abs((Number(r.topY)||0)-target)<=tolerance)// Polygon roofs (flat/hip) override their exact outline.
+  .map(r=>({minX:r.minX,maxX:r.maxX,minZ:r.minZ,maxZ:r.maxZ,...(r.polygon?{polygon:r.polygon}:{})})));
 }
 
 export function manualFloorRectanglesAtLevel(building, topY, tolerance = 0.05) {

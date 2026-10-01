@@ -35,10 +35,15 @@ export function normalizeFloor(floor,index,idFactory=uid){
   }
   for(const light of floor.lights){
     light.id ||= idFactory('light');light.label ||= 'Light';light.position ||= {x:0,y:2.2,z:0};
-    light.position.x=Number(light.position.x)||0;light.position.y=Number.isFinite(Number(light.position.y))?Number(light.position.y):2.2;light.position.z=Number(light.position.z)||0;
+    // A malformed position/color (not an object) is left for validation to
+    // report clearly instead of failing here with a raw JavaScript error.
+    const isObject=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
+    if(isObject(light.position)){light.position.x=Number(light.position.x)||0;light.position.y=Number.isFinite(Number(light.position.y))?Number(light.position.y):2.2;light.position.z=Number(light.position.z)||0;}
     light.color ||= {...DEFAULT_OMNI_LIGHT.color};
-    for(const k of ['r','g','b'])light.color[k]=Number.isFinite(Number(light.color[k]))?Number(light.color[k]):DEFAULT_OMNI_LIGHT.color[k];
-    light.color.a=Number.isFinite(Number(light.color.a))?Number(light.color.a):1;
+    if(isObject(light.color)){
+      for(const k of ['r','g','b'])light.color[k]=Number.isFinite(Number(light.color[k]))?Number(light.color[k]):DEFAULT_OMNI_LIGHT.color[k];
+      light.color.a=Number.isFinite(Number(light.color.a))?Number(light.color.a):1;
+    }
     light.energy=Math.max(0,Number.isFinite(Number(light.energy))?Number(light.energy):DEFAULT_OMNI_LIGHT.energy);
     light.range=Math.max(.1,Number.isFinite(Number(light.range))?Number(light.range):DEFAULT_OMNI_LIGHT.range);
     if(typeof light.shadows!=='boolean')light.shadows=DEFAULT_OMNI_LIGHT.shadows;light.group ||= DEFAULT_OMNI_LIGHT.group;

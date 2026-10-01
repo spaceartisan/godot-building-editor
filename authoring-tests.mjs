@@ -84,3 +84,16 @@ test('region validation rejects malformed data without mutation',()=>{
   assert.ok(validateBuilding(b).errors.length);
 });
 console.log(groups+' authoring groups passed.');
+{
+  // Audit A5 (found via the browser suite): repeating the first click must close
+  // a wall loop even when grid snapping moved the start farther than the pixel
+  // radius. Grid 0.5 m at 40 px/m: the start (0, 0) came from a click at
+  // (0.24, 0.24), about 13.6 px away, which snaps to the same grid point.
+  const walls=[{id:'a',a:{x:0,z:0},b:{x:4,z:0}},{id:'b',a:{x:4,z:0},b:{x:4,z:4}},{id:'c',a:{x:4,z:4},b:{x:0,z:4}}];
+  const opts={grid:.5,scale:40,radius:10,origin:{x:0,z:0},segments:3,start:{x:0,z:4}};
+  assert.equal(snapPlanPoint({x:.24,z:.24},walls,opts).kind,'close','same grid point as the start closes the loop');
+  assert.deepEqual(snapPlanPoint({x:.24,z:.24},walls,opts).point,{x:0,z:0});
+  assert.notEqual(snapPlanPoint({x:.3,z:.3},walls,{...opts,segments:3}).kind,'close','a different grid point does not close');
+  assert.equal(snapPlanPoint({x:.24,z:.24},walls,{...opts,segments:1}).kind==='close',false,'needs at least two segments first');
+  console.log('PASS wall loop closing: the start grid point closes the loop beyond the pixel radius');
+}

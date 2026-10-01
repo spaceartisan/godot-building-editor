@@ -85,6 +85,7 @@ Environment: Linux, Node 22.22.2, Godot 4.5.1 stable (headless for checks; Compa
 | Interiors as exported | Verified in Godot renders | Eye-level views of the gate tunnel, courtyard, great hall, tower rooms, wall walks, chapel, great chamber, tower tops and keep roof |
 | Export | Verified | `godot-check --assets --require-collision` (Godot 4.5.1): 34 scenes, 865 collision shapes, 239 mesh instances, 0 material surfaces, 0 failures |
 | Character traversal | Partly verified | The static route check and the navmesh probe are connectivity checks. Door swing, stair comfort and headroom along each flight are unverified. |
+| Lighting shells | Verified in Godot surface-colour renders | After the F14 exporter fix: grey siding wraps every corner, story seams are closed, InsideFaces only face rooms, and EdgeFaces appear only on wall tops, reveals and crenels (`godot-renders/surface-colors/`) |
 | Materials | Intentionally omitted | Empty by default |
 
 ## Known limits of this blockout

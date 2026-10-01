@@ -1,0 +1,222 @@
+{
+  "engineVersion": "4.5.1.stable.official.f62fdbde1",
+  "colorMode": "surfaces",
+  "renderer": "4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.1 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)",
+  "virtualDisplay": true,
+  "scenes": [
+    "kestrel_class_courier.tscn"
+  ],
+  "views": [
+    {
+      "eye": [
+        -34,
+        9,
+        -16
+      ],
+      "file": "stern-quarter.png",
+      "fov": 45,
+      "look": [
+        -2,
+        1.5,
+        0
+      ],
+      "scene": "assets/kestrel_class_courier.tscn"
+    },
+    {
+      "eye": [
+        36,
+        10,
+        18
+      ],
+      "file": "bow-quarter.png",
+      "fov": 45,
+      "look": [
+        2,
+        1.5,
+        0
+      ],
+      "scene": "assets/kestrel_class_courier.tscn"
+    },
+    {
+      "eye": [
+        0,
+        4,
+        -30
+      ],
+      "file": "port-beam.png",
+      "fov": 55,
+      "look": [
+        0,
+        2.5,
+        0
+      ],
+      "scene": "assets/kestrel_class_courier.tscn"
+    },
+    {
+      "eye": [
+        -7.5,
+        1.7,
+        5
+      ],
+      "file": "cargo-aft-ramp.png",
+      "fov": 75,
+      "look": [
+        -18,
+        1.2,
+        -1
+      ],
+      "scene": "assets/kestrel_class_courier.tscn"
+    },
+    {
+      "eye": [
+        -7.5,
+        1.7,
+        1
+      ],
+      "file": "cargo-stair.png",
+      "fov": 75,
+      "look": [
+        -13,
+        1.2,
+        -4.5
+      ],
+      "scene": "assets/kestrel_class_courier.tscn"
+    },
+    {
+      "eye": [
+        -5,
+        1.65,
+        0
+      ],
+      "file": "deck1-corridor.png",
+      "fov": 75,
+      "look": [
+        10,
+        1.4,
+        0
+      ],
+      "scene": "assets/kestrel_class_courier.tscn"
+    },
+    {
+      "eye": [
+        -4.8,
+        1.7,
+        -2.2
+      ],
+      "file": "engineering.png",
+      "fov": 75,
+      "look": [
+        2.8,
+        1,
+        -6.8
+      ],
+      "scene": "assets/kestrel_class_courier.tscn"
+    },
+    {
+      "eye": [
+        3,
+        1.7,
+        2.1
+      ],
+      "file": "airlock-inside.png",
+      "fov": 75,
+      "look": [
+        3,
+        1.4,
+        8
+      ],
+      "scene": "assets/kestrel_class_courier.tscn"
+    },
+    {
+      "eye": [
+        -6.8,
+        5.1,
+        -2.2
+      ],
+      "file": "stair-top.png",
+      "fov": 75,
+      "look": [
+        -12,
+        3.4,
+        -4.2
+      ],
+      "scene": "assets/kestrel_class_courier.tscn"
+    },
+    {
+      "eye": [
+        -6.8,
+        5.05,
+        3.8
+      ],
+      "file": "lounge.png",
+      "fov": 80,
+      "look": [
+        -14,
+        4.4,
+        -1.5
+      ],
+      "scene": "assets/kestrel_class_courier.tscn"
+    },
+    {
+      "eye": [
+        -5,
+        5.03,
+        0
+      ],
+      "file": "deck2-corridor.png",
+      "fov": 75,
+      "look": [
+        9,
+        4.8,
+        0
+      ],
+      "scene": "assets/kestrel_class_courier.tscn"
+    },
+    {
+      "eye": [
+        1.1,
+        5.05,
+        -1.8
+      ],
+      "file": "quarters-2.png",
+      "fov": 85,
+      "look": [
+        1.1,
+        4.4,
+        -5.5
+      ],
+      "scene": "assets/kestrel_class_courier.tscn"
+    },
+    {
+      "eye": [
+        9.8,
+        5.05,
+        0
+      ],
+      "file": "bridge-forward.png",
+      "fov": 80,
+      "look": [
+        16,
+        5,
+        0
+      ],
+      "scene": "assets/kestrel_class_courier.tscn"
+    },
+    {
+      "eye": [
+        10.6,
+        1.7,
+        0
+      ],
+      "file": "sensor-bay.png",
+      "fov": 80,
+      "look": [
+        20,
+        1.4,
+        0
+      ],
+      "scene": "assets/kestrel_class_courier.tscn"
+    }
+  ],
+  "note": "Scenes loaded unmodified (empty materials render as default grey); only camera, sky, sun, ambient light and a camera headlamp were added; exported Glass surfaces render with a clear material. Lighting in a game scene will differ."
+}

@@ -28,7 +28,8 @@ try{
  const voided=load();voided.floors[0].regions=[{id:'void',label:'Courtyard',kind:'courtyard',effect:'void',minX:-1,maxX:1,minZ:-1,maxZ:1}];voided.roof.type='none';
  write('void',voided,[ray(0,0,.2,-.4),ray(0,0,2.4,2.9),ray(2,0,.2,-.4,0),ray(2,0,2.4,2.9,2.68)]);
  const stacked=load(),upper=structuredClone(stacked.floors[0]);upper.id='upper';for(const w of upper.walls)w.id+='upper';upper.openings=[];stacked.floors.push(upper);stacked.floors[0].stairs=[makeStair({x:0,z:1.5},{x:0,z:-1.5},1,'ramp',12,'Stair')];
- write('stairs',stacked,[ray(0,0,3.1,2.79),ray(2,0,3.1,2.6,2.98),ray(3.8,3.8,3.1,2.6),ray(2,0,2.4,2.79)]);
+ // The lower ceiling hangs under the upper slab (2.68 m) except at the stair opening.
+ write('stairs',stacked,[ray(0,0,3.1,2.79),ray(2,0,3.1,2.6,2.98),ray(3.8,3.8,3.1,2.6),ray(2,0,2.4,2.79,2.68)]);
  const canopy=load();canopy.roofSections=[{id:'canopy',label:'Low roof',type:'flat',direction:'x',minX:3,maxX:6,minZ:-1,maxZ:1,baseY:1.8,pitch:35,overhang:0,gableEnds:'none'}];
  write('canopy',canopy,[ray(3.5,0,2.1,1.6),ray(5,0,2.1,1.6,1.92)]);
  const concave=load(),points=[{x:0,z:0},{x:6,z:0},{x:5,z:2},{x:2,z:2},{x:2,z:5},{x:0,z:6}];concave.floors[0].walls=points.map((a,i)=>({id:'c'+i,a,b:points[(i+1)%points.length],role:'exterior',height:null}));concave.floors[0].openings=[];concave.roof.type='none';

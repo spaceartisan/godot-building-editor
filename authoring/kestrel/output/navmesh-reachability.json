@@ -1,0 +1,432 @@
+{
+  "engine": "4.5.1.stable.official.f62fdbde1",
+  "agent": {
+    "height": 1.8,
+    "max_climb": 0.3,
+    "max_slope": 46,
+    "radius": 0.3
+  },
+  "doorPanelsRemoved": 4,
+  "iteration": 2,
+  "mapRegions": 1,
+  "navBounds": [
+    -17.875,
+    0.0699999928474426,
+    -6.875,
+    19.8249969482422,
+    6.57000017166138,
+    6.82500076293945
+  ],
+  "navPolygons": 237,
+  "results": [
+    {
+      "end": [
+        -12,
+        0.0699999928474426,
+        1.99999976158142
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Cargo bay",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 4.92442882061005,
+      "snap": [
+        -12,
+        0.0699999928474426,
+        2
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -1.50000011920929,
+        0.0699999928474426,
+        -4
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Engineering",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 15.801805973053,
+      "snap": [
+        -1.5,
+        0.0699999928474426,
+        -4
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        6.5,
+        0.0699999928474426,
+        -4
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Reactor room",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 25.851079323329,
+      "snap": [
+        6.5,
+        0.0699999928474426,
+        -4
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        1.99999988079071,
+        0.0699999928474426,
+        8.94069671630859e-8
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Deck 1 corridor",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 18.4999997615814,
+      "snap": [
+        2,
+        0.0699999928474426,
+        0
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -2.49999856948853,
+        0.0699999928474426,
+        4
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Storage",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 16.8667886480689,
+      "snap": [
+        -2.5,
+        0.0699999928474426,
+        4
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        3,
+        0.0699999928474426,
+        4
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Airlock",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 22.1775911934674,
+      "snap": [
+        3,
+        0.0699999928474426,
+        4
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        7.5,
+        0.0699999928474426,
+        4
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Life support",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 26.8558241352439,
+      "snap": [
+        7.5,
+        0.0699999928474426,
+        4
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        15,
+        0.0699999928474426,
+        -2.68220901489258e-7
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Sensor bay",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 31.5,
+      "snap": [
+        15,
+        0.0699999928474426,
+        0
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -10,
+        3.47000002861023,
+        2
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Observation lounge",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 17.0951816618908,
+      "snap": [
+        -10,
+        3.47000002861023,
+        2
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        1.5,
+        3.47000002861023,
+        -1.19209289550781e-7
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Deck 2 corridor",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 22.4535528309643,
+      "snap": [
+        1.5,
+        3.47000002861023,
+        0
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -3.74999976158142,
+        3.47000002861023,
+        -3.5
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Crew quarters 1",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 19.5258253850043,
+      "snap": [
+        -3.75,
+        3.47000002861023,
+        -3.5
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        1.10000002384186,
+        3.47000002861023,
+        -3.5
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Crew quarters 2",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 24.4159187190235,
+      "snap": [
+        1.10000002384186,
+        3.47000002861023,
+        -3.5
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        6.40000057220459,
+        3.47000002861023,
+        -3.49999952316284
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Captain's quarters",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 29.7146300561726,
+      "snap": [
+        6.40000009536743,
+        3.47000002861023,
+        -3.5
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -2,
+        3.47000002861023,
+        3.5
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Mess",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 22.1511571221054,
+      "snap": [
+        -2,
+        3.47000002861023,
+        3.5
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        5.5,
+        3.47000002861023,
+        3.50000047683716
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Med bay",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 28.7732066102326,
+      "snap": [
+        5.5,
+        3.47000002861023,
+        3.5
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        13.0000019073486,
+        3.47000002861023,
+        -6.55651092529297e-7
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Bridge",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 33.935141755268,
+      "snap": [
+        13,
+        3.47000002861023,
+        0
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        3,
+        0.0699999928474426,
+        -0.29999977350235
+      ],
+      "floorCovered": true,
+      "maxLength": 8,
+      "name": "Airlock -> Deck 1 corridor (inner hatch)",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 4.29999977350235,
+      "snap": [
+        3,
+        0.0699999928474426,
+        -0.300000011920929
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        13.0000019073486,
+        3.47000002861023,
+        -6.55651092529297e-7
+      ],
+      "floorCovered": true,
+      "maxLength": 45,
+      "name": "Cargo bay -> bridge",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 34.822252953425,
+      "snap": [
+        13,
+        3.47000002861023,
+        0
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    }
+  ],
+  "start": [
+    -16.5,
+    0,
+    0
+  ],
+  "startCovered": true,
+  "startSnap": [
+    -16.5,
+    0.0699999928474426,
+    0
+  ],
+  "startSnapDistance": 0,
+  "unreachable": 0
+}

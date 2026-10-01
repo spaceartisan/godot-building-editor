@@ -57,7 +57,9 @@ func run_checks() -> void:
 		# A solid slab and a stair hole replace the former top ceiling and roof.
 		height_hit(ray(world, Vector3(3, 6.3, 0), Vector3(3, 5.4, 0)), 5.96 if item.third else 5.9, "Solid slab/restored roof")
 		height_hit(ray(world, Vector3(1, 6.3, 0), Vector3(1, 4, 0)), 4.47 if item.third else 5.9, "New stair cut/restored roof")
-		height_hit(ray(world, Vector3(3, 5.5, 0), Vector3(3, 6.2, 0)), 5.78 if item.third else 5.66, "Ceiling underside")
+		# The story ceiling hangs at wall top − ceiling thickness whether or not a
+		# floor is added above (uniform ceiling height; the stair opening stays cut).
+		height_hit(ray(world, Vector3(3, 5.5, 0), Vector3(3, 6.2, 0)), 5.66, "Ceiling underside")
 		var opening: Dictionary = ray(world, Vector3(1, 5.5, 0), Vector3(1, 6.2, 0))
 		check(opening.is_empty() == bool(item.third), "Stair opening / restored ceiling mismatch")
 		# Above the old roof, below the new slab top: only the added wall skirts occupy this band.

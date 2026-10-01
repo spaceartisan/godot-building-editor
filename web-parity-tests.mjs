@@ -74,6 +74,8 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   assert.deepEqual(sent,[{name:expected.tscnName,text:expected.tscn},...expected.doors.map(d=>({name:d.filename,text:d.tscn}))],'posts exactly the web export');
   const extra=JSON.parse(calls[0].init.body).extraViews;
   assert.equal(extra.length,1);assert.equal(extra[0].name,'current-view');assert.equal(extra[0].fov,65);
+  assert.equal(JSON.parse(calls[0].init.body).colorMode,'materials','default: unmodified materials');
+  {const t=$r('#render-surface-colors-toggle');t.checked=true;await $r('#godot-render-btn').click();assert.equal(JSON.parse(calls.at(-1).init.body).colorMode,'surfaces','surface colours requested');t.checked=false;}
   assert.ok([...extra[0].eye,...extra[0].look].every(Number.isFinite),'current preview camera is sent as a view');
   const gallery=$r('#godot-render-results').children;
   assert.deepEqual(gallery.map(f=>f.children[1].textContent),['aerial','floor-01-hall']);
@@ -94,4 +96,57 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   assert.equal($r('#godot-render-btn').disabled,false,'button re-enabled after failure');
   assert.deepEqual(r.errors,[]);
   console.log('PASS web Godot render: posts the web export, shows images, downloads ZIP, explains missing server/Godot');
+}
+{
+  // Wall types and doorway shapes: the web dialogs and the CLI operations
+  // (wallType.*, openingShape.*, wall.update inwardSide) give the same document.
+  const st=(height,offset)=>({height,offset,thickness:.18});
+  const room=[[-4,-3],[4,-3],[4,3],[-4,3]].map((p,i,a)=>({op:'wall.add',floorId:'floor_1',id:`w${i}`,value:{a:{x:p[0],z:p[1]},b:{x:a[(i+1)%4][0],z:a[(i+1)%4][1]},role:'exterior'}}));
+  const base=tx([{op:'wallType.add',id:'flare',value:{label:'Flare',stations:[st(0,0),st(.2,-.3),st(.8,-.3),st(1,0)]}},
+    {op:'openingShape.add',id:'hatch',value:{label:'Hatch',points:[{x:.2,y:0},{x:.8,y:0},{x:1,y:.2},{x:1,y:.8},{x:.8,y:1},{x:.2,y:1},{x:0,y:.8},{x:0,y:.2}]}},
+    ...room,{op:'wall.update',floorId:'floor_1',id:'w0',value:{wallTypeId:'flare'}},
+    {op:'opening.add',floorId:'floor_1',id:'d',value:{type:'door',wallId:'w1',t:.5,width:1.2,height:2.2,doorStyle:'empty',shapeId:'hatch'}}]);
+  const w=await createEditorHarness(),$w=w.$,set=async(el,v)=>{el.value=v;await el.dispatch('change');};
+  // Delete wall type in the dialog == wallType.remove.
+  await w.loadBuildingData(structuredClone(base));await set($w('#new-wall-type'),'flare');await $w('#wall-types-btn').click();await $w('#wall-type-delete').click();
+  assert.deepEqual(w.snapshot(),tx([{op:'wallType.remove',id:'flare'}],base),'web wall-type delete equals wallType.remove');
+  // Per-wall inward direction == wall.update inwardSide.
+  await w.loadBuildingData(structuredClone(base));w.chooseSelection({type:'wall',id:'w0'});
+  await set($w('#selection-form').children.find(n=>n.textContent.startsWith('Inward direction')).querySelector('select'),'left');
+  assert.deepEqual(w.snapshot(),tx([{op:'wall.update',floorId:'floor_1',id:'w0',value:{inwardSide:'left'}}],base),'web inward direction equals wall.update inwardSide');
+  // Delete doorway shape in the dialog == openingShape.remove.
+  await w.loadBuildingData(structuredClone(base));await $w('#opening-shapes-btn').click();await set($w('#opening-shape-choice'),'hatch');await $w('#opening-shape-delete').click();
+  assert.deepEqual(w.snapshot(),tx([{op:'openingShape.remove',id:'hatch'}],base),'web doorway-shape delete equals openingShape.remove');
+  assert.deepEqual(w.errors,[]);
+  console.log('PASS web wall types and doorway shapes: dialog delete and inward direction equal the CLI operations');
+}
+{
+  // Lights: the web light panel and light.update give the same document.
+  const base=tx([{op:'light.add',floorId:'floor_1',id:'lamp',value:{position:{x:1,y:2.4,z:-2}}}]);
+  const w=await createEditorHarness(),field=label=>w.$('#selection-form').children.find(c=>c.textContent.startsWith(label))?.querySelector('input');
+  await w.loadBuildingData(structuredClone(base));w.chooseSelection({type:'light',id:'lamp'});
+  const energy=field('Energy');energy.value='1.2';await energy.dispatch('change');
+  w.chooseSelection({type:'light',id:'lamp'});const range=field('Range');range.value='6';await range.dispatch('change');
+  assert.deepEqual(w.snapshot(),tx([{op:'light.update',floorId:'floor_1',id:'lamp',value:{energy:1.2,range:6}}],base),'web light panel equals light.update');
+  assert.deepEqual(w.errors,[]);
+  console.log('PASS web lights: panel edits equal light.update');
+}
+{
+  // Route start (Kestrel K4): the web field and CLI --from use the same parser and check.
+  const walls=[[-4,-3,4,-3],[4,-3,4,3],[4,3,-4,3],[-4,3,-4,-3]].map(([ax,az,bx,bz],i)=>({op:'wall.add',floorId:'floor_1',id:`s${i}`,value:{a:{x:ax,z:az},b:{x:bx,z:bz},role:'exterior'}}));
+  const sealed=tx(walls),{parseRouteStarts,reachabilityWarnings}=await import('./src/reachability.js');
+  const w=await createEditorHarness(),$w=w.$,messages=()=>$w('#validation-results').children.map(li=>li.children[0].textContent);
+  await w.loadBuildingData(structuredClone(sealed));
+  const toggle=$w('#route-check-toggle');toggle.checked=true;await toggle.dispatch('change');
+  assert.ok(messages().some(m=>/cannot be reached from outside through/.test(m)),'sealed room is unreachable from outside');
+  const field=$w('#route-start');field.value='0,0';await field.dispatch('change');
+  assert.deepEqual(messages().filter(m=>/route|reached/.test(m)),reachabilityWarnings(w.snapshot(),{starts:parseRouteStarts('0,0',sealed)}).warnings.map(x=>x.message));
+  assert.equal(messages().some(m=>/cannot be reached/.test(m)),false,'reachable from the start point');
+  assert.match($w('#status-text').textContent,/Route check from 1 start point\(s\): 0 unreachable areas/);
+  field.value='4,0';await field.dispatch('change');
+  assert.ok(messages().some(m=>/route start \(4, 0\) is not on walkable floor/.test(m)));
+  field.value='oops';await field.dispatch('change');
+  assert.ok(messages().some(m=>/Route start "oops": expected x,z/.test(m)),'parse errors appear as warnings');
+  assert.deepEqual(w.errors,[]);
+  console.log('PASS web route start: same starts, warnings and parse errors as CLI --from');
 }

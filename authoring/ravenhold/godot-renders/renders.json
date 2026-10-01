@@ -1,5 +1,6 @@
 {
   "engineVersion": "4.5.1.stable.official.f62fdbde1",
+  "colorMode": "materials",
   "renderer": "4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.1 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)",
   "virtualDisplay": true,
   "scenes": [
@@ -262,5 +263,5 @@
       "scene": "assets/ravenhold_castle.tscn"
     }
   ],
-  "note": "Scenes loaded unmodified (empty materials render as default grey); only camera, sky, sun and ambient light were added. Lighting in a game scene will differ. This folder keeps a curated subset; build.sh renders all views."
+  "note": "Scenes loaded unmodified (empty materials render as default grey); only camera, sky, sun and ambient light were added. Lighting in a game scene will differ. This folder keeps a curated subset; build.sh renders all views. surface-colors/ uses --surface-colors (OutsideFaces grey, InsideFaces pink, EdgeFaces teal, SideA/B orange/yellow, slab tops/bottoms green/blue, roofs brown)."
 }

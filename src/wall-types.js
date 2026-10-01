@@ -35,3 +35,16 @@ export function wallTypePreset(name,thickness=.18){
   if(name==='taper')return [p(0,0,thickness*2),p(.25,0,thickness),p(1,0,thickness)];
   return standardStations(thickness);
 }
+// Units: station height is a fraction of each wall's height (so one profile
+// fits walls of any height); offset and thickness are metres. A station whose
+// thickness equals the building wall thickness is "at wall thickness" and
+// follows it when that setting changes (web settings and building.update), so
+// end stations keep matching the plan footprint. Deliberately thicker or
+// thinner stations keep their authored metres. Returns the number of stations changed.
+export function followWallThickness(building,before,after){
+  if(!(Math.abs(before-after)>1e-9))return 0;
+  let changed=0;
+  for(const type of building.wallTypes||[])for(const station of type.stations||[])
+    if(Math.abs(station.thickness-before)<1e-6){station.thickness=after;changed++;}
+  return changed;
+}

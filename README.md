@@ -8,6 +8,33 @@ The deliverable is a building `.tscn` with its door `.tscn` dependencies. No gam
 
 Start with [QUICKSTART.md](QUICKSTART.md) for the web workflow, Godot import steps and all 11 CLI recipes. Detailed operation fields live in [TRANSACTIONS.md](TRANSACTIONS.md).
 
+## Since 1.3.0: Kestrel starship stress test
+
+An AI built a two-deck starship interior ([authoring/kestrel](authoring/kestrel/README.md)) using custom wall profiles (flared hull, hexagonal corridors) and custom doorway shapes (hatches, airlocks, blast doors). Its [FINDINGS.md](authoring/kestrel/FINDINGS.md) lists each issue with its status. Still open: Standard stubs at shaped-wall ends (K6, deferred), shaped windows (K7) and ladders or lifts (K8), which are accepted limits for now. Fixed:
+
+- **Z-fighting on lower-story ceilings (Godot export).** Buildings with shaped walls or shaped openings no longer emit the story-seam skirt underside, which lay exactly on the lower story's ceiling and flickered in Godot. The Standard wall path never emitted it. Collision is unchanged, and no bundled example scene changed.
+- **Nubs at angled wall junctions (Godot export).** At junctions whose angles are not all multiples of 90° (obtuse corners, Y junctions), Standard wall ends are now mitered on the bisector planes instead of extended by half the thickness. The extension overshot and left small nubs whose end caps showed as strips. Right-angle and T junctions and all collision shapes are unchanged. Only three example scenes changed: `editable_junctions`, `polygon_regions` and `round_bounding`, in mesh data only.
+- **Uniform ceiling height (Godot export).** The automatic ceiling used to hang only under exposed areas (wall top − 0.12 m), while rooms under the next floor saw that floor's slab at wall top. Wherever an upper story was smaller, the ceiling stepped 12 cm. The ceiling now hangs over the whole story, cut at stair openings and left open under upper floors with `autoFloor:false`. The CLI and web previews share the rule. Changed scenes: `twostory`, `basement_markers` and `roof_junctions`; the others have automatic ceilings off or no setback.
+- **Profile thickness follows the wall thickness.** Profile station heights are fractions of the wall height (one type fits walls of different heights); offsets and thickness are metres. When the building wall thickness changes (web setting or `building.update`), stations at the old thickness follow the new one, so profiles no longer drift out of step with the plan footprint. Deliberately thicker or thinner stations keep their metres.
+- **Interior surface-colour check.** `--surface-colors` (web: **Color surfaces by type**) paints interior-wall EdgeFaces red, distinct from exterior teal, next to interior SideA orange and SideB yellow.
+- **Readable interior renders.** `godot-check --render` and the web **Render in Godot** share a script that now adds a short-range camera headlamp and a clear render-only material on `Glass` surfaces. Sealed rooms are visible and windows show what they look onto. Scenes are still unmodified.
+- **CLI wall types, doorway shapes and lights.** New operations mirror the web dialogs and panels, on the same shared validators:
+  - `wallType.add/update/remove` and `openingShape.add/update/remove`;
+  - `wall.add/update` accept `wallTypeId`, `inwardSide` and `inwardToward: {x, z}`, a point on the side the profile should face;
+  - `light.add/update/remove`.
+
+  `inspect --entities` lists the definitions, lights and each shaped wall's resolved inward direction. The Kestrel is now built with CLI commands only.
+- **Route check for sealed interiors and shaped walls.** `validate --reachability --from "x,z[,floorId]"` (web: **Route start** under **Include route check**) starts the route inside, for ships and bunkers with no exterior opening. Shaped walls now block by their profile's reach up to body height.
+- **Render and probe fixes.** Automatic eye-level render cameras avoid stairs and walls. The navmesh probe fails a start or target that is not on the navmesh instead of silently snapping it.
+
+| Capability | CLI | Web editor |
+| --- | --- | --- |
+| Wall types | `wallType.*`, `wall.add/update wallTypeId` | **Wall types** dialog, wall panel |
+| Wall inward side | `wall.add/update inwardSide` or `inwardToward` | Wall panel **Inward direction** |
+| Doorway shapes | `openingShape.*`, opening `shapeId` | **Doorway shapes** dialog, opening panel |
+| Lights | `light.add/update/remove` | **Light** tool and light panel |
+| Route start points | `--reachability --from` | **Route start** field |
+
 ## Added in 1.3.0: AI authoring fixes from the Ravenhold castle exercise
 
 An AI built a four-level castle through the CLI ([authoring/ravenhold](authoring/ravenhold/README.md)) and recorded where the workflow failed ([FINDINGS.md](authoring/ravenhold/FINDINGS.md)). This release addresses those findings:
@@ -17,6 +44,10 @@ An AI built a four-level castle through the CLI ([authoring/ravenhold](authoring
 - **Godot renders.** `godot-check --assets DIR --render --out NEW_DIR` renders the exported scenes in Godot: exteriors, aerial and eye-level region views, or custom `--views`. It needs `DISPLAY` or `xvfb-run`.
 - **Parapets, guards and openings.** `wall.crenellate` adds crenels to a wall as empty window openings, `railing.add/update/remove` edit railings, and `opening.add/update` accept a world point `at: {x, z}` instead of `t`.
 - **Reviewable diffs.** Adding or removing ID'd objects reports per-ID `add`/`remove` entries instead of restating whole arrays.
+- **Exterior shell fixes (Godot export).**
+  - Thick exterior walls no longer show EdgeFaces strips at convex corners, or holes in the story-seam skirt there. Where a wall's side face and a neighbour's end cap share a plane, the side face now always wins, regardless of wall order.
+  - Open wall chains, such as parapets ending against a tower, no longer flip which side of other exterior walls is OutsideFaces.
+  - Collision is unchanged. Bundled example scenes were regenerated with `generate-examples.mjs`; their building JSON is unchanged.
 - **Fewer false warnings.** On floors with solid regions or Floor Footprints, only free-standing exterior wall ends warn, with wall targets.
 - **Docs and papercuts.**
   - Saved check reports use relative paths.
@@ -32,6 +63,7 @@ Every addition is available in both the web editor and the CLI, through the same
 | Route check | `validate`/`inspect --reachability` | **Include route check** under Godot Export: warnings with **Show floor**/**Show stair**, a red plan outline of unreachable areas, and inclusion in the check report |
 | Godot renders | `godot-check --assets DIR --render --out NEW_DIR [--views FILE]` | **Render in Godot**: gallery, ZIP download and optional current 3D view. Uses the local server started with `GODOT_BIN`. |
 | Crenellation | `wall.crenellate` | Wall panel: crenel/merlon width, depth, **Add crenels** |
+| Surface-colour renders | `godot-check --render --surface-colors` | **Color surfaces by type** |
 | Railings | `railing.add/update/remove` | Railing tool and railing panel |
 | Opening placement | `opening.add` with `t` or `at` | Click placement on a wall |
 
@@ -507,7 +539,7 @@ Both automatic and manual gable fills have matching triangular collision when co
 
 ## Automatic and manual floors / ceilings
 
-Each story generates its structural floor and exposed ceiling automatically by default. In the **Floors** panel, **Generate floor automatically** and **Generate ceiling automatically** can be disabled independently for the active story.
+Each story generates its structural floor and ceiling automatically by default. The ceiling hangs inside the story (wall top minus the ceiling thickness) over the whole footprint, including under the next floor's slab, so a room's ceiling height is the same everywhere; it stays open only at stair openings and under an upper floor whose automatic floor is off. In the **Floors** panel, **Generate floor automatically** and **Generate ceiling automatically** can be disabled independently for the active story.
 
 The **Floor Footprint** tool remains a story-level convenience override: it changes the footprint used by the active story's automatic slab and related structural calculations while retaining that story's normal elevation.
 

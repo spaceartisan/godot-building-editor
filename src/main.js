@@ -2,7 +2,7 @@ import {createOpeningShapeEditor} from './opening-shape-editor.js';
 import {diagnosticTargets,resolveDiagnosticTarget} from './diagnostic-targets.js';
 import {profileWallState} from './wall-profile-geometry.js';
 import {createWallTypeEditor} from './wall-type-editor.js';
-import {wallTypeFor,wallTypeOpeningProblem} from './wall-types.js';
+import {wallTypeFor,wallTypeOpeningProblem,followWallThickness} from './wall-types.js';
 import { polygonRegion, regionPolygonProblem, regionBounds, regionLabelPoint, regionInteriorClearance, pointInRegion, wallOutlinePoints } from './regions.js';
 import { areaPoints, areaSize } from './polygon-areas.js';
 import { areaSelectionCandidates, stairPickDistance } from './selection.js';
@@ -18,7 +18,7 @@ import {
 } from './model.js';
 import { downloadGodotTscn, downloadText, downloadBinary, makeStoredZip, exportGodotFiles, isExteriorWall, exteriorWallOutsideSign } from './exporter.js';
 import { createCheckReport, checkReportFilename } from './check-report.js';
-import { reachabilityWarnings } from './reachability.js';
+import { reachabilityWarnings, parseRouteStarts } from './reachability.js';
 import { snapPlanPoint, samePoint, wallSegmentProblem, wallJunctions, proposePlatformUpdate, proposeCrenellation, CRENELLATION_DEFAULTS } from './authoring.js';
 import { endpointMoveTargets, proposeEndpointMove } from './wall-edit.js';
 import { WebPreview3D as Preview3D, webReviewDescription } from './preview-web.js';
@@ -497,6 +497,12 @@ function drawRouteOverlay(){
     ctx.fillStyle='rgba(255,107,107,.14)';ctx.fillRect(a.x,a.y,c.x-a.x,c.y-a.y);ctx.strokeStyle='#ff6b6b';ctx.strokeRect(a.x,a.y,c.x-a.x,c.y-a.y);
     ctx.fillStyle='#ff8f8f';ctx.fillText(`Unreachable ${u.area.toFixed(1)} m²`,a.x+4,a.y+13);
   }
+  // Route start points on this floor: green if on walkable floor, red if not.
+  ctx.setLineDash([]);
+  for(const s of (routeResult.starts||[]).filter(q=>q.floorId===id)){
+    const p=worldToScreen(s);ctx.beginPath();ctx.arc(p.x,p.y,6,0,Math.PI*2);ctx.fillStyle=s.ok?'#5ee08a':'#ff6b6b';ctx.fill();ctx.strokeStyle='#0b1418';ctx.stroke();
+    ctx.fillStyle=s.ok?'#8ff0b0':'#ff8f8f';ctx.fillText('Route start',p.x+9,p.y+4);
+  }
   ctx.restore();
 }
 function drawPlanMarkers(){
@@ -753,7 +759,7 @@ function bindNum(id,set){$(id).addEventListener('change',e=>{
 });}
 
 $('#building-name').addEventListener('change',e=>{building.name=e.target.value||'Building';commit('Building renamed');});
-bindNum('#wall-height',v=>{building.wallHeight=Math.max(.2,v);newRoofBaseY=defaultRoofBaseY();syncManualSurfaceDefaults();$('#new-roof-base-y').value=newRoofBaseY;$('#new-manual-floor-y').value=newManualFloorY;$('#new-manual-ceiling-y').value=newManualCeilingY;});bindNum('#wall-thickness',v=>building.wallThickness=Math.max(.02,v));bindNum('#floor-thickness',v=>{building.floorThickness=Math.max(.02,v);syncManualSurfaceDefaults();newRoofBaseY=defaultRoofBaseY();$('#new-roof-base-y').value=newRoofBaseY;$('#new-manual-floor-y').value=newManualFloorY;$('#new-manual-floor-thickness').value=newManualFloorThickness;$('#new-manual-ceiling-y').value=newManualCeilingY;});bindNum('#grid-size',v=>building.gridSize=Math.max(.1,v));
+bindNum('#wall-height',v=>{building.wallHeight=Math.max(.2,v);newRoofBaseY=defaultRoofBaseY();syncManualSurfaceDefaults();$('#new-roof-base-y').value=newRoofBaseY;$('#new-manual-floor-y').value=newManualFloorY;$('#new-manual-ceiling-y').value=newManualCeilingY;});bindNum('#wall-thickness',v=>{const next=Math.max(.02,v);followWallThickness(building,building.wallThickness,next);building.wallThickness=next;});bindNum('#floor-thickness',v=>{building.floorThickness=Math.max(.02,v);syncManualSurfaceDefaults();newRoofBaseY=defaultRoofBaseY();$('#new-roof-base-y').value=newRoofBaseY;$('#new-manual-floor-y').value=newManualFloorY;$('#new-manual-floor-thickness').value=newManualFloorThickness;$('#new-manual-ceiling-y').value=newManualCeilingY;});bindNum('#grid-size',v=>building.gridSize=Math.max(.1,v));
 $('#new-region-shape').addEventListener('change',e=>{cancelDrawing();newRegionShape=e.target.value;syncRegionDraft();drawPlan();});
 $('#finish-region-btn').addEventListener('click',finishPolygonRegion);
 $('#undo-region-corner-btn').addEventListener('click',undoRegionCorner);
@@ -863,7 +869,10 @@ function showValidation(){
   const r=validateBuilding(building,{roofDiagnostics:true}),list=$('#validation-results'),summary=$('#validation-summary'),review=$('#review-checks-btn');
   // Opt-in route check shared with the CLI (validate --reachability).
   routeResult=null;
-  if($('#route-check-toggle').checked&&!r.errors.length){const route=reachabilityWarnings(building);routeResult=route.result;r.warnings=[...r.warnings,...route.warnings];}
+  if($('#route-check-toggle').checked&&!r.errors.length){
+    let starts=[];try{starts=parseRouteStarts($('#route-start').value,building);}catch(e){r.warnings=[...r.warnings,{path:'Route start',message:e.message}];}
+    const route=reachabilityWarnings(building,{starts});routeResult=route.result;r.warnings=[...r.warnings,...route.warnings];
+  }
   list.replaceChildren();
   for(const issue of [...r.errors,...r.warnings]){
     const li=document.createElement('li'),message=document.createElement('span');message.className='validation-message';message.textContent=issue.message;li.append(message);li.className=r.errors.includes(issue)?'validation-error':'validation-warning';
@@ -899,6 +908,7 @@ function visitDiagnosticTarget(reference){
   setStatus(`${target.label.replace(/^Show /,'Reviewing ')}. Inspection only; no geometry changed.`);
 }
 function revealValidation(){const summary=$('#validation-summary');summary.focus({preventScroll:true});summary.scrollIntoView({block:'nearest'});}
+$('#route-start').addEventListener('change',()=>{if(!$('#route-check-toggle').checked)return;showValidation();drawPlan();setStatus(`Route check from ${routeResult?.starts?.length||0} start point(s): ${routeResult?`${routeResult.unreachable.length} unreachable areas`:'resolve errors first'}.`);});
 $('#route-check-toggle').addEventListener('change',e=>{
   const r=showValidation();drawPlan();
   setStatus(e.target.checked?`Route check on: ${routeResult?`${routeResult.unreachable.length} unreachable areas, ${routeResult.stairIssues.length} stair issues`:'resolve errors first'}. Inspection only; no geometry changed.`:'Route check off');
@@ -926,13 +936,13 @@ async function renderInGodot(){
   button.disabled=true;report('Rendering the current export in Godot…');
   let response,body;
   try{
-    response=await fetch('/api/godot-render',{method:'POST',headers:{'Content-Type':'application/json','X-Building-Editor':'1'},body:JSON.stringify({files,extraViews})});
+    response=await fetch('/api/godot-render',{method:'POST',headers:{'Content-Type':'application/json','X-Building-Editor':'1'},body:JSON.stringify({files,extraViews,colorMode:$('#render-surface-colors-toggle').checked?'surfaces':'materials'})});
     body=await response.json();
   }catch{
     report('Godot rendering needs the local editor server: start it with GODOT_BIN=/path/to/godot node server.mjs and open the editor from that address.');return;
   }finally{button.disabled=false;}
   if(!response.ok||!body?.ok){report(`Godot render failed: ${body?.error||`HTTP ${response.status}`}`);return;}
-  lastRenders={base:f.base,engineVersion:body.engineVersion,renderer:body.renderer,views:body.views,images:body.images};
+  lastRenders={base:f.base,colorMode:body.colorMode,engineVersion:body.engineVersion,renderer:body.renderer,views:body.views,images:body.images};
   const gallery=$('#godot-render-results');gallery.replaceChildren();
   for(const image of body.images){
     const figure=document.createElement('figure'),img=document.createElement('img'),caption=document.createElement('figcaption');
@@ -940,14 +950,14 @@ async function renderInGodot(){
     figure.append(img,caption);gallery.append(figure);
   }
   $('#download-renders-btn').hidden=false;
-  report(`${body.images.length} views rendered by Godot ${body.engineVersion}. Scenes are unmodified: empty materials render grey; only camera, sky, sun and ambient light were added.`);
+  report(`${body.images.length} views rendered by Godot ${body.engineVersion}. Scenes are unmodified: empty materials render grey; only camera, sky, sun, ambient light and a camera headlamp were added (window glass renders clear).`);
 }
 $('#godot-render-btn').addEventListener('click',()=>renderInGodot());
 $('#download-renders-btn').addEventListener('click',()=>{
   if(!lastRenders)return;
   try{
     const decode=b64=>Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
-    const manifest={engineVersion:lastRenders.engineVersion,renderer:lastRenders.renderer,views:lastRenders.views,note:'Scenes loaded unmodified (empty materials render as default grey); only camera, sky, sun and ambient light were added.'};
+    const manifest={engineVersion:lastRenders.engineVersion,colorMode:lastRenders.colorMode,renderer:lastRenders.renderer,views:lastRenders.views,note:'Scenes loaded unmodified (empty materials render as default grey); only camera, sky, sun, ambient light and a camera headlamp were added; exported Glass surfaces render with a clear material.'};
     downloadBinary(`${lastRenders.base}_godot_renders.zip`,makeStoredZip([...lastRenders.images.map(i=>({name:i.file,data:decode(i.png)})),{name:'renders.json',data:JSON.stringify(manifest,null,2)+'\n'}]));
     setStatus('Godot renders download requested.');
   }catch(err){setStatus(`Render download failed: ${err.message}`);}

@@ -1,0 +1,1005 @@
+{
+  "version": 1,
+  "operations": [
+    {
+      "op": "building.update",
+      "value": {
+        "name": "Kestrel-class courier",
+        "wallThickness": 0.25,
+        "wallHeight": 3,
+        "floorThickness": 0.18,
+        "roof": {
+          "type": "flat",
+          "overhang": 0
+        }
+      }
+    },
+    {
+      "op": "floor.update",
+      "id": "floor_1",
+      "value": {
+        "label": "Deck 1: engineering and cargo",
+        "wallHeight": 3.2
+      }
+    },
+    {
+      "op": "floor.add-top",
+      "id": "deck_2",
+      "aboveFloorId": "floor_1",
+      "value": {
+        "label": "Deck 2: crew"
+      }
+    },
+    {
+      "op": "wallType.add",
+      "id": "hull",
+      "value": {
+        "label": "Tumblehome hull",
+        "stations": [
+          {
+            "height": 0,
+            "offset": 0,
+            "thickness": 0.25
+          },
+          {
+            "height": 0.18,
+            "offset": -0.35,
+            "thickness": 0.25
+          },
+          {
+            "height": 0.55,
+            "offset": -0.35,
+            "thickness": 0.25
+          },
+          {
+            "height": 1,
+            "offset": 0,
+            "thickness": 0.25
+          }
+        ]
+      }
+    },
+    {
+      "op": "wallType.add",
+      "id": "corridor",
+      "value": {
+        "label": "Hex corridor",
+        "stations": [
+          {
+            "height": 0,
+            "offset": 0,
+            "thickness": 0.25
+          },
+          {
+            "height": 0.4,
+            "offset": -0.2,
+            "thickness": 0.25
+          },
+          {
+            "height": 0.62,
+            "offset": -0.2,
+            "thickness": 0.25
+          },
+          {
+            "height": 1,
+            "offset": 0,
+            "thickness": 0.25
+          }
+        ]
+      }
+    },
+    {
+      "op": "openingShape.add",
+      "id": "hatch",
+      "value": {
+        "label": "Octagon hatch",
+        "points": [
+          {
+            "x": 0.22,
+            "y": 0
+          },
+          {
+            "x": 0.78,
+            "y": 0
+          },
+          {
+            "x": 1,
+            "y": 0.16
+          },
+          {
+            "x": 1,
+            "y": 0.84
+          },
+          {
+            "x": 0.78,
+            "y": 1
+          },
+          {
+            "x": 0.22,
+            "y": 1
+          },
+          {
+            "x": 0,
+            "y": 0.84
+          },
+          {
+            "x": 0,
+            "y": 0.16
+          }
+        ]
+      }
+    },
+    {
+      "op": "openingShape.add",
+      "id": "airlock",
+      "value": {
+        "label": "Airlock outline",
+        "points": [
+          {
+            "x": 0.16,
+            "y": 0
+          },
+          {
+            "x": 0.84,
+            "y": 0
+          },
+          {
+            "x": 1,
+            "y": 0.2
+          },
+          {
+            "x": 1,
+            "y": 0.8
+          },
+          {
+            "x": 0.88,
+            "y": 1
+          },
+          {
+            "x": 0.12,
+            "y": 1
+          },
+          {
+            "x": 0,
+            "y": 0.8
+          },
+          {
+            "x": 0,
+            "y": 0.2
+          }
+        ]
+      }
+    },
+    {
+      "op": "openingShape.add",
+      "id": "blast",
+      "value": {
+        "label": "Blast door",
+        "points": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 1,
+            "y": 0
+          },
+          {
+            "x": 1,
+            "y": 0.8
+          },
+          {
+            "x": 0.85,
+            "y": 1
+          },
+          {
+            "x": 0.15,
+            "y": 1
+          },
+          {
+            "x": 0,
+            "y": 0.8
+          }
+        ]
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "d1_hull1",
+      "value": {
+        "a": {
+          "x": -18,
+          "z": -7
+        },
+        "b": {
+          "x": 12,
+          "z": -7
+        },
+        "role": "exterior",
+        "label": "Deck 1 hull 1",
+        "wallTypeId": "hull"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "d1_hull2",
+      "value": {
+        "a": {
+          "x": 12,
+          "z": -7
+        },
+        "b": {
+          "x": 20,
+          "z": -2
+        },
+        "role": "exterior",
+        "label": "Deck 1 hull 2",
+        "wallTypeId": "hull"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "d1_hull3",
+      "value": {
+        "a": {
+          "x": 20,
+          "z": -2
+        },
+        "b": {
+          "x": 20,
+          "z": 2
+        },
+        "role": "exterior",
+        "label": "Deck 1 hull 3",
+        "wallTypeId": "hull"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "d1_hull4",
+      "value": {
+        "a": {
+          "x": 20,
+          "z": 2
+        },
+        "b": {
+          "x": 12,
+          "z": 7
+        },
+        "role": "exterior",
+        "label": "Deck 1 hull 4",
+        "wallTypeId": "hull"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "d1_hull5",
+      "value": {
+        "a": {
+          "x": 12,
+          "z": 7
+        },
+        "b": {
+          "x": -18,
+          "z": 7
+        },
+        "role": "exterior",
+        "label": "Deck 1 hull 5",
+        "wallTypeId": "hull"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "d1_hull6",
+      "value": {
+        "a": {
+          "x": -18,
+          "z": 7
+        },
+        "b": {
+          "x": -18,
+          "z": -7
+        },
+        "role": "exterior",
+        "label": "Deck 1 hull 6",
+        "wallTypeId": "hull"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "d1_cargo_bulkhead",
+      "value": {
+        "a": {
+          "x": -6,
+          "z": -7
+        },
+        "b": {
+          "x": -6,
+          "z": 7
+        },
+        "role": "interior",
+        "label": "Cargo bulkhead"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "d1_bow_bulkhead",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": -7
+        },
+        "b": {
+          "x": 10,
+          "z": 7
+        },
+        "role": "interior",
+        "label": "Sensor bay bulkhead"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "d1_corr_port_stub_aft",
+      "value": {
+        "a": {
+          "x": -6,
+          "z": -1.25
+        },
+        "b": {
+          "x": -5.4,
+          "z": -1.25
+        },
+        "role": "interior",
+        "label": "Deck 1 corridor port aft stub"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "d1_corr_port",
+      "value": {
+        "a": {
+          "x": -5.4,
+          "z": -1.25
+        },
+        "b": {
+          "x": 9.4,
+          "z": -1.25
+        },
+        "role": "interior",
+        "label": "Deck 1 corridor port",
+        "wallTypeId": "corridor",
+        "inwardToward": {
+          "x": 2,
+          "z": 0
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "d1_corr_port_stub_fwd",
+      "value": {
+        "a": {
+          "x": 9.4,
+          "z": -1.25
+        },
+        "b": {
+          "x": 10,
+          "z": -1.25
+        },
+        "role": "interior",
+        "label": "Deck 1 corridor port forward stub"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "d1_corr_stbd_stub_aft",
+      "value": {
+        "a": {
+          "x": -6,
+          "z": 1.25
+        },
+        "b": {
+          "x": -5.4,
+          "z": 1.25
+        },
+        "role": "interior",
+        "label": "Deck 1 corridor starboard aft stub"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "d1_corr_stbd",
+      "value": {
+        "a": {
+          "x": -5.4,
+          "z": 1.25
+        },
+        "b": {
+          "x": 9.4,
+          "z": 1.25
+        },
+        "role": "interior",
+        "label": "Deck 1 corridor starboard",
+        "wallTypeId": "corridor",
+        "inwardToward": {
+          "x": 2,
+          "z": 0
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "d1_corr_stbd_stub_fwd",
+      "value": {
+        "a": {
+          "x": 9.4,
+          "z": 1.25
+        },
+        "b": {
+          "x": 10,
+          "z": 1.25
+        },
+        "role": "interior",
+        "label": "Deck 1 corridor starboard forward stub"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "d1_eng_reactor",
+      "value": {
+        "a": {
+          "x": 3,
+          "z": -7
+        },
+        "b": {
+          "x": 3,
+          "z": -1.25
+        },
+        "role": "interior",
+        "label": "Engineering / reactor"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "d1_store_airlock",
+      "value": {
+        "a": {
+          "x": 1,
+          "z": 1.25
+        },
+        "b": {
+          "x": 1,
+          "z": 7
+        },
+        "role": "interior",
+        "label": "Storage / airlock"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "d1_airlock_life",
+      "value": {
+        "a": {
+          "x": 5,
+          "z": 1.25
+        },
+        "b": {
+          "x": 5,
+          "z": 7
+        },
+        "role": "interior",
+        "label": "Airlock / life support"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "deck_2",
+      "id": "d2_hull1",
+      "value": {
+        "a": {
+          "x": -14,
+          "z": -5.5
+        },
+        "b": {
+          "x": 10,
+          "z": -5.5
+        },
+        "role": "exterior",
+        "label": "Deck 2 hull 1",
+        "wallTypeId": "hull"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "deck_2",
+      "id": "d2_hull2",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": -5.5
+        },
+        "b": {
+          "x": 16,
+          "z": -1.5
+        },
+        "role": "exterior",
+        "label": "Deck 2 hull 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "deck_2",
+      "id": "d2_hull3",
+      "value": {
+        "a": {
+          "x": 16,
+          "z": -1.5
+        },
+        "b": {
+          "x": 16,
+          "z": 1.5
+        },
+        "role": "exterior",
+        "label": "Deck 2 hull 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "deck_2",
+      "id": "d2_hull4",
+      "value": {
+        "a": {
+          "x": 16,
+          "z": 1.5
+        },
+        "b": {
+          "x": 10,
+          "z": 5.5
+        },
+        "role": "exterior",
+        "label": "Deck 2 hull 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "deck_2",
+      "id": "d2_hull5",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": 5.5
+        },
+        "b": {
+          "x": -14,
+          "z": 5.5
+        },
+        "role": "exterior",
+        "label": "Deck 2 hull 5",
+        "wallTypeId": "hull"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "deck_2",
+      "id": "d2_hull6",
+      "value": {
+        "a": {
+          "x": -14,
+          "z": 5.5
+        },
+        "b": {
+          "x": -14,
+          "z": -5.5
+        },
+        "role": "exterior",
+        "label": "Deck 2 hull 6"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "deck_2",
+      "id": "d2_lounge_bulkhead",
+      "value": {
+        "a": {
+          "x": -6,
+          "z": -5.5
+        },
+        "b": {
+          "x": -6,
+          "z": 5.5
+        },
+        "role": "interior",
+        "label": "Lounge bulkhead"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "deck_2",
+      "id": "d2_bridge_bulkhead",
+      "value": {
+        "a": {
+          "x": 9,
+          "z": -5.5
+        },
+        "b": {
+          "x": 9,
+          "z": 5.5
+        },
+        "role": "interior",
+        "label": "Bridge bulkhead"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "deck_2",
+      "id": "d2_corr_port_stub_aft",
+      "value": {
+        "a": {
+          "x": -6,
+          "z": -1.25
+        },
+        "b": {
+          "x": -5.4,
+          "z": -1.25
+        },
+        "role": "interior",
+        "label": "Deck 2 corridor port aft stub"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "deck_2",
+      "id": "d2_corr_port",
+      "value": {
+        "a": {
+          "x": -5.4,
+          "z": -1.25
+        },
+        "b": {
+          "x": 8.4,
+          "z": -1.25
+        },
+        "role": "interior",
+        "label": "Deck 2 corridor port",
+        "wallTypeId": "corridor",
+        "inwardToward": {
+          "x": 1.5,
+          "z": 0
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "deck_2",
+      "id": "d2_corr_port_stub_fwd",
+      "value": {
+        "a": {
+          "x": 8.4,
+          "z": -1.25
+        },
+        "b": {
+          "x": 9,
+          "z": -1.25
+        },
+        "role": "interior",
+        "label": "Deck 2 corridor port forward stub"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "deck_2",
+      "id": "d2_corr_stbd_stub_aft",
+      "value": {
+        "a": {
+          "x": -6,
+          "z": 1.25
+        },
+        "b": {
+          "x": -5.4,
+          "z": 1.25
+        },
+        "role": "interior",
+        "label": "Deck 2 corridor starboard aft stub"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "deck_2",
+      "id": "d2_corr_stbd",
+      "value": {
+        "a": {
+          "x": -5.4,
+          "z": 1.25
+        },
+        "b": {
+          "x": 8.4,
+          "z": 1.25
+        },
+        "role": "interior",
+        "label": "Deck 2 corridor starboard",
+        "wallTypeId": "corridor",
+        "inwardToward": {
+          "x": 1.5,
+          "z": 0
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "deck_2",
+      "id": "d2_corr_stbd_stub_fwd",
+      "value": {
+        "a": {
+          "x": 8.4,
+          "z": 1.25
+        },
+        "b": {
+          "x": 9,
+          "z": 1.25
+        },
+        "role": "interior",
+        "label": "Deck 2 corridor starboard forward stub"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "deck_2",
+      "id": "d2_q1_q2",
+      "value": {
+        "a": {
+          "x": -1.5,
+          "z": -5.5
+        },
+        "b": {
+          "x": -1.5,
+          "z": -1.25
+        },
+        "role": "interior",
+        "label": "Quarters 1 / 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "deck_2",
+      "id": "d2_q2_q3",
+      "value": {
+        "a": {
+          "x": 3.75,
+          "z": -5.5
+        },
+        "b": {
+          "x": 3.75,
+          "z": -1.25
+        },
+        "role": "interior",
+        "label": "Quarters 2 / 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "deck_2",
+      "id": "d2_mess_med",
+      "value": {
+        "a": {
+          "x": 2,
+          "z": 1.25
+        },
+        "b": {
+          "x": 2,
+          "z": 5.5
+        },
+        "role": "interior",
+        "label": "Mess / med bay"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "r_cargo",
+      "value": {
+        "label": "Cargo bay",
+        "minX": -18,
+        "maxX": -6,
+        "minZ": -7,
+        "maxZ": 7
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "r_engineering",
+      "value": {
+        "label": "Engineering",
+        "minX": -6,
+        "maxX": 3,
+        "minZ": -7,
+        "maxZ": -1.25
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "r_reactor",
+      "value": {
+        "label": "Reactor room",
+        "minX": 3,
+        "maxX": 10,
+        "minZ": -7,
+        "maxZ": -1.25
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "r_d1_corridor",
+      "value": {
+        "label": "Deck 1 corridor",
+        "minX": -6,
+        "maxX": 10,
+        "minZ": -1.25,
+        "maxZ": 1.25
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "r_storage",
+      "value": {
+        "label": "Storage",
+        "minX": -6,
+        "maxX": 1,
+        "minZ": 1.25,
+        "maxZ": 7
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "r_airlock",
+      "value": {
+        "label": "Airlock",
+        "minX": 1,
+        "maxX": 5,
+        "minZ": 1.25,
+        "maxZ": 7
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "r_life",
+      "value": {
+        "label": "Life support",
+        "minX": 5,
+        "maxX": 10,
+        "minZ": 1.25,
+        "maxZ": 7
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "r_sensor",
+      "value": {
+        "label": "Sensor bay",
+        "minX": 10,
+        "maxX": 20,
+        "minZ": -7,
+        "maxZ": 7
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "deck_2",
+      "id": "r_lounge",
+      "value": {
+        "label": "Observation lounge",
+        "minX": -14,
+        "maxX": -6,
+        "minZ": -5.5,
+        "maxZ": 5.5
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "deck_2",
+      "id": "r_d2_corridor",
+      "value": {
+        "label": "Deck 2 corridor",
+        "minX": -6,
+        "maxX": 9,
+        "minZ": -1.25,
+        "maxZ": 1.25
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "deck_2",
+      "id": "r_q1",
+      "value": {
+        "label": "Crew quarters 1",
+        "minX": -6,
+        "maxX": -1.5,
+        "minZ": -5.5,
+        "maxZ": -1.25
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "deck_2",
+      "id": "r_q2",
+      "value": {
+        "label": "Crew quarters 2",
+        "minX": -1.5,
+        "maxX": 3.75,
+        "minZ": -5.5,
+        "maxZ": -1.25
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "deck_2",
+      "id": "r_q3",
+      "value": {
+        "label": "Captain's quarters",
+        "minX": 3.75,
+        "maxX": 9,
+        "minZ": -5.5,
+        "maxZ": -1.25
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "deck_2",
+      "id": "r_mess",
+      "value": {
+        "label": "Mess",
+        "minX": -6,
+        "maxX": 2,
+        "minZ": 1.25,
+        "maxZ": 5.5
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "deck_2",
+      "id": "r_med",
+      "value": {
+        "label": "Med bay",
+        "minX": 2,
+        "maxX": 9,
+        "minZ": 1.25,
+        "maxZ": 5.5
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "deck_2",
+      "id": "r_bridge",
+      "value": {
+        "label": "Bridge",
+        "minX": 9,
+        "maxX": 16,
+        "minZ": -5.5,
+        "maxZ": 5.5
+      }
+    }
+  ]
+}

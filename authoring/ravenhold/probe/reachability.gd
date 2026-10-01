@@ -59,6 +59,11 @@ func _bake() -> void:
 	report["navPolygons"] = nav.get_polygon_count()
 	report["agent"] = cfg["agent"]
 
+# A requested point counts as on the navmesh when its nearest navmesh point is
+# within 0.6 m horizontally and 0.35 m vertically.
+func _covered(requested: Vector3, snapped: Vector3) -> bool:
+	return Vector2(snapped.x - requested.x, snapped.z - requested.z).length() < 0.6 and absf(snapped.y - requested.y) < 0.35
+
 func _process(_delta: float) -> bool:
 	frames += 1
 	if frames == 1:
@@ -74,26 +79,36 @@ func _process(_delta: float) -> bool:
 	var from := NavigationServer3D.map_get_closest_point(map_rid, start)
 	report["start"] = [start.x, start.y, start.z]
 	report["startSnap"] = [from.x, from.y, from.z]
+	# A start far from any navmesh (e.g. outside a building with no terrain)
+	# would silently snap to the nearest walkable point; fail it instead.
+	var start_covered := _covered(start, from)
+	report["startSnapDistance"] = Vector2(from.x - start.x, from.z - start.z).length()
+	report["startCovered"] = start_covered
 	var results := []
 	var unreachable := 0
 	for t in targets:
 		var p := Vector3(t["at"][0], t["at"][1], t["at"][2])
 		var origin := from
+		var origin_covered := start_covered
+		var origin_snap := float(report["startSnapDistance"])
 		if t.has("from"):
-			origin = NavigationServer3D.map_get_closest_point(map_rid, Vector3(t["from"][0], t["from"][1], t["from"][2]))
+			var f := Vector3(t["from"][0], t["from"][1], t["from"][2])
+			origin = NavigationServer3D.map_get_closest_point(map_rid, f)
+			origin_covered = _covered(f, origin)
+			origin_snap = Vector2(origin.x - f.x, origin.z - f.z).length()
 		var snap := NavigationServer3D.map_get_closest_point(map_rid, p)
 		var path := NavigationServer3D.map_get_path(map_rid, origin, snap, true)
 		var end := path[path.size() - 1] if path.size() > 0 else origin
-		var covered := Vector2(snap.x - p.x, snap.z - p.z).length() < 0.6 and absf(snap.y - p.y) < 0.35
+		var covered := _covered(p, snap)
 		var arrived := path.size() > 0 and end.distance_to(snap) < 0.3
 		var length := 0.0
 		for i in range(1, path.size()):
 			length += path[i - 1].distance_to(path[i])
 		var within: bool = not t.has("maxLength") or length <= float(t["maxLength"])
-		var ok: bool = covered and arrived and within
+		var ok: bool = covered and origin_covered and arrived and within
 		if not ok:
 			unreachable += 1
-		results.append({"name": t["name"], "ok": ok, "floorCovered": covered, "pathArrives": arrived, "withinMaxLength": within, "maxLength": t.get("maxLength", null),
+		results.append({"name": t["name"], "ok": ok, "floorCovered": covered, "originCovered": origin_covered, "originSnapDistance": origin_snap, "targetSnapDistance": Vector2(snap.x - p.x, snap.z - p.z).length(), "pathArrives": arrived, "withinMaxLength": within, "maxLength": t.get("maxLength", null),
 			"snap": [snap.x, snap.y, snap.z], "end": [end.x, end.y, end.z], "pathLength": length})
 	report["results"] = results
 	report["unreachable"] = unreachable

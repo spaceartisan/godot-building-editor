@@ -88,3 +88,36 @@ try{
   assert.deepEqual(editor.errors,[]);assert.deepEqual(fs.readFileSync(input),bytes);
 }finally{fs.rmSync(temp,{recursive:true,force:true});}
 console.log('PASS web/CLI check report parity, structured targets, strict warnings, invalid/missing inputs, fresh snapshots, unchanged geometry/history and protected output paths');
+{
+  // Audit A2: a report records whether the route check ran and from where,
+  // identically from CLI validate --reachability --from and the web download.
+  const { createCheckReport } = await import('./src/check-report.js');
+  const { applyTransaction } = await import('./src/transactions.js');
+  const { prepareDocument } = await import('./src/diagnostics.js');
+  const { makeEmptyBuilding } = await import('./src/model.js');
+  const blank=(()=>{const b=makeEmptyBuilding();b.floors[0].id='floor_1';return prepareDocument(b).building;})();
+  const sealed=applyTransaction(blank,{version:1,operations:[[-4,-3,4,-3],[4,-3,4,3],[4,3,-4,3],[-4,3,-4,-3]].map(([ax,az,bx,bz],i)=>({op:'wall.add',floorId:'floor_1',id:`w${i}`,value:{a:{x:ax,z:az},b:{x:bx,z:bz},role:'exterior'}}))}).building;
+  const plain=createCheckReport([{building:sealed,errors:[],warnings:[]}]);
+  assert.equal(plain.verification.routeCheck,'not-run');assert.equal('routeCheck' in plain.results[0],false,'no route section unless the check ran');
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'route-report-')),file=path.join(dir,'sealed.json'),out=path.join(dir,'report.json');
+  try{
+    fs.writeFileSync(file,JSON.stringify(sealed));
+    const r=spawnSync(process.execPath,[path.join(root,'cli.mjs'),'validate',file,'--reachability','--from','0,0','--out',out,'--json'],{encoding:'utf8'});assert.equal(r.status,0,r.stderr);
+    const cli=JSON.parse(fs.readFileSync(out,'utf8'));
+    assert.equal(cli.verification.routeCheck,'static-check-run');
+    assert.deepEqual(cli.results[0].routeCheck.starts,[{x:0,z:0,floorId:'floor_1',ok:true}]);
+    assert.deepEqual(cli.results[0].routeCheck.from,['open ground outside the ground floor','route start (0, 0) on floor_1']);
+    assert.equal(cli.results[0].routeCheck.unreachableAreas,0);
+    // The web download from the same document and start point carries the same section.
+    const editor=await createEditorHarness(),{$}=editor;editor.loadBuildingData(structuredClone(sealed));
+    $('#route-start').value='0,0';const toggle=$('#route-check-toggle');toggle.checked=true;await toggle.dispatch('change');
+    const originalDocument=globalThis.document,originalCreate=URL.createObjectURL;const downloads=[];
+    globalThis.document={createElement:()=>({click(){}})};URL.createObjectURL=blob=>{downloads.push(blob);return originalCreate(blob);};
+    try{await $('#download-check-report-btn').click();}finally{globalThis.document=originalDocument;URL.createObjectURL=originalCreate;}
+    const web=JSON.parse(await downloads[0].text());
+    assert.deepEqual(web.results[0].routeCheck,cli.results[0].routeCheck,'web and CLI reports record the same route check');
+    assert.equal(web.verification.routeCheck,'static-check-run');
+    assert.deepEqual(editor.errors,[]);
+    console.log('PASS route check in reports: CLI and web record that it ran, from open ground and each start point');
+  }finally{fs.rmSync(dir,{recursive:true,force:true});}
+}

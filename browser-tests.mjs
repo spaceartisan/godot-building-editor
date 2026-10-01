@@ -34,7 +34,7 @@ try{
   await page.locator('#grid-size').fill('1001');await page.locator('#grid-size').press('Tab');
   assert.equal(await page.locator('#grid-size').inputValue(),priorGrid);
   assert.match(await page.locator('#status-text').textContent(),/Setting unchanged/);
-  await page.locator('.advanced-options').evaluate(el=>el.open=true);
+  await page.locator('details.advanced-options:has(#floor-wall-height)').evaluate(el=>el.open=true);
   await page.locator('#floor-wall-height').fill('3.6');
   await page.locator('#floor-wall-height').press('Tab');
   await page.locator('#floor-select').selectOption('1');
@@ -138,8 +138,8 @@ try{
   for(const [width,height] of [[1440,900],[768,1024],[390,844]]){
     await page.setViewportSize({width,height});
     await page.locator('[data-view="plan"]').click();
-    const planBox=await page.locator('#plan-canvas').boundingBox();
-    await page.mouse.click(planBox.x+planBox.width/2,planBox.y+planBox.height/2);
+    // Element click scrolls the canvas into view first (at 390 px it sits below the fold).
+    await page.locator('#plan-canvas').click();
     assert.equal(await page.locator('#selection-candidates button').count(),2);
     await page.getByRole('button',{name:'Roof section · Canopy B @ 2.80 m',exact:true}).click();
     assert.equal(await page.locator('#selection-candidates button[aria-pressed="true"]').textContent(),'Roof section · Canopy B @ 2.80 m');

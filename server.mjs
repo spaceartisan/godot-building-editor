@@ -33,11 +33,13 @@ async function api(req,res,rel){
     if(!availability.available)return json(res,503,{ok:false,error:availability.reason});
     if(rendering)return json(res,409,{ok:false,error:'A Godot render is already running; try again when it finishes.'});
     if(!/^application\/json\b/.test(req.headers['content-type']||''))return json(res,415,{ok:false,error:'Expected application/json'});
-    const chunks=[];let size=0;
-    for await(const chunk of req){size+=chunk.length;if(size>MAX_BODY)return json(res,413,{ok:false,error:'Request too large (64 MiB limit)'});chunks.push(chunk);}
-    let body;try{body=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{return json(res,400,{ok:false,error:'Invalid JSON'});}
+    // Claim the single render slot before awaiting the body, so a second
+    // request arriving meanwhile is refused instead of starting another Godot.
     rendering=true;
     try{
+      const chunks=[];let size=0;
+      for await(const chunk of req){size+=chunk.length;if(size>MAX_BODY)return json(res,413,{ok:false,error:'Request too large (64 MiB limit)'});chunks.push(chunk);}
+      let body;try{body=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{return json(res,400,{ok:false,error:'Invalid JSON'});}
       const result=await renderSceneFiles({executable:process.env.GODOT_BIN,files:body?.files,views:body?.views??null,extraViews:body?.extraViews??[],colorMode:body?.colorMode??'materials'});
       return json(res,200,{ok:true,engineVersion:availability.engineVersion,colorMode:result.colorMode,renderer:result.renderer,virtualDisplay:result.virtualDisplay,views:result.manifest,
         images:result.entries.map(e=>({file:e.name,png:e.data.toString('base64')}))});

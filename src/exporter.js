@@ -4,7 +4,7 @@ import { profileWallState, profileWallSolids } from './wall-profile-geometry.js'
 import { polygonSlabFaces } from './polygon-geometry.js';
 import { areaPoints, unionPolygonAreas, subtractPolygonAreas } from './polygon-areas.js';
 import { roofBoxParts, roofInteriorBlockers, roofAttachmentBlockers, trimRoofBox, trimmedGableEnds } from './roof-geometry.js';
-import { higherFloorBlockerRectangles, unionRectAreas, automaticRoofRectangles, automaticRoofSections, boundsOfAutomaticRoof, boundsOfBuilding, boundsOfStructuralFloor, constrainedOpening, exposedStructuralFloorRectangles, floorElevation, floorView, findWall, manualCeilingRectanglesAtLevel, manualFloorRectanglesAtLevel, pointOnWall, rectValid, roofSectionsForFloor, stairFootprint, storyHeight, structuralFloorRectangles, subtractRectAreas, splitWallIntoSolidSegments, validateOpeningLayout, wallLength } from './model.js';
+import { higherFloorBlockerRectangles, unionRectAreas, automaticRoofRectangles, automaticRoofSections, boundsOfAutomaticRoof, boundsOfBuilding, boundsOfStructuralFloor, constrainedOpening, floorElevation, floorView, findWall, manualCeilingRectanglesAtLevel, manualFloorRectanglesAtLevel, pointOnWall, rectValid, roofSectionsForFloor, stairFootprint, storyHeight, structuralFloorRectangles, subtractRectAreas, splitWallIntoSolidSegments, validateOpeningLayout, wallLength } from './model.js';
 import { wallSolidPlanes, unionFaceWriter, junctionMiters } from './wall-union.js';
 import { stairOpeningFootprint } from './model.js';
 import { assertValidBuilding } from './validation.js';
@@ -23,6 +23,9 @@ const v3 = (x,y,z) => `Vector3(${fmt(x)}, ${fmt(y)}, ${fmt(z)})`;
 const packedV3 = points => `PackedVector3Array(${points.flatMap(p => [fmt(p.x), fmt(p.y), fmt(p.z)]).join(', ')})`;
 const clean = s => (s || 'Building').replace(/[^A-Za-z0-9_ -]/g,'').trim() || 'Building';
 const nodeClean = s => clean(s).replace(/\s+/g,'_');
+// Free text inside a quoted .tscn string: Godot reads \ \" \n \t as escapes,
+// so an unescaped backslash, quote or newline in a label would corrupt the scene.
+export const tscnText = s => String(s).replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\r\n|\r|\n/g,'\\n').replace(/\t/g,'\\t');
 export const fileBase = name => (name || 'building').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_|_$/g,'').toLowerCase() || 'building';
 const fileSlug = name => (name || 'door').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_|_$/g,'').toLowerCase() || 'door';
 
@@ -690,55 +693,6 @@ function addInteriorStorySkirt(sideAWriter, sideBWriter, building, wall, depth) 
   sideBWriter.face([a0p,a1p,b1p,b0p],[{u:s0,v:y0},{u:s0,v:y1},{u:s1,v:y1},{u:s1,v:y0}],{x:n.x,y:0,z:n.z},'side');
 }
 
-function addStorySkirtToUnifiedWallMesh(writer, building, wall, depth) {
-  const skirt=Math.max(0,Number(depth)||0);
-  const L=wallLength(wall);
-  if(skirt<=EPS||L<EPS)return;
-  const d={x:(wall.b.x-wall.a.x)/L,z:(wall.b.z-wall.a.z)/L};
-  const n={x:-d.z,z:d.x},ht=building.wallThickness/2;
-  const s0=endpointJoinOffset(building,wall,true),s1=L+endpointJoinOffset(building,wall,false);
-  if(s1-s0<EPS)return;
-  const centerAt=s=>({x:wall.a.x+d.x*s,z:wall.a.z+d.z*s});
-  const a=centerAt(s0),b=centerAt(s1),y0=-skirt,y1=0,p=(c,side,y)=>({x:c.x+n.x*ht*side,y,z:c.z+n.z*ht*side});
-  const a0m=p(a,-1,y0),b0m=p(b,-1,y0),a1m=p(a,-1,y1),b1m=p(b,-1,y1),a0p=p(a,1,y0),b0p=p(b,1,y0),a1p=p(a,1,y1),b1p=p(b,1,y1);
-  writer.face([a0m,b0m,b1m,a1m],[{u:s0,v:y0},{u:s1,v:y0},{u:s1,v:y1},{u:s0,v:y1}],{x:-n.x,y:0,z:-n.z});
-  writer.face([a0p,a1p,b1p,b0p],[{u:s0,v:y0},{u:s0,v:y1},{u:s1,v:y1},{u:s1,v:y0}],{x:n.x,y:0,z:n.z});
-}
-
-function addWallBoxToMesh(writer, building, wall, seg) {
-  const L=wallLength(wall);
-  if(L<EPS) return;
-  const d={x:(wall.b.x-wall.a.x)/L,z:(wall.b.z-wall.a.z)/L};
-  const n={x:-d.z,z:d.x};
-  const ht=building.wallThickness/2;
-  const s0=seg.start,s1=seg.end,y0=seg.bottom,y1=seg.top;
-  if(s1-s0<EPS || y1-y0<EPS) return;
-  const centerAt=s=>({x:wall.a.x+d.x*s,z:wall.a.z+d.z*s});
-  const a=centerAt(s0), b=centerAt(s1);
-  const p=(c,side,y)=>({x:c.x+n.x*ht*side,y,z:c.z+n.z*ht*side});
-  const a0m=p(a,-1,y0), b0m=p(b,-1,y0), a1m=p(a,-1,y1), b1m=p(b,-1,y1);
-  const a0p=p(a, 1,y0), b0p=p(b, 1,y0), a1p=p(a, 1,y1), b1p=p(b, 1,y1);
-
-  // Pieces above/below/beside an opening use the same wall-distance/height UV
-  // frame, so a single wall texture does not restart at every generated piece.
-  writer.face([a0m,b0m,b1m,a1m],[{u:s0,v:y0},{u:s1,v:y0},{u:s1,v:y1},{u:s0,v:y1}],{x:-n.x,y:0,z:-n.z});
-  writer.face([a0p,a1p,b1p,b0p],[{u:s0,v:y0},{u:s0,v:y1},{u:s1,v:y1},{u:s1,v:y0}],{x:n.x,y:0,z:n.z});
-  writer.face([a1m,b1m,b1p,a1p],[{u:s0,v:-ht},{u:s1,v:-ht},{u:s1,v:ht},{u:s0,v:ht}],{x:0,y:1,z:0});
-  writer.face([a0m,a0p,b0p,b0m],[{u:s0,v:-ht},{u:s0,v:ht},{u:s1,v:ht},{u:s1,v:-ht}],{x:0,y:-1,z:0});
-
-  // Wall-end caps are useful at a window/door jamb or a genuinely free wall
-  // end. At an exterior corner they create the narrow material strip the user
-  // was seeing, so omit them and let the two long wall faces meet directly.
-  const startsAtEndpoint=seg.start<=EPS || seg.start<0;
-  const endsAtEndpoint=seg.end>=L-EPS || seg.end>L;
-  {
-    writer.face([a0m,a1m,a1p,a0p],[{u:-ht,v:y0},{u:-ht,v:y1},{u:ht,v:y1},{u:ht,v:y0}],{x:-d.x,y:0,z:-d.z});
-  }
-  {
-    writer.face([b0m,b0p,b1p,b1m],[{u:-ht,v:y0},{u:ht,v:y0},{u:ht,v:y1},{u:-ht,v:y1}],{x:d.x,y:0,z:d.z});
-  }
-}
-
 function addGablePrismToMesh(writer, orient, fixedCoord, spanMin, spanMax, center, wallY, ridgeY, thickness) {
   const ht=thickness/2;
   if (orient === 'x') {
@@ -947,21 +901,6 @@ export function buildInteriorSplitMeshData(building) {
   return {sideA,sideB,edges};
 }
 
-export function buildInteriorMeshData(building) {
-  if(hasProfileWalls(building)){const meshes=Object.values(buildInteriorSplitMeshData(building));return {vertices:meshes.flatMap(m=>m.vertices),normals:meshes.flatMap(m=>m.normals),uvs:meshes.flatMap(m=>m.uvs)};}
-  const writer=meshWriter();
-  const interiorWalls=building.walls.filter(w=>!isExteriorWall(building,w));
-  const storySkirt=Math.max(0,Number(building.storyFloorSkirt ?? building.exteriorFloorSkirt)||0);
-  for(const wall of interiorWalls) {
-    for(const raw of splitWallIntoSolidSegments(building,wall)) {
-      const seg=adjustedSegment(building,wall,raw);
-      addWallBoxToMesh(writer,building,wall,seg);
-    }
-    if(storySkirt>EPS)addStorySkirtToUnifiedWallMesh(writer,building,wall,storySkirt);
-  }
-  return writer;
-}
-
 function bytesToBase64(bytes){
   if(typeof Buffer!=='undefined') return Buffer.from(bytes).toString('base64');
   let out='';
@@ -1116,10 +1055,6 @@ function exteriorArrayMeshResources(building, outsideMaterialId, insideMaterialI
     edges:arrayMeshResource(data.edges,edgeMaterialId,`${prefix}ExteriorEdgeMesh`,'EdgeFaces'),
     ids:{outside:`${prefix}ExteriorOutsideMesh`,inside:`${prefix}ExteriorInsideMesh`,edges:`${prefix}ExteriorEdgeMesh`}
   };
-}
-
-function interiorArrayMeshResource(building, materialId, prefix=''){
-  return arrayMeshResource(buildInteriorMeshData(building), materialId, `${prefix}InteriorMesh`, 'InteriorWalls');
 }
 
 function interiorArrayMeshResources(building, sideAMaterialId, sideBMaterialId, edgeMaterialId, prefix=''){
@@ -1696,7 +1631,7 @@ export function exportGodotTscn(building, options={collision:true, markers:true}
     const exteriorWalls=view.walls.filter(w=>isExteriorWall(view,w));
     const interiorWalls=view.walls.filter(w=>!isExteriorWall(view,w));
 
-    nodes.push(`[node name="${floorName}" type="Node3D" parent="."]${elevation?`\nposition = ${v3(0,elevation,0)}`:''}\neditor_description = "${(floor.label||`Floor ${fi+1}`).replace(/"/g,'')}; elevation ${fmt(elevation)}m"`);
+    nodes.push(`[node name="${floorName}" type="Node3D" parent="."]${elevation?`\nposition = ${v3(0,elevation,0)}`:''}\neditor_description = "${tscnText(floor.label||`Floor ${fi+1}`)}; elevation ${fmt(elevation)}m"`);
     // Editor metadata only: no region meshes, scripts, or gameplay markers.
     if(floor.regions?.length) nodes[nodes.length-1]+='\nmetadata/building_regions = '+JSON.stringify(floor.regions.map(r=>({id:r.id,label:r.label||'Region',kind:r.kind||'room',effect:r.effect||'label',minX:r.minX,maxX:r.maxX,minZ:r.minZ,maxZ:r.maxZ,...(r.polygon?{polygon:r.polygon}:{} )})));
 

@@ -1,6 +1,6 @@
 # Using Building Studio effectively as an LLM
 
-Applies to executable version **1.3.0**, building schemas through **10**, transaction format **1**, and check-report format **1**. Start with `node cli.mjs --version` and `node cli.mjs --help` in the installed package; use its implementation and current guides over remembered behavior from older releases.
+Applies to executable version **1.4.0**, building schemas through **10**, transaction format **1**, and check-report format **1**. Start with `node cli.mjs --version` and `node cli.mjs --help` in the installed package; use its implementation and current guides over remembered behavior from older releases.
 
 ## 1. Establish the task and source
 
@@ -26,7 +26,8 @@ For a new design, start from `node cli.mjs new --out NEW.json --name NAME` (floo
 | Stairs/platforms | Add, update, remove transactions | Stairs connect adjacent floors; independent pieces do not automatically follow platform edits |
 | Wall/door shapes | Web dialogs; `wallType.add/update/remove`, `openingShape.add/update/remove`, `wall.add/update` `wallTypeId`/`inwardSide`/`inwardToward`, opening `shapeId` | Doorway shapes are door-only and must reach the floor |
 | Parapets and guards | `wall.crenellate` (crenels as empty windows), `railing.add/update/remove` | Wall thickness remains building-wide |
-| Lights/markers/manual slabs | Web controls or supported JSON fields | No corresponding dedicated transaction commands in this version |
+| Lights | `light.add/update/remove` (omni lights, web light tool defaults) | Exported as `OmniLight3D` per floor |
+| Markers, manual floors/ceilings, Floor Footprints | Web controls or supported JSON fields | No transaction commands yet (parity gap tracked in the 1.4.0 audit) |
 | Inspect appearance | Web 3D preview; CLI `preview` with floor/roof views, comparisons and overlays | Optional canvas dependency for PNGs; no CLI plan/collision-overlay mode |
 | Generate Godot assets | `export FILE --out NEW_DIR`, `package FILE --out NEW.zip` | Retain relative door dependencies; materials empty by default |
 | Verify exported assets | `godot-check --assets DIR --godot PATH`; add `--render --out NEW_DIR` for Godot screenshots | Resource checks, not character traversal certification; rendering needs a display or xvfb-run |

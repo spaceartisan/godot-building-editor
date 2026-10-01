@@ -916,7 +916,7 @@ $('#route-check-toggle').addEventListener('change',e=>{
 for(const id of ['#validate-btn','#review-checks-btn'])$(id).addEventListener('click',()=>{const r=showValidation();revealValidation();setStatus(`${r.errors.length} errors, ${r.warnings.length} warnings`);});
 $('#download-check-report-btn').addEventListener('click',()=>{
   try{
-    const result=showValidation(),report=createCheckReport([{building,...result}]);
+    const result=showValidation(),report=createCheckReport([{building,...result,...(routeResult?{reachability:routeResult}:{})}]);
     downloadText(checkReportFilename(building.name),JSON.stringify(report,null,2)+'\n','application/json');
     setStatus(`Check report downloaded: ${report.counts.errors} errors, ${report.counts.warnings} warnings. Save the building JSON separately.`);
   }catch(err){setStatus(`Check report download failed: ${err.message}`);}

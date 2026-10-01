@@ -256,17 +256,6 @@ export function makeRoofSection(a, b, type = 'gable', direction = 'x', label = '
   };
 }
 
-export function rectBounds(rects = []) {
-  const valid = rects.filter(rectValid);
-  if (!valid.length) return null;
-  return {
-    minX: Math.min(...valid.map(r => r.minX)),
-    maxX: Math.max(...valid.map(r => r.maxX)),
-    minZ: Math.min(...valid.map(r => r.minZ)),
-    maxZ: Math.max(...valid.map(r => r.maxZ))
-  };
-}
-
 function W(x1, z1, x2, z2, label = '', role = 'interior', height = null) {
   return { id: uid('wall'), a: {x:x1,z:z1}, b:{x:x2,z:z2}, label, role, height };
 }

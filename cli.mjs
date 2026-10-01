@@ -210,8 +210,11 @@ function writeEditFile(out,data){
 }
 
 function runScript(script,env={}){
-  const child=spawnSync(process.execPath,[path.join(root,script)],{cwd:root,env:{...process.env,...env},encoding:'utf8',timeout:180000,maxBuffer:16*1024*1024});
-  return {name:script,ok:child.status===0&&!child.error,exitCode:child.status,signal:child.signal||null,stdout:child.stdout||'',stderr:child.stderr||'',error:child.error?.message};
+  // Generous per-file limit: the infrastructure test regenerates every example
+  // (about 90 s idle) and slows down on a busy machine.
+  const limit=600000,child=spawnSync(process.execPath,[path.join(root,script)],{cwd:root,env:{...process.env,...env},encoding:'utf8',timeout:limit,maxBuffer:16*1024*1024});
+  const timedOut=child.error?.code==='ETIMEDOUT';
+  return {name:script,ok:child.status===0&&!child.error,exitCode:child.status,signal:child.signal||null,stdout:child.stdout||'',stderr:child.stderr||'',error:timedOut?`timed out after ${limit/1000} s`:child.error?.message};
 }
 function listExamples(){
   return EXAMPLE_CATALOG.map(entry=>({...entry,name:entry.title,file:path.join(root,entry.file)}));

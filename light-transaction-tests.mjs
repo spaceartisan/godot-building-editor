@@ -26,3 +26,15 @@ const rejects=(ops,pattern,base)=>{const r=run(ops,base);assert.equal(r.ok,false
   assert.match(scene,/OmniLight3D/);assert.match(scene,/omni_range = 8/);
   console.log('PASS lights: add with web defaults, update, remove, validation, exported OmniLight3D');
 }
+{
+  // Audit A4: a malformed light color/position in a loaded file is a clear
+  // validation error, not a raw JavaScript TypeError from normalization.
+  const { validateBuilding } = await import('./src/validation.js');
+  for(const [field,value,pattern] of [['color',true,/lights\[0\]\.color: expected an object/],['color','warm',/lights\[0\]\.color: expected an object/],['position',5,/lights\[0\]\.position\.x: expected a finite number/]]){
+    const raw=structuredClone(ok([{op:'light.add',floorId:'floor_1',id:'lamp',value:{position:{x:1,y:2.4,z:-2}}}]));raw.floors[0].lights[0][field]=value;
+    const prepared=prepareDocument(raw);
+    const errors=prepared.building?validateBuilding(prepared.building).errors:prepared.errors;
+    assert.ok(errors.some(e=>pattern.test(e.message)),`${field}=${JSON.stringify(value)}: ${JSON.stringify(errors.map(e=>e.message))}`);
+  }
+  console.log('PASS malformed light color/position: clear validation errors');
+}

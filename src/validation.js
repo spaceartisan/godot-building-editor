@@ -110,7 +110,8 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
         if(name==='lights'){
           for(const axis of ['x','y','z'])number(obj.position?.[axis],`${p}.position.${axis}`,-1e6,1e6,true);
           number(obj.energy,`${p}.energy`,0,1e6);number(obj.range,`${p}.range`,.1,1e6);
-          for(const c of ['r','g','b','a'])number(obj.color?.[c],`${p}.color.${c}`,0,1);
+          if(obj.color!==undefined&&(obj.color===null||typeof obj.color!=='object'||Array.isArray(obj.color)))error(`${p}.color`,'expected an object {r, g, b, a} with channels from 0 to 1');
+          else for(const c of ['r','g','b','a'])number(obj.color?.[c],`${p}.color.${c}`,0,1);
           if(obj.group!=null&&typeof obj.group!=='string')error(p,'light group must be text');
         }
       });

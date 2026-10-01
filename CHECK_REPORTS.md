@@ -18,7 +18,8 @@ Reports are diagnostic snapshots, not editable building files. Save the `.buildi
 | `ok` | Every listed document passed the recorded policy |
 | `counts` | Document, error and warning totals |
 | `results` | One entry per input, preserving input order; the web has one current document |
-| `verification` | Authoring-check scope; Godot is `not-run`, collision clearance is `not-verified` |
+| `verification` | Authoring-check scope; Godot is `not-run`, collision clearance is `not-verified`, `routeCheck` is `static-check-run` when the route check ran and `not-run` otherwise |
+| `results[].routeCheck` | Present only when the route check ran (CLI `--reachability`, web **Include route check**): `ok`, `from` (open ground plus each route start), `starts`, `settings`, per-floor walkable/reached areas, and the counts of unreachable areas and stair issues. A clear report without it does not say anything about routes. |
 | `usage` | Reminder to save/share the building separately |
 
 Each result records optional CLI `file` (the input path relative to the saved report's directory, with `/` separators, so reports can be shared without machine paths), building name and schema version (null when unavailable), `validationStage`, `normalized`, policy outcome, error/warning counts and issue arrays. Issues preserve the validator's messages, paths, codes and other existing metadata. `resolvedTargets` adds the currently resolvable navigation targets, including labels. A target uses `type`, optional entity `id`, and `floorId` for floor-owned objects. Floor-wide targets have only `type: "floor"` and `floorId`. Targets are inspection references, not edit operations. IDs are scoped to their owning floor or building-level collection; names are never used to infer identity.

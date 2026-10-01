@@ -10,7 +10,7 @@ import {
   makeFarmhousePreset, makeFloor, makeManualSurface, makeOmniLight, makePlatform, makeRectArea, makeRailing, makeRoofSection, makeStair, manualCeilingRectanglesAtLevel, manualFloorRectanglesAtLevel, roofSectionsForFloor, splitWallIntoSolidSegments, stairFootprint, subtractRectAreas, validateOpeningLayout, wallHeightFor, uid
 } from './src/model.js';
 import {
-  buildClosetDoorLeafMeshData, buildDoorMeshData, buildExteriorMeshData, buildInteriorMeshData, buildInteriorSplitMeshData, buildMergedWallCollisionBoxes,
+  buildClosetDoorLeafMeshData, buildDoorMeshData, buildExteriorMeshData, buildInteriorSplitMeshData, buildMergedWallCollisionBoxes,
   buildRailingMeshData, buildSlabFaceMeshData, buildStairMeshData, buildWindowMeshData, exportDoorTscn, exportGodotFiles, exteriorWallOutsideSign, floorRectanglesForView, isExteriorWall,
   decodeOctNormal, encodeOctNormal, makeStoredZip, packExteriorMesh, pointInExteriorFootprint, slabRectangles
 } from './src/exporter.js';
@@ -139,7 +139,7 @@ assert.match(indexSource,/value="empty">Empty opening<\/option>/,'empty opening 
 const normalizedEmpty=normalizeBuilding(structuredClone(emptyProbe));
 for(const o of normalizedEmpty.floors[0].openings)assert.equal(o.type==='door'?o.doorStyle:o.windowStyle,'empty','Shared import normalization preserves empty door/window styles');
 
-const ex=buildExteriorMeshData(v1),im=buildInteriorMeshData(v1),ims=buildInteriorSplitMeshData(v1);validateMesh(ex.outside);validateMesh(ex.inside);validateMesh(ex.edges);validateMesh(im);validateMesh(ims.sideA);validateMesh(ims.sideB);validateMesh(ims.edges);
+const ex=buildExteriorMeshData(v1),ims=buildInteriorSplitMeshData(v1);validateMesh(ex.outside);validateMesh(ex.inside);validateMesh(ex.edges);validateMesh(ims.sideA);validateMesh(ims.sideB);validateMesh(ims.edges);
 const windows=f1.openings.filter(o=>o.type==='window');for(const o of windows){const wm=buildWindowMeshData(v1,o);validateMesh(wm.frame);validateMesh(wm.glass);}
 const windowGroupFiles=exportGodotFiles(b,{collision:true,markers:false});const windowCollisionNodes=[...windowGroupFiles.tscn.matchAll(/\[node name=\"Window_[^\"]*_Collision\" type=\"CollisionShape3D\" parent=\"[^\"]*\/Collision\" groups=\[\"scare_sight_transparent\"\]\]/g)];assert.equal(windowCollisionNodes.length,windows.length,'every exported non-empty window CollisionShape3D must belong to scare_sight_transparent');
 const doors=f1.openings.filter(o=>o.type==='door');for(const o of doors){const dm=buildDoorMeshData(v1,o);validateMesh(dm.frame);validateMesh(dm.panel);validateMesh(dm.hardware);const d=exportDoorTscn(v1,o);assert.match(d,/name="Hinge"/);assert.doesNotMatch(d,/Script/);if(o.doorStyle==='closet')assert.match(d,/name="Hinge2"/);assert.match(d,/id="DoorInteractionShape_GP"/);assert.match(d,/name="InteractionArea" type="Area3D" parent="\."/);assert.match(d,/collision_layer = 4\ncollision_mask = 0/);assert.match(d,/parent="InteractionArea"/);}

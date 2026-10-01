@@ -2,6 +2,8 @@
 
 ## Current direction: cleanup
 
+- [x] 1.4.0: Kestrel starship stress test (wall-type, doorway-shape and light transactions; route starts and profile-aware route check; uniform ceilings; junction miters) and a code audit (scene-text escaping, route check in reports, wall-loop closing, render guard, malformed-light errors, browser suite repaired).
+- [ ] Web/CLI parity: transactions for markers, manual floors/ceilings, Floor Footprints, floor insertion/duplication/reordering, group move and door/window mesh settings.
 - [x] 1.3.0: fix the AI-authoring findings from the Ravenhold castle exercise: `new`, `building.update`, floor surface/boundary fields, opt-in `--reachability`, `godot-check --render`, `wall.crenellate`, railing transactions, world-point openings, per-ID diffs, coverage-aware boundary warnings. Per-wall thickness and per-region open-to-sky remain open.
 
 - [x] 1.2.5: add evidence-based AI building review and a castle void/keep regression case; distinguish valid data from a complete accessible design.

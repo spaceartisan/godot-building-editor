@@ -1,4 +1,4 @@
-# Building Studio — Building Editor 1.3.0
+# Building Studio — Building Editor 1.4.0
 
 For LLMs and coding agents, start with [AGENTS.md](AGENTS.md) and [LLM_GUIDE.md](LLM_GUIDE.md): supported capabilities, an executable workflow, geometry conventions, source map and verification limits. Current development is focused on web/CLI cleanup; architectural expansion is deferred.
 
@@ -8,7 +8,20 @@ The deliverable is a building `.tscn` with its door `.tscn` dependencies. No gam
 
 Start with [QUICKSTART.md](QUICKSTART.md) for the web workflow, Godot import steps and all 11 CLI recipes. Detailed operation fields live in [TRANSACTIONS.md](TRANSACTIONS.md).
 
-## Since 1.3.0: Kestrel starship stress test
+## Added in 1.4.0: Kestrel starship stress test and code audit
+
+Code audit fixes (each reproduced first, with a regression test):
+
+- **Scene files with backslashes in labels.** A floor label such as `C:\stores` passed validation but exported a `.tscn` that Godot could not parse. Labels in quoted scene strings are now escaped; five hostile labels round-trip exactly through Godot.
+- **Route check in check reports.** Reports from `validate --reachability --out` and the web download now record that the route check ran, from open ground and from which route starts, with per-floor reached areas (`results[].routeCheck`, `verification.routeCheck`).
+- **Wall loops close where you started.** In the web Wall tool, clicking the start point again could make a T-junction instead of closing the loop when grid snapping had moved the start beyond the 10 px snap radius. Snapping to the start's grid point now closes the loop. Found by the repaired browser suite.
+- **One Godot render at a time.** The local server claimed its render slot only after reading the request body, so simultaneous requests both ran Godot; a second request now gets 409.
+- **Clear errors for malformed lights.** A light `color` or `position` that is not an object is a validation error instead of a raw JavaScript TypeError.
+- **Tests and docs.** `npm run test:browser` passes again (ambiguous selector, phone-width click); the test runner allows 10 minutes per file and reports timeouts plainly; LLM_GUIDE lists the light operations; the version is 1.4.0; unused legacy interior-mesh code is removed.
+
+Remaining web/CLI parity gaps (markers, manual floors/ceilings, Floor Footprints, floor insertion/duplication/reordering, group move, door/window mesh settings) are planned as a separate project.
+
+### Kestrel starship stress test
 
 An AI built a two-deck starship interior ([authoring/kestrel](authoring/kestrel/README.md)) using custom wall profiles (flared hull, hexagonal corridors) and custom doorway shapes (hatches, airlocks, blast doors). Its [FINDINGS.md](authoring/kestrel/FINDINGS.md) lists each issue with its status. Still open: Standard stubs at shaped-wall ends (K6, deferred), shaped windows (K7) and ladders or lifts (K8), which are accepted limits for now. Fixed:
 

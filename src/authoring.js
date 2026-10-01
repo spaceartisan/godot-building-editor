@@ -27,7 +27,11 @@ function projection(p,w) {
 export function snapPlanPoint(p,walls=[],{enabled=true,grid=.5,scale=55,radius=10,bypass=false,origin=null,segments=0,start=null,excludedEndpoints=[],excludedProjections=[]}={}) {
   if(!enabled||bypass)return {point:{...p},kind:'free'};
   const distance=q=>Math.hypot(p.x-q.x,p.z-q.z)*scale;
-  if(origin&&segments>=2&&!samePoint(start,origin)&&distance(origin)<=radius)
+  const g=Number.isFinite(grid)&&grid>0?grid:.5,gridPoint={x:Math.round(p.x/g)*g,z:Math.round(p.z/g)*g};
+  // Close the loop when the pointer is near the start or snaps to the same grid
+  // point as the start: grid snapping can move the start by half a cell, which
+  // may exceed the pixel radius, so repeating the first click must still close.
+  if(origin&&segments>=2&&!samePoint(start,origin)&&(distance(origin)<=radius||samePoint(gridPoint,origin)))
     return {point:{...origin},kind:'close'};
   let best=null;
   // Endpoints take priority over wall projections, and both beat the grid.
@@ -44,8 +48,7 @@ export function snapPlanPoint(p,walls=[],{enabled=true,grid=.5,scale=55,radius=1
       best={point:hit.point,kind:'wall',wallId:w.id,d};
   }
   if(best)return best;
-  const g=Number.isFinite(grid)&&grid>0?grid:.5;
-  return {point:{x:Math.round(p.x/g)*g,z:Math.round(p.z/g)*g},kind:'grid'};
+  return {point:gridPoint,kind:'grid'};
 }
 export function wallSegmentProblem(a,b,walls=[]) {
   if(Math.hypot(b.x-a.x,b.z-a.z)<=.15)return 'Choose an endpoint more than 0.15 m away';

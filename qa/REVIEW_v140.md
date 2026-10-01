@@ -23,4 +23,4 @@ These were checked and found fine:
 - **Syntax:** `node --check` passes on every file.
 - **Performance:** Ravenhold exports in 0.6 s and validates with the route check in 0.27 s.
 
-Open, as a separate project: CLI operations for markers, manual floors and ceilings, Floor Footprints, floor insertion, duplication and reordering, group move, and door/window mesh settings. Until then, these break the web/CLI parity rule.
+A9, the web/CLI parity gaps, was closed in a follow-up: `marker.*`, `slab.*`, `manualFloor.*`/`manualCeiling.*`, `floor.insert/duplicate/move/remove`, `group.move` and `building.update` `doorMesh`/`windowMesh`. They're covered by `parity-transaction-tests.mjs` and by web-parity cases that compare each web control with its operation.

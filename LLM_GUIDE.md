@@ -21,18 +21,19 @@ For a new design, start from `node cli.mjs new --out NEW.json --name NAME` (floo
 | Discover editable IDs | `inspect FILE --entities --json` | Lists normalized floor IDs and supported entity inventories; inspect JSON for fields not included |
 | Repeatable building edit | `edit FILE --ops RECIPE --dry-run` then `--out NEW.json` | Version-1 operations only; exact fields in TRANSACTIONS.md |
 | Walls/openings/regions/manual roofs | Add, update, remove transactions; wall endpoint moves | Wall property updates do not move endpoints; manual roofs are building-level objects |
-| Building settings | `building.update` (name, default dimensions, wall thickness, automatic roof, ceiling, profile) | Window/door mesh settings remain web/JSON fields |
-| Floors | Existing dimensions/labels/surface switches/boundary mode, add/remove top floor | Basement/middle insertion, duplication and reordering are web controls |
+| Building settings | `building.update` (name, default dimensions, wall thickness, automatic roof, ceiling, profile, `doorMesh`, `windowMesh`) | Materials stay empty by design |
+| Floors | `floor.update`, `floor.add-top`/`remove-top`, `floor.insert` (above/below any floor, basements), `floor.duplicate`, `floor.move`, `floor.remove` | Duplicates omit stairs; copied IDs are `<new floor id>-<original id>` |
 | Stairs/platforms | Add, update, remove transactions | Stairs connect adjacent floors; independent pieces do not automatically follow platform edits |
 | Wall/door shapes | Web dialogs; `wallType.add/update/remove`, `openingShape.add/update/remove`, `wall.add/update` `wallTypeId`/`inwardSide`/`inwardToward`, opening `shapeId` | Doorway shapes are door-only and must reach the floor |
 | Parapets and guards | `wall.crenellate` (crenels as empty windows), `railing.add/update/remove` | Wall thickness remains building-wide |
 | Lights | `light.add/update/remove` (omni lights, web light tool defaults) | Exported as `OmniLight3D` per floor |
-| Markers, manual floors/ceilings, Floor Footprints | Web controls or supported JSON fields | No transaction commands yet (parity gap tracked in the 1.4.0 audit) |
+| Markers, Floor Footprints, manual floors/ceilings | `marker.*`, `slab.*` (Floor Footprints), `manualFloor.*`/`manualCeiling.*` (building-level, absolute `topY`) | Manual surfaces keep absolute heights when floors change |
+| Move a selection | `group.move` (`items`, `delta`, `connected`) | Same guards as the web Move selection |
 | Inspect appearance | Web 3D preview; CLI `preview` with floor/roof views, comparisons and overlays | Optional canvas dependency for PNGs; no CLI plan/collision-overlay mode |
 | Generate Godot assets | `export FILE --out NEW_DIR`, `package FILE --out NEW.zip` | Retain relative door dependencies; materials empty by default |
 | Verify exported assets | `godot-check --assets DIR --godot PATH`; add `--render --out NEW_DIR` for Godot screenshots | Resource checks, not character traversal certification; rendering needs a display or xvfb-run |
 
-Transactions support `building.update`, `floor.update/add-top/remove-top`, `wall.add/update/move-endpoint/crenellate/remove`, and `railing`, `light`, `opening`, `roof`, `region`, `stair`, `platform`, `wallType`, `openingShape` add/update/remove. Do not extrapolate new operation names from this pattern. Read the operation table for supported `value` fields and removal flags.
+Transactions support `building.update`, `floor.update/add-top/remove-top`, `wall.add/update/move-endpoint/crenellate/remove`, `floor.insert/duplicate/move/remove`, `group.move`, and `railing`, `light`, `marker`, `opening`, `roof`, `region`, `slab`, `stair`, `platform`, `manualFloor`, `manualCeiling`, `wallType`, `openingShape` add/update/remove. Do not extrapolate new operation names from this pattern. Read the operation table for supported `value` fields and removal flags.
 
 Core CLI and web serving need Node 20+ and no npm install. Linux is the tested platform. `CANVAS_MODULE` can name an installed canvas module; `GODOT_BIN` or `--godot` supplies an existing Godot executable. Browser tests additionally need Playwright and its Chromium binary. Do not infer availability from the module alone.
 

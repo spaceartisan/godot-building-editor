@@ -1,0 +1,103 @@
+import assert from 'node:assert/strict';
+import { applyTransaction } from './src/transactions.js';
+import { prepareDocument } from './src/diagnostics.js';
+import { makeEmptyBuilding, floorElevation } from './src/model.js';
+import { exportGodotFiles } from './src/exporter.js';
+
+// Web/CLI parity project (audit A9): markers, Floor Footprints, manual
+// floors/ceilings, floor insertion/duplication/reordering/removal, group move
+// and door/window mesh settings, through the same shared code as the web.
+const blank=(()=>{const b=makeEmptyBuilding();b.floors[0].id='floor_1';return prepareDocument(b).building;})();
+const run=(ops,base=blank)=>applyTransaction(base,{version:1,operations:ops});
+const ok=(ops,base)=>{const r=run(ops,base);assert.equal(r.ok,true,JSON.stringify(r.errors));return r.building;};
+const rejects=(ops,pattern,base)=>{const r=run(ops,base);assert.equal(r.ok,false,'expected a rejection');assert.match(JSON.stringify(r.errors),pattern);};
+const room=(floorId,p)=>[[-4,-3,4,-3],[4,-3,4,3],[4,3,-4,3],[-4,3,-4,-3]].map(([ax,az,bx,bz],i)=>({op:'wall.add',floorId,id:`${p}${i}`,value:{a:{x:ax,z:az},b:{x:bx,z:bz},role:'exterior'}}));
+const base=ok(room('floor_1','w'));
+{
+  const b=ok([{op:'marker.add',floorId:'floor_1',id:'spawn',value:{position:{x:1,y:0,z:2}}}],base);
+  assert.deepEqual(b.floors[0].markers[0],{id:'spawn',label:'Marker 1',details:'',position:{x:1,y:0,z:2}},'web Marker tool defaults');
+  const u=ok([{op:'marker.update',floorId:'floor_1',id:'spawn',value:{label:'Player spawn',details:'Faces north',position:{x:0,y:.1,z:0}}}],b).floors[0].markers[0];
+  assert.deepEqual([u.label,u.details,u.position],['Player spawn','Faces north',{x:0,y:.1,z:0}]);
+  assert.equal(ok([{op:'marker.remove',floorId:'floor_1',id:'spawn'}],b).floors[0].markers.length,0);
+  rejects([{op:'marker.update',floorId:'floor_1',id:'spawn',value:{label:'two\nlines'}}],/Marker name must be 1–120 characters on one line/,b);
+  rejects([{op:'marker.add',floorId:'floor_1',id:'m',value:{label:'x'}}],/Missing required field: position/,b);
+  assert.match(exportGodotFiles(b).tscn,/type="Marker3D"/);
+  console.log('PASS markers: add with web defaults, update, remove, shared markerProblem, exported Marker3D');
+}
+{
+  const b=ok([{op:'slab.add',floorId:'floor_1',id:'fp',value:{minX:-4,maxX:4,minZ:-3,maxZ:0}}],base);
+  assert.deepEqual(b.floors[0].slabs[0],{id:'fp',label:'Floor Footprint 1',minX:-4,maxX:4,minZ:-3,maxZ:0});
+  assert.equal(ok([{op:'slab.update',floorId:'floor_1',id:'fp',value:{maxZ:3,label:'Whole room'}}],b).floors[0].slabs[0].maxZ,3);
+  assert.equal(ok([{op:'slab.remove',floorId:'floor_1',id:'fp'}],b).floors[0].slabs.length,0);
+  rejects([{op:'slab.update',floorId:'floor_1',id:'fp',value:{maxX:-4.05}}],/minX < maxX/,b);
+  console.log('PASS Floor Footprints: slab add/update/remove with web defaults and rectangle checks');
+}
+{
+  const b=ok([{op:'manualFloor.add',id:'mezz',value:{minX:-4,maxX:0,minZ:-3,maxZ:0,topY:1.4}},{op:'manualCeiling.add',id:'soffit',value:{minX:0,maxX:4,minZ:-3,maxZ:0,topY:2.6}}],base);
+  assert.deepEqual(b.manualFloors[0],{id:'mezz',label:'Manual Floor',minX:-4,maxX:0,minZ:-3,maxZ:0,kind:'floor',topY:1.4,thickness:b.floorThickness},'web defaults: building floor thickness');
+  assert.equal(b.manualCeilings[0].thickness,b.ceiling.thickness,'web default: building ceiling thickness');
+  assert.equal(ok([{op:'manualFloor.update',id:'mezz',value:{topY:1.5,thickness:.25}}],b).manualFloors[0].topY,1.5);
+  assert.equal(ok([{op:'manualCeiling.remove',id:'soffit'}],b).manualCeilings.length,0);
+  rejects([{op:'manualFloor.add',floorId:'floor_1',id:'x',value:{minX:0,maxX:1,minZ:0,maxZ:1,topY:1}}],/Unknown field: floorId/,b);
+  rejects([{op:'manualFloor.add',id:'x',value:{minX:0,maxX:1,minZ:0,maxZ:1}}],/Missing required field: topY/,b);
+  console.log('PASS manual floors/ceilings: building-level add/update/remove with web thickness defaults');
+}
+{
+  // Floor stack: the web Add above/below, Duplicate, Move up/down and Delete.
+  const two=ok([{op:'floor.add-top',id:'up',aboveFloorId:'floor_1'},...room('up','u'),{op:'marker.add',floorId:'up',id:'mk',value:{position:{x:0,y:0,z:0}}}],base);
+  const below=ok([{op:'floor.insert',id:'cellar',belowFloorId:'floor_1',value:{label:'Cellar'}}],two);
+  assert.deepEqual(below.floors.map(f=>f.id),['cellar','floor_1','up']);assert.equal(below.floors[0].label,'Cellar');
+  assert.ok(floorElevation(below,0)<0,'a floor below the ground sits under it');
+  const middle=ok([{op:'floor.insert',id:'mid',aboveFloorId:'floor_1'}],two);assert.deepEqual(middle.floors.map(f=>f.id),['floor_1','mid','up']);
+  const dup=ok([{op:'floor.duplicate',id:'up2',sourceFloorId:'up',value:{label:'Upper copy'}}],two);
+  assert.deepEqual(dup.floors.map(f=>f.id),['floor_1','up','up2']);
+  assert.deepEqual(dup.floors[2].walls.map(w=>w.id),['up2-u0','up2-u1','up2-u2','up2-u3'],'deterministic copied IDs');
+  assert.equal(dup.floors[2].markers[0].id,'up2-mk');assert.equal(dup.floors[2].label,'Upper copy');
+  assert.deepEqual(ok([{op:'floor.duplicate',id:'up2',sourceFloorId:'up',value:{label:'Upper copy'}}],two),dup,'the same recipe gives the same document');
+  assert.equal(ok([{op:'floor.duplicate',id:'up2',sourceFloorId:'up'}],two).floors[2].label,'New floor 2 copy','default label as in the web');
+  const moved=ok([{op:'floor.move',id:'up',direction:'down'}],two);assert.deepEqual(moved.floors.map(f=>f.id),['up','floor_1']);
+  rejects([{op:'floor.move',id:'up',direction:'up'}],/already at the end/,two);
+  rejects([{op:'floor.remove',id:'up'}],/set removeContents: true/,two);
+  const removed=ok([{op:'floor.remove',id:'floor_1',removeContents:true}],two);assert.deepEqual(removed.floors.map(f=>f.id),['up']);
+  // Stair connections that would change need an explicit flag, as in the web.
+  const stairs=ok([{op:'stair.add',floorId:'floor_1',id:'s',value:{x:0,z:0,width:1.2,run:4,direction:'north'}}],two);
+  rejects([{op:'floor.insert',id:'mid',aboveFloorId:'floor_1'}],/Set removeAffectedStairs: true/,stairs);
+  const r=run([{op:'floor.insert',id:'mid',aboveFloorId:'floor_1',removeAffectedStairs:true}],stairs);assert.equal(r.ok,true,JSON.stringify(r.errors));
+  assert.equal(r.building.floors[0].stairs.length,0);assert.equal(r.floorStackChanges[0].removedIncomingStairs.length,1);
+  rejects([{op:'floor.insert',id:'x',aboveFloorId:'floor_1',belowFloorId:'up'}],/exactly one of aboveFloorId or belowFloorId/,two);
+  rejects([{op:'floor.insert',id:'up',aboveFloorId:'floor_1'}],/Floor ID already exists/,two);
+  console.log('PASS floor stack: insert above/below any floor, deterministic duplicate, move, remove, stair-connection flag');
+}
+{
+  const withParts=ok([{op:'marker.add',floorId:'floor_1',id:'mk',value:{position:{x:0,y:0,z:0}}},{op:'light.add',floorId:'floor_1',id:'lt',value:{position:{x:1,y:2,z:1}}}],base);
+  const moved=ok([{op:'group.move',floorId:'floor_1',items:[{type:'marker',id:'mk'},{type:'light',id:'lt'}],delta:{x:.5,z:-1}}],withParts);
+  assert.deepEqual(moved.floors[0].markers[0].position,{x:.5,y:0,z:-1});assert.deepEqual(moved.floors[0].lights[0].position,{x:1.5,y:2,z:0});
+  // Moving all room walls keeps their joints; a single wall with joints kept would break them.
+  const shifted=ok([{op:'group.move',floorId:'floor_1',items:['w0','w1','w2','w3'].map(id=>({type:'wall',id})),delta:{x:2,z:0}}],base);
+  assert.deepEqual(shifted.floors[0].walls[0].a,{x:-2,z:-3});
+  rejects([{op:'group.move',floorId:'floor_1',items:[{type:'wall',id:'nope'}],delta:{x:1,z:0}}],/Select existing objects to move/,base);
+  rejects([{op:'group.move',floorId:'floor_1',items:[{type:'tree',id:'w0'}],delta:{x:1,z:0}}],/Expected one of/,base);
+  console.log('PASS group move: markers/lights/walls via the shared web Move selection, with its guards');
+}
+{
+  const b=ok([{op:'building.update',value:{doorMesh:{frameWidth:.12,enabled:false},windowMesh:{glassThickness:.02}}}],base);
+  assert.equal(b.doorMesh.frameWidth,.12);assert.equal(b.doorMesh.enabled,false);assert.equal(b.doorMesh.frameDepth,blank.doorMesh.frameDepth,'unspecified fields kept');
+  assert.equal(b.windowMesh.glassThickness,.02);
+  rejects([{op:'building.update',value:{doorMesh:{frameWidth:.01}}}],/0.03/,base);
+  rejects([{op:'building.update',value:{windowMesh:{glassThickness:.001}}}],/0.005/,base);
+  rejects([{op:'building.update',value:{doorMesh:{colour:'red'}}}],/Unknown field: colour/,base);
+  console.log('PASS door/window mesh settings: building.update merges fields with the web minimums');
+}
+{
+  // inspect --entities exposes the IDs the new operations need.
+  const fs=await import('node:fs'),os=await import('node:os'),path=await import('node:path'),{spawnSync}=await import('node:child_process');
+  const b=ok([{op:'slab.add',floorId:'floor_1',id:'fp',value:{minX:-4,maxX:4,minZ:-3,maxZ:3}},{op:'manualCeiling.add',id:'soffit',value:{minX:0,maxX:4,minZ:-3,maxZ:0,topY:2.6}},{op:'marker.add',floorId:'floor_1',id:'mk',value:{position:{x:0,y:0,z:0}}}],base);
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'parity-inspect-')),file=path.join(dir,'b.json');
+  try{
+    fs.writeFileSync(file,JSON.stringify(b));
+    const r=spawnSync(process.execPath,['cli.mjs','inspect',file,'--entities','--json'],{encoding:'utf8'});assert.equal(r.status,0,r.stderr);
+    const e=JSON.parse(r.stdout).results[0].entities;
+    assert.deepEqual([e.floors[0].slabs[0].id,e.manualCeilings[0].id,e.floors[0].markers[0].id],['fp','soffit','mk']);
+    console.log('PASS inspect --entities lists Floor Footprints, manual surfaces and markers');
+  }finally{fs.rmSync(dir,{recursive:true,force:true});}
+}

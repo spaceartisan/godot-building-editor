@@ -125,6 +125,9 @@ export function clipToPlanes(poly,planes){
 // at the outer apex. Right-angle junctions keep the established box
 // extension. Junctions where another wall passes through (T) are unchanged.
 // Returns {a, b}, each null or {ext, planes, sides:[{plane, from, to}]}.
+// Outer apexes further than this many half-thicknesses from the junction are
+// bevelled (about a 29 degree corner); blunter corners keep a sharp miter.
+const MITER_LIMIT=4;
 export function junctionMiters(walls,wall,thickness,joinEps=1e-4){
   const out={a:null,b:null},L=Math.hypot(wall.b.x-wall.a.x,wall.b.z-wall.a.z);
   if(L<1e-9)return out;
@@ -152,9 +155,22 @@ export function junctionMiters(walls,wall,thickness,joinEps=1e-4){
       const b=rot(u,s*phi/2),m=rot(b,s*Math.PI/2),ns=rot(u,s*Math.PI/2);
       const t=-ht*(ns.x*m.x+ns.z*m.z)/(u.x*m.x+u.z*m.z);
       const X={x:J.x+ns.x*ht+u.x*t,z:J.z+ns.z*ht+u.z*t};
-      ext=Math.max(ext,-t);
       const plane={n:{x:m.x,y:0,z:m.z},d:m.x*J.x+m.z*J.z,kind:'end'};
-      planes.push(plane);sides.push({plane,from:X,to:{x:J.x,z:J.z},side:s});
+      planes.push(plane);
+      // Miter limit: a sharp corner's outer apex lies ht/sin(gap/2) behind
+      // the junction. Beyond MITER_LIMIT half-thicknesses, cut it with a bevel
+      // plane square to the apex direction and close it with a bevel face.
+      const reach=Math.hypot(X.x-J.x,X.z-J.z),limit=MITER_LIMIT*ht;
+      if(t<0&&reach>limit){
+        const w={x:(X.x-J.x)/reach,z:(X.z-J.z)/reach},tip={x:J.x+w.x*limit,z:J.z+w.z*limit};
+        const tb=(limit-ht*(w.x*ns.x+w.z*ns.z))/(w.x*u.x+w.z*u.z),corner={x:J.x+ns.x*ht+u.x*tb,z:J.z+ns.z*ht+u.z*tb};
+        const bevel={n:{x:w.x,y:0,z:w.z},d:w.x*J.x+w.z*J.z+limit,kind:'end'};
+        planes.push(bevel);ext=Math.max(ext,-tb);
+        sides.push({plane,from:tip,to:{x:J.x,z:J.z},side:s},{plane:bevel,from:corner,to:tip,side:s});
+      }else{
+        ext=Math.max(ext,-t);
+        sides.push({plane,from:X,to:{x:J.x,z:J.z},side:s});
+      }
     }
     out[end]={ext:Math.min(Math.max(0,ext),20*ht)+1e-6,planes,sides};
   }

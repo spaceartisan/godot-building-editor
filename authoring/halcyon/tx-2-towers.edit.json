@@ -7,8 +7,7 @@
       "aboveFloorId": "l2",
       "value": {
         "label": "L3 roof terrace",
-        "boundaryMode": "intentional_open",
-        "autoCeiling": false
+        "boundaryMode": "intentional_open"
       }
     },
     {
@@ -1582,8 +1581,7 @@
       "sourceFloorId": "l3",
       "value": {
         "label": "L9 west penthouse",
-        "boundaryMode": "closed",
-        "autoCeiling": true
+        "boundaryMode": "closed"
       }
     },
     {
@@ -1622,8 +1620,7 @@
       "sourceFloorId": "l3",
       "value": {
         "label": "L8 west tower / east roof",
-        "boundaryMode": "closed",
-        "autoCeiling": false
+        "boundaryMode": "closed"
       }
     },
     {
@@ -1662,8 +1659,7 @@
       "sourceFloorId": "l3",
       "value": {
         "label": "L7 offices",
-        "boundaryMode": "closed",
-        "autoCeiling": true
+        "boundaryMode": "closed"
       }
     },
     {
@@ -1702,8 +1698,7 @@
       "sourceFloorId": "l3",
       "value": {
         "label": "L6 sky bridge",
-        "boundaryMode": "closed",
-        "autoCeiling": true
+        "boundaryMode": "closed"
       }
     },
     {
@@ -1742,8 +1737,7 @@
       "sourceFloorId": "l3",
       "value": {
         "label": "L5 offices",
-        "boundaryMode": "closed",
-        "autoCeiling": true
+        "boundaryMode": "closed"
       }
     },
     {
@@ -1782,8 +1776,7 @@
       "sourceFloorId": "l3",
       "value": {
         "label": "L4 offices",
-        "boundaryMode": "closed",
-        "autoCeiling": true
+        "boundaryMode": "closed"
       }
     },
     {
@@ -2228,39 +2221,61 @@
       }
     },
     {
-      "op": "slab.add",
+      "op": "wall.split",
       "floorId": "l6",
-      "id": "slab_w",
-      "value": {
-        "label": "West tower floor",
-        "minX": -34,
-        "maxX": -14,
-        "minZ": -12,
-        "maxZ": 12
+      "id": "l6-w_ext_2",
+      "newId": "l6-w_ext_2_bridge",
+      "at": {
+        "x": -14,
+        "z": -2
       }
     },
     {
-      "op": "slab.add",
+      "op": "wall.split",
       "floorId": "l6",
-      "id": "slab_bridge",
-      "value": {
-        "label": "Sky bridge floor",
-        "minX": -14,
-        "maxX": 14,
-        "minZ": -2,
-        "maxZ": 2
+      "id": "l6-w_ext_2_bridge",
+      "newId": "l6-w_ext_2_south",
+      "at": {
+        "x": -14,
+        "z": 2
       }
     },
     {
-      "op": "slab.add",
+      "op": "wall.update",
       "floorId": "l6",
-      "id": "slab_e",
+      "id": "l6-w_ext_2_bridge",
       "value": {
-        "label": "East tower floor",
-        "minX": 14,
-        "maxX": 34,
-        "minZ": -12,
-        "maxZ": 12
+        "role": "interior",
+        "label": "West bridge mouth"
+      }
+    },
+    {
+      "op": "wall.split",
+      "floorId": "l6",
+      "id": "l6-e_ext_2",
+      "newId": "l6-e_ext_2_bridge",
+      "at": {
+        "x": 14,
+        "z": -2
+      }
+    },
+    {
+      "op": "wall.split",
+      "floorId": "l6",
+      "id": "l6-e_ext_2_bridge",
+      "newId": "l6-e_ext_2_south",
+      "at": {
+        "x": 14,
+        "z": 2
+      }
+    },
+    {
+      "op": "wall.update",
+      "floorId": "l6",
+      "id": "l6-e_ext_2_bridge",
+      "value": {
+        "role": "interior",
+        "label": "East bridge mouth"
       }
     },
     {

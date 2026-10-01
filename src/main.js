@@ -20,7 +20,8 @@ import { downloadGodotTscn, downloadText, downloadBinary, makeStoredZip, exportG
 import { createCheckReport, checkReportFilename } from './check-report.js';
 import { reachabilityWarnings, parseRouteStarts } from './reachability.js';
 import { snapPlanPoint, samePoint, wallSegmentProblem, wallJunctions, proposePlatformUpdate, proposeCrenellation, CRENELLATION_DEFAULTS } from './authoring.js';
-import { endpointMoveTargets, proposeEndpointMove } from './wall-edit.js';
+import { endpointMoveTargets, proposeEndpointMove, proposeWallSplit } from './wall-edit.js';
+import { stairGuardRailings } from './stair-guards.js';
 import { WebPreview3D as Preview3D, webReviewDescription } from './preview-web.js';
 import { createHistory } from './history.js';
 import { assertValidBuilding, validateBuilding } from './validation.js';
@@ -51,6 +52,7 @@ let newMarkerHeight=0;
 let newWallTypeId='',wallTypeEditor=null;
 let newOpeningShapeId='',openingShapeEditor=null;
 let crenelDraft={...CRENELLATION_DEFAULTS};
+let splitDraft=null; // {wallId, distance} for Split wall; another wall defaults to its midpoint.
 let routeResult=null,lastRenders=null;
 
 const $=s=>document.querySelector(s);
@@ -623,6 +625,19 @@ function refreshSelection(){
       if(problem){f.openings.splice(f.openings.length-result.openings.length);setStatus(`Crenels not added: ${problem.message}`);return;}
       commit(`Added ${result.openings.length} crenels`);
     });
+    // Split shares wall.split: the A piece keeps this ID; openings follow their piece.
+    const splitDistance=()=>splitDraft?.wallId===w.id?splitDraft.distance:wallLength(w)/2;
+    const splitAt=numInput('Split at (m from A)',splitDistance(),v=>{splitDraft={wallId:w.id,distance:v};});splitAt.querySelector('input').id='split-distance';
+    const splitBtn=document.createElement('button');splitBtn.type='button';splitBtn.id='split-wall-btn';splitBtn.textContent='Split wall';
+    splitBtn.addEventListener('click',()=>{
+      const result=proposeWallSplit(building,activeFloorIndex,w.id,{distance:splitDistance()},uid('wall'));
+      if(!result.ok){setStatus(`Wall not split: ${result.reason}`);return;}
+      const before=building.floors[activeFloorIndex];building.floors[activeFloorIndex]=result.floor;
+      const problem=validateBuilding(building).errors[0];
+      if(problem){building.floors[activeFloorIndex]=before;setStatus(`Wall not split: ${problem.message}`);return;}
+      splitDraft=null;commit(`Wall split at (${result.point.x.toFixed(2)}, ${result.point.z.toFixed(2)})`);
+    });
+    form.append(splitAt,splitBtn);
     form.append(crenelHelp,numInput('Crenel width',crenelDraft.crenelWidth,v=>{crenelDraft.crenelWidth=v;}),numInput('Merlon width',crenelDraft.merlonWidth,v=>{crenelDraft.merlonWidth=v;}),numInput('Crenel depth',crenelDraft.depth,v=>{crenelDraft.depth=v;}),addCrenels);
   }else if(selected.type==='region'){
     const r=f.regions.find(x=>x.id===selected.id);if(!r){selected=null;return refreshSelection();}
@@ -648,7 +663,20 @@ function refreshSelection(){
     for(const [key,label] of [['x','Marker X'],['y','Height above floor (m)'],['z','Marker Z']])form.append(numInput(label,marker.position[key],v=>change({position:{...marker.position,[key]:v}})));
     const help=document.createElement('p');help.className='muted compact-help';help.textContent='Exports as Marker3D under this floor. Notes stay in the building JSON. World Y: '+(floorElevation(building,activeFloorIndex)+marker.position.y).toFixed(2)+' m';form.append(help);
   }else if(selected.type==='light'){const l=f.lights.find(x=>x.id===selected.id);if(!l){selected=null;return refreshSelection();}form.append(textInput('Name',l.label,v=>{l.label=v||'Light';commit('Light updated');}),numInput('X',l.position.x,v=>{l.position.x=v;commit('Light moved');}),numInput('Y / height',l.position.y,v=>{l.position.y=v;commit('Light moved');}),numInput('Z',l.position.z,v=>{l.position.z=v;commit('Light moved');}),colorInput('Color',l.color,v=>{l.color=v;commit('Light color updated');}),numInput('Energy',l.energy,v=>{l.energy=Math.max(0,v);commit('Light updated');},'.05'),numInput('Range',l.range,v=>{l.range=Math.max(.1,v);commit('Light updated');}),checkboxInput('Shadows enabled',l.shadows,v=>{l.shadows=v;commit('Light updated');}));
-  }else if(selected.type==='stair'){const s=f.stairs.find(x=>x.id===selected.id);if(!s){selected=null;return refreshSelection();}form.append(textInput('Name',s.label,v=>{s.label=v||(s.style==='steps'?'Staircase':'Ramp');commit('Stair updated');}),selectInput('Style',s.style||'ramp',[['ramp','Ramp'],['steps','Steps']],v=>{s.style=v;commit('Stair style updated');refreshSelection();}),checkboxInput('Block space below',s.blockBelow!==false,v=>{s.blockBelow=v;commit('Under-stair blocking updated');refreshSelection();}),numInput('Center X',s.x,v=>{s.x=v;commit('Stair moved');}),numInput('Center Z',s.z,v=>{s.z=v;commit('Stair moved');}),numInput('Width',s.width,v=>{s.width=Math.max(.5,v);commit('Stair updated');}),numInput('Run',s.run,v=>{s.run=Math.max(1,v);commit('Stair updated');}));if(s.style==='steps')form.append(numInput('Step count',s.steps||12,v=>{s.steps=Math.max(2,Math.round(v));commit('Step count updated');},'1'));form.append(selectInput('Ascent direction',s.direction,[["north","North (-Z)"],["south","South (+Z)"],["east","East (+X)"],["west","West (-X)"]],v=>{s.direction=v;commit('Stair updated');}));const sm=document.createElement('div');sm.className='muted';sm.textContent=`${s.style==='steps'?'Visible steps':'Smooth ramp'} with a smooth WalkableRamp collision. ${s.blockBelow!==false?'A visible/collidable solid fill blocks the underside.':'The underside is open.'} Opens Floor ${activeFloorIndex+2} slab/ceiling.`;form.append(sm);
+  }else if(selected.type==='stair'){const s=f.stairs.find(x=>x.id===selected.id);if(!s){selected=null;return refreshSelection();}form.append(textInput('Name',s.label,v=>{s.label=v||(s.style==='steps'?'Staircase':'Ramp');commit('Stair updated');}),selectInput('Style',s.style||'ramp',[['ramp','Ramp'],['steps','Steps']],v=>{s.style=v;commit('Stair style updated');refreshSelection();}),checkboxInput('Block space below',s.blockBelow!==false,v=>{s.blockBelow=v;commit('Under-stair blocking updated');refreshSelection();}),numInput('Center X',s.x,v=>{s.x=v;commit('Stair moved');}),numInput('Center Z',s.z,v=>{s.z=v;commit('Stair moved');}),numInput('Width',s.width,v=>{s.width=Math.max(.5,v);commit('Stair updated');}),numInput('Run',s.run,v=>{s.run=Math.max(1,v);commit('Stair updated');}));if(s.style==='steps')form.append(numInput('Step count',s.steps||12,v=>{s.steps=Math.max(2,Math.round(v));commit('Step count updated');},'1'));form.append(selectInput('Ascent direction',s.direction,[["north","North (-Z)"],["south","South (+Z)"],["east","East (+X)"],["west","West (-X)"]],v=>{s.direction=v;commit('Stair updated');}));if(building.floors[activeFloorIndex+1]){
+      // Guard opening shares stair.guard: rails on the floor above around the open sides.
+      const guard=document.createElement('button');guard.type='button';guard.id='guard-stair-btn';guard.textContent='Guard opening above';
+      guard.addEventListener('click',()=>{
+        const result=stairGuardRailings(building,activeFloorIndex,s.id,{idPrefix:uid('rail')});
+        if(!result.ok){setStatus(`Opening not guarded: ${result.reason}`);return;}
+        if(!result.railings.length){setStatus('Opening already guarded: walls or railings close every open side');return;}
+        const upper=building.floors[activeFloorIndex+1];(upper.railings ||= []).push(...result.railings);
+        const problem=validateBuilding(building).errors[0];
+        if(problem){upper.railings.splice(upper.railings.length-result.railings.length);setStatus(`Opening not guarded: ${problem.message}`);return;}
+        commit(`Added ${result.railings.length} guard railing${result.railings.length===1?'':'s'} on Floor ${activeFloorIndex+2}${result.skipped.length?` (${result.skipped.map(q=>`${q.side} closed by ${q.by}`).join(', ')})`:''}`);
+      });
+      form.append(guard);
+    }const sm=document.createElement('div');sm.className='muted';sm.textContent=`${s.style==='steps'?'Visible steps':'Smooth ramp'} with a smooth WalkableRamp collision. ${s.blockBelow!==false?'A visible/collidable solid fill blocks the underside.':'The underside is open.'} Opens Floor ${activeFloorIndex+2} slab/ceiling.`;form.append(sm);
   }else if(selected.type==='slab'){const r=f.slabs.find(x=>x.id===selected.id);if(!r){selected=null;return refreshSelection();}form.append(textInput('Name',r.label,v=>{r.label=v||'Floor Footprint';commit('Floor footprint updated');}),numInput('Min X',r.minX,v=>{r.minX=v;commit('Floor footprint updated');}),numInput('Max X',r.maxX,v=>{r.maxX=v;commit('Floor footprint updated');}),numInput('Min Z',r.minZ,v=>{r.minZ=v;commit('Floor footprint updated');}),numInput('Max Z',r.maxZ,v=>{r.maxZ=v;commit('Floor footprint updated');}));const sm=document.createElement('div');sm.className='muted';sm.textContent='Overrides the automatic slab footprint on the active story. It remains tied to this floor elevation.';form.append(sm);
   }else if(selected.type==='manualFloor'||selected.type==='manualCeiling'){const isCeiling=selected.type==='manualCeiling',list=isCeiling?building.manualCeilings:building.manualFloors,r=list.find(x=>x.id===selected.id);if(!r){selected=null;return refreshSelection();}const kind=isCeiling?'Ceiling':'Floor';form.append(textInput('Name',r.label,v=>{r.label=v||`Manual ${kind}`;commit(`Manual ${kind.toLowerCase()} updated`);}),numInput('Top height Y',r.topY,v=>{r.topY=v;commit(`Manual ${kind.toLowerCase()} height updated`);}),numInput('Thickness',r.thickness,v=>{r.thickness=Math.max(.01,v);commit(`Manual ${kind.toLowerCase()} thickness updated`);},'.01'),numInput('Min X',r.minX,v=>{r.minX=v;commit(`Manual ${kind.toLowerCase()} footprint updated`);}),numInput('Max X',r.maxX,v=>{r.maxX=v;commit(`Manual ${kind.toLowerCase()} footprint updated`);}),numInput('Min Z',r.minZ,v=>{r.minZ=v;commit(`Manual ${kind.toLowerCase()} footprint updated`);}),numInput('Max Z',r.maxZ,v=>{r.maxZ=v;commit(`Manual ${kind.toLowerCase()} footprint updated`);}));const sm=document.createElement('div');sm.className='muted';sm.textContent=`Independent building-level ${kind.toLowerCase()} slab. Thickness extends downward from Top height Y; same-height overlap replaces automatic ${kind.toLowerCase()} geometry.`;form.append(sm);
   }else if(selected.type==='platform'){const r=f.platforms.find(x=>x.id===selected.id);if(!r){selected=null;return refreshSelection();}form.append(textInput('Name',r.label,v=>updatePlatformSettings(r,{label:v||'Platform'})),selectInput('Type',r.kind,[['porch','Porch'],['deck','Deck']],v=>updatePlatformSettings(r,{kind:v})),checkboxInput('Covered by roof',r.covered,v=>updatePlatformSettings(r,{covered:v})),numInput('Height offset',r.height||0,v=>updatePlatformSettings(r,{height:v})),numInput('Min X',r.minX,v=>updatePlatformSettings(r,{minX:v})),numInput('Max X',r.maxX,v=>updatePlatformSettings(r,{maxX:v})),numInput('Min Z',r.minZ,v=>updatePlatformSettings(r,{minZ:v})),numInput('Max Z',r.maxZ,v=>updatePlatformSettings(r,{maxZ:v})));

@@ -17,7 +17,7 @@
     33.5,
     25.9500007629395
   ],
-  "navPolygons": 2917,
+  "navPolygons": 2922,
   "results": [
     {
       "end": [
@@ -274,7 +274,7 @@
       "originCovered": true,
       "originSnapDistance": 0,
       "pathArrives": true,
-      "pathLength": 87.591142540623,
+      "pathLength": 87.5901722533745,
       "snap": [
         -16.5,
         12.7000007629395,
@@ -296,7 +296,7 @@
       "originCovered": true,
       "originSnapDistance": 0,
       "pathArrives": true,
-      "pathLength": 82.7936247896869,
+      "pathLength": 82.7938532393891,
       "snap": [
         29,
         16.2000007629395,
@@ -318,7 +318,7 @@
       "originCovered": true,
       "originSnapDistance": 0,
       "pathArrives": true,
-      "pathLength": 117.095665630652,
+      "pathLength": 117.095894080354,
       "snap": [
         0,
         19.7000007629395,
@@ -340,7 +340,7 @@
       "originCovered": true,
       "originSnapDistance": 0,
       "pathArrives": true,
-      "pathLength": 99.128077581292,
+      "pathLength": 99.1283060309943,
       "snap": [
         18,
         19.7000007629395,
@@ -362,7 +362,7 @@
       "originCovered": true,
       "originSnapDistance": 0,
       "pathArrives": true,
-      "pathLength": 108.454607787804,
+      "pathLength": 108.454836237506,
       "snap": [
         29,
         23.2000007629395,
@@ -384,7 +384,7 @@
       "originCovered": true,
       "originSnapDistance": 0,
       "pathArrives": true,
-      "pathLength": 116.005128898891,
+      "pathLength": 116.004392230185,
       "snap": [
         24,
         26.7000007629395,
@@ -406,7 +406,7 @@
       "originCovered": true,
       "originSnapDistance": 0,
       "pathArrives": true,
-      "pathLength": 119.051156250935,
+      "pathLength": 119.050185963686,
       "snap": [
         -21.5,
         26.7000007629395,
@@ -428,7 +428,7 @@
       "originCovered": true,
       "originSnapDistance": 0,
       "pathArrives": true,
-      "pathLength": 126.463919719856,
+      "pathLength": 126.462949492212,
       "snap": [
         -29,
         30.2000007629395,
@@ -472,7 +472,7 @@
       "originCovered": true,
       "originSnapDistance": 0,
       "pathArrives": true,
-      "pathLength": 58.5438832209911,
+      "pathLength": 58.5438832805958,
       "snap": [
         -26.5,
         30.2000007629395,

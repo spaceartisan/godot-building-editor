@@ -243,8 +243,12 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
       // An end that stops partway along another exterior wall (a T) closes
       // nothing: the outline needs that host split at the junction.
       const tees=exterior.flatMap(w=>['a','b'].filter(end=>degree.get(key(w[end]))===1).flatMap(end=>{const host=exterior.find(q=>q!==w&&(()=>{const r=projectToWall(q,w[end]);return r.distance<=1e-4&&r.t>1e-6&&r.t<1-1e-6;})());return host?[{wall:w,host,at:w[end]}]:[];}));
-      const detail=tees.length?` ${tees.slice(0,3).map(t=>`${t.wall.label||t.wall.id} ends partway along ${t.host.label||t.host.id} at (${+t.at.x.toFixed(3)}, ${+t.at.z.toFixed(3)})`).join('; ')}${tees.length>3?'; …':''}: an outline only closes at shared endpoints, so split the host wall there (remove it and add two walls meeting at that point), or set Floor Footprints for the coverage.`:'';
-      warn(p,`exterior boundary has open ends; mark intentional access openings in Floors or close the wall loop.${detail}`,[...new Set(tees.flatMap(t=>[t.wall,t.host]))].map(q=>({type:'wall',id:q.id,floorId:f.id})));
+      const detail=tees.length?` ${tees.slice(0,3).map(t=>`${t.wall.label||t.wall.id} ends partway along ${t.host.label||t.host.id} at (${+t.at.x.toFixed(3)}, ${+t.at.z.toFixed(3)})`).join('; ')}${tees.length>3?'; …':''}: an outline only closes at shared endpoints, so split the host wall there (wall.split, or Split wall in the wall panel), or set Floor Footprints for the coverage.`:'';
+      // Free ends that nearly meet (within 5 cm) are almost always a missed join.
+      const ends=exterior.flatMap(w=>['a','b'].filter(end=>degree.get(key(w[end]))===1&&!tees.some(t=>t.wall===w&&t.at===w[end])).map(end=>({wall:w,end})));
+      const near=[];for(let i=0;i<ends.length;i++)for(let j=i+1;j<ends.length;j++){const a=ends[i],b=ends[j],d=Math.hypot(a.wall[a.end].x-b.wall[b.end].x,a.wall[a.end].z-b.wall[b.end].z);if(d<=.05&&a.wall!==b.wall)near.push({a,b,d});}
+      const nearDetail=near.length?` ${near.slice(0,3).map(q=>`${q.a.wall.label||q.a.wall.id} end ${q.a.end.toUpperCase()} is ${+q.d.toPrecision(2)} m from ${q.b.wall.label||q.b.wall.id} end ${q.b.end.toUpperCase()}`).join('; ')}${near.length>3?'; …':''}: move one endpoint onto the other (wall.move-endpoint, or drag it in the plan) to close the loop.`:'';
+      warn(p,`exterior boundary has open ends; mark intentional access openings in Floors or close the wall loop.${detail}${nearDetail}`,[...new Set([...tees.flatMap(t=>[t.wall,t.host]),...near.flatMap(q=>[q.a.wall,q.b.wall])])].map(q=>({type:'wall',id:q.id,floorId:f.id})));
     }
     const footprintIssue=exteriorFootprintIssue(view);
     if(exterior.length&&footprintIssue&&!(f.slabs?.length)&&!f.regions?.some(r=>r.effect==='solid'))warn(p,`automatic footprint uses rectangular bounds here. ${f.boundaryMode==='intentional_open'?'The intentional opening needs explicit coverage.':footprintIssue} Use Floor Footprint to define the intended coverage.`);
@@ -289,6 +293,20 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
       if(walls.some(w=>Math.max(w.a.x,w.b.x)>h.minX&&Math.min(w.a.x,w.b.x)<h.maxX&&Math.max(w.a.z,w.b.z)>h.minZ&&Math.min(w.a.z,w.b.z)<h.maxZ))warn(p,`${s.label||s.id}: wall intersects stair footprint; check clearance`,targets);
     }
   });
+  // Godot stores vertices as 32-bit floats: far from the origin, exported
+  // positions round to whole millimetres or worse (Halcyon H13).
+  {
+    let far=0;
+    const reach=(x,z)=>{const r=Math.max(Math.abs(Number(x)||0),Math.abs(Number(z)||0));if(r>far)far=r;};
+    for(const f of floors){
+      for(const w of f.walls||[]){reach(w.a.x,w.a.z);reach(w.b.x,w.b.z);}
+      for(const k of ['regions','slabs','platforms'])for(const r of f[k]||[]){reach(r.minX,r.minZ);reach(r.maxX,r.maxZ);}
+      for(const r of f.railings||[]){reach(r.a.x,r.a.z);reach(r.b.x,r.b.z);}
+      for(const s of f.stairs||[])reach(s.x,s.z);
+    }
+    for(const r of [...(building.roofSections||[]),...(building.manualFloors||[]),...(building.manualCeilings||[])]){reach(r.minX,r.minZ);reach(r.maxX,r.maxZ);}
+    if(far>10000){const step=Math.pow(2,Math.floor(Math.log2(far))-23);warn('Building',`plan coordinates reach ${Math.round(far).toLocaleString('en-US')} m from the origin, where Godot's 32-bit vertex positions round to ${step>=.01?`${Number((step*100).toPrecision(2))} cm`:`${Number((step*1000).toPrecision(2))} mm`}; author the building near the origin and position the scene in Godot instead`);}
+  }
   // Geometry diagnostics are opt-in for prepared documents. Raw import checks
   // run before normalization and must not retain warnings about missing defaults.
   if(!errors.length)for(const issue of roofWallDiagnostics(building))warnings.push({...issue,path:`Floor ${issue.floorIndex+1}`,message:`Floor ${issue.floorIndex+1}: ${issue.message}`,targets:[{type:'wall',id:issue.wallId,floorId:floors[issue.floorIndex]?.id}]});

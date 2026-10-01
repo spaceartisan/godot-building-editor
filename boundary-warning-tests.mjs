@@ -54,3 +54,21 @@ const towerAndRange=[...loop('t',-4,-4,4,4),wall('r0',[4,-4],[14,-4]),wall('r1',
   assert.deepEqual(messages(split),[]);assert.ok(Math.abs(inspectFloorCoverage(split,0).area-280)<1e-6,'split hosts give the dumbbell: 2 x 120 + 40 m²');
   console.log('PASS T-junction outlines: the open-ends warning names each T and its host; splitting the hosts closes the outline exactly');
 }
+{
+  // Halcyon H13: far coordinates lose 32-bit float precision in Godot.
+  const box=off=>build([wall('a',[off,0],[off+8,0]),wall('b',[off+8,0],[off+8,8]),wall('c',[off+8,8],[off,8]),wall('d',[off,8],[off,0])]);
+  assert.deepEqual(messages(box(9000)).filter(m=>/32-bit/.test(m)),[],'within 10 km: no warning');
+  assert.deepEqual(messages(box(100000)).filter(m=>/32-bit/.test(m)),["Building: plan coordinates reach 100,008 m from the origin, where Godot's 32-bit vertex positions round to 7.8 mm; author the building near the origin and position the scene in Godot instead"]);
+  assert.match(messages(box(999000)).find(m=>/32-bit/.test(m)),/round to 6\.3 cm/);
+  console.log('PASS far coordinates: a warning beyond 10 km gives the 32-bit float step');
+}
+{
+  // Halcyon H14: a loop that stops just short of closing names the near miss.
+  const gap=build([wall('a',[0,0],[8,0]),wall('b',[8,0],[8,8]),wall('c',[8,8],[0,8]),wall('d',[0,8],[0,0.001])]);
+  const open=validateBuilding(gap).warnings.find(w=>/open ends/.test(w.message));
+  assert.match(open.message,/a end A is 0\.001 m from d end B: move one endpoint onto the other/);
+  assert.deepEqual(open.targets.map(t=>t.id).sort(),['a','d']);
+  const fixed=build([{op:'wall.move-endpoint',floorId:'floor_1',id:'d',end:'b',point:{x:0,z:0}}],gap);
+  assert.deepEqual(messages(fixed).filter(m=>/open ends/.test(m)),[],'following the advice closes the loop');
+  console.log('PASS near-miss endpoints: the open-ends warning names ends within 5 cm and the fix');
+}

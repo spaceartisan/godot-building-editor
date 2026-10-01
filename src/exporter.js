@@ -4,7 +4,7 @@ import { profileWallState, profileWallSolids } from './wall-profile-geometry.js'
 import { polygonSlabFaces } from './polygon-geometry.js';
 import { areaPoints, unionPolygonAreas, subtractPolygonAreas } from './polygon-areas.js';
 import { roofBoxParts, roofInteriorBlockers, roofAttachmentBlockers, trimRoofBox, trimmedGableEnds } from './roof-geometry.js';
-import { higherFloorBlockerRectangles, unionRectAreas, automaticRoofRectangles, automaticRoofSections, boundsOfAutomaticRoof, boundsOfBuilding, boundsOfStructuralFloor, constrainedOpening, floorElevation, floorView, findWall, manualCeilingRectanglesAtLevel, manualFloorRectanglesAtLevel, pointOnWall, rectValid, roofSectionsForFloor, stairFootprint, storyHeight, structuralFloorRectangles, subtractRectAreas, splitWallIntoSolidSegments, validateOpeningLayout, wallLength } from './model.js';
+import { higherFloorBlockerRectangles, exteriorFootprintRectangles, unionRectAreas, automaticRoofRectangles, automaticRoofSections, boundsOfAutomaticRoof, boundsOfBuilding, boundsOfStructuralFloor, constrainedOpening, floorElevation, floorView, findWall, manualCeilingRectanglesAtLevel, manualFloorRectanglesAtLevel, pointOnWall, rectValid, roofSectionsForFloor, stairFootprint, storyHeight, structuralFloorRectangles, subtractRectAreas, splitWallIntoSolidSegments, validateOpeningLayout, wallLength } from './model.js';
 import { wallSolidPlanes, unionFaceWriter, junctionMiters } from './wall-union.js';
 import { stairOpeningFootprint } from './model.js';
 import { assertValidBuilding } from './validation.js';
@@ -1315,7 +1315,23 @@ export function storyCeilingRectangles(building, fi) {
     cover.push(...manualFloorRectanglesAtLevel(building,upperY,Math.max(.05,(Number(upperView.floorThickness)||.18)*.6)));
   }
   const openAbove=cover.length?subtractRectAreas(blockers,unionRectAreas(cover)):blockers;
-  return subtractRectAreas(structural,openAbove);
+  const ceiling=subtractRectAreas(structural,openAbove);
+  if(building.roof?.type!=='none')return ceiling;
+  // Without an automatic roof, floor coverage outside the closed exterior
+  // wall outline with nothing above it is open sky (a terrace or roof deck):
+  // it keeps a ceiling only under an independent roof, ceiling or floor at or
+  // above this story's wall top. Inside the outline the ceiling still closes
+  // the rooms; an open or branched outline keeps the previous behaviour.
+  const hasExterior=view.walls.some(w=>isExteriorWall(view,w)),outline=hasExterior?exteriorFootprintRectangles(view):[];
+  if(hasExterior&&!outline.length)return ceiling;
+  const storyTop=floorElevation(building,fi)+(Number(view.wallHeight)||0),tolerance=.05;
+  const exposed=subtractRectAreas(subtractRectAreas(structural,blockers),outline);
+  if(!exposed.length)return ceiling;
+  const independent=[
+    ...(building.roofSections||[]).filter(r=>rectValid(r)&&Number(r.baseY)>=storyTop-tolerance).map(r=>{const o=Math.max(0,Number(r.overhang)||0);return {minX:r.minX-o,maxX:r.maxX+o,minZ:r.minZ-o,maxZ:r.maxZ+o};}),
+    ...[...(building.manualCeilings||[]),...(building.manualFloors||[])].filter(r=>rectValid(r)&&Number(r.topY)>=storyTop-tolerance).map(r=>({minX:r.minX,maxX:r.maxX,minZ:r.minZ,maxZ:r.maxZ}))];
+  const sky=independent.length?subtractRectAreas(exposed,unionRectAreas(independent)):exposed;
+  return sky.length?subtractRectAreas(ceiling,sky):ceiling;
 }
 
 export function floorRectanglesForView(view, belowStairs=[]) {

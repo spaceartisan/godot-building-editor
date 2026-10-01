@@ -55,6 +55,13 @@ const base=ok(room('floor_1','w'));
   assert.equal(dup.floors[2].markers[0].id,'up2-mk');assert.equal(dup.floors[2].label,'Upper copy');
   assert.deepEqual(ok([{op:'floor.duplicate',id:'up2',sourceFloorId:'up',value:{label:'Upper copy'}}],two),dup,'the same recipe gives the same document');
   assert.equal(ok([{op:'floor.duplicate',id:'up2',sourceFloorId:'up'}],two).floors[2].label,'New floor 2 copy','default label as in the web');
+  // Halcyon H10: a copy of a copy replaces the source prefix ("up3-u0", not "up3-up2-u0"); openings keep their hosts.
+  const withDoor=ok([{op:'opening.add',floorId:'up2',id:'up2-d',value:{type:'door',wallId:'up2-u0',t:.5,width:1,height:2}}],dup);
+  const chain=ok([{op:'floor.duplicate',id:'up3',sourceFloorId:'up2'}],withDoor).floors[3];
+  assert.deepEqual(chain.walls.map(w=>w.id),['up3-u0','up3-u1','up3-u2','up3-u3']);assert.deepEqual(chain.openings.map(o=>[o.id,o.wallId]),[['up3-d','up3-u0']]);
+  // If stripping would collide (both "x" and "up2-x" exist), the full prefix is kept.
+  const clash=ok([{op:'marker.add',floorId:'up2',id:'mk',value:{position:{x:0,y:1,z:0}}}],dup);
+  assert.deepEqual(ok([{op:'floor.duplicate',id:'up3',sourceFloorId:'up2'}],clash).floors[3].markers.map(m=>m.id),['up3-up2-mk','up3-mk']);
   const moved=ok([{op:'floor.move',id:'up',direction:'down'}],two);assert.deepEqual(moved.floors.map(f=>f.id),['up','floor_1']);
   rejects([{op:'floor.move',id:'up',direction:'up'}],/already at the end/,two);
   rejects([{op:'floor.remove',id:'up'}],/set removeContents: true/,two);
@@ -100,4 +107,64 @@ const base=ok(room('floor_1','w'));
     assert.deepEqual([e.floors[0].slabs[0].id,e.manualCeilings[0].id,e.floors[0].markers[0].id],['fp','soffit','mk']);
     console.log('PASS inspect --entities lists Floor Footprints, manual surfaces and markers');
   }finally{fs.rmSync(dir,{recursive:true,force:true});}
+}
+{
+  // Halcyon H1: wall.split. Splitting each tower's inner wall where the bridge
+  // walls meet it closes the outline exactly; openings follow their piece.
+  const { inspectFloorCoverage } = await import('./src/diagnostics.js');
+  const W=(id,a,b)=>({op:'wall.add',floorId:'floor_1',id,value:{a:{x:a[0],z:a[1]},b:{x:b[0],z:b[1]},role:'exterior'}});
+  const loop=(p,x0,z0,x1,z1)=>[[x0,z0,x1,z0],[x1,z0,x1,z1],[x1,z1,x0,z1],[x0,z1,x0,z0]].map(([a,b,c,d],i)=>W(`${p}${i}`,[a,b],[c,d]));
+  const bridged=ok([...loop('west',-20,-6,-10,6),...loop('east',10,-6,20,6),W('bridge_n',[-10,-1],[10,-1]),W('bridge_s',[10,1],[-10,1]),
+    {op:'opening.add',floorId:'floor_1',id:'w1',value:{type:'window',wallId:'west1',at:{x:-10,z:-4},width:1.2,height:1.2}},
+    {op:'opening.add',floorId:'floor_1',id:'w2',value:{type:'window',wallId:'west1',at:{x:-10,z:4},width:1.2,height:1.2}}]);
+  const split=ok([{op:'wall.split',floorId:'floor_1',id:'west1',newId:'west1_mid',at:{x:-10,z:-1}},{op:'wall.split',floorId:'floor_1',id:'west1_mid',newId:'west1_s',at:{x:-10,z:1}},
+    {op:'wall.update',floorId:'floor_1',id:'west1_mid',value:{role:'interior'}},
+    {op:'wall.split',floorId:'floor_1',id:'east3',newId:'east3_mid',distance:5},{op:'wall.split',floorId:'floor_1',id:'east3_mid',newId:'east3_n',distance:2},
+    {op:'wall.update',floorId:'floor_1',id:'east3_mid',value:{role:'interior'}}],bridged);
+  const walls=Object.fromEntries(split.floors[0].walls.map(w=>[w.id,w]));
+  assert.deepEqual([walls.west1.a,walls.west1.b,walls.west1_s.b],[{x:-10,z:-6},{x:-10,z:-1},{x:-10,z:6}],'the A piece keeps the ID; B pieces carry on to the old end');
+  assert.deepEqual(split.floors[0].walls.slice(1,4).map(w=>w.id),['west1','west1_mid','west1_s'],'new pieces follow the original in wall order');
+  assert.deepEqual(split.floors[0].openings.map(o=>[o.id,o.wallId,Math.round(o.t*1e6)/1e6]),[['w1','west1',0.4],['w2','west1_s',0.6]]);
+  assert.ok(Math.abs(inspectFloorCoverage(split,0).area-280)<1e-6,'closed dumbbell outline: 2 x 120 + 40 m²');
+  for(const [op,pattern] of [
+    [{op:'wall.split',floorId:'floor_1',id:'west1',newId:'n',at:{x:-10,z:-4}},/Window spans the split point/],
+    [{op:'wall.split',floorId:'floor_1',id:'west1',newId:'west0',distance:3},/ID already exists: west0/],
+    [{op:'wall.split',floorId:'floor_1',id:'west1',newId:'n',distance:.1},/at least 0\.15 m/],
+    [{op:'wall.split',floorId:'floor_1',id:'west1',newId:'n',at:{x:-9,z:0}},/from wall west1/],
+    [{op:'wall.split',floorId:'floor_1',id:'west1',newId:'n',distance:3,at:{x:-10,z:0}},/exactly one of at/],
+    [{op:'wall.split',floorId:'floor_1',id:'nope',newId:'n',distance:3},/Unknown wall/]]){
+    const r=run([op],bridged);assert.equal(r.ok,false);assert.match(JSON.stringify(r.errors),pattern);
+  }
+  // Shaped walls split collinearly (Kestrel's flared hull and a hex corridor
+  // through its hatch row) export with exactly the same surface areas: no
+  // seam faces at the split.
+  {
+    const fs=await import('node:fs'),{buildProfileMeshData}=await import('./src/exporter.js'),{floorView}=await import('./src/model.js');
+    const kestrel=JSON.parse(fs.readFileSync(new URL('./authoring/kestrel/output/kestrel.building.json',import.meta.url),'utf8'));
+    const splitK=ok([{op:'wall.split',floorId:'floor_1',id:'d1_hull1',newId:'d1_hull1b',at:{x:-9,z:-7}},{op:'wall.split',floorId:'floor_1',id:'d1_corr_port',newId:'d1_corr_port_b',distance:4}],kestrel);
+    const tri=w=>{let s=0;for(let i=0;i<w.vertices.length;i+=3){const [a,b,c]=w.vertices.slice(i,i+3),u={x:b.x-a.x,y:b.y-a.y,z:b.z-a.z},v={x:c.x-a.x,y:c.y-a.y,z:c.z-a.z};s+=Math.hypot(u.y*v.z-u.z*v.y,u.z*v.x-u.x*v.z,u.x*v.y-u.y*v.x)/2;}return s;};
+    const areas=b=>Object.fromEntries(Object.entries(buildProfileMeshData(floorView(b,0,false))).filter(([,w])=>w?.vertices).map(([k,w])=>[k,Math.round(tri(w)*1e4)/1e4]));
+    assert.deepEqual(areas(splitK),areas(kestrel),'same profile surface areas after splitting shaped walls');
+  }
+  console.log('PASS wall.split: pieces keep properties and order, openings follow, T-junction outlines close, clear rejections');
+}
+{
+  // Halcyon H11: stair.guard rails the opening's open sides on the floor above
+  // (opening footprint: 0.06 m outside the flight, landing end left open) and
+  // skips sides a wall already closes.
+  const W=(floorId,id,a,b)=>({op:'wall.add',floorId,id,value:{a:{x:a[0],z:a[1]},b:{x:b[0],z:b[1]},role:'exterior'}});
+  const box=(f,p)=>[[-4,-4,4,-4],[4,-4,4,4],[4,4,-4,4],[-4,4,-4,-4]].map(([a,b,c,d],i)=>W(f,`${p}${i}`,[a,b],[c,d]));
+  const two=ok([...box('floor_1','g'),{op:'floor.add-top',id:'up',aboveFloorId:'floor_1'},...box('up','u'),
+    {op:'stair.add',floorId:'floor_1',id:'st',value:{x:-3.1,z:0,width:1.6,run:5,direction:'north',style:'steps',steps:16}}]);
+  const guarded=ok([{op:'stair.guard',floorId:'floor_1',id:'st'}],two),rails=guarded.floors[1].railings;
+  const round=p=>({x:Math.round(p.x*1e6)/1e6,z:Math.round(p.z*1e6)/1e6});
+  assert.deepEqual(rails.map(r=>[r.id,round(r.a),round(r.b),r.height,r.style]),[
+    ['st-guard-east',{x:-2.24,z:-2.5},{x:-2.24,z:2.56},1,'two_rail'],
+    ['st-guard-south',{x:-3.96,z:2.56},{x:-2.24,z:2.56},1,'two_rail']],'east side and entry end; the west side is closed by the wall, the north landing stays open');
+  assert.deepEqual(ok([{op:'stair.guard',floorId:'floor_1',id:'st',value:{idPrefix:'again'}}],guarded).floors[1].railings,rails,'guarding again adds nothing: existing railings close those sides');
+  const custom=ok([{op:'stair.guard',floorId:'floor_1',id:'st',value:{idPrefix:'g',height:1.1,style:'picket',label:'Well rail'}}],two).floors[1].railings;
+  assert.deepEqual(custom.map(r=>[r.id,r.label,r.height,r.style]),[['g-east','Well rail east',1.1,'picket'],['g-south','Well rail south',1.1,'picket']]);
+  rejects([{op:'stair.guard',floorId:'floor_1',id:'st',value:{style:'rope'}}],/style/,two);
+  rejects([{op:'floor.update',id:'up',value:{autoFloor:false}},{op:'stair.guard',floorId:'floor_1',id:'st'}],/no automatic floor, so the stair cuts no opening/,two);
+  console.log('PASS stair.guard: rails on the opening footprint, wall-closed sides and the landing end skipped, options, rejections');
 }

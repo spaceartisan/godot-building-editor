@@ -1,0 +1,222 @@
+{
+  "engineVersion": "4.5.1.stable.official.f62fdbde1",
+  "colorMode": "materials",
+  "renderer": "4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.1 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)",
+  "virtualDisplay": false,
+  "scenes": [
+    "halcyon_twin_towers.tscn"
+  ],
+  "views": [
+    {
+      "eye": [
+        78,
+        52,
+        82
+      ],
+      "file": "southeast-aerial.png",
+      "fov": 45,
+      "look": [
+        0,
+        8,
+        0
+      ],
+      "scene": "assets/halcyon_twin_towers.tscn"
+    },
+    {
+      "eye": [
+        -80,
+        30,
+        -70
+      ],
+      "file": "northwest-quarter.png",
+      "fov": 45,
+      "look": [
+        0,
+        10,
+        0
+      ],
+      "scene": "assets/halcyon_twin_towers.tscn"
+    },
+    {
+      "eye": [
+        14,
+        3,
+        42
+      ],
+      "file": "entrance-bay.png",
+      "fov": 55,
+      "look": [
+        0,
+        4,
+        20
+      ],
+      "scene": "assets/halcyon_twin_towers.tscn"
+    },
+    {
+      "eye": [
+        0,
+        1.6,
+        10.8
+      ],
+      "file": "rotunda-interior.png",
+      "fov": 70,
+      "look": [
+        0,
+        3,
+        -4
+      ],
+      "scene": "assets/halcyon_twin_towers.tscn"
+    },
+    {
+      "eye": [
+        -22,
+        1.7,
+        16
+      ],
+      "file": "concourse-shopfronts.png",
+      "fov": 65,
+      "look": [
+        6,
+        2,
+        -12
+      ],
+      "scene": "assets/halcyon_twin_towers.tscn"
+    },
+    {
+      "eye": [
+        -5,
+        6.6,
+        15
+      ],
+      "file": "atrium-from-l2.png",
+      "fov": 65,
+      "look": [
+        0,
+        0.5,
+        4
+      ],
+      "scene": "assets/halcyon_twin_towers.tscn"
+    },
+    {
+      "eye": [
+        -37,
+        -5.4,
+        -17
+      ],
+      "file": "parking-b2.png",
+      "fov": 65,
+      "look": [
+        10,
+        -6,
+        8
+      ],
+      "scene": "assets/halcyon_twin_towers.tscn"
+    },
+    {
+      "eye": [
+        6,
+        -1.6,
+        -6
+      ],
+      "file": "car-ramp-b1.png",
+      "fov": 65,
+      "look": [
+        22,
+        -4.5,
+        0
+      ],
+      "scene": "assets/halcyon_twin_towers.tscn"
+    },
+    {
+      "eye": [
+        0,
+        10.8,
+        -18
+      ],
+      "file": "terrace-and-bridge.png",
+      "fov": 65,
+      "look": [
+        0,
+        19,
+        0
+      ],
+      "scene": "assets/halcyon_twin_towers.tscn"
+    },
+    {
+      "eye": [
+        -12.5,
+        21.3,
+        0
+      ],
+      "file": "sky-bridge-interior.png",
+      "fov": 65,
+      "look": [
+        14,
+        21,
+        0
+      ],
+      "scene": "assets/halcyon_twin_towers.tscn"
+    },
+    {
+      "eye": [
+        -29.8,
+        14.3,
+        -5.4
+      ],
+      "file": "west-stair-core.png",
+      "fov": 75,
+      "look": [
+        -32,
+        11.5,
+        2
+      ],
+      "scene": "assets/halcyon_twin_towers.tscn"
+    },
+    {
+      "eye": [
+        16,
+        28.3,
+        10.5
+      ],
+      "file": "east-roof-deck.png",
+      "fov": 65,
+      "look": [
+        30,
+        27.5,
+        -8
+      ],
+      "scene": "assets/halcyon_twin_towers.tscn"
+    },
+    {
+      "eye": [
+        -15,
+        31.8,
+        10.5
+      ],
+      "file": "penthouse-l9.png",
+      "fov": 70,
+      "look": [
+        -30,
+        31.3,
+        -10
+      ],
+      "scene": "assets/halcyon_twin_towers.tscn"
+    },
+    {
+      "eye": [
+        -23,
+        14.3,
+        0
+      ],
+      "file": "office-corridor-l4.png",
+      "fov": 65,
+      "look": [
+        -14,
+        14,
+        0
+      ],
+      "scene": "assets/halcyon_twin_towers.tscn"
+    }
+  ],
+  "note": "Scenes loaded unmodified (empty materials render as default grey); only camera, sky, sun, ambient light and a camera headlamp were added; exported Glass surfaces render with a clear material. Lighting in a game scene will differ."
+}

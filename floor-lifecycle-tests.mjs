@@ -93,6 +93,11 @@ try{
   for(const shell of ['OutsideFaces','InsideFaces','SideAFaces','SideBFaces'])assert.match(files.tscn,new RegExp(`name="${shell}"`));assert.doesNotMatch(files.tscn,/type="StandardMaterial3D"/);
   const restoredPath=path.join(temp,'restored.json');run(['edit',out,'--ops',removalPath,'--out',restoredPath,'--warnings-as-errors']);assert.deepEqual(JSON.parse(fs.readFileSync(restoredPath)),source);
   assert.match(run(['edit',out,'--ops',removalPath,'--dry-run'],0,false),/Top floor removed: third; removed 7 owned entities and 1 incoming stairs/);
+  // Halcyon: insert/duplicate act on any floor, so the summary names the anchor instead of saying "Top floor".
+  {const first=JSON.parse(fs.readFileSync(out)).floors[0].id,stackPath=path.join(temp,'stack.edit.json');
+   fs.writeFileSync(stackPath,JSON.stringify({version:1,operations:[{op:'floor.insert',id:'basement',belowFloorId:first},{op:'floor.duplicate',id:'copy',sourceFloorId:first,removeAffectedStairs:true}]}));
+   const text=run(['edit',out,'--ops',stackPath,'--dry-run'],0,false);fs.rmSync(stackPath);
+   assert.match(text,new RegExp(`\n  Floor inserted: basement \\(below ${first}\\);`));assert.match(text,new RegExp(`\n  Floor duplicated: copy \\(copy of ${first}, placed above it\\);`));assert.doesNotMatch(text,/Top floor (inserted|duplicated)/);}
   run([...args,'--out',out],3);
   const bad=path.join(temp,'bad.edit.json'),dest=path.join(temp,'missing','rejected.json');
   fs.writeFileSync(bad,JSON.stringify({version:1,operations:[remove]}));run(['edit',out,'--ops',bad,'--out',dest],1);assert.equal(fs.existsSync(path.dirname(dest)),false);

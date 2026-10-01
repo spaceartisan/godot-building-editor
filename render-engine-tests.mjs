@@ -28,6 +28,19 @@ try{
   assert.equal(JSON.parse(fs.readFileSync(path.join(temp,'colored/renders.json'),'utf8')).colorMode,'surfaces');
   assert.notDeepEqual(fs.readFileSync(path.join(temp,'colored/gate.png')),fs.readFileSync(path.join(temp,'custom/gate.png')),'surface colours change the pixels');
   assert.deepEqual(custom.render.files,['gate.png']);
+  // Halcyon: a manual roof that meets nothing exports as an unnamed BoxMesh;
+  // the surface-colour mode still paints it as a roof instead of leaving the
+  // default grey (which reads as wall siding).
+  {
+    const { applyTransaction } = await import('./src/transactions.js'), { prepareDocument } = await import('./src/diagnostics.js'), { makeEmptyBuilding } = await import('./src/model.js');
+    const b0=makeEmptyBuilding();b0.floors[0].id='floor_1';b0.name='Lone roof';
+    const r=applyTransaction(prepareDocument(b0).building,{version:1,operations:[{op:'building.update',value:{roof:{type:'none'}}},{op:'roof.add',id:'lone',value:{type:'flat',minX:-4,maxX:4,minZ:-4,maxZ:4,baseY:3,overhang:0}}]});assert.equal(r.ok,true,JSON.stringify(r.errors));
+    fs.writeFileSync(path.join(temp,'lone.building.json'),JSON.stringify(r.building));run(['export','lone.building.json','--out','lone']);
+    assert.match(fs.readFileSync(path.join(temp,'lone/lone_roof.tscn'),'utf8'),/\[node name="ManualRoof_001_Flat"[^\n]*\]\n[^\n]*\n[^\n]*\nmesh = SubResource\("BoxMesh_/,'the lone roof is a BoxMesh primitive');
+    fs.writeFileSync(path.join(temp,'top.json'),JSON.stringify({views:[{name:'top',eye:[0,12,0.01],look:[0,3,0],fov:30}]}));
+    run(['godot-check','--assets','lone','--render','--out','lone-plain','--views','top.json']);run(['godot-check','--assets','lone','--render','--surface-colors','--out','lone-colored','--views','top.json']);
+    assert.notDeepEqual(fs.readFileSync(path.join(temp,'lone-colored/top.png')),fs.readFileSync(path.join(temp,'lone-plain/top.png')),'a BoxMesh manual roof gets the roof colour');
+  }
   run(['godot-check','--assets','assets','--render','--out','custom'],3);
   console.log(`PASS render engine: ${names.length} automatic views and 1 custom view rendered by ${auto.engineVersion}`);
   // Web editor route: the local server renders the web export with the same views.

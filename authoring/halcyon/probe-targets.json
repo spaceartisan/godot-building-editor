@@ -1,0 +1,27 @@
+{
+  "start": [0, 0, 23.5],
+  "targets": [
+    {"name": "B2 parking west", "at": [-20, -7, 10]},
+    {"name": "B2 parking east (ramp foot)", "at": [10, -7, 0]},
+    {"name": "B1 plant room 1", "at": [-30, -3.5, -14]},
+    {"name": "B1 loading hall (ramp top)", "at": [28, -3.5, 0]},
+    {"name": "L1 rotunda centre", "at": [0, 0, 4]},
+    {"name": "L1 shop 1", "at": [-25.4, 0, -16]},
+    {"name": "L1 shop 8", "at": [25.4, 0, -16]},
+    {"name": "L2 food court", "at": [-20, 4.8, 12]},
+    {"name": "L2 shop 4", "at": [-3.6, 4.8, -16]},
+    {"name": "L3 terrace middle", "at": [0, 9.1, -16]},
+    {"name": "L3 terrace west of west tower", "at": [-37, 9.1, 0]},
+    {"name": "L4 west suite N3", "at": [-16.5, 12.6, -6]},
+    {"name": "L5 east suite S1", "at": [29, 16.1, 9]},
+    {"name": "L6 sky bridge", "at": [0, 19.6, 0]},
+    {"name": "L6 east corridor", "at": [18, 19.6, 0]},
+    {"name": "L7 east suite N1", "at": [29, 23.1, -9]},
+    {"name": "L8 east roof deck", "at": [24, 26.6, 8]},
+    {"name": "L8 west suite S2", "at": [-21.5, 26.6, 6]},
+    {"name": "L9 penthouse N1", "at": [-29, 30.1, -9]},
+    {"name": "Bridge leg: west corridor -> east corridor", "from": [-18, 19.6, 0], "at": [18, 19.6, 0], "maxLength": 40},
+    {"name": "Core leg: L4 west lobby -> L9 west lobby", "from": [-26.5, 12.6, 0], "at": [-26.5, 30.1, 0], "maxLength": 140},
+    {"name": "Ramp leg: B2 ramp foot -> B1 ramp top", "from": [10, -7, 0], "at": [28, -3.5, 0], "maxLength": 30}
+  ]
+}

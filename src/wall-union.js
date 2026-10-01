@@ -59,12 +59,51 @@ export function wallSolidPlanes(wall,seg,thickness){
     {n:{x:0,y:1,z:0},d:seg.top,kind:'cap'},{n:{x:0,y:-1,z:0},d:-seg.bottom,kind:'cap'}];
 }
 
+// Plan bounds of a solid whose x and z extents are set by its own
+// axis-aligned planes (walls along X or Z), else null. A face lying more than
+// EPS beyond one of those planes is returned unchanged by subtract(), so the
+// solid can be skipped without changing the output.
+function axisBounds(planes){
+  const b={minX:-Infinity,maxX:Infinity,minZ:-Infinity,maxZ:Infinity};
+  for(const {n,d} of planes){
+    if(n.y!==0)continue;
+    if(n.x===1&&n.z===0)b.maxX=Math.min(b.maxX,d);else if(n.x===-1&&n.z===0)b.minX=Math.max(b.minX,-d);
+    else if(n.z===1&&n.x===0)b.maxZ=Math.min(b.maxZ,d);else if(n.z===-1&&n.x===0)b.minZ=Math.max(b.minZ,-d);
+  }
+  return Object.values(b).every(Number.isFinite)?b:null;
+}
+// Grid of axis-aligned solids by plan bounds; other solids are always checked.
+const CELL=4,solidIndexes=new WeakMap();
+function solidIndex(solids){
+  let index=solidIndexes.get(solids);if(index)return index;
+  index={cells:new Map(),always:[]};
+  solids.forEach((solid,i)=>{
+    const b=axisBounds(solid.planes),cells=b&&(Math.floor(b.maxX/CELL)-Math.floor(b.minX/CELL)+1)*(Math.floor(b.maxZ/CELL)-Math.floor(b.minZ/CELL)+1);
+    if(!b||!(cells<=64)){index.always.push(i);return;}
+    for(let cx=Math.floor(b.minX/CELL);cx<=Math.floor(b.maxX/CELL);cx++)for(let cz=Math.floor(b.minZ/CELL);cz<=Math.floor(b.maxZ/CELL);cz++){
+      const key=`${cx}:${cz}`;if(!index.cells.has(key))index.cells.set(key,[]);index.cells.get(key).push(i);
+    }
+  });
+  solidIndexes.set(solids,index);return index;
+}
+// Solids that may touch a face, in their original order.
+function candidateSolids(solids,points){
+  const index=solidIndex(solids),M=1e-3,seen=new Set(index.always);
+  const xs=points.map(p=>p.x),zs=points.map(p=>p.z);
+  const minX=Math.min(...xs)-M,maxX=Math.max(...xs)+M,minZ=Math.min(...zs)-M,maxZ=Math.max(...zs)+M;
+  if((Math.floor(maxX/CELL)-Math.floor(minX/CELL)+1)*(Math.floor(maxZ/CELL)-Math.floor(minZ/CELL)+1)>index.cells.size)return solids;
+  for(let cx=Math.floor(minX/CELL);cx<=Math.floor(maxX/CELL);cx++)for(let cz=Math.floor(minZ/CELL);cz<=Math.floor(maxZ/CELL);cz++)for(const i of index.cells.get(`${cx}:${cz}`)||[])seen.add(i);
+  return [...seen].sort((a,b)=>a-b).map(i=>solids[i]);
+}
+
 // ownPlanes clip the wall's own faces first (junction miters).
 export function unionFaceWriter(writer,ownerIndex,solids,ownPlanes=[]){
   return {face(points,uvs,normal,kind){
     let pieces=[points.map((p,i)=>({...p,u:uvs[i].u,v:uvs[i].v}))];
     if(ownPlanes.length){pieces=pieces.map(p=>clipToPlanes(p,ownPlanes)).filter(p=>polyArea(p)>1e-10);if(!pieces.length)return;}
-    for(const solid of solids){
+    // Clipping only shrinks the face, so solids beyond the original face's
+    // plan bounds stay irrelevant to every piece.
+    for(const solid of candidateSolids(solids,points)){
       if(solid.ownerIndex===ownerIndex)continue;
       pieces=pieces.flatMap(p=>subtract(p,solid.planes,normal,solid.ownerIndex<ownerIndex,kind));
       if(!pieces.length)break;

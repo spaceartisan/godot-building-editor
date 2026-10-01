@@ -36,3 +36,21 @@ const towerAndRange=[...loop('t',-4,-4,4,4),wall('r0',[4,-4],[14,-4]),wall('r1',
   assert.deepEqual(messages(intentional).filter(m=>/free-standing/.test(m)),[],'intentional_open suppresses the warning');
   console.log('PASS free ends: midspan/face contacts join; free ends warn with wall targets; intentional_open accepted');
 }
+{
+  // Halcyon H1: two towers joined by bridge walls that end partway along the
+  // towers' walls. The warning names each T and the host to split; following
+  // that advice closes the outline with exact (not rectangular) coverage.
+  const { inspectFloorCoverage } = await import('./src/diagnostics.js');
+  const loop=(p,x0,z0,x1,z1)=>[[x0,z0,x1,z0],[x1,z0,x1,z1],[x1,z1,x0,z1],[x0,z1,x0,z0]].map(([a,b,c,d],i)=>wall(`${p}${i}`,[a,b],[c,d]));
+  const bridged=build([...loop('west',-20,-6,-10,6),...loop('east',10,-6,20,6),wall('bridge_n',[-10,-1],[10,-1]),wall('bridge_s',[10,1],[-10,1])]);
+  const open=validateBuilding(bridged).warnings.find(w=>/open ends/.test(w.message));
+  assert.match(open.message,/bridge_n ends partway along west1 at \(-10, -1\); bridge_n ends partway along east3 at \(10, -1\)/);
+  assert.match(open.message,/split the host wall there/);
+  assert.deepEqual([...new Set(open.targets.map(t=>t.id))].sort(),open.targets.map(t=>t.id).sort(),'each wall is targeted once');
+  assert.ok(Math.abs(inspectFloorCoverage(bridged,0).area-(40*12))<1e-6,'the unsplit plan falls back to the 40 x 12 m bounding rectangle');
+  const interior=(id,a,b)=>wall(id,a,b,{role:'interior'});
+  const split=build([wall('west0',[-20,-6],[-10,-6]),wall('w1a',[-10,-6],[-10,-1]),interior('w1m',[-10,-1],[-10,1]),wall('w1b',[-10,1],[-10,6]),wall('west2',[-10,6],[-20,6]),wall('west3',[-20,6],[-20,-6]),
+    wall('east0',[10,-6],[20,-6]),wall('east1',[20,-6],[20,6]),wall('east2',[20,6],[10,6]),wall('e3a',[10,6],[10,1]),interior('e3m',[10,1],[10,-1]),wall('e3b',[10,-1],[10,-6]),wall('bridge_n',[-10,-1],[10,-1]),wall('bridge_s',[10,1],[-10,1])]);
+  assert.deepEqual(messages(split),[]);assert.ok(Math.abs(inspectFloorCoverage(split,0).area-280)<1e-6,'split hosts give the dumbbell: 2 x 120 + 40 m²');
+  console.log('PASS T-junction outlines: the open-ends warning names each T and its host; splitting the hosts closes the outline exactly');
+}

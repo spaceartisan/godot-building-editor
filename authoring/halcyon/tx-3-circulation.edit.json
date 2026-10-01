@@ -1,0 +1,1204 @@
+{
+  "version": 1,
+  "operations": [
+    {
+      "op": "stair.add",
+      "floorId": "b2",
+      "id": "st_w_b2",
+      "value": {
+        "label": "W core b2 to b1",
+        "x": -32.9,
+        "z": 0,
+        "width": 1.6,
+        "run": 7,
+        "direction": "north",
+        "style": "steps",
+        "steps": 20
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "b1",
+      "id": "rail_w_b2_inner",
+      "value": {
+        "a": {
+          "x": -32.04,
+          "z": -3.5
+        },
+        "b": {
+          "x": -32.04,
+          "z": 3.56
+        },
+        "label": "W stair rail inner",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "b1",
+      "id": "rail_w_b2_end",
+      "value": {
+        "a": {
+          "x": -33.76,
+          "z": 3.56
+        },
+        "b": {
+          "x": -32.04,
+          "z": 3.56
+        },
+        "label": "W stair rail end",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "b1",
+      "id": "st_w_b1",
+      "value": {
+        "label": "W core b1 to floor_1",
+        "x": -31.1,
+        "z": 0,
+        "width": 1.6,
+        "run": 7,
+        "direction": "south",
+        "style": "steps",
+        "steps": 20
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "floor_1",
+      "id": "rail_w_b1_inner",
+      "value": {
+        "a": {
+          "x": -31.96,
+          "z": 3.5
+        },
+        "b": {
+          "x": -31.96,
+          "z": -3.56
+        },
+        "label": "W stair rail inner",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "floor_1",
+      "id": "rail_w_b1_end",
+      "value": {
+        "a": {
+          "x": -31.96,
+          "z": -3.56
+        },
+        "b": {
+          "x": -30.24,
+          "z": -3.56
+        },
+        "label": "W stair rail end",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "floor_1",
+      "id": "rail_w_b1_outer",
+      "value": {
+        "a": {
+          "x": -30.24,
+          "z": 3.5
+        },
+        "b": {
+          "x": -30.24,
+          "z": -3.56
+        },
+        "label": "W stair rail outer",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "floor_1",
+      "id": "st_w_floor_1",
+      "value": {
+        "label": "W core floor_1 to l2",
+        "x": -32.9,
+        "z": 0,
+        "width": 1.6,
+        "run": 7,
+        "direction": "north",
+        "style": "steps",
+        "steps": 27
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_w_floor_1_inner",
+      "value": {
+        "a": {
+          "x": -32.04,
+          "z": -3.5
+        },
+        "b": {
+          "x": -32.04,
+          "z": 3.56
+        },
+        "label": "W stair rail inner",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_w_floor_1_end",
+      "value": {
+        "a": {
+          "x": -33.76,
+          "z": 3.56
+        },
+        "b": {
+          "x": -32.04,
+          "z": 3.56
+        },
+        "label": "W stair rail end",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "l2",
+      "id": "st_w_l2",
+      "value": {
+        "label": "W core l2 to l3",
+        "x": -31.1,
+        "z": 0,
+        "width": 1.6,
+        "run": 7,
+        "direction": "south",
+        "style": "steps",
+        "steps": 25
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l3",
+      "id": "rail_w_l2_inner",
+      "value": {
+        "a": {
+          "x": -31.96,
+          "z": 3.5
+        },
+        "b": {
+          "x": -31.96,
+          "z": -3.56
+        },
+        "label": "W stair rail inner",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l3",
+      "id": "rail_w_l2_end",
+      "value": {
+        "a": {
+          "x": -31.96,
+          "z": -3.56
+        },
+        "b": {
+          "x": -30.24,
+          "z": -3.56
+        },
+        "label": "W stair rail end",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l3",
+      "id": "rail_w_l2_outer",
+      "value": {
+        "a": {
+          "x": -30.24,
+          "z": 3.5
+        },
+        "b": {
+          "x": -30.24,
+          "z": -3.56
+        },
+        "label": "W stair rail outer",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "l3",
+      "id": "st_w_l3",
+      "value": {
+        "label": "W core l3 to l4",
+        "x": -32.9,
+        "z": 0,
+        "width": 1.6,
+        "run": 7,
+        "direction": "north",
+        "style": "steps",
+        "steps": 20
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l4",
+      "id": "rail_w_l3_inner",
+      "value": {
+        "a": {
+          "x": -32.04,
+          "z": -3.5
+        },
+        "b": {
+          "x": -32.04,
+          "z": 3.56
+        },
+        "label": "W stair rail inner",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l4",
+      "id": "rail_w_l3_end",
+      "value": {
+        "a": {
+          "x": -33.76,
+          "z": 3.56
+        },
+        "b": {
+          "x": -32.04,
+          "z": 3.56
+        },
+        "label": "W stair rail end",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "l4",
+      "id": "st_w_l4",
+      "value": {
+        "label": "W core l4 to l5",
+        "x": -31.1,
+        "z": 0,
+        "width": 1.6,
+        "run": 7,
+        "direction": "south",
+        "style": "steps",
+        "steps": 20
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l5",
+      "id": "rail_w_l4_inner",
+      "value": {
+        "a": {
+          "x": -31.96,
+          "z": 3.5
+        },
+        "b": {
+          "x": -31.96,
+          "z": -3.56
+        },
+        "label": "W stair rail inner",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l5",
+      "id": "rail_w_l4_end",
+      "value": {
+        "a": {
+          "x": -31.96,
+          "z": -3.56
+        },
+        "b": {
+          "x": -30.24,
+          "z": -3.56
+        },
+        "label": "W stair rail end",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l5",
+      "id": "rail_w_l4_outer",
+      "value": {
+        "a": {
+          "x": -30.24,
+          "z": 3.5
+        },
+        "b": {
+          "x": -30.24,
+          "z": -3.56
+        },
+        "label": "W stair rail outer",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "l5",
+      "id": "st_w_l5",
+      "value": {
+        "label": "W core l5 to l6",
+        "x": -32.9,
+        "z": 0,
+        "width": 1.6,
+        "run": 7,
+        "direction": "north",
+        "style": "steps",
+        "steps": 20
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l6",
+      "id": "rail_w_l5_inner",
+      "value": {
+        "a": {
+          "x": -32.04,
+          "z": -3.5
+        },
+        "b": {
+          "x": -32.04,
+          "z": 3.56
+        },
+        "label": "W stair rail inner",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l6",
+      "id": "rail_w_l5_end",
+      "value": {
+        "a": {
+          "x": -33.76,
+          "z": 3.56
+        },
+        "b": {
+          "x": -32.04,
+          "z": 3.56
+        },
+        "label": "W stair rail end",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "l6",
+      "id": "st_w_l6",
+      "value": {
+        "label": "W core l6 to l7",
+        "x": -31.1,
+        "z": 0,
+        "width": 1.6,
+        "run": 7,
+        "direction": "south",
+        "style": "steps",
+        "steps": 20
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l7",
+      "id": "rail_w_l6_inner",
+      "value": {
+        "a": {
+          "x": -31.96,
+          "z": 3.5
+        },
+        "b": {
+          "x": -31.96,
+          "z": -3.56
+        },
+        "label": "W stair rail inner",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l7",
+      "id": "rail_w_l6_end",
+      "value": {
+        "a": {
+          "x": -31.96,
+          "z": -3.56
+        },
+        "b": {
+          "x": -30.24,
+          "z": -3.56
+        },
+        "label": "W stair rail end",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l7",
+      "id": "rail_w_l6_outer",
+      "value": {
+        "a": {
+          "x": -30.24,
+          "z": 3.5
+        },
+        "b": {
+          "x": -30.24,
+          "z": -3.56
+        },
+        "label": "W stair rail outer",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "l7",
+      "id": "st_w_l7",
+      "value": {
+        "label": "W core l7 to l8",
+        "x": -32.9,
+        "z": 0,
+        "width": 1.6,
+        "run": 7,
+        "direction": "north",
+        "style": "steps",
+        "steps": 20
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l8",
+      "id": "rail_w_l7_inner",
+      "value": {
+        "a": {
+          "x": -32.04,
+          "z": -3.5
+        },
+        "b": {
+          "x": -32.04,
+          "z": 3.56
+        },
+        "label": "W stair rail inner",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l8",
+      "id": "rail_w_l7_end",
+      "value": {
+        "a": {
+          "x": -33.76,
+          "z": 3.56
+        },
+        "b": {
+          "x": -32.04,
+          "z": 3.56
+        },
+        "label": "W stair rail end",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "l8",
+      "id": "st_w_l8",
+      "value": {
+        "label": "W core l8 to l9",
+        "x": -31.1,
+        "z": 0,
+        "width": 1.6,
+        "run": 7,
+        "direction": "south",
+        "style": "steps",
+        "steps": 20
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l9",
+      "id": "rail_w_l8_inner",
+      "value": {
+        "a": {
+          "x": -31.96,
+          "z": 3.5
+        },
+        "b": {
+          "x": -31.96,
+          "z": -3.56
+        },
+        "label": "W stair rail inner",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l9",
+      "id": "rail_w_l8_end",
+      "value": {
+        "a": {
+          "x": -31.96,
+          "z": -3.56
+        },
+        "b": {
+          "x": -30.24,
+          "z": -3.56
+        },
+        "label": "W stair rail end",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l9",
+      "id": "rail_w_l8_outer",
+      "value": {
+        "a": {
+          "x": -30.24,
+          "z": 3.5
+        },
+        "b": {
+          "x": -30.24,
+          "z": -3.56
+        },
+        "label": "W stair rail outer",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "b2",
+      "id": "st_e_b2",
+      "value": {
+        "label": "E core b2 to b1",
+        "x": 32.9,
+        "z": 0,
+        "width": 1.6,
+        "run": 7,
+        "direction": "north",
+        "style": "steps",
+        "steps": 20
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "b1",
+      "id": "rail_e_b2_inner",
+      "value": {
+        "a": {
+          "x": 32.04,
+          "z": -3.5
+        },
+        "b": {
+          "x": 32.04,
+          "z": 3.56
+        },
+        "label": "E stair rail inner",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "b1",
+      "id": "rail_e_b2_end",
+      "value": {
+        "a": {
+          "x": 32.04,
+          "z": 3.56
+        },
+        "b": {
+          "x": 33.76,
+          "z": 3.56
+        },
+        "label": "E stair rail end",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "b1",
+      "id": "st_e_b1",
+      "value": {
+        "label": "E core b1 to floor_1",
+        "x": 31.1,
+        "z": 0,
+        "width": 1.6,
+        "run": 7,
+        "direction": "south",
+        "style": "steps",
+        "steps": 20
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "floor_1",
+      "id": "rail_e_b1_inner",
+      "value": {
+        "a": {
+          "x": 31.96,
+          "z": 3.5
+        },
+        "b": {
+          "x": 31.96,
+          "z": -3.56
+        },
+        "label": "E stair rail inner",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "floor_1",
+      "id": "rail_e_b1_end",
+      "value": {
+        "a": {
+          "x": 30.24,
+          "z": -3.56
+        },
+        "b": {
+          "x": 31.96,
+          "z": -3.56
+        },
+        "label": "E stair rail end",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "floor_1",
+      "id": "rail_e_b1_outer",
+      "value": {
+        "a": {
+          "x": 30.24,
+          "z": 3.5
+        },
+        "b": {
+          "x": 30.24,
+          "z": -3.56
+        },
+        "label": "E stair rail outer",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "floor_1",
+      "id": "st_e_floor_1",
+      "value": {
+        "label": "E core floor_1 to l2",
+        "x": 32.9,
+        "z": 0,
+        "width": 1.6,
+        "run": 7,
+        "direction": "north",
+        "style": "steps",
+        "steps": 27
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_e_floor_1_inner",
+      "value": {
+        "a": {
+          "x": 32.04,
+          "z": -3.5
+        },
+        "b": {
+          "x": 32.04,
+          "z": 3.56
+        },
+        "label": "E stair rail inner",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_e_floor_1_end",
+      "value": {
+        "a": {
+          "x": 32.04,
+          "z": 3.56
+        },
+        "b": {
+          "x": 33.76,
+          "z": 3.56
+        },
+        "label": "E stair rail end",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "l2",
+      "id": "st_e_l2",
+      "value": {
+        "label": "E core l2 to l3",
+        "x": 31.1,
+        "z": 0,
+        "width": 1.6,
+        "run": 7,
+        "direction": "south",
+        "style": "steps",
+        "steps": 25
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l3",
+      "id": "rail_e_l2_inner",
+      "value": {
+        "a": {
+          "x": 31.96,
+          "z": 3.5
+        },
+        "b": {
+          "x": 31.96,
+          "z": -3.56
+        },
+        "label": "E stair rail inner",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l3",
+      "id": "rail_e_l2_end",
+      "value": {
+        "a": {
+          "x": 30.24,
+          "z": -3.56
+        },
+        "b": {
+          "x": 31.96,
+          "z": -3.56
+        },
+        "label": "E stair rail end",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l3",
+      "id": "rail_e_l2_outer",
+      "value": {
+        "a": {
+          "x": 30.24,
+          "z": 3.5
+        },
+        "b": {
+          "x": 30.24,
+          "z": -3.56
+        },
+        "label": "E stair rail outer",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "l3",
+      "id": "st_e_l3",
+      "value": {
+        "label": "E core l3 to l4",
+        "x": 32.9,
+        "z": 0,
+        "width": 1.6,
+        "run": 7,
+        "direction": "north",
+        "style": "steps",
+        "steps": 20
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l4",
+      "id": "rail_e_l3_inner",
+      "value": {
+        "a": {
+          "x": 32.04,
+          "z": -3.5
+        },
+        "b": {
+          "x": 32.04,
+          "z": 3.56
+        },
+        "label": "E stair rail inner",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l4",
+      "id": "rail_e_l3_end",
+      "value": {
+        "a": {
+          "x": 32.04,
+          "z": 3.56
+        },
+        "b": {
+          "x": 33.76,
+          "z": 3.56
+        },
+        "label": "E stair rail end",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "l4",
+      "id": "st_e_l4",
+      "value": {
+        "label": "E core l4 to l5",
+        "x": 31.1,
+        "z": 0,
+        "width": 1.6,
+        "run": 7,
+        "direction": "south",
+        "style": "steps",
+        "steps": 20
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l5",
+      "id": "rail_e_l4_inner",
+      "value": {
+        "a": {
+          "x": 31.96,
+          "z": 3.5
+        },
+        "b": {
+          "x": 31.96,
+          "z": -3.56
+        },
+        "label": "E stair rail inner",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l5",
+      "id": "rail_e_l4_end",
+      "value": {
+        "a": {
+          "x": 30.24,
+          "z": -3.56
+        },
+        "b": {
+          "x": 31.96,
+          "z": -3.56
+        },
+        "label": "E stair rail end",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l5",
+      "id": "rail_e_l4_outer",
+      "value": {
+        "a": {
+          "x": 30.24,
+          "z": 3.5
+        },
+        "b": {
+          "x": 30.24,
+          "z": -3.56
+        },
+        "label": "E stair rail outer",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "l5",
+      "id": "st_e_l5",
+      "value": {
+        "label": "E core l5 to l6",
+        "x": 32.9,
+        "z": 0,
+        "width": 1.6,
+        "run": 7,
+        "direction": "north",
+        "style": "steps",
+        "steps": 20
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l6",
+      "id": "rail_e_l5_inner",
+      "value": {
+        "a": {
+          "x": 32.04,
+          "z": -3.5
+        },
+        "b": {
+          "x": 32.04,
+          "z": 3.56
+        },
+        "label": "E stair rail inner",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l6",
+      "id": "rail_e_l5_end",
+      "value": {
+        "a": {
+          "x": 32.04,
+          "z": 3.56
+        },
+        "b": {
+          "x": 33.76,
+          "z": 3.56
+        },
+        "label": "E stair rail end",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "l6",
+      "id": "st_e_l6",
+      "value": {
+        "label": "E core l6 to l7",
+        "x": 31.1,
+        "z": 0,
+        "width": 1.6,
+        "run": 7,
+        "direction": "south",
+        "style": "steps",
+        "steps": 20
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l7",
+      "id": "rail_e_l6_inner",
+      "value": {
+        "a": {
+          "x": 31.96,
+          "z": 3.5
+        },
+        "b": {
+          "x": 31.96,
+          "z": -3.56
+        },
+        "label": "E stair rail inner",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l7",
+      "id": "rail_e_l6_end",
+      "value": {
+        "a": {
+          "x": 30.24,
+          "z": -3.56
+        },
+        "b": {
+          "x": 31.96,
+          "z": -3.56
+        },
+        "label": "E stair rail end",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l7",
+      "id": "rail_e_l6_outer",
+      "value": {
+        "a": {
+          "x": 30.24,
+          "z": 3.5
+        },
+        "b": {
+          "x": 30.24,
+          "z": -3.56
+        },
+        "label": "E stair rail outer",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "l7",
+      "id": "st_e_l7",
+      "value": {
+        "label": "E core l7 to l8",
+        "x": 32.9,
+        "z": 0,
+        "width": 1.6,
+        "run": 7,
+        "direction": "north",
+        "style": "steps",
+        "steps": 20
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l8",
+      "id": "rail_e_l7_inner",
+      "value": {
+        "a": {
+          "x": 32.04,
+          "z": -3.5
+        },
+        "b": {
+          "x": 32.04,
+          "z": 3.56
+        },
+        "label": "E stair rail inner",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l8",
+      "id": "rail_e_l7_end",
+      "value": {
+        "a": {
+          "x": 32.04,
+          "z": 3.56
+        },
+        "b": {
+          "x": 33.76,
+          "z": 3.56
+        },
+        "label": "E stair rail end",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "stair.add",
+      "floorId": "b2",
+      "id": "ramp_cars",
+      "value": {
+        "label": "Car ramp",
+        "x": 20,
+        "z": 0,
+        "width": 3.5,
+        "run": 12,
+        "direction": "east",
+        "style": "ramp"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "b1",
+      "id": "rail_ramp_n",
+      "value": {
+        "a": {
+          "x": 13.94,
+          "z": -1.81
+        },
+        "b": {
+          "x": 26,
+          "z": -1.81
+        },
+        "label": "Ramp rail north",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "b1",
+      "id": "rail_ramp_s",
+      "value": {
+        "a": {
+          "x": 13.94,
+          "z": 1.81
+        },
+        "b": {
+          "x": 26,
+          "z": 1.81
+        },
+        "label": "Ramp rail south",
+        "style": "two_rail",
+        "height": 1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "b1",
+      "id": "rail_ramp_end",
+      "value": {
+        "a": {
+          "x": 13.94,
+          "z": -1.81
+        },
+        "b": {
+          "x": 13.94,
+          "z": 1.81
+        },
+        "label": "Ramp rail end",
+        "style": "two_rail",
+        "height": 1
+      }
+    }
+  ]
+}

@@ -1,0 +1,2833 @@
+{
+  "version": 1,
+  "operations": [
+    {
+      "op": "floor.insert",
+      "id": "l3",
+      "aboveFloorId": "l2",
+      "value": {
+        "label": "L3 roof terrace",
+        "boundaryMode": "intentional_open",
+        "autoCeiling": false
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "w_ext_1",
+      "value": {
+        "a": {
+          "x": -34,
+          "z": -12
+        },
+        "b": {
+          "x": -14,
+          "z": -12
+        },
+        "role": "exterior",
+        "label": "West tower wall 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "w_ext_2",
+      "value": {
+        "a": {
+          "x": -14,
+          "z": -12
+        },
+        "b": {
+          "x": -14,
+          "z": 12
+        },
+        "role": "exterior",
+        "label": "West tower wall 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "w_ext_3",
+      "value": {
+        "a": {
+          "x": -14,
+          "z": 12
+        },
+        "b": {
+          "x": -34,
+          "z": 12
+        },
+        "role": "exterior",
+        "label": "West tower wall 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "w_ext_4",
+      "value": {
+        "a": {
+          "x": -34,
+          "z": 12
+        },
+        "b": {
+          "x": -34,
+          "z": -12
+        },
+        "role": "exterior",
+        "label": "West tower wall 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "w_shaft",
+      "value": {
+        "a": {
+          "x": -29,
+          "z": -6
+        },
+        "b": {
+          "x": -29,
+          "z": 6
+        },
+        "role": "interior",
+        "label": "West shaft wall"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "w_n6",
+      "value": {
+        "a": {
+          "x": -34,
+          "z": -6
+        },
+        "b": {
+          "x": -24,
+          "z": -6
+        },
+        "role": "interior",
+        "label": "West lobby north"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "w_s6",
+      "value": {
+        "a": {
+          "x": -34,
+          "z": 6
+        },
+        "b": {
+          "x": -24,
+          "z": 6
+        },
+        "role": "interior",
+        "label": "West lobby south"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "w_x24n",
+      "value": {
+        "a": {
+          "x": -24,
+          "z": -12
+        },
+        "b": {
+          "x": -24,
+          "z": -1.25
+        },
+        "role": "interior",
+        "label": "West lobby east north"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "w_x24s",
+      "value": {
+        "a": {
+          "x": -24,
+          "z": 1.25
+        },
+        "b": {
+          "x": -24,
+          "z": 12
+        },
+        "role": "interior",
+        "label": "West lobby east south"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "w_corr_n",
+      "value": {
+        "a": {
+          "x": -24,
+          "z": -1.25
+        },
+        "b": {
+          "x": -14,
+          "z": -1.25
+        },
+        "role": "interior",
+        "label": "West corridor north"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "w_corr_s",
+      "value": {
+        "a": {
+          "x": -24,
+          "z": 1.25
+        },
+        "b": {
+          "x": -14,
+          "z": 1.25
+        },
+        "role": "interior",
+        "label": "West corridor south"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "w_x19n",
+      "value": {
+        "a": {
+          "x": -19,
+          "z": -12
+        },
+        "b": {
+          "x": -19,
+          "z": -1.25
+        },
+        "role": "interior",
+        "label": "West suite split north"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "w_x19s",
+      "value": {
+        "a": {
+          "x": -19,
+          "z": 1.25
+        },
+        "b": {
+          "x": -19,
+          "z": 12
+        },
+        "role": "interior",
+        "label": "West suite split south"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "w_d_shaft_n",
+      "value": {
+        "type": "door",
+        "wallId": "w_shaft",
+        "at": {
+          "x": -29,
+          "z": -4.75
+        },
+        "label": "West stair door north",
+        "width": 1.2,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "w_d_shaft_s",
+      "value": {
+        "type": "door",
+        "wallId": "w_shaft",
+        "at": {
+          "x": -29,
+          "z": 4.75
+        },
+        "label": "West stair door south",
+        "width": 1.2,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "w_d_n1",
+      "value": {
+        "type": "door",
+        "wallId": "w_n6",
+        "at": {
+          "x": -26.5,
+          "z": -6
+        },
+        "label": "West suite N1 door",
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "w_d_s1",
+      "value": {
+        "type": "door",
+        "wallId": "w_s6",
+        "at": {
+          "x": -26.5,
+          "z": 6
+        },
+        "label": "West suite S1 door",
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "w_d_n2",
+      "value": {
+        "type": "door",
+        "wallId": "w_corr_n",
+        "at": {
+          "x": -21.5,
+          "z": -1.25
+        },
+        "label": "West suite N2 door",
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "w_d_s2",
+      "value": {
+        "type": "door",
+        "wallId": "w_corr_s",
+        "at": {
+          "x": -21.5,
+          "z": 1.25
+        },
+        "label": "West suite S2 door",
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "w_d_n3",
+      "value": {
+        "type": "door",
+        "wallId": "w_corr_n",
+        "at": {
+          "x": -16.5,
+          "z": -1.25
+        },
+        "label": "West suite N3 door",
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "w_d_s3",
+      "value": {
+        "type": "door",
+        "wallId": "w_corr_s",
+        "at": {
+          "x": -16.5,
+          "z": 1.25
+        },
+        "label": "West suite S3 door",
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "w_w_n31",
+      "value": {
+        "type": "window",
+        "wallId": "w_ext_1",
+        "at": {
+          "x": -31,
+          "z": -12
+        },
+        "label": "West north window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "w_w_s31",
+      "value": {
+        "type": "window",
+        "wallId": "w_ext_3",
+        "at": {
+          "x": -31,
+          "z": 12
+        },
+        "label": "West south window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "w_w_n27",
+      "value": {
+        "type": "window",
+        "wallId": "w_ext_1",
+        "at": {
+          "x": -27,
+          "z": -12
+        },
+        "label": "West north window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "w_w_s27",
+      "value": {
+        "type": "window",
+        "wallId": "w_ext_3",
+        "at": {
+          "x": -27,
+          "z": 12
+        },
+        "label": "West south window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "w_w_n21.5",
+      "value": {
+        "type": "window",
+        "wallId": "w_ext_1",
+        "at": {
+          "x": -21.5,
+          "z": -12
+        },
+        "label": "West north window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "w_w_s21.5",
+      "value": {
+        "type": "window",
+        "wallId": "w_ext_3",
+        "at": {
+          "x": -21.5,
+          "z": 12
+        },
+        "label": "West south window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "w_w_n16.5",
+      "value": {
+        "type": "window",
+        "wallId": "w_ext_1",
+        "at": {
+          "x": -16.5,
+          "z": -12
+        },
+        "label": "West north window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "w_w_s16.5",
+      "value": {
+        "type": "window",
+        "wallId": "w_ext_3",
+        "at": {
+          "x": -16.5,
+          "z": 12
+        },
+        "label": "West south window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "w_w_e-9",
+      "value": {
+        "type": "window",
+        "wallId": "w_ext_2",
+        "at": {
+          "x": -14,
+          "z": -9
+        },
+        "label": "West inner window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "w_w_e-5",
+      "value": {
+        "type": "window",
+        "wallId": "w_ext_2",
+        "at": {
+          "x": -14,
+          "z": -5
+        },
+        "label": "West inner window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "w_w_e5",
+      "value": {
+        "type": "window",
+        "wallId": "w_ext_2",
+        "at": {
+          "x": -14,
+          "z": 5
+        },
+        "label": "West inner window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "w_w_e9",
+      "value": {
+        "type": "window",
+        "wallId": "w_ext_2",
+        "at": {
+          "x": -14,
+          "z": 9
+        },
+        "label": "West inner window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "w_w_w-9",
+      "value": {
+        "type": "window",
+        "wallId": "w_ext_4",
+        "at": {
+          "x": -34,
+          "z": -9
+        },
+        "label": "West outer window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "w_w_w9",
+      "value": {
+        "type": "window",
+        "wallId": "w_ext_4",
+        "at": {
+          "x": -34,
+          "z": 9
+        },
+        "label": "West outer window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "w_d_end",
+      "value": {
+        "type": "door",
+        "wallId": "w_ext_2",
+        "at": {
+          "x": -14,
+          "z": 0
+        },
+        "label": "West corridor end door",
+        "width": 1.6,
+        "height": 2.4,
+        "doorStyle": "exterior"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l3",
+      "id": "w_r_n1",
+      "value": {
+        "label": "West n1",
+        "minX": -34,
+        "maxX": -24,
+        "minZ": -12,
+        "maxZ": -6
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l3",
+      "id": "w_r_n2",
+      "value": {
+        "label": "West n2",
+        "minX": -24,
+        "maxX": -19,
+        "minZ": -12,
+        "maxZ": -1.25
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l3",
+      "id": "w_r_n3",
+      "value": {
+        "label": "West n3",
+        "minX": -19,
+        "maxX": -14,
+        "minZ": -12,
+        "maxZ": -1.25
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l3",
+      "id": "w_r_s1",
+      "value": {
+        "label": "West s1",
+        "minX": -34,
+        "maxX": -24,
+        "minZ": 6,
+        "maxZ": 12
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l3",
+      "id": "w_r_s2",
+      "value": {
+        "label": "West s2",
+        "minX": -24,
+        "maxX": -19,
+        "minZ": 1.25,
+        "maxZ": 12
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l3",
+      "id": "w_r_s3",
+      "value": {
+        "label": "West s3",
+        "minX": -19,
+        "maxX": -14,
+        "minZ": 1.25,
+        "maxZ": 12
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l3",
+      "id": "w_r_lobby",
+      "value": {
+        "label": "West lobby",
+        "minX": -29,
+        "maxX": -24,
+        "minZ": -6,
+        "maxZ": 6
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l3",
+      "id": "w_r_corr",
+      "value": {
+        "label": "West corr",
+        "minX": -24,
+        "maxX": -14,
+        "minZ": -1.25,
+        "maxZ": 1.25
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l3",
+      "id": "w_r_shaft",
+      "value": {
+        "label": "West shaft",
+        "minX": -34,
+        "maxX": -29,
+        "minZ": -6,
+        "maxZ": 6
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "e_ext_1",
+      "value": {
+        "a": {
+          "x": 34,
+          "z": -12
+        },
+        "b": {
+          "x": 14,
+          "z": -12
+        },
+        "role": "exterior",
+        "label": "East tower wall 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "e_ext_2",
+      "value": {
+        "a": {
+          "x": 14,
+          "z": -12
+        },
+        "b": {
+          "x": 14,
+          "z": 12
+        },
+        "role": "exterior",
+        "label": "East tower wall 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "e_ext_3",
+      "value": {
+        "a": {
+          "x": 14,
+          "z": 12
+        },
+        "b": {
+          "x": 34,
+          "z": 12
+        },
+        "role": "exterior",
+        "label": "East tower wall 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "e_ext_4",
+      "value": {
+        "a": {
+          "x": 34,
+          "z": 12
+        },
+        "b": {
+          "x": 34,
+          "z": -12
+        },
+        "role": "exterior",
+        "label": "East tower wall 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "e_shaft",
+      "value": {
+        "a": {
+          "x": 29,
+          "z": -6
+        },
+        "b": {
+          "x": 29,
+          "z": 6
+        },
+        "role": "interior",
+        "label": "East shaft wall"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "e_n6",
+      "value": {
+        "a": {
+          "x": 34,
+          "z": -6
+        },
+        "b": {
+          "x": 24,
+          "z": -6
+        },
+        "role": "interior",
+        "label": "East lobby north"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "e_s6",
+      "value": {
+        "a": {
+          "x": 34,
+          "z": 6
+        },
+        "b": {
+          "x": 24,
+          "z": 6
+        },
+        "role": "interior",
+        "label": "East lobby south"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "e_x24n",
+      "value": {
+        "a": {
+          "x": 24,
+          "z": -12
+        },
+        "b": {
+          "x": 24,
+          "z": -1.25
+        },
+        "role": "interior",
+        "label": "East lobby east north"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "e_x24s",
+      "value": {
+        "a": {
+          "x": 24,
+          "z": 1.25
+        },
+        "b": {
+          "x": 24,
+          "z": 12
+        },
+        "role": "interior",
+        "label": "East lobby east south"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "e_corr_n",
+      "value": {
+        "a": {
+          "x": 24,
+          "z": -1.25
+        },
+        "b": {
+          "x": 14,
+          "z": -1.25
+        },
+        "role": "interior",
+        "label": "East corridor north"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "e_corr_s",
+      "value": {
+        "a": {
+          "x": 24,
+          "z": 1.25
+        },
+        "b": {
+          "x": 14,
+          "z": 1.25
+        },
+        "role": "interior",
+        "label": "East corridor south"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "e_x19n",
+      "value": {
+        "a": {
+          "x": 19,
+          "z": -12
+        },
+        "b": {
+          "x": 19,
+          "z": -1.25
+        },
+        "role": "interior",
+        "label": "East suite split north"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l3",
+      "id": "e_x19s",
+      "value": {
+        "a": {
+          "x": 19,
+          "z": 1.25
+        },
+        "b": {
+          "x": 19,
+          "z": 12
+        },
+        "role": "interior",
+        "label": "East suite split south"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "e_d_shaft_n",
+      "value": {
+        "type": "door",
+        "wallId": "e_shaft",
+        "at": {
+          "x": 29,
+          "z": -4.75
+        },
+        "label": "East stair door north",
+        "width": 1.2,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "e_d_shaft_s",
+      "value": {
+        "type": "door",
+        "wallId": "e_shaft",
+        "at": {
+          "x": 29,
+          "z": 4.75
+        },
+        "label": "East stair door south",
+        "width": 1.2,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "e_d_n1",
+      "value": {
+        "type": "door",
+        "wallId": "e_n6",
+        "at": {
+          "x": 26.5,
+          "z": -6
+        },
+        "label": "East suite N1 door",
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "e_d_s1",
+      "value": {
+        "type": "door",
+        "wallId": "e_s6",
+        "at": {
+          "x": 26.5,
+          "z": 6
+        },
+        "label": "East suite S1 door",
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "e_d_n2",
+      "value": {
+        "type": "door",
+        "wallId": "e_corr_n",
+        "at": {
+          "x": 21.5,
+          "z": -1.25
+        },
+        "label": "East suite N2 door",
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "e_d_s2",
+      "value": {
+        "type": "door",
+        "wallId": "e_corr_s",
+        "at": {
+          "x": 21.5,
+          "z": 1.25
+        },
+        "label": "East suite S2 door",
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "e_d_n3",
+      "value": {
+        "type": "door",
+        "wallId": "e_corr_n",
+        "at": {
+          "x": 16.5,
+          "z": -1.25
+        },
+        "label": "East suite N3 door",
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "e_d_s3",
+      "value": {
+        "type": "door",
+        "wallId": "e_corr_s",
+        "at": {
+          "x": 16.5,
+          "z": 1.25
+        },
+        "label": "East suite S3 door",
+        "width": 1,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "e_w_n31",
+      "value": {
+        "type": "window",
+        "wallId": "e_ext_1",
+        "at": {
+          "x": 31,
+          "z": -12
+        },
+        "label": "East north window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "e_w_s31",
+      "value": {
+        "type": "window",
+        "wallId": "e_ext_3",
+        "at": {
+          "x": 31,
+          "z": 12
+        },
+        "label": "East south window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "e_w_n27",
+      "value": {
+        "type": "window",
+        "wallId": "e_ext_1",
+        "at": {
+          "x": 27,
+          "z": -12
+        },
+        "label": "East north window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "e_w_s27",
+      "value": {
+        "type": "window",
+        "wallId": "e_ext_3",
+        "at": {
+          "x": 27,
+          "z": 12
+        },
+        "label": "East south window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "e_w_n21.5",
+      "value": {
+        "type": "window",
+        "wallId": "e_ext_1",
+        "at": {
+          "x": 21.5,
+          "z": -12
+        },
+        "label": "East north window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "e_w_s21.5",
+      "value": {
+        "type": "window",
+        "wallId": "e_ext_3",
+        "at": {
+          "x": 21.5,
+          "z": 12
+        },
+        "label": "East south window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "e_w_n16.5",
+      "value": {
+        "type": "window",
+        "wallId": "e_ext_1",
+        "at": {
+          "x": 16.5,
+          "z": -12
+        },
+        "label": "East north window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "e_w_s16.5",
+      "value": {
+        "type": "window",
+        "wallId": "e_ext_3",
+        "at": {
+          "x": 16.5,
+          "z": 12
+        },
+        "label": "East south window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "e_w_e-9",
+      "value": {
+        "type": "window",
+        "wallId": "e_ext_2",
+        "at": {
+          "x": 14,
+          "z": -9
+        },
+        "label": "East inner window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "e_w_e-5",
+      "value": {
+        "type": "window",
+        "wallId": "e_ext_2",
+        "at": {
+          "x": 14,
+          "z": -5
+        },
+        "label": "East inner window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "e_w_e5",
+      "value": {
+        "type": "window",
+        "wallId": "e_ext_2",
+        "at": {
+          "x": 14,
+          "z": 5
+        },
+        "label": "East inner window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "e_w_e9",
+      "value": {
+        "type": "window",
+        "wallId": "e_ext_2",
+        "at": {
+          "x": 14,
+          "z": 9
+        },
+        "label": "East inner window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "e_w_w-9",
+      "value": {
+        "type": "window",
+        "wallId": "e_ext_4",
+        "at": {
+          "x": 34,
+          "z": -9
+        },
+        "label": "East outer window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "e_w_w9",
+      "value": {
+        "type": "window",
+        "wallId": "e_ext_4",
+        "at": {
+          "x": 34,
+          "z": 9
+        },
+        "label": "East outer window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l3",
+      "id": "e_d_end",
+      "value": {
+        "type": "door",
+        "wallId": "e_ext_2",
+        "at": {
+          "x": 14,
+          "z": 0
+        },
+        "label": "East corridor end door",
+        "width": 1.6,
+        "height": 2.4,
+        "doorStyle": "exterior"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l3",
+      "id": "e_r_n1",
+      "value": {
+        "label": "East n1",
+        "minX": 24,
+        "maxX": 34,
+        "minZ": -12,
+        "maxZ": -6
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l3",
+      "id": "e_r_n2",
+      "value": {
+        "label": "East n2",
+        "minX": 19,
+        "maxX": 24,
+        "minZ": -12,
+        "maxZ": -1.25
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l3",
+      "id": "e_r_n3",
+      "value": {
+        "label": "East n3",
+        "minX": 14,
+        "maxX": 19,
+        "minZ": -12,
+        "maxZ": -1.25
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l3",
+      "id": "e_r_s1",
+      "value": {
+        "label": "East s1",
+        "minX": 24,
+        "maxX": 34,
+        "minZ": 6,
+        "maxZ": 12
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l3",
+      "id": "e_r_s2",
+      "value": {
+        "label": "East s2",
+        "minX": 19,
+        "maxX": 24,
+        "minZ": 1.25,
+        "maxZ": 12
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l3",
+      "id": "e_r_s3",
+      "value": {
+        "label": "East s3",
+        "minX": 14,
+        "maxX": 19,
+        "minZ": 1.25,
+        "maxZ": 12
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l3",
+      "id": "e_r_lobby",
+      "value": {
+        "label": "East lobby",
+        "minX": 24,
+        "maxX": 29,
+        "minZ": -6,
+        "maxZ": 6
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l3",
+      "id": "e_r_corr",
+      "value": {
+        "label": "East corr",
+        "minX": 14,
+        "maxX": 24,
+        "minZ": -1.25,
+        "maxZ": 1.25
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l3",
+      "id": "e_r_shaft",
+      "value": {
+        "label": "East shaft",
+        "minX": 29,
+        "maxX": 34,
+        "minZ": -6,
+        "maxZ": 6
+      }
+    },
+    {
+      "op": "slab.add",
+      "floorId": "l3",
+      "id": "slab_terrace",
+      "value": {
+        "label": "Terrace deck",
+        "minX": -40,
+        "maxX": 40,
+        "minZ": -20,
+        "maxZ": 20
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l3",
+      "id": "rail_terrace_1",
+      "value": {
+        "a": {
+          "x": -40,
+          "z": -20
+        },
+        "b": {
+          "x": 40,
+          "z": -20
+        },
+        "label": "Terrace parapet 1",
+        "style": "cross_brace",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l3",
+      "id": "rail_terrace_2",
+      "value": {
+        "a": {
+          "x": 40,
+          "z": -20
+        },
+        "b": {
+          "x": 40,
+          "z": 20
+        },
+        "label": "Terrace parapet 2",
+        "style": "cross_brace",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l3",
+      "id": "rail_terrace_3",
+      "value": {
+        "a": {
+          "x": 40,
+          "z": 20
+        },
+        "b": {
+          "x": -40,
+          "z": 20
+        },
+        "label": "Terrace parapet 3",
+        "style": "cross_brace",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l3",
+      "id": "rail_terrace_4",
+      "value": {
+        "a": {
+          "x": -40,
+          "z": 20
+        },
+        "b": {
+          "x": -40,
+          "z": -20
+        },
+        "label": "Terrace parapet 4",
+        "style": "cross_brace",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l3",
+      "id": "r_terrace",
+      "value": {
+        "label": "Roof terrace",
+        "minX": -40,
+        "maxX": 40,
+        "minZ": -20,
+        "maxZ": 20,
+        "kind": "courtyard"
+      }
+    },
+    {
+      "op": "floor.duplicate",
+      "id": "l9",
+      "sourceFloorId": "l3",
+      "value": {
+        "label": "L9 west penthouse",
+        "boundaryMode": "closed",
+        "autoCeiling": true
+      }
+    },
+    {
+      "op": "slab.remove",
+      "floorId": "l9",
+      "id": "l9-slab_terrace"
+    },
+    {
+      "op": "railing.remove",
+      "floorId": "l9",
+      "id": "l9-rail_terrace_1"
+    },
+    {
+      "op": "railing.remove",
+      "floorId": "l9",
+      "id": "l9-rail_terrace_2"
+    },
+    {
+      "op": "railing.remove",
+      "floorId": "l9",
+      "id": "l9-rail_terrace_3"
+    },
+    {
+      "op": "railing.remove",
+      "floorId": "l9",
+      "id": "l9-rail_terrace_4"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l9",
+      "id": "l9-r_terrace"
+    },
+    {
+      "op": "floor.duplicate",
+      "id": "l8",
+      "sourceFloorId": "l3",
+      "value": {
+        "label": "L8 west tower / east roof",
+        "boundaryMode": "closed",
+        "autoCeiling": false
+      }
+    },
+    {
+      "op": "slab.remove",
+      "floorId": "l8",
+      "id": "l8-slab_terrace"
+    },
+    {
+      "op": "railing.remove",
+      "floorId": "l8",
+      "id": "l8-rail_terrace_1"
+    },
+    {
+      "op": "railing.remove",
+      "floorId": "l8",
+      "id": "l8-rail_terrace_2"
+    },
+    {
+      "op": "railing.remove",
+      "floorId": "l8",
+      "id": "l8-rail_terrace_3"
+    },
+    {
+      "op": "railing.remove",
+      "floorId": "l8",
+      "id": "l8-rail_terrace_4"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l8",
+      "id": "l8-r_terrace"
+    },
+    {
+      "op": "floor.duplicate",
+      "id": "l7",
+      "sourceFloorId": "l3",
+      "value": {
+        "label": "L7 offices",
+        "boundaryMode": "closed",
+        "autoCeiling": true
+      }
+    },
+    {
+      "op": "slab.remove",
+      "floorId": "l7",
+      "id": "l7-slab_terrace"
+    },
+    {
+      "op": "railing.remove",
+      "floorId": "l7",
+      "id": "l7-rail_terrace_1"
+    },
+    {
+      "op": "railing.remove",
+      "floorId": "l7",
+      "id": "l7-rail_terrace_2"
+    },
+    {
+      "op": "railing.remove",
+      "floorId": "l7",
+      "id": "l7-rail_terrace_3"
+    },
+    {
+      "op": "railing.remove",
+      "floorId": "l7",
+      "id": "l7-rail_terrace_4"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l7",
+      "id": "l7-r_terrace"
+    },
+    {
+      "op": "floor.duplicate",
+      "id": "l6",
+      "sourceFloorId": "l3",
+      "value": {
+        "label": "L6 sky bridge",
+        "boundaryMode": "closed",
+        "autoCeiling": true
+      }
+    },
+    {
+      "op": "slab.remove",
+      "floorId": "l6",
+      "id": "l6-slab_terrace"
+    },
+    {
+      "op": "railing.remove",
+      "floorId": "l6",
+      "id": "l6-rail_terrace_1"
+    },
+    {
+      "op": "railing.remove",
+      "floorId": "l6",
+      "id": "l6-rail_terrace_2"
+    },
+    {
+      "op": "railing.remove",
+      "floorId": "l6",
+      "id": "l6-rail_terrace_3"
+    },
+    {
+      "op": "railing.remove",
+      "floorId": "l6",
+      "id": "l6-rail_terrace_4"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l6",
+      "id": "l6-r_terrace"
+    },
+    {
+      "op": "floor.duplicate",
+      "id": "l5",
+      "sourceFloorId": "l3",
+      "value": {
+        "label": "L5 offices",
+        "boundaryMode": "closed",
+        "autoCeiling": true
+      }
+    },
+    {
+      "op": "slab.remove",
+      "floorId": "l5",
+      "id": "l5-slab_terrace"
+    },
+    {
+      "op": "railing.remove",
+      "floorId": "l5",
+      "id": "l5-rail_terrace_1"
+    },
+    {
+      "op": "railing.remove",
+      "floorId": "l5",
+      "id": "l5-rail_terrace_2"
+    },
+    {
+      "op": "railing.remove",
+      "floorId": "l5",
+      "id": "l5-rail_terrace_3"
+    },
+    {
+      "op": "railing.remove",
+      "floorId": "l5",
+      "id": "l5-rail_terrace_4"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l5",
+      "id": "l5-r_terrace"
+    },
+    {
+      "op": "floor.duplicate",
+      "id": "l4",
+      "sourceFloorId": "l3",
+      "value": {
+        "label": "L4 offices",
+        "boundaryMode": "closed",
+        "autoCeiling": true
+      }
+    },
+    {
+      "op": "slab.remove",
+      "floorId": "l4",
+      "id": "l4-slab_terrace"
+    },
+    {
+      "op": "railing.remove",
+      "floorId": "l4",
+      "id": "l4-rail_terrace_1"
+    },
+    {
+      "op": "railing.remove",
+      "floorId": "l4",
+      "id": "l4-rail_terrace_2"
+    },
+    {
+      "op": "railing.remove",
+      "floorId": "l4",
+      "id": "l4-rail_terrace_3"
+    },
+    {
+      "op": "railing.remove",
+      "floorId": "l4",
+      "id": "l4-rail_terrace_4"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l4",
+      "id": "l4-r_terrace"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l4",
+      "id": "l4-w_d_end"
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "w_w_end",
+      "value": {
+        "type": "window",
+        "wallId": "l4-w_ext_2",
+        "at": {
+          "x": -14,
+          "z": 0
+        },
+        "label": "Corridor end window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l4",
+      "id": "l4-e_d_end"
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "e_w_end",
+      "value": {
+        "type": "window",
+        "wallId": "l4-e_ext_2",
+        "at": {
+          "x": 14,
+          "z": 0
+        },
+        "label": "Corridor end window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l5",
+      "id": "l5-w_d_end"
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "w_w_end",
+      "value": {
+        "type": "window",
+        "wallId": "l5-w_ext_2",
+        "at": {
+          "x": -14,
+          "z": 0
+        },
+        "label": "Corridor end window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l5",
+      "id": "l5-e_d_end"
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "e_w_end",
+      "value": {
+        "type": "window",
+        "wallId": "l5-e_ext_2",
+        "at": {
+          "x": 14,
+          "z": 0
+        },
+        "label": "Corridor end window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l7",
+      "id": "l7-w_d_end"
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l7",
+      "id": "w_w_end",
+      "value": {
+        "type": "window",
+        "wallId": "l7-w_ext_2",
+        "at": {
+          "x": -14,
+          "z": 0
+        },
+        "label": "Corridor end window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l7",
+      "id": "l7-e_d_end"
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l7",
+      "id": "e_w_end",
+      "value": {
+        "type": "window",
+        "wallId": "l7-e_ext_2",
+        "at": {
+          "x": 14,
+          "z": 0
+        },
+        "label": "Corridor end window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l8",
+      "id": "l8-w_d_end"
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l8",
+      "id": "w_w_end",
+      "value": {
+        "type": "window",
+        "wallId": "l8-w_ext_2",
+        "at": {
+          "x": -14,
+          "z": 0
+        },
+        "label": "Corridor end window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l9",
+      "id": "l9-w_d_end"
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l9",
+      "id": "w_w_end",
+      "value": {
+        "type": "window",
+        "wallId": "l9-w_ext_2",
+        "at": {
+          "x": -14,
+          "z": 0
+        },
+        "label": "Corridor end window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l6",
+      "id": "bridge_n",
+      "value": {
+        "a": {
+          "x": -14,
+          "z": -2
+        },
+        "b": {
+          "x": 14,
+          "z": -2
+        },
+        "role": "exterior",
+        "label": "Sky bridge north"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l6",
+      "id": "bridge_s",
+      "value": {
+        "a": {
+          "x": 14,
+          "z": 2
+        },
+        "b": {
+          "x": -14,
+          "z": 2
+        },
+        "role": "exterior",
+        "label": "Sky bridge south"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l6",
+      "id": "w_bridge_n-10",
+      "value": {
+        "type": "window",
+        "wallId": "bridge_n",
+        "at": {
+          "x": -10,
+          "z": -2
+        },
+        "label": "Bridge glazing north",
+        "width": 3.6,
+        "height": 2.4,
+        "sill": 0.3,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l6",
+      "id": "w_bridge_s-10",
+      "value": {
+        "type": "window",
+        "wallId": "bridge_s",
+        "at": {
+          "x": -10,
+          "z": 2
+        },
+        "label": "Bridge glazing south",
+        "width": 3.6,
+        "height": 2.4,
+        "sill": 0.3,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l6",
+      "id": "w_bridge_n-5",
+      "value": {
+        "type": "window",
+        "wallId": "bridge_n",
+        "at": {
+          "x": -5,
+          "z": -2
+        },
+        "label": "Bridge glazing north",
+        "width": 3.6,
+        "height": 2.4,
+        "sill": 0.3,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l6",
+      "id": "w_bridge_s-5",
+      "value": {
+        "type": "window",
+        "wallId": "bridge_s",
+        "at": {
+          "x": -5,
+          "z": 2
+        },
+        "label": "Bridge glazing south",
+        "width": 3.6,
+        "height": 2.4,
+        "sill": 0.3,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l6",
+      "id": "w_bridge_n0",
+      "value": {
+        "type": "window",
+        "wallId": "bridge_n",
+        "at": {
+          "x": 0,
+          "z": -2
+        },
+        "label": "Bridge glazing north",
+        "width": 3.6,
+        "height": 2.4,
+        "sill": 0.3,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l6",
+      "id": "w_bridge_s0",
+      "value": {
+        "type": "window",
+        "wallId": "bridge_s",
+        "at": {
+          "x": 0,
+          "z": 2
+        },
+        "label": "Bridge glazing south",
+        "width": 3.6,
+        "height": 2.4,
+        "sill": 0.3,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l6",
+      "id": "w_bridge_n5",
+      "value": {
+        "type": "window",
+        "wallId": "bridge_n",
+        "at": {
+          "x": 5,
+          "z": -2
+        },
+        "label": "Bridge glazing north",
+        "width": 3.6,
+        "height": 2.4,
+        "sill": 0.3,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l6",
+      "id": "w_bridge_s5",
+      "value": {
+        "type": "window",
+        "wallId": "bridge_s",
+        "at": {
+          "x": 5,
+          "z": 2
+        },
+        "label": "Bridge glazing south",
+        "width": 3.6,
+        "height": 2.4,
+        "sill": 0.3,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l6",
+      "id": "w_bridge_n10",
+      "value": {
+        "type": "window",
+        "wallId": "bridge_n",
+        "at": {
+          "x": 10,
+          "z": -2
+        },
+        "label": "Bridge glazing north",
+        "width": 3.6,
+        "height": 2.4,
+        "sill": 0.3,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l6",
+      "id": "w_bridge_s10",
+      "value": {
+        "type": "window",
+        "wallId": "bridge_s",
+        "at": {
+          "x": 10,
+          "z": 2
+        },
+        "label": "Bridge glazing south",
+        "width": 3.6,
+        "height": 2.4,
+        "sill": 0.3,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l6",
+      "id": "r_bridge",
+      "value": {
+        "label": "Sky bridge",
+        "minX": -14,
+        "maxX": 14,
+        "minZ": -2,
+        "maxZ": 2,
+        "kind": "wing"
+      }
+    },
+    {
+      "op": "slab.add",
+      "floorId": "l6",
+      "id": "slab_w",
+      "value": {
+        "label": "West tower floor",
+        "minX": -34,
+        "maxX": -14,
+        "minZ": -12,
+        "maxZ": 12
+      }
+    },
+    {
+      "op": "slab.add",
+      "floorId": "l6",
+      "id": "slab_bridge",
+      "value": {
+        "label": "Sky bridge floor",
+        "minX": -14,
+        "maxX": 14,
+        "minZ": -2,
+        "maxZ": 2
+      }
+    },
+    {
+      "op": "slab.add",
+      "floorId": "l6",
+      "id": "slab_e",
+      "value": {
+        "label": "East tower floor",
+        "minX": 14,
+        "maxX": 34,
+        "minZ": -12,
+        "maxZ": 12
+      }
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l8",
+      "id": "l8-e_d_shaft_n"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l8",
+      "id": "l8-e_d_shaft_s"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l8",
+      "id": "l8-e_d_n1"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l8",
+      "id": "l8-e_d_s1"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l8",
+      "id": "l8-e_d_n2"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l8",
+      "id": "l8-e_d_s2"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l8",
+      "id": "l8-e_d_n3"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l8",
+      "id": "l8-e_d_s3"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l8",
+      "id": "l8-e_d_end"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l8",
+      "id": "l8-e_w_n31"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l8",
+      "id": "l8-e_w_s31"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l8",
+      "id": "l8-e_w_n27"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l8",
+      "id": "l8-e_w_s27"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l8",
+      "id": "l8-e_w_n21.5"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l8",
+      "id": "l8-e_w_s21.5"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l8",
+      "id": "l8-e_w_n16.5"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l8",
+      "id": "l8-e_w_s16.5"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l8",
+      "id": "l8-e_w_e-9"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l8",
+      "id": "l8-e_w_e-5"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l8",
+      "id": "l8-e_w_e5"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l8",
+      "id": "l8-e_w_e9"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l8",
+      "id": "l8-e_w_w-9"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l8",
+      "id": "l8-e_w_w9"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l8",
+      "id": "l8-e_ext_1"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l8",
+      "id": "l8-e_ext_2"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l8",
+      "id": "l8-e_ext_3"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l8",
+      "id": "l8-e_ext_4"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l8",
+      "id": "l8-e_shaft"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l8",
+      "id": "l8-e_n6"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l8",
+      "id": "l8-e_s6"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l8",
+      "id": "l8-e_x24n"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l8",
+      "id": "l8-e_x24s"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l8",
+      "id": "l8-e_corr_n"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l8",
+      "id": "l8-e_corr_s"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l8",
+      "id": "l8-e_x19n"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l8",
+      "id": "l8-e_x19s"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l8",
+      "id": "l8-e_r_n1"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l8",
+      "id": "l8-e_r_n2"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l8",
+      "id": "l8-e_r_n3"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l8",
+      "id": "l8-e_r_s1"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l8",
+      "id": "l8-e_r_s2"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l8",
+      "id": "l8-e_r_s3"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l8",
+      "id": "l8-e_r_lobby"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l8",
+      "id": "l8-e_r_corr"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l8",
+      "id": "l8-e_r_shaft"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l9",
+      "id": "l9-e_d_shaft_n"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l9",
+      "id": "l9-e_d_shaft_s"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l9",
+      "id": "l9-e_d_n1"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l9",
+      "id": "l9-e_d_s1"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l9",
+      "id": "l9-e_d_n2"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l9",
+      "id": "l9-e_d_s2"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l9",
+      "id": "l9-e_d_n3"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l9",
+      "id": "l9-e_d_s3"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l9",
+      "id": "l9-e_d_end"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l9",
+      "id": "l9-e_w_n31"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l9",
+      "id": "l9-e_w_s31"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l9",
+      "id": "l9-e_w_n27"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l9",
+      "id": "l9-e_w_s27"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l9",
+      "id": "l9-e_w_n21.5"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l9",
+      "id": "l9-e_w_s21.5"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l9",
+      "id": "l9-e_w_n16.5"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l9",
+      "id": "l9-e_w_s16.5"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l9",
+      "id": "l9-e_w_e-9"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l9",
+      "id": "l9-e_w_e-5"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l9",
+      "id": "l9-e_w_e5"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l9",
+      "id": "l9-e_w_e9"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l9",
+      "id": "l9-e_w_w-9"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l9",
+      "id": "l9-e_w_w9"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l9",
+      "id": "l9-e_ext_1"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l9",
+      "id": "l9-e_ext_2"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l9",
+      "id": "l9-e_ext_3"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l9",
+      "id": "l9-e_ext_4"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l9",
+      "id": "l9-e_shaft"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l9",
+      "id": "l9-e_n6"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l9",
+      "id": "l9-e_s6"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l9",
+      "id": "l9-e_x24n"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l9",
+      "id": "l9-e_x24s"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l9",
+      "id": "l9-e_corr_n"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l9",
+      "id": "l9-e_corr_s"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l9",
+      "id": "l9-e_x19n"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l9",
+      "id": "l9-e_x19s"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l9",
+      "id": "l9-e_r_n1"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l9",
+      "id": "l9-e_r_n2"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l9",
+      "id": "l9-e_r_n3"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l9",
+      "id": "l9-e_r_s1"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l9",
+      "id": "l9-e_r_s2"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l9",
+      "id": "l9-e_r_s3"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l9",
+      "id": "l9-e_r_lobby"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l9",
+      "id": "l9-e_r_corr"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l9",
+      "id": "l9-e_r_shaft"
+    },
+    {
+      "op": "floor.update",
+      "id": "l8",
+      "value": {
+        "boundaryMode": "intentional_open"
+      }
+    },
+    {
+      "op": "slab.add",
+      "floorId": "l8",
+      "id": "slab_west",
+      "value": {
+        "label": "West tower floor",
+        "minX": -34,
+        "maxX": -14,
+        "minZ": -12,
+        "maxZ": 12
+      }
+    },
+    {
+      "op": "slab.add",
+      "floorId": "l8",
+      "id": "slab_east_roof",
+      "value": {
+        "label": "East roof deck",
+        "minX": 14,
+        "maxX": 34,
+        "minZ": -12,
+        "maxZ": 12
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l8",
+      "id": "rail_east_roof_1",
+      "value": {
+        "a": {
+          "x": 14,
+          "z": -12
+        },
+        "b": {
+          "x": 34,
+          "z": -12
+        },
+        "label": "East roof parapet 1",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l8",
+      "id": "rail_east_roof_2",
+      "value": {
+        "a": {
+          "x": 34,
+          "z": -12
+        },
+        "b": {
+          "x": 34,
+          "z": 12
+        },
+        "label": "East roof parapet 2",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l8",
+      "id": "rail_east_roof_3",
+      "value": {
+        "a": {
+          "x": 34,
+          "z": 12
+        },
+        "b": {
+          "x": 14,
+          "z": 12
+        },
+        "label": "East roof parapet 3",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l8",
+      "id": "rail_east_roof_4",
+      "value": {
+        "a": {
+          "x": 14,
+          "z": 12
+        },
+        "b": {
+          "x": 14,
+          "z": -12
+        },
+        "label": "East roof parapet 4",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l8",
+      "id": "r_east_roof",
+      "value": {
+        "label": "East roof deck",
+        "minX": 14,
+        "maxX": 34,
+        "minZ": -12,
+        "maxZ": 12,
+        "kind": "courtyard"
+      }
+    }
+  ]
+}

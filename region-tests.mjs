@@ -52,3 +52,17 @@ const changed=applyTransaction(transaction.building,{version:1,operations:[{op:'
 const blocked=applyTransaction(transaction.building,{version:1,operations:[{op:'region.update',floorId:base().floors[0].id,id:'cli_polygon',value:{minX:1}}]});assert.equal(blocked.ok,false);
 const onlyLabel=base();onlyLabel.floors[0].regions=[label];assert.equal(exportGodotFiles(onlyLabel).tscn.replace(/^metadata\/building_regions = .*\n/gm,''),exportGodotFiles(base()).tscn);
 console.log('PASS CLI region transactions: polygon creation/replacement, derived bounds and unsafe bounds edit rejection; label-only preserves geometry exactly');
+{
+  // Halcyon H2: the independent-surface review warning only fires when a
+  // manual roof/floor/ceiling or platform overlaps a void in plan (roof eaves
+  // included) within the void's story, not for any such surface anywhere.
+  const b=prepareDocument({...JSON.parse(JSON.stringify(base())),roof:{type:'none'}}).building,fid=b.floors[0].id;
+  const cut=r=>validateBuilding(r).warnings.filter(w=>/region cutouts affect automatic surfaces only/.test(w.message||w)).length;
+  const withVoid=applyTransaction(b,{version:1,operations:[{op:'region.add',floorId:fid,id:'void_probe',value:{minX:-1,maxX:1,minZ:-1,maxZ:1,effect:'void'}}]});assert.ok(withVoid.ok,JSON.stringify(withVoid.errors));
+  const roof=value=>{const r=applyTransaction(withVoid.building,{version:1,operations:[{op:'roof.add',id:'r_probe',value:{type:'flat',baseY:2,...value}}]});assert.ok(r.ok,JSON.stringify(r.errors));return r.building;};
+  assert.equal(cut(roof({minX:20,maxX:24,minZ:20,maxZ:24,overhang:0})),0,'a roof far from the void is not flagged');
+  assert.equal(cut(roof({minX:1.2,maxX:4,minZ:-1,maxZ:1,overhang:0.35})),1,'eaves reaching over the void are flagged');
+  assert.equal(cut(roof({minX:-0.5,maxX:0.5,minZ:-0.5,maxZ:0.5,overhang:0,baseY:2})),1,'a roof over the void within its story is flagged');
+  assert.equal(cut(roof({minX:-0.5,maxX:0.5,minZ:-0.5,maxZ:0.5,overhang:0,baseY:40})),0,'a roof far above the void\'s story is not flagged');
+  console.log('PASS void review warning: only independent surfaces overlapping a void in plan are flagged');
+}

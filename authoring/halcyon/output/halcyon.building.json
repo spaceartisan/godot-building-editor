@@ -3671,7 +3671,8 @@
       "platforms": [],
       "railings": [
         {
-          "label": "W stair rail inner",
+          "id": "st_w_b2-guard-east",
+          "label": "W core b2 to b1 guard east",
           "a": {
             "x": -32.04,
             "z": -3.5
@@ -3681,11 +3682,11 @@
             "z": 3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_b2_inner"
+          "style": "two_rail"
         },
         {
-          "label": "W stair rail end",
+          "id": "st_w_b2-guard-south",
+          "label": "W core b2 to b1 guard south",
           "a": {
             "x": -33.76,
             "z": 3.56
@@ -3695,11 +3696,11 @@
             "z": 3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_b2_end"
+          "style": "two_rail"
         },
         {
-          "label": "E stair rail inner",
+          "id": "st_e_b2-guard-west",
+          "label": "E core b2 to b1 guard west",
           "a": {
             "x": 32.04,
             "z": -3.5
@@ -3709,11 +3710,11 @@
             "z": 3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_e_b2_inner"
+          "style": "two_rail"
         },
         {
-          "label": "E stair rail end",
+          "id": "st_e_b2-guard-south",
+          "label": "E core b2 to b1 guard south",
           "a": {
             "x": 32.04,
             "z": 3.56
@@ -3723,13 +3724,27 @@
             "z": 3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_e_b2_end"
+          "style": "two_rail"
         },
         {
+          "id": "ramp_cars-guard-west",
+          "label": "Ramp rail west",
+          "a": {
+            "x": 13.940000000000001,
+            "z": -1.81
+          },
+          "b": {
+            "x": 13.940000000000001,
+            "z": 1.81
+          },
+          "height": 1,
+          "style": "two_rail"
+        },
+        {
+          "id": "ramp_cars-guard-north",
           "label": "Ramp rail north",
           "a": {
-            "x": 13.94,
+            "x": 13.940000000000001,
             "z": -1.81
           },
           "b": {
@@ -3737,13 +3752,13 @@
             "z": -1.81
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_ramp_n"
+          "style": "two_rail"
         },
         {
+          "id": "ramp_cars-guard-south",
           "label": "Ramp rail south",
           "a": {
-            "x": 13.94,
+            "x": 13.940000000000001,
             "z": 1.81
           },
           "b": {
@@ -3751,22 +3766,7 @@
             "z": 1.81
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_ramp_s"
-        },
-        {
-          "label": "Ramp rail end",
-          "a": {
-            "x": 13.94,
-            "z": -1.81
-          },
-          "b": {
-            "x": 13.94,
-            "z": 1.81
-          },
-          "height": 1,
-          "style": "two_rail",
-          "id": "rail_ramp_end"
+          "style": "two_rail"
         }
       ],
       "roofSections": [],
@@ -5600,88 +5600,88 @@
       "platforms": [],
       "railings": [
         {
-          "label": "W stair rail inner",
-          "a": {
-            "x": -31.96,
-            "z": 3.5
-          },
-          "b": {
-            "x": -31.96,
-            "z": -3.56
-          },
-          "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_b1_inner"
-        },
-        {
-          "label": "W stair rail end",
+          "id": "st_w_b1-guard-west",
+          "label": "W core b1 to floor_1 guard west",
           "a": {
             "x": -31.96,
             "z": -3.56
           },
           "b": {
-            "x": -30.24,
-            "z": -3.56
-          },
-          "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_b1_end"
-        },
-        {
-          "label": "W stair rail outer",
-          "a": {
-            "x": -30.24,
+            "x": -31.96,
             "z": 3.5
           },
+          "height": 1,
+          "style": "two_rail"
+        },
+        {
+          "id": "st_w_b1-guard-east",
+          "label": "W core b1 to floor_1 guard east",
+          "a": {
+            "x": -30.240000000000002,
+            "z": -3.56
+          },
           "b": {
-            "x": -30.24,
+            "x": -30.240000000000002,
+            "z": 3.5
+          },
+          "height": 1,
+          "style": "two_rail"
+        },
+        {
+          "id": "st_w_b1-guard-north",
+          "label": "W core b1 to floor_1 guard north",
+          "a": {
+            "x": -31.96,
+            "z": -3.56
+          },
+          "b": {
+            "x": -30.240000000000002,
             "z": -3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_b1_outer"
+          "style": "two_rail"
         },
         {
-          "label": "E stair rail inner",
+          "id": "st_e_b1-guard-west",
+          "label": "E core b1 to floor_1 guard west",
           "a": {
+            "x": 30.240000000000002,
+            "z": -3.56
+          },
+          "b": {
+            "x": 30.240000000000002,
+            "z": 3.5
+          },
+          "height": 1,
+          "style": "two_rail"
+        },
+        {
+          "id": "st_e_b1-guard-east",
+          "label": "E core b1 to floor_1 guard east",
+          "a": {
+            "x": 31.96,
+            "z": -3.56
+          },
+          "b": {
             "x": 31.96,
             "z": 3.5
           },
+          "height": 1,
+          "style": "two_rail"
+        },
+        {
+          "id": "st_e_b1-guard-north",
+          "label": "E core b1 to floor_1 guard north",
+          "a": {
+            "x": 30.240000000000002,
+            "z": -3.56
+          },
           "b": {
             "x": 31.96,
             "z": -3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_e_b1_inner"
-        },
-        {
-          "label": "E stair rail end",
-          "a": {
-            "x": 30.24,
-            "z": -3.56
-          },
-          "b": {
-            "x": 31.96,
-            "z": -3.56
-          },
-          "height": 1,
-          "style": "two_rail",
-          "id": "rail_e_b1_end"
-        },
-        {
-          "label": "E stair rail outer",
-          "a": {
-            "x": 30.24,
-            "z": 3.5
-          },
-          "b": {
-            "x": 30.24,
-            "z": -3.56
-          },
-          "height": 1,
-          "style": "two_rail",
-          "id": "rail_e_b1_outer"
+          "style": "two_rail"
         }
       ],
       "roofSections": [],
@@ -7367,7 +7367,8 @@
           "id": "rail_atrium_24"
         },
         {
-          "label": "W stair rail inner",
+          "id": "st_w_floor_1-guard-east",
+          "label": "W core floor_1 to l2 guard east",
           "a": {
             "x": -32.04,
             "z": -3.5
@@ -7377,11 +7378,11 @@
             "z": 3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_floor_1_inner"
+          "style": "two_rail"
         },
         {
-          "label": "W stair rail end",
+          "id": "st_w_floor_1-guard-south",
+          "label": "W core floor_1 to l2 guard south",
           "a": {
             "x": -33.76,
             "z": 3.56
@@ -7391,11 +7392,11 @@
             "z": 3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_floor_1_end"
+          "style": "two_rail"
         },
         {
-          "label": "E stair rail inner",
+          "id": "st_e_floor_1-guard-west",
+          "label": "E core floor_1 to l2 guard west",
           "a": {
             "x": 32.04,
             "z": -3.5
@@ -7405,11 +7406,11 @@
             "z": 3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_e_floor_1_inner"
+          "style": "two_rail"
         },
         {
-          "label": "E stair rail end",
+          "id": "st_e_floor_1-guard-south",
+          "label": "E core floor_1 to l2 guard south",
           "a": {
             "x": 32.04,
             "z": 3.56
@@ -7419,8 +7420,7 @@
             "z": 3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_e_floor_1_end"
+          "style": "two_rail"
         }
       ],
       "roofSections": [],
@@ -9146,93 +9146,93 @@
           "id": "rail_terrace_4"
         },
         {
-          "label": "W stair rail inner",
-          "a": {
-            "x": -31.96,
-            "z": 3.5
-          },
-          "b": {
-            "x": -31.96,
-            "z": -3.56
-          },
-          "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_l2_inner"
-        },
-        {
-          "label": "W stair rail end",
+          "id": "st_w_l2-guard-west",
+          "label": "W core l2 to l3 guard west",
           "a": {
             "x": -31.96,
             "z": -3.56
           },
           "b": {
-            "x": -30.24,
-            "z": -3.56
-          },
-          "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_l2_end"
-        },
-        {
-          "label": "W stair rail outer",
-          "a": {
-            "x": -30.24,
+            "x": -31.96,
             "z": 3.5
           },
+          "height": 1,
+          "style": "two_rail"
+        },
+        {
+          "id": "st_w_l2-guard-east",
+          "label": "W core l2 to l3 guard east",
+          "a": {
+            "x": -30.240000000000002,
+            "z": -3.56
+          },
           "b": {
-            "x": -30.24,
+            "x": -30.240000000000002,
+            "z": 3.5
+          },
+          "height": 1,
+          "style": "two_rail"
+        },
+        {
+          "id": "st_w_l2-guard-north",
+          "label": "W core l2 to l3 guard north",
+          "a": {
+            "x": -31.96,
+            "z": -3.56
+          },
+          "b": {
+            "x": -30.240000000000002,
             "z": -3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_l2_outer"
+          "style": "two_rail"
         },
         {
-          "label": "E stair rail inner",
+          "id": "st_e_l2-guard-west",
+          "label": "E core l2 to l3 guard west",
           "a": {
+            "x": 30.240000000000002,
+            "z": -3.56
+          },
+          "b": {
+            "x": 30.240000000000002,
+            "z": 3.5
+          },
+          "height": 1,
+          "style": "two_rail"
+        },
+        {
+          "id": "st_e_l2-guard-east",
+          "label": "E core l2 to l3 guard east",
+          "a": {
+            "x": 31.96,
+            "z": -3.56
+          },
+          "b": {
             "x": 31.96,
             "z": 3.5
           },
+          "height": 1,
+          "style": "two_rail"
+        },
+        {
+          "id": "st_e_l2-guard-north",
+          "label": "E core l2 to l3 guard north",
+          "a": {
+            "x": 30.240000000000002,
+            "z": -3.56
+          },
           "b": {
             "x": 31.96,
             "z": -3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_e_l2_inner"
-        },
-        {
-          "label": "E stair rail end",
-          "a": {
-            "x": 30.24,
-            "z": -3.56
-          },
-          "b": {
-            "x": 31.96,
-            "z": -3.56
-          },
-          "height": 1,
-          "style": "two_rail",
-          "id": "rail_e_l2_end"
-        },
-        {
-          "label": "E stair rail outer",
-          "a": {
-            "x": 30.24,
-            "z": 3.5
-          },
-          "b": {
-            "x": 30.24,
-            "z": -3.56
-          },
-          "height": 1,
-          "style": "two_rail",
-          "id": "rail_e_l2_outer"
+          "style": "two_rail"
         }
       ],
       "roofSections": [],
       "autoFloor": true,
-      "autoCeiling": false,
+      "autoCeiling": true,
       "boundaryMode": "intentional_open"
     },
     {
@@ -10652,7 +10652,8 @@
       "platforms": [],
       "railings": [
         {
-          "label": "W stair rail inner",
+          "id": "st_w_l3-guard-east",
+          "label": "W core l3 to l4 guard east",
           "a": {
             "x": -32.04,
             "z": -3.5
@@ -10662,11 +10663,11 @@
             "z": 3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_l3_inner"
+          "style": "two_rail"
         },
         {
-          "label": "W stair rail end",
+          "id": "st_w_l3-guard-south",
+          "label": "W core l3 to l4 guard south",
           "a": {
             "x": -33.76,
             "z": 3.56
@@ -10676,11 +10677,11 @@
             "z": 3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_l3_end"
+          "style": "two_rail"
         },
         {
-          "label": "E stair rail inner",
+          "id": "st_e_l3-guard-west",
+          "label": "E core l3 to l4 guard west",
           "a": {
             "x": 32.04,
             "z": -3.5
@@ -10690,11 +10691,11 @@
             "z": 3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_e_l3_inner"
+          "style": "two_rail"
         },
         {
-          "label": "E stair rail end",
+          "id": "st_e_l3-guard-south",
+          "label": "E core l3 to l4 guard south",
           "a": {
             "x": 32.04,
             "z": 3.56
@@ -10704,8 +10705,7 @@
             "z": 3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_e_l3_end"
+          "style": "two_rail"
         }
       ],
       "roofSections": [],
@@ -12129,88 +12129,88 @@
       "platforms": [],
       "railings": [
         {
-          "label": "W stair rail inner",
-          "a": {
-            "x": -31.96,
-            "z": 3.5
-          },
-          "b": {
-            "x": -31.96,
-            "z": -3.56
-          },
-          "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_l4_inner"
-        },
-        {
-          "label": "W stair rail end",
+          "id": "st_w_l4-guard-west",
+          "label": "W core l4 to l5 guard west",
           "a": {
             "x": -31.96,
             "z": -3.56
           },
           "b": {
-            "x": -30.24,
-            "z": -3.56
-          },
-          "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_l4_end"
-        },
-        {
-          "label": "W stair rail outer",
-          "a": {
-            "x": -30.24,
+            "x": -31.96,
             "z": 3.5
           },
+          "height": 1,
+          "style": "two_rail"
+        },
+        {
+          "id": "st_w_l4-guard-east",
+          "label": "W core l4 to l5 guard east",
+          "a": {
+            "x": -30.240000000000002,
+            "z": -3.56
+          },
           "b": {
-            "x": -30.24,
+            "x": -30.240000000000002,
+            "z": 3.5
+          },
+          "height": 1,
+          "style": "two_rail"
+        },
+        {
+          "id": "st_w_l4-guard-north",
+          "label": "W core l4 to l5 guard north",
+          "a": {
+            "x": -31.96,
+            "z": -3.56
+          },
+          "b": {
+            "x": -30.240000000000002,
             "z": -3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_l4_outer"
+          "style": "two_rail"
         },
         {
-          "label": "E stair rail inner",
+          "id": "st_e_l4-guard-west",
+          "label": "E core l4 to l5 guard west",
           "a": {
+            "x": 30.240000000000002,
+            "z": -3.56
+          },
+          "b": {
+            "x": 30.240000000000002,
+            "z": 3.5
+          },
+          "height": 1,
+          "style": "two_rail"
+        },
+        {
+          "id": "st_e_l4-guard-east",
+          "label": "E core l4 to l5 guard east",
+          "a": {
+            "x": 31.96,
+            "z": -3.56
+          },
+          "b": {
             "x": 31.96,
             "z": 3.5
           },
+          "height": 1,
+          "style": "two_rail"
+        },
+        {
+          "id": "st_e_l4-guard-north",
+          "label": "E core l4 to l5 guard north",
+          "a": {
+            "x": 30.240000000000002,
+            "z": -3.56
+          },
           "b": {
             "x": 31.96,
             "z": -3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_e_l4_inner"
-        },
-        {
-          "label": "E stair rail end",
-          "a": {
-            "x": 30.24,
-            "z": -3.56
-          },
-          "b": {
-            "x": 31.96,
-            "z": -3.56
-          },
-          "height": 1,
-          "style": "two_rail",
-          "id": "rail_e_l4_end"
-        },
-        {
-          "label": "E stair rail outer",
-          "a": {
-            "x": 30.24,
-            "z": 3.5
-          },
-          "b": {
-            "x": 30.24,
-            "z": -3.56
-          },
-          "height": 1,
-          "style": "two_rail",
-          "id": "rail_e_l4_outer"
+          "style": "two_rail"
         }
       ],
       "roofSections": [],
@@ -12245,9 +12245,37 @@
           },
           "b": {
             "x": -14,
-            "z": 12
+            "z": -2
           },
           "id": "l6-w_ext_2"
+        },
+        {
+          "label": "West bridge mouth",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": -14,
+            "z": -2
+          },
+          "b": {
+            "x": -14,
+            "z": 2
+          },
+          "id": "l6-w_ext_2_bridge"
+        },
+        {
+          "label": "West tower wall 2",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": -14,
+            "z": 2
+          },
+          "b": {
+            "x": -14,
+            "z": 12
+          },
+          "id": "l6-w_ext_2_south"
         },
         {
           "label": "West tower wall 3",
@@ -12427,9 +12455,37 @@
           },
           "b": {
             "x": 14,
-            "z": 12
+            "z": -2
           },
           "id": "l6-e_ext_2"
+        },
+        {
+          "label": "East bridge mouth",
+          "role": "interior",
+          "height": null,
+          "a": {
+            "x": 14,
+            "z": -2
+          },
+          "b": {
+            "x": 14,
+            "z": 2
+          },
+          "id": "l6-e_ext_2_bridge"
+        },
+        {
+          "label": "East tower wall 2",
+          "role": "exterior",
+          "height": null,
+          "a": {
+            "x": 14,
+            "z": 2
+          },
+          "b": {
+            "x": 14,
+            "z": 12
+          },
+          "id": "l6-e_ext_2_south"
         },
         {
           "label": "East tower wall 3",
@@ -12791,7 +12847,7 @@
           "wallId": "l6-w_ext_2",
           "width": 1.6,
           "height": 1.5,
-          "t": 0.125,
+          "t": 0.3,
           "id": "l6-w_w_e-9"
         },
         {
@@ -12802,7 +12858,7 @@
           "wallId": "l6-w_ext_2",
           "width": 1.6,
           "height": 1.5,
-          "t": 0.291666667,
+          "t": 0.700000001,
           "id": "l6-w_w_e-5"
         },
         {
@@ -12810,10 +12866,10 @@
           "sill": 0.9,
           "windowStyle": "plain",
           "type": "window",
-          "wallId": "l6-w_ext_2",
+          "wallId": "l6-w_ext_2_south",
           "width": 1.6,
           "height": 1.5,
-          "t": 0.708333333,
+          "t": 0.299999999,
           "id": "l6-w_w_e5"
         },
         {
@@ -12821,10 +12877,10 @@
           "sill": 0.9,
           "windowStyle": "plain",
           "type": "window",
-          "wallId": "l6-w_ext_2",
+          "wallId": "l6-w_ext_2_south",
           "width": 1.6,
           "height": 1.5,
-          "t": 0.875,
+          "t": 0.7,
           "id": "l6-w_w_e9"
         },
         {
@@ -12853,7 +12909,7 @@
           "label": "West corridor end door",
           "doorStyle": "exterior",
           "type": "door",
-          "wallId": "l6-w_ext_2",
+          "wallId": "l6-w_ext_2_bridge",
           "width": 1.6,
           "height": 2.4,
           "t": 0.5,
@@ -13035,7 +13091,7 @@
           "wallId": "l6-e_ext_2",
           "width": 1.6,
           "height": 1.5,
-          "t": 0.125,
+          "t": 0.3,
           "id": "l6-e_w_e-9"
         },
         {
@@ -13046,7 +13102,7 @@
           "wallId": "l6-e_ext_2",
           "width": 1.6,
           "height": 1.5,
-          "t": 0.291666667,
+          "t": 0.700000001,
           "id": "l6-e_w_e-5"
         },
         {
@@ -13054,10 +13110,10 @@
           "sill": 0.9,
           "windowStyle": "plain",
           "type": "window",
-          "wallId": "l6-e_ext_2",
+          "wallId": "l6-e_ext_2_south",
           "width": 1.6,
           "height": 1.5,
-          "t": 0.708333333,
+          "t": 0.299999999,
           "id": "l6-e_w_e5"
         },
         {
@@ -13065,10 +13121,10 @@
           "sill": 0.9,
           "windowStyle": "plain",
           "type": "window",
-          "wallId": "l6-e_ext_2",
+          "wallId": "l6-e_ext_2_south",
           "width": 1.6,
           "height": 1.5,
-          "t": 0.875,
+          "t": 0.7,
           "id": "l6-e_w_e9"
         },
         {
@@ -13097,7 +13153,7 @@
           "label": "East corridor end door",
           "doorStyle": "exterior",
           "type": "door",
-          "wallId": "l6-e_ext_2",
+          "wallId": "l6-e_ext_2_bridge",
           "width": 1.6,
           "height": 2.4,
           "t": 0.5,
@@ -13641,32 +13697,7 @@
           "blockBelow": true
         }
       ],
-      "slabs": [
-        {
-          "label": "West tower floor",
-          "minX": -34,
-          "maxX": -14,
-          "minZ": -12,
-          "maxZ": 12,
-          "id": "slab_w"
-        },
-        {
-          "label": "Sky bridge floor",
-          "minX": -14,
-          "maxX": 14,
-          "minZ": -2,
-          "maxZ": 2,
-          "id": "slab_bridge"
-        },
-        {
-          "label": "East tower floor",
-          "minX": 14,
-          "maxX": 34,
-          "minZ": -12,
-          "maxZ": 12,
-          "id": "slab_e"
-        }
-      ],
+      "slabs": [],
       "regions": [
         {
           "id": "l6-w_r_n1",
@@ -13862,7 +13893,8 @@
       "platforms": [],
       "railings": [
         {
-          "label": "W stair rail inner",
+          "id": "st_w_l5-guard-east",
+          "label": "W core l5 to l6 guard east",
           "a": {
             "x": -32.04,
             "z": -3.5
@@ -13872,11 +13904,11 @@
             "z": 3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_l5_inner"
+          "style": "two_rail"
         },
         {
-          "label": "W stair rail end",
+          "id": "st_w_l5-guard-south",
+          "label": "W core l5 to l6 guard south",
           "a": {
             "x": -33.76,
             "z": 3.56
@@ -13886,11 +13918,11 @@
             "z": 3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_l5_end"
+          "style": "two_rail"
         },
         {
-          "label": "E stair rail inner",
+          "id": "st_e_l5-guard-west",
+          "label": "E core l5 to l6 guard west",
           "a": {
             "x": 32.04,
             "z": -3.5
@@ -13900,11 +13932,11 @@
             "z": 3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_e_l5_inner"
+          "style": "two_rail"
         },
         {
-          "label": "E stair rail end",
+          "id": "st_e_l5-guard-south",
+          "label": "E core l5 to l6 guard south",
           "a": {
             "x": 32.04,
             "z": 3.56
@@ -13914,8 +13946,7 @@
             "z": 3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_e_l5_end"
+          "style": "two_rail"
         }
       ],
       "roofSections": [],
@@ -15351,88 +15382,88 @@
       "platforms": [],
       "railings": [
         {
-          "label": "W stair rail inner",
-          "a": {
-            "x": -31.96,
-            "z": 3.5
-          },
-          "b": {
-            "x": -31.96,
-            "z": -3.56
-          },
-          "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_l6_inner"
-        },
-        {
-          "label": "W stair rail end",
+          "id": "st_w_l6-guard-west",
+          "label": "W core l6 to l7 guard west",
           "a": {
             "x": -31.96,
             "z": -3.56
           },
           "b": {
-            "x": -30.24,
-            "z": -3.56
-          },
-          "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_l6_end"
-        },
-        {
-          "label": "W stair rail outer",
-          "a": {
-            "x": -30.24,
+            "x": -31.96,
             "z": 3.5
           },
+          "height": 1,
+          "style": "two_rail"
+        },
+        {
+          "id": "st_w_l6-guard-east",
+          "label": "W core l6 to l7 guard east",
+          "a": {
+            "x": -30.240000000000002,
+            "z": -3.56
+          },
           "b": {
-            "x": -30.24,
+            "x": -30.240000000000002,
+            "z": 3.5
+          },
+          "height": 1,
+          "style": "two_rail"
+        },
+        {
+          "id": "st_w_l6-guard-north",
+          "label": "W core l6 to l7 guard north",
+          "a": {
+            "x": -31.96,
+            "z": -3.56
+          },
+          "b": {
+            "x": -30.240000000000002,
             "z": -3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_l6_outer"
+          "style": "two_rail"
         },
         {
-          "label": "E stair rail inner",
+          "id": "st_e_l6-guard-west",
+          "label": "E core l6 to l7 guard west",
           "a": {
+            "x": 30.240000000000002,
+            "z": -3.56
+          },
+          "b": {
+            "x": 30.240000000000002,
+            "z": 3.5
+          },
+          "height": 1,
+          "style": "two_rail"
+        },
+        {
+          "id": "st_e_l6-guard-east",
+          "label": "E core l6 to l7 guard east",
+          "a": {
+            "x": 31.96,
+            "z": -3.56
+          },
+          "b": {
             "x": 31.96,
             "z": 3.5
           },
+          "height": 1,
+          "style": "two_rail"
+        },
+        {
+          "id": "st_e_l6-guard-north",
+          "label": "E core l6 to l7 guard north",
+          "a": {
+            "x": 30.240000000000002,
+            "z": -3.56
+          },
           "b": {
             "x": 31.96,
             "z": -3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_e_l6_inner"
-        },
-        {
-          "label": "E stair rail end",
-          "a": {
-            "x": 30.24,
-            "z": -3.56
-          },
-          "b": {
-            "x": 31.96,
-            "z": -3.56
-          },
-          "height": 1,
-          "style": "two_rail",
-          "id": "rail_e_l6_end"
-        },
-        {
-          "label": "E stair rail outer",
-          "a": {
-            "x": 30.24,
-            "z": 3.5
-          },
-          "b": {
-            "x": 30.24,
-            "z": -3.56
-          },
-          "height": 1,
-          "style": "two_rail",
-          "id": "rail_e_l6_outer"
+          "style": "two_rail"
         }
       ],
       "roofSections": [],
@@ -16239,7 +16270,8 @@
           "id": "rail_east_roof_4"
         },
         {
-          "label": "W stair rail inner",
+          "id": "st_w_l7-guard-east",
+          "label": "W core l7 to l8 guard east",
           "a": {
             "x": -32.04,
             "z": -3.5
@@ -16249,11 +16281,11 @@
             "z": 3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_l7_inner"
+          "style": "two_rail"
         },
         {
-          "label": "W stair rail end",
+          "id": "st_w_l7-guard-south",
+          "label": "W core l7 to l8 guard south",
           "a": {
             "x": -33.76,
             "z": 3.56
@@ -16263,11 +16295,11 @@
             "z": 3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_l7_end"
+          "style": "two_rail"
         },
         {
-          "label": "E stair rail inner",
+          "id": "st_e_l7-guard-west",
+          "label": "E core l7 to l8 guard west",
           "a": {
             "x": 32.04,
             "z": -3.5
@@ -16277,11 +16309,25 @@
             "z": 3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_e_l7_inner"
+          "style": "two_rail"
         },
         {
-          "label": "E stair rail end",
+          "id": "st_e_l7-guard-east",
+          "label": "E core l7 to l8 guard east",
+          "a": {
+            "x": 33.76,
+            "z": -3.5
+          },
+          "b": {
+            "x": 33.76,
+            "z": 3.56
+          },
+          "height": 1,
+          "style": "two_rail"
+        },
+        {
+          "id": "st_e_l7-guard-south",
+          "label": "E core l7 to l8 guard south",
           "a": {
             "x": 32.04,
             "z": 3.56
@@ -16291,13 +16337,12 @@
             "z": 3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_e_l7_end"
+          "style": "two_rail"
         }
       ],
       "roofSections": [],
       "autoFloor": true,
-      "autoCeiling": false,
+      "autoCeiling": true,
       "boundaryMode": "intentional_open",
       "markers": [
         {
@@ -17016,46 +17061,46 @@
       "platforms": [],
       "railings": [
         {
-          "label": "W stair rail inner",
+          "id": "st_w_l8-guard-west",
+          "label": "W core l8 to l9 guard west",
           "a": {
+            "x": -31.96,
+            "z": -3.56
+          },
+          "b": {
             "x": -31.96,
             "z": 3.5
           },
-          "b": {
-            "x": -31.96,
-            "z": -3.56
-          },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_l8_inner"
+          "style": "two_rail"
         },
         {
-          "label": "W stair rail end",
+          "id": "st_w_l8-guard-east",
+          "label": "W core l8 to l9 guard east",
           "a": {
-            "x": -31.96,
+            "x": -30.240000000000002,
             "z": -3.56
           },
           "b": {
-            "x": -30.24,
-            "z": -3.56
-          },
-          "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_l8_end"
-        },
-        {
-          "label": "W stair rail outer",
-          "a": {
-            "x": -30.24,
+            "x": -30.240000000000002,
             "z": 3.5
           },
+          "height": 1,
+          "style": "two_rail"
+        },
+        {
+          "id": "st_w_l8-guard-north",
+          "label": "W core l8 to l9 guard north",
+          "a": {
+            "x": -31.96,
+            "z": -3.56
+          },
           "b": {
-            "x": -30.24,
+            "x": -30.240000000000002,
             "z": -3.56
           },
           "height": 1,
-          "style": "two_rail",
-          "id": "rail_w_l8_outer"
+          "style": "two_rail"
         }
       ],
       "roofSections": [],

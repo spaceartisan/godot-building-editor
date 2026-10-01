@@ -87,6 +87,8 @@ Every addition is available in both the web editor and the CLI, through the same
 | Crenellation | `wall.crenellate` | Wall panel: crenel/merlon width, depth, **Add crenels** |
 | Surface-colour renders | `godot-check --render --surface-colors` | **Color surfaces by type** |
 | Railings | `railing.add/update/remove` | Railing tool and railing panel |
+| Wall splitting | `wall.split` (`at` or `distance`) | Wall panel: **Split at (m from A)**, **Split wall** |
+| Stair-opening guards | `stair.guard` | Stair panel: **Guard opening above** |
 | Opening placement | `opening.add` with `t` or `at` | Click placement on a wall |
 
 Default validation, example expectations and existing scene exports are unchanged.

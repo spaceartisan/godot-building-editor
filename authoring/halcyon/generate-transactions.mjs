@@ -164,9 +164,9 @@ const TOWER_WALLS = side => [1, 2, 3, 4].map(i => `${side}_ext_${i}`).concat(['s
 const TOWER_OPENINGS = side => ['d_shaft_n', 'd_shaft_s', 'd_n1', 'd_s1', 'd_n2', 'd_s2', 'd_n3', 'd_s3', 'd_end', ...[31, 27, 21.5, 16.5].flatMap(x => [`w_n${x}`, `w_s${x}`]), ...[-9, -5, 5, 9].map(z => `w_e${z}`), 'w_w-9', 'w_w9'].map(k => tw(side, k));
 const TOWER_REGIONS = side => ['n1', 'n2', 'n3', 's1', 's2', 's3', 'lobby', 'corr', 'shaft'].map(k => tw(side, `r_${k}`));
 
-ops.push({ op: 'floor.insert', id: 'l3', aboveFloorId: 'l2', value: { label: 'L3 roof terrace', boundaryMode: 'intentional_open', autoCeiling: false } });
-// autoCeiling:false: with roof none an automatic ceiling would also hang over
-// the open terrace (LLM_GUIDE §5); the tower rooms are closed by L4's slab.
+ops.push({ op: 'floor.insert', id: 'l3', aboveFloorId: 'l2', value: { label: 'L3 roof terrace', boundaryMode: 'intentional_open' } });
+// With roof none, the terrace outside the tower outlines is open sky and gets
+// no automatic ceiling, while the tower rooms keep theirs (FINDINGS H3).
 tower('l3', 'w'); tower('l3', 'e');
 ops.push({ op: 'slab.add', floorId: 'l3', id: 'slab_terrace', value: { label: 'Terrace deck', minX: -40, maxX: 40, minZ: -20, maxZ: 20 } });
 const terraceRails = [[[-40, -20], [40, -20]], [[40, -20], [40, 20]], [[40, 20], [-40, 20]], [[-40, 20], [-40, -20]]];
@@ -175,7 +175,7 @@ region('l3', 'r_terrace', 'Roof terrace', [-40, 40, -20, 20], { kind: 'courtyard
 
 const labels = { l4: 'L4 offices', l5: 'L5 offices', l6: 'L6 sky bridge', l7: 'L7 offices', l8: 'L8 west tower / east roof', l9: 'L9 west penthouse' };
 for (const f of [...TOWER_FLOORS].reverse()) {
-  ops.push({ op: 'floor.duplicate', id: f, sourceFloorId: 'l3', value: { label: labels[f], boundaryMode: 'closed', autoCeiling: f !== 'l8' } });
+  ops.push({ op: 'floor.duplicate', id: f, sourceFloorId: 'l3', value: { label: labels[f], boundaryMode: 'closed' } });
   remove('slab', f, `${f}-slab_terrace`);
   terraceRails.forEach((_, i) => remove('railing', f, `${f}-rail_terrace_${i + 1}`));
   remove('region', f, `${f}-r_terrace`);
@@ -191,18 +191,23 @@ wall('l6', 'bridge_n', [-14, -2], [14, -2], 'exterior', 'Sky bridge north');
 wall('l6', 'bridge_s', [14, 2], [-14, 2], 'exterior', 'Sky bridge south');
 for (const x of [-10, -5, 0, 5, 10]) { win('l6', `w_bridge_n${x}`, 'bridge_n', [x, -2], 'Bridge glazing north', 3.6, 2.4, 0.3); win('l6', `w_bridge_s${x}`, 'bridge_s', [x, 2], 'Bridge glazing south', 3.6, 2.4, 0.3); }
 region('l6', 'r_bridge', 'Sky bridge', [-14, 14, -2, 2], { kind: 'wing' });
-// The bridge walls T into the tower walls, which the outline finder reports as
-// open ends; its rectangular fallback would floor the whole gap between the
-// towers (FINDINGS H1). Floor Footprints give the intended dumbbell.
-for (const [id, label, b] of [['slab_w', 'West tower floor', [-34, -14, -12, 12]], ['slab_bridge', 'Sky bridge floor', [-14, 14, -2, 2]], ['slab_e', 'East tower floor', [14, 34, -12, 12]]])
-  ops.push({ op: 'slab.add', floorId: 'l6', id, value: { label, minX: b[0], maxX: b[1], minZ: b[2], maxZ: b[3] } });
+// The bridge walls meet the towers' inner walls partway along. An outline only
+// closes at shared endpoints, so split each inner wall where the bridge meets
+// it; the piece between the bridge walls (with the corridor door) becomes
+// interior and the floor follows the dumbbell outline (FINDINGS H1).
+for (const side of ['w', 'e']) {
+  const host = `l6-${side}_ext_2`, x = mx(side, -14);
+  ops.push({ op: 'wall.split', floorId: 'l6', id: host, newId: `${host}_bridge`, at: P(x, -2) });
+  ops.push({ op: 'wall.split', floorId: 'l6', id: `${host}_bridge`, newId: `${host}_south`, at: P(x, 2) });
+  ops.push({ op: 'wall.update', floorId: 'l6', id: `${host}_bridge`, value: { role: 'interior', label: `${side === 'w' ? 'West' : 'East'} bridge mouth` } });
+}
 // L8/L9: west tower only. L8 keeps the east tower's roof as a terrace.
 for (const f of ['l8', 'l9']) {
   for (const id of TOWER_OPENINGS('e')) remove('opening', f, `${f}-${id}`);
   for (const id of TOWER_WALLS('e')) remove('wall', f, `${f}-${id}`);
   for (const id of TOWER_REGIONS('e')) remove('region', f, `${f}-${id}`);
 }
-ops.push({ op: 'floor.update', id: 'l8', value: { boundaryMode: 'intentional_open' } }); // autoCeiling off: the east roof deck is open
+ops.push({ op: 'floor.update', id: 'l8', value: { boundaryMode: 'intentional_open' } });
 ops.push({ op: 'slab.add', floorId: 'l8', id: 'slab_west', value: { label: 'West tower floor', minX: -34, maxX: -14, minZ: -12, maxZ: 12 } });
 ops.push({ op: 'slab.add', floorId: 'l8', id: 'slab_east_roof', value: { label: 'East roof deck', minX: 14, maxX: 34, minZ: -12, maxZ: 12 } });
 [[[14, -12], [34, -12]], [[34, -12], [34, 12]], [[34, 12], [14, 12]], [[14, 12], [14, -12]]].forEach(([a, b], i) =>
@@ -211,33 +216,25 @@ region('l8', 'r_east_roof', 'East roof deck', [14, 34, -12, 12], { kind: 'courty
 tx('tx-2-towers.edit.json', ops);
 
 // ================================================================== tx-3 circulation
-// Switchback flights in both cores, alternating lanes; each upper floor gets
-// rails along the open edges of the flight's opening. A car ramp joins B2-B1.
+// Switchback flights in both cores, alternating lanes; stair.guard rails each
+// flight's opening on the floor above. A car ramp joins B2-B1.
 ops = [];
 const FLOORS = ['b2', 'b1', L1, 'l2', 'l3', ...TOWER_FLOORS];
 const storyHeight = f => (H[f] ?? 3.2) + SLAB;
 const RUN = 7, SW = 1.6;
-const rail = (floorId, id, a, b, label) => ops.push({ op: 'railing.add', floorId, id, value: { a: P(...a), b: P(...b), label, style: 'two_rail', height: 1.0 } });
 for (const side of ['w', 'e']) {
   const top = side === 'w' ? 'l9' : 'l8', c = CORE[side];
   for (let i = 0; FLOORS[i] !== top; i++) {
     const f = FLOORS[i], up = FLOORS[i + 1], lane = c.lanes[i % 2], north = i % 2 === 0;
     const steps = Math.round(storyHeight(f) / 0.175);
     ops.push({ op: 'stair.add', floorId: f, id: `st_${side}_${f}`, value: { label: `${side.toUpperCase()} core ${f} to ${up}`, x: lane, z: 0, width: SW, run: RUN, direction: north ? 'north' : 'south', style: 'steps', steps } });
-    // Rails follow the model's opening footprint: 0.06 m outside the flight
-    // on the sides and the entry end, flush at the top landing.
-    const M = 0.06, toward = Math.sign(c.lanes[1 - (i % 2)] - lane), half = SW / 2 + M;
-    const inner = lane + toward * half, outer = lane - toward * half;
-    const bottomZ = north ? RUN / 2 + M : -RUN / 2 - M, topZ = north ? -RUN / 2 : RUN / 2;
-    rail(up, `rail_${side}_${f}_inner`, [inner, topZ], [inner, bottomZ], `${side.toUpperCase()} stair rail inner`);
-    rail(up, `rail_${side}_${f}_end`, [lane - half, bottomZ], [lane + half, bottomZ], `${side.toUpperCase()} stair rail end`);
-    if (i % 2 === 1) rail(up, `rail_${side}_${f}_outer`, [outer, topZ], [outer, bottomZ], `${side.toUpperCase()} stair rail outer`);
+    // Guard the opening on the floor above (FINDINGS H11): rails on its open
+    // sides; shaft walls close the outer side of the lane beside them.
+    ops.push({ op: 'stair.guard', floorId: f, id: `st_${side}_${f}` });
   }
 }
 ops.push({ op: 'stair.add', floorId: 'b2', id: 'ramp_cars', value: { label: 'Car ramp', x: 20, z: 0, width: 3.5, run: 12, direction: 'east', style: 'ramp' } });
-rail('b1', 'rail_ramp_n', [13.94, -1.81], [26, -1.81], 'Ramp rail north');
-rail('b1', 'rail_ramp_s', [13.94, 1.81], [26, 1.81], 'Ramp rail south');
-rail('b1', 'rail_ramp_end', [13.94, -1.81], [13.94, 1.81], 'Ramp rail end');
+ops.push({ op: 'stair.guard', floorId: 'b2', id: 'ramp_cars', value: { label: 'Ramp rail' } });
 tx('tx-3-circulation.edit.json', ops);
 
 // ================================================================== tx-4 roofs, lights, markers

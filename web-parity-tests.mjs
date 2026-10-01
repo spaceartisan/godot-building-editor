@@ -38,6 +38,48 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   console.log('PASS web crenellation: same openings as wall.crenellate, undo/redo, shared rejections');
 }
 {
+  // Halcyon H1: Split wall uses wall.split's shared proposal. The web B piece
+  // gets a generated ID; everything else matches the CLI result.
+  const W=(id,a,b)=>({op:'wall.add',floorId:'floor_1',id,value:{a:{x:a[0],z:a[1]},b:{x:b[0],z:b[1]},role:'exterior'}});
+  const tower=tx([W('s0',[0,0],[10,0]),W('s1',[10,0],[10,12]),W('s2',[10,12],[0,12]),W('s3',[0,12],[0,0]),
+    {op:'opening.add',floorId:'floor_1',id:'near',value:{type:'window',wallId:'s1',at:{x:10,z:2},width:1.2,height:1.2}},
+    {op:'opening.add',floorId:'floor_1',id:'far',value:{type:'window',wallId:'s1',at:{x:10,z:9},width:1.2,height:1.2}}]);
+  await e.loadBuildingData(structuredClone(tower));e.chooseSelection({type:'wall',id:'s1'});
+  assert.equal(Number(property('Split at').value),6,'defaults to the midpoint');
+  await change(property('Split at'),5);await $('#split-wall-btn').click();
+  const web=e.snapshot().floors[0],newId=web.walls[2].id;assert.notEqual(newId,'s1');
+  const cli=tx([{op:'wall.split',floorId:'floor_1',id:'s1',newId,distance:5}],tower).floors[0];
+  assert.deepEqual(web.walls,cli.walls);assert.deepEqual(web.openings,cli.openings);
+  assert.deepEqual(web.openings.map(o=>o.wallId),['s1',newId],'each window follows its piece');
+  assert.match($('#status-text').textContent,/Wall split at \(10\.00, 5\.00\)/);
+  await $('#undo-btn').click();assert.deepEqual(e.snapshot().floors[0].walls,tower.floors[0].walls,'undo restores the wall');
+  // A window across the split point is rejected with the shared message.
+  e.chooseSelection({type:'wall',id:'s1'});await change(property('Split at'),2);await $('#split-wall-btn').click();
+  assert.deepEqual(e.snapshot().floors[0].walls,tower.floors[0].walls);assert.match($('#status-text').textContent,/Wall not split: Window spans the split point/);
+  const rejected=applyTransaction(tower,{version:1,operations:[{op:'wall.split',floorId:'floor_1',id:'s1',newId:'x',distance:2}]});
+  assert.equal(rejected.ok,false);assert.match(JSON.stringify(rejected.errors),/Window spans the split point/);
+  assert.deepEqual(e.errors,[]);
+  console.log('PASS web split wall: same walls and openings as wall.split, undo, shared rejection');
+}
+{
+  // Halcyon H11: Guard opening above uses stair.guard's shared layout.
+  const W=(floorId,id,a,b)=>({op:'wall.add',floorId,id,value:{a:{x:a[0],z:a[1]},b:{x:b[0],z:b[1]},role:'exterior'}});
+  const box=(f,p)=>[[-4,-4,4,-4],[4,-4,4,4],[4,4,-4,4],[-4,4,-4,-4]].map(([a,b,c,d],i)=>W(f,`${p}${i}`,[a,b],[c,d]));
+  const two=tx([...box('floor_1','g'),{op:'floor.add-top',id:'up',aboveFloorId:'floor_1'},...box('up','u'),
+    {op:'stair.add',floorId:'floor_1',id:'st',value:{x:-3.1,z:0,width:1.6,run:5,direction:'north',style:'steps',steps:16}}]);
+  await e.loadBuildingData(structuredClone(two));e.chooseSelection({type:'stair',id:'st'});
+  await $('#guard-stair-btn').click();
+  const strip=list=>list.map(({id,...rest})=>({...rest,side:id.split('-').at(-1)}));
+  const web=e.snapshot().floors[1].railings,cli=tx([{op:'stair.guard',floorId:'floor_1',id:'st'}],two).floors[1].railings;
+  assert.deepEqual(strip(web),strip(cli),'same railings as stair.guard (IDs aside)');
+  assert.match($('#status-text').textContent,/Added 2 guard railings on Floor 2 \(west closed by wall\)/);
+  e.chooseSelection({type:'stair',id:'st'});await $('#guard-stair-btn').click();
+  assert.equal(e.snapshot().floors[1].railings.length,2);assert.match($('#status-text').textContent,/already guarded/);
+  await $('#undo-btn').click();assert.equal((e.snapshot().floors[1].railings||[]).length,0,'undo removes the guard');
+  assert.deepEqual(e.errors,[]);
+  console.log('PASS web stair guard: same railings as stair.guard, repeat is a no-op, undo');
+}
+{
   // Route check: same warnings as validate --reachability, opt-in, navigable, in reports.
   const { reachabilityWarnings } = await import('./src/reachability.js');
   const fs = await import('node:fs');

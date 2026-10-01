@@ -47,3 +47,17 @@ const base=tx([{op:'building.update',value:{roof:{type:'flat'}}},...loop('floor_
   assert.deepEqual(floors(tx([{op:'floor.update',id:'floor_1',value:{autoFloor:false}}],base)),['2']);
   console.log('PASS optional surfaces: autoFloor and autoCeiling still switch each story\'s slab and ceiling off');
 }
+{
+  // Halcyon H3: with roof none, Floor Footprint coverage outside the closed
+  // wall outline (a terrace) with nothing above is open sky and gets no
+  // automatic ceiling; enclosed rooms keep theirs; a manual roof restores it.
+  const terrace=tx([{op:'building.update',value:{roof:{type:'none'}}},...loop('floor_1','t',-2,-2,2,2),{op:'slab.add',floorId:'floor_1',id:'deck',value:{minX:-8,maxX:8,minZ:-6,maxZ:6}},{op:'floor.update',id:'floor_1',value:{boundaryMode:'intentional_open'}}]);
+  assert.ok(Math.abs(area(storyCeilingRectangles(terrace,0))-16)<1e-6,'only the enclosed 4 x 4 m room keeps a ceiling under open sky');
+  const roofed=tx([{op:'roof.add',id:'awning',value:{type:'flat',minX:2,maxX:8,minZ:-6,maxZ:6,baseY:2.8,overhang:0}}],terrace);
+  assert.ok(Math.abs(area(storyCeilingRectangles(roofed,0))-(16+72))<1e-6,'a manual roof over part of the terrace keeps the ceiling under it');
+  const flat=tx([{op:'building.update',value:{roof:{type:'flat'}}}],terrace);
+  assert.ok(Math.abs(area(storyCeilingRectangles(flat,0))-192)<1e-6,'an automatic roof still covers the whole deck, so its ceiling stays');
+  const enclosed=tx([{op:'building.update',value:{roof:{type:'none'}}}],base);
+  assert.ok(Math.abs(area(storyCeilingRectangles(enclosed,0))-96)<1e-6&&Math.abs(area(storyCeilingRectangles(enclosed,1))-48)<1e-6,'rooms inside a closed outline keep their ceilings with roof none');
+  console.log('PASS open-sky ceilings: roof none leaves terraces outside the wall outline open unless a manual roof covers them');
+}

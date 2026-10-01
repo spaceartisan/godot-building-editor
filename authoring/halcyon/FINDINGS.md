@@ -1,20 +1,26 @@
 # Halcyon findings: where the tool breaks
 
-Halcyon and the limit probes (see [README](README.md)) were run on 1.4.0 at `412e6e5`. Each finding was reproduced before any change. Fixed items have a regression test that fails on the old code. Items marked **decision needed** change geometry or long-standing behaviour, so they're proposals, not fixes.
+Halcyon and the limit probes (see [README](README.md)) were run on 1.4.0 at `412e6e5`. Each finding was reproduced before any change. Every item below is now fixed except H9 and H12, which are left as they are for the reasons given. Each fix has a regression test that fails on the old code.
 
 ## Summary
 
 | # | Finding | Severity | Status |
 | --- | --- | --- | --- |
-| H1 | An exterior wall that ends partway along another exterior wall (the sky bridge meeting the towers) leaves the outline "open". The rectangular fallback then floors the whole 28 × 24 m gap between the towers. | High (silent-looking floor in mid-air; it was warned) | Warning now names each T-junction and the wall to split. There's still no wall-split operation. |
+| H1 | An exterior wall that ends partway along another exterior wall (the sky bridge meeting the towers) leaves the outline "open". The rectangular fallback then floors the whole 28 × 24 m gap between the towers. | High (floor in mid-air; it was warned) | **Fixed**: the warning names each T-junction, and the new `wall.split` (web: **Split wall**) closes the outline |
 | H2 | The void-region review warning fired whenever any manual roof, floor or ceiling existed anywhere, which blocked `--warnings-as-errors` | Medium | **Fixed** |
-| H3 | With roof `none`, automatic ceilings float over open terraces and roof decks. That's documented (LLM_GUIDE §5), but validation stayed silent while 2,400 m² of ceiling floated. | High (visual) | Halcyon uses the documented recipe. **Decision needed** on a warning or a rule change. |
+| H3 | With roof `none`, automatic ceilings floated over open terraces and roof decks. Validation stayed silent while 2,400 m² of ceiling floated. | High (visual) | **Fixed**: open-sky coverage gets no ceiling unless a manual roof covers it |
 | H4 | Edit and export time grew with the square of the wall count: a 40 × 40 room grid took 49 s to edit and 156 s to export | High at scale | **Fixed**: byte-identical output; 15× faster export and 4.5× faster edit on the largest grid |
-| H5 | Exterior corners sharper than about 15° grow a long visual spike: 10.3 m at 1°, 2 m at 5°, 1 m at 10°. Collision stays bounded, so mesh and collision disagree. | Medium (edge case) | **Decision needed** |
+| H5 | Exterior corners sharper than about 15° grew a long visual spike: 10.3 m at 1°, 2 m at 5°, 1 m at 10°. Collision stayed bounded, so mesh and collision disagreed. | Medium (edge case) | **Fixed**: miter limit with a bevel |
 | H6 | The CLI said "Top floor inserted/duplicated" for basements and mid-stack copies | Low | **Fixed** |
 | H7 | TRANSACTIONS.md still said CLI floor insertion and duplication were deferred | Low | **Fixed** |
 | H8 | `--surface-colors` left a manual roof exported as a `BoxMesh` in default grey, which reads as wall siding | Low (diagnostic) | **Fixed** |
-| H9–H15 | Usability and limit observations | Low | Documented below |
+| H9 | One exported scene per door, many identical | Low | Not changed (see below) |
+| H10 | Copying a copied floor stacked ID prefixes (`l5-l4-x`) | Low | **Fixed** |
+| H11 | Railings around stair openings had to be placed by hand on a hidden 0.06 m margin. Halcyon's hand-placed rails missed one open side. | Medium | **Fixed**: `stair.guard` (web: **Guard opening above**) |
+| H12 | Smooth shaped curves are limited to about 64 segments at a 12 m radius | Low | Not changed (see below) |
+| H13 | Coordinates far from the origin lose precision in Godot without a warning | Low | **Fixed**: a warning beyond 10 km |
+| H14 | A loop that stops a millimetre short got the generic open-ends warning | Low | **Fixed**: the warning names the near miss |
+| H15 | A `floor.duplicate` dry run printed the whole copied floor as one 18.7 KB line | Low | **Fixed**: long values are summarised |
 
 ## Fixed
 
@@ -24,8 +30,8 @@ The L6 bridge walls (z = ±2) start and end partway along the towers' inner wall
 
 - **Fix:** The warning now names each T-junction, for example "bridge_n ends partway along west1 at (−10, −1)". It explains that the host wall must be split there, or Floor Footprints set, and it targets both walls for diagnostic navigation.
 - **Test:** `boundary-warning-tests.mjs` checks the message on the two-tower plan. It also follows the advice (split hosts, interior bridge mouths) and gets exactly 280 m² with no warnings.
-- **Halcyon:** uses three Floor Footprints on L6. Splitting the duplicated tower walls would have meant removing each wall and re-adding three, then re-hosting its four windows and door.
-- **Proposal (not done):** a shared `wall.split` operation in the web editor and CLI that splits a wall at a point and keeps its openings on the right piece.
+- **`wall.split`:** A shared `proposeWallSplit` (in `src/wall-edit.js`) splits a wall at a plan point (`at`) or a distance from end A. The original keeps its ID as the A piece; the new piece copies its properties. Openings follow their piece, and one across the split point is rejected. The CLI operation is `wall.split`; in the web editor, the wall panel has **Split at (m from A)** and **Split wall**. The warning's advice now names it. Tests: `parity-transaction-tests.mjs` (pieces, order, openings, the closed dumbbell and every rejection) and `web-parity-tests.mjs` (web result equals the transaction, undo, shared rejection).
+- **Halcyon:** L6 now splits each tower's inner wall at the bridge and makes the mouth interior. The floor follows the dumbbell outline (1,072 m²) with no Floor Footprints.
 
 ### H2: The void review warning ignored where surfaces are
 
@@ -68,39 +74,54 @@ The edit summary now reads "Floor inserted: b1 (below floor_1)" and "Floor dupli
 
 A manual roof that meets no wall exports as a plain `BoxMesh`, which has no surface names. The colour pass left it in Godot's default grey, the same tone as OutsideFaces. Meshes under `ManualRoofs` now get the roof colour. `render-engine-tests.mjs` renders a lone roof and requires the coloured image to differ from the plain render; it fails on the old script. See `godot-renders/limits/box-roof-colour-*.png`.
 
-## Decision needed
-
 ### H3: Ceilings under open sky
 
-Since K2, an enabled automatic ceiling hangs under a story's whole floor area. Where nothing is above, the automatic roof is assumed to cover it. With roof `none` and nothing above (Halcyon's 80 × 40 m L3 terrace and the L8 east roof deck), the ceiling floats under open sky: see `godot-renders/limits/floating-ceiling-before.png`.
+Since K2, an enabled automatic ceiling hangs under a story's whole floor area. Where nothing is above, the automatic roof was assumed to cover it. With roof `none` and nothing above (Halcyon's 80 × 40 m L3 terrace and the L8 east roof deck), the ceiling floated under open sky: see `godot-renders/limits/floating-ceiling-before.png`. LLM_GUIDE §5's workaround, `autoCeiling:false` on such floors, also removed the ceilings from the enclosed tower rooms on those floors.
 
-LLM_GUIDE §5 documents this case: use `autoCeiling:false` on such floors. Halcyon does, so the rooms there are closed by the next floor's slab instead. But the first pass validated with 0 warnings while 2,400 m² of ceiling floated, and the recipe also removes the ceiling from enclosed rooms on that floor (the tower rooms on L3).
-
-Options:
-
-1. **Warning only:** "N m² of automatic ceiling has nothing above it and no roof". No geometry change.
-2. **Rule change:** with roof `none`, exposed areas get an automatic ceiling only under a manual roof, ceiling or floor. Tower rooms keep their ceilings with `autoCeiling` left on. This changes output for existing roof-`none` plans that rely on the ceiling as a flat roof.
-
-(A per-region "open to sky" flag was deferred earlier as architectural expansion.)
+- **Fix:** With roof `none`, floor coverage outside the floor's closed exterior wall outline that has nothing above it is open sky. It gets no automatic ceiling unless an independent roof, ceiling or floor at or above the wall top covers it.
+- **Changed:** A floor with no exterior walls (coverage only from solid regions or Floor Footprints) is all open sky under roof `none`. `region-engine-tests.mjs` covered such a deck and expected a ceiling, so its moved-polygon case now has a manual roof above it to keep testing the moved ceiling collision.
+- **Unchanged:** Rooms inside the outline keep their ceilings, and the ceiling still closes them as before. Floors with an open or branched outline are unchanged, and so is any automatic roof type other than `none`. All 35 example, demo, Kestrel and Ravenhold scenes export byte-identically.
+- **Shared code:** The rule lives in `storyCeilingRectangles`, which the exporter and the web 3D preview share.
+- **Test:** `ceiling-tests.mjs` covers the open terrace, a manual roof over part of it, the automatic flat roof and enclosed rooms with roof `none`.
+- **Halcyon:** no longer sets `autoCeiling:false`. The tower rooms on L3 and L8 keep their ceilings, and the terrace and deck are open (`floating-ceiling-after.png`).
 
 ### H5: Acute exterior corners
 
-The exterior shell offsets the outline with an unlimited miter. The wall-top cap (EdgeFaces) reaches 0.09 / sin(θ/2) m past the apex: 10.3 m at 1°, 2.1 m at 5° and 1.0 m at 10°. OutsideFaces reaches up to 1.8 m (its 20 × half-thickness cap). Collision boxes only extend by half a thickness. See `godot-renders/limits/acute-corner-*.png`.
+The junction miter (`junctionMiters`) drew each wall's miter face all the way to the outer apex, ht / sin(θ/2) behind the corner. The wall box itself was capped at 20 half-thicknesses, so at 1° a 10.3 m wall-top sheet stuck out (`godot-renders/limits/acute-corner-1deg-before.png`).
 
-Options:
+- **Fix:** A miter limit. When the outer apex is more than 4 half-thicknesses from the junction, which happens for corners sharper than about 29°, a bevel plane square to the apex direction cuts it at that distance. The miter face stops there, and a bevel face (EdgeFaces) closes the end.
+- **Result:** The shell now stays within 0.36 m (0.18 m walls) at 1°, 5° and 10° (`acute-corner-*-after.png`). Blunter corners keep their sharp miter, and every existing scene exports byte-identically.
+- **Test:** `exterior-shell-tests.mjs` checks the reach along the apex direction, the closed bevel face at 1°, 5° and 10°, and that 30° stays sharp.
 
-1. **Warning only:** for exterior corners under, say, 20°.
-2. **Bevel limit:** bevel the shell where the miter exceeds a limit. This is a geometry change, but no example or authored building has an exterior corner under 90°, so none of their scenes would change.
+### H10: Duplicate chains
 
-## Observations (H9–H15, not changed)
+`floor.duplicate` now replaces the source floor's prefix instead of stacking it: `l5-x` from `l4-x`, not `l5-l4-x`. Opening hosts follow, and the full prefix is kept if stripping would make two IDs equal. Tested in `parity-transaction-tests.mjs`.
 
-- **H9: One scene per door.** Halcyon exports 141 door scenes, and 72 are byte-identical. Sharing identical door scenes would shrink exports but change the file layout and per-door editability.
-- **H10: Duplicate chains.** Copying a copy gives IDs like `l5-l4-x`. Halcyon avoids this by duplicating L3 six times top-down (each copy is placed directly above its source).
-- **H11: Opening guards are manual.** Railings around stair openings must be placed on the opening footprint by hand: 0.06 m outside the flight's sides and entry, flush at the top. That's documented under `inspect`; Halcyon computes its 47 stair rails and 3 ramp rails. A "guard this opening" helper would remove a common mistake.
-- **H12: Shaped curves have a segment limit.** A 128-segment circle (12 m radius) of a 0.3 m-offset profile is rejected: "profile is too wide for this short wall" (0.59 m segments; the rule is offset + thickness/2 ≤ 45% of the length). 64 segments work.
-- **H13: Far coordinates.** Plans are accepted up to ±1,000,000 m. Godot stores vertices as 32-bit floats, so the step is 7.8 mm at 100 km and 6 cm at 1,000 km. Nothing warns. The scene text at 100 km matches the plan; Godot rounds it to float32 on load.
-- **H14: Near-miss endpoints.** A wall that stops 1 mm or 0.1 mm short of closing a loop gets the generic open-ends warning and the rectangle fallback. It doesn't say which endpoint nearly meets which.
-- **H15: Dry-run output for duplicates.** A `floor.duplicate` diff prints the whole copied floor as one JSON line (18.7 KB for L2).
+### H11: Stair-opening guards
+
+A shared `stairGuardRailings` (`src/stair-guards.js`) places railings on the floor above around a flight's opening. They sit on the model's opening footprint, one per open side. The landing end stays open, and sides already closed by a parallel wall (within half a wall thickness + 0.25 m) or by a railing are skipped, so guarding twice adds nothing.
+
+- **Routes:** The CLI operation is `stair.guard`, with an optional `idPrefix`, `height`, `style` and `label`. In the web editor, the stair panel has **Guard opening above**.
+- **Tests:** `parity-transaction-tests.mjs` and `web-parity-tests.mjs`.
+- **Halcyon:** its 19 flights and the ramp now use `stair.guard` instead of 50 hand-placed rails. The helper found a side the hand-placed rails had missed: the outer side of the east core's last opening, which is on the open L8 roof deck with no shaft wall beside it.
+
+### H13: Far coordinates
+
+Validation now warns when plan coordinates reach more than 10 km from the origin. The warning gives the 32-bit float step there (7.8 mm at 100 km, 6.3 cm at 1,000 km) and suggests positioning the scene in Godot instead. Tested in `boundary-warning-tests.mjs`.
+
+### H14: Near-miss endpoints
+
+The open-ends warning now names free exterior ends within 5 cm of each other, for example "a end A is 0.001 m from d end B: move one endpoint onto the other". It targets both walls. The test follows the advice with `wall.move-endpoint` and the warning clears.
+
+### H15: Dry-run output
+
+In the human-readable edit summary, a value longer than 300 characters is summarised by its shape (keys and array counts) with its size; `--json` keeps the full value. Halcyon's longest dry-run line went from 18.7 KB to 282 characters.
+
+## Not changed
+
+- **H9: One scene per door.** Halcyon exports 141 door scenes, and 72 are byte-identical. Sharing identical door scenes would shrink exports, but it changes the export file layout and removes per-door editing in Godot. That's a product decision rather than a defect.
+- **H12: Shaped curves have a segment limit.** A 128-segment circle (12 m radius) of a 0.3 m-offset profile is rejected: "profile is too wide for this short wall" (0.59 m segments; the rule is offset + thickness/2 ≤ 45% of the length). 64 segments work. The rule prevents self-intersecting profile geometry, and its message says what to change.
+- **Rectangular manual roofs.** The entrance bay's roof can't follow its angled walls because manual roofs are rectangles. Polygon roofs would be architectural expansion (ROADMAP).
 
 ## Limits that held
 
@@ -115,4 +136,4 @@ Options:
 | 1,001 operations in one transaction | Rejected with a clear message (limit 1,000) |
 | Coordinate 1,000,000 + 5 | Rejected (limit ±1,000,000) |
 | 512 steps over a 1 m run | Accepted with the "incline exceeds 45°" warning |
-| Halcyon in Godot | 142 scenes, navmesh 2,917 polygons, 22 of 22 targets in 3.3 s |
+| Halcyon in Godot | 142 scenes, navmesh 2,922 polygons, 22 of 22 targets |

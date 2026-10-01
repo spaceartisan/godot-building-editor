@@ -79,3 +79,29 @@ const near=(a,b,tol=1e-6)=>Math.abs(a-b)<=tol;
   assert.equal(sum(ym.edges,t=>vertical(t)&&nearJ(1,0,.4)(t)),0,'no end caps at the Y junction');
   console.log('PASS junction miters: no nubs at obtuse corners or three-way junctions; siding closes');
 }
+{
+  // Halcyon H5: sharp exterior corners get a miter limit. The outer apex of a
+  // θ corner lies ht/sin(θ/2) behind the junction; beyond 4 half-thicknesses
+  // it is bevelled, so a 1° corner no longer grows a 10 m wall-top sheet.
+  const ht=.25,limit=4*ht;
+  const hitX=(meshes,y,z)=>{let best=Infinity;for(const m of Object.values(meshes))for(const t of triangles(m)){
+    // Ray from x = -50 along +X at height y, depth z.
+    const [a,b,c]=t,e1={x:b.x-a.x,y:b.y-a.y,z:b.z-a.z},e2={x:c.x-a.x,y:c.y-a.y,z:c.z-a.z},p={x:0,y:-e2.z,z:e2.y},det=e1.x*p.x+e1.y*p.y+e1.z*p.z;if(Math.abs(det)<1e-12)continue;
+    const s={x:-50-a.x,y:y-a.y,z:z-a.z},u=(s.x*p.x+s.y*p.y+s.z*p.z)/det;if(u<-1e-9||u>1+1e-9)continue;const q={x:s.y*e1.z-s.z*e1.y,y:s.z*e1.x-s.x*e1.z,z:s.x*e1.y-s.y*e1.x},v=q.x/det;if(v<-1e-9||u+v>1+1e-9)continue;
+    const d=(e2.x*q.x+e2.y*q.y+e2.z*q.z)/det;if(d>0)best=Math.min(best,d-50);}return best;};
+  for(const deg of [1,5,10,30]){
+    const t=deg*Math.PI/180,C=[20*Math.cos(t),20*Math.sin(t)];
+    const b=building([[wall('a',[0,0],[20,0]),wall('b',[20,0],C),wall('c',C,[0,0])]]),meshes=buildExteriorMeshData(floorView(b,0));
+    const minX=Math.min(...Object.values(meshes).flatMap(m=>m.vertices.map(p=>p.x)));
+    const apex=-ht/Math.sin(t/2)*Math.cos(t/2);
+    if(ht/Math.sin(t/2)>limit){
+      // Every vertex lies within the limit along the apex direction w.
+      const w={x:-Math.cos(t/2),z:-Math.sin(t/2)},reach=Math.max(...Object.values(meshes).flatMap(m=>m.vertices.map(p=>p.x*w.x+p.z*w.z)));
+      assert.ok(reach<=limit+1e-6,`${deg}°: shell stays within the miter limit (${reach.toFixed(4)} m)`);
+      // The bevel face closes the apex: a ray along +X at z = 0 meets the
+      // bevel plane (normal along the apex direction) at -limit/cos(θ/2).
+      const x=hitX(meshes,1.4,0);assert.ok(near(x,-limit/Math.cos(t/2),1e-6),`${deg}°: bevelled apex is closed (${x})`);
+    }else assert.ok(near(minX,apex,1e-4),`${deg}°: blunter corners keep the sharp miter (${minX} vs ${apex})`);
+  }
+  console.log('PASS miter limit: corners sharper than about 29° are bevelled within 4 half-thicknesses and stay closed');
+}

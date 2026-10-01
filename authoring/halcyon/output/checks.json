@@ -59,8 +59,8 @@
           },
           {
             "floorId": "floor_1",
-            "walkableArea": 2954.29,
-            "reachedArea": 2954.29
+            "walkableArea": 2955,
+            "reachedArea": 2955
           },
           {
             "floorId": "l2",
@@ -69,8 +69,8 @@
           },
           {
             "floorId": "l3",
-            "walkableArea": 2798.44,
-            "reachedArea": 2798.44
+            "walkableArea": 2799.15,
+            "reachedArea": 2799.15
           },
           {
             "floorId": "l4",
@@ -79,8 +79,8 @@
           },
           {
             "floorId": "l5",
-            "walkableArea": 699.76,
-            "reachedArea": 699.76
+            "walkableArea": 700.47,
+            "reachedArea": 700.47
           },
           {
             "floorId": "l6",
@@ -89,18 +89,18 @@
           },
           {
             "floorId": "l7",
-            "walkableArea": 699.76,
-            "reachedArea": 699.76
+            "walkableArea": 700.47,
+            "reachedArea": 700.47
           },
           {
             "floorId": "l8",
-            "walkableArea": 792.37,
-            "reachedArea": 792.37
+            "walkableArea": 792.32,
+            "reachedArea": 792.32
           },
           {
             "floorId": "l9",
-            "walkableArea": 359.12,
-            "reachedArea": 359.12
+            "walkableArea": 359.83,
+            "reachedArea": 359.83
           }
         ],
         "unreachableAreas": 0,

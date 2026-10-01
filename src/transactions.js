@@ -2,7 +2,8 @@ import { regionPolygonProblem, regionBounds } from './regions.js';
 import { prepareDocument, resolvedFloorDimensions, inspectStair, inspectPlatform, inspectFloorCoverage } from './diagnostics.js';
 import { validateBuilding } from './validation.js';
 import { makeOmniLight, makeManualSurface, makeRectArea, floorView, makeRegion, makeRoofSection, makeStair, makePlatform, makeRailing, wallLength, rectValid, REGION_KINDS, REGION_EFFECTS, validateOpeningLayout } from './model.js';
-import { proposeEndpointMove } from './wall-edit.js';
+import { proposeEndpointMove, proposeWallSplit } from './wall-edit.js';
+import { stairGuardRailings } from './stair-guards.js';
 import { wallSegmentProblem, proposePlatformUpdate, proposeCrenellation } from './authoring.js';
 import {proposeFloorStackEdit} from './floor-stack.js';
 import {markerProblem} from './markers.js';
@@ -159,7 +160,7 @@ export function validateTransaction(transaction){
     const p=`operations/${index}`;
     if(!object(op)||typeof op.op!=='string')fail('Expected an operation object with an op name',p);
     const [kind,action,...extra]=op.op.split('.');
-    const actions=kind==='floor'?['update','add-top','remove-top','insert','duplicate','move','remove']:kind==='building'?['update']:kind==='group'?['move']:['add','update','remove',...(kind==='wall'?['move-endpoint','crenellate']:[])];
+    const actions=kind==='floor'?['update','add-top','remove-top','insert','duplicate','move','remove']:kind==='building'?['update']:kind==='group'?['move']:['add','update','remove',...(kind==='wall'?['move-endpoint','crenellate','split']:kind==='stair'?['guard']:[])];
     if(extra.length||!(Object.hasOwn(fields,kind)||kind==='group')||!actions.includes(action))fail(`Unknown operation: ${op.op}`,p);
     if(kind==='group'){
       // group.move: the web Move selection / group drag, on one floor.
@@ -167,6 +168,24 @@ export function validateTransaction(transaction){
       if(!Array.isArray(op.items)||!op.items.length||op.items.length>10000)fail('items must be a nonempty array of {type, id}',`${p}/items`);
       op.items.forEach((item,i)=>{keys(item,['type','id'],`${p}/items/${i}`);choice(item.type,GROUP_TYPES,`${p}/items/${i}/type`);text(item.id,`${p}/items/${i}/id`);});
       point(op.delta,`${p}/delta`);if(op.connected!==undefined&&typeof op.connected!=='boolean')fail('connected must be boolean',`${p}/connected`);
+      return;
+    }
+    if(kind==='stair'&&action==='guard'){
+      // stair.guard: the web stair panel's Guard opening above.
+      keys(op,['op','id','floorId','value'],p);text(op.id,`${p}/id`);text(op.floorId,`${p}/floorId`);
+      if(op.value!==undefined){
+        keys(op.value,['idPrefix','height','style','label'],`${p}/value`);
+        for(const k of ['idPrefix','label'])if(op.value[k]!==undefined)text(op.value[k],`${p}/value/${k}`);
+        if(op.value.height!==undefined&&(typeof op.value.height!=='number'||!Number.isFinite(op.value.height)))fail('height must be a finite number',`${p}/value/height`);
+        if(op.value.style!==undefined)choice(op.value.style,['two_rail','picket','cross_brace'],`${p}/value/style`);
+      }
+      return;
+    }
+    if(kind==='wall'&&action==='split'){
+      // wall.split: the web wall panel's Split wall, at a plan point or a distance from end A.
+      keys(op,['op','id','floorId','newId','at','distance'],p);text(op.id,`${p}/id`);text(op.floorId,`${p}/floorId`);text(op.newId,`${p}/newId`);
+      if((op.at===undefined)===(op.distance===undefined))fail('Give exactly one of at {x, z} or distance (metres from end A)',p);
+      if(op.at!==undefined)point(op.at,`${p}/at`);else if(typeof op.distance!=='number'||!Number.isFinite(op.distance))fail('distance must be a finite number of metres',`${p}/distance`);
       return;
     }
     if(kind==='wall'&&action==='crenellate'){
@@ -323,6 +342,16 @@ function applyOperation(building,op,index){
     if(!result.ok)fail(result.reason,`${p}/value`);
     floor.openings.push(...result.openings);return;
   }
+  if(action==='guard'){
+    const result=stairGuardRailings(building,fi,op.id,op.value||{});
+    if(!result.ok)fail(result.reason,p);
+    const upper=building.floors[fi+1];(upper.railings ||= []).push(...result.railings);return;
+  }
+  if(action==='split'){
+    if(['walls','openings','lights','markers','stairs','regions','slabs','platforms','railings'].some(k=>(floor[k]||[]).some(o=>o.id===op.newId)))fail(`ID already exists: ${op.newId}`,`${p}/newId`);
+    const result=proposeWallSplit(building,fi,op.id,{at:op.at,distance:op.distance},op.newId);
+    if(!result.ok)fail(result.reason,p);building.floors[fi]=result.floor;return;
+  }
   if(action==='move-endpoint'){
     const result=proposeEndpointMove(building,fi,op.id,op.end,op.point,{connected:op.connected!==false});
     if(!result.ok)fail(result.reason,p);building.floors[fi]=result.floor;return;
@@ -408,9 +437,13 @@ function applyFloorStack(building,op,action,p){
     const result=proposeFloorStackEdit(building,anchor,stackAction,{removeAffectedStairs,validateResult:false});if(!result.ok)fail(cliReason(result.reason),p);
     const added=result.building.floors[result.activeIndex];added.id=op.id;
     if(action==='duplicate'){
-      const source=building.floors[anchor],rename=(list,original)=>list.forEach((e,i)=>{e.id=`${op.id}-${original[i].id}`;});
-      for(const key of ['walls','openings','lights','markers','regions','slabs','platforms','railings'])rename(added[key]||[],source[key]||[]);
-      const wallIds=new Map(source.walls.map(w=>[w.id,`${op.id}-${w.id}`]));for(const o of added.openings)o.wallId=wallIds.get(source.openings.find(q=>`${op.id}-${q.id}`===o.id).wallId);
+      // A copy of a copy replaces the source floor's prefix instead of
+      // stacking it ("l5-x", not "l5-l4-x"), unless that would collide.
+      const source=building.floors[anchor],keys=['walls','openings','lights','markers','regions','slabs','platforms','railings'];
+      const prefix=`${source.id}-`,all=keys.flatMap(k=>(source[k]||[]).map(e=>e.id)),strip=id=>id.startsWith(prefix)?id.slice(prefix.length):id;
+      const canStrip=new Set(all.map(strip)).size===all.length,newId=id=>`${op.id}-${canStrip?strip(id):id}`;
+      for(const key of keys)(added[key]||[]).forEach((e,i)=>{e.id=newId(source[key][i].id);});
+      added.openings.forEach((o,i)=>{o.wallId=newId(source.openings[i].wallId);});
     }
     for(const [key,value] of Object.entries(op.value||{}))if(value!==null)added[key]=value;
     if(added.boundaryMode==='closed')delete added.boundaryMode;

@@ -380,6 +380,7 @@ function human(result,verbose){
     // Long values (a whole duplicated floor is ~20 KB) are summarised by shape;
     // --json keeps the full value.
     const value=v=>{const text=JSON.stringify(v);if(text.length<=300)return text;
+      if(v===null||typeof v!=='object')return `${text.slice(0,120)}…" (${text.length.toLocaleString('en-US')} characters; --json shows it in full)`;
       const shape=Array.isArray(v)?`[${v.length} items]`:`{${Object.entries(v).map(([k,x])=>Array.isArray(x)?`${k}: ${x.length}`:`${k}${x!==null&&typeof x==='object'?': {…}':`: ${JSON.stringify(x).slice(0,40)}`}`).join(', ')}}`;
       return `${shape} (${text.length.toLocaleString('en-US')} characters; --json shows it in full)`;};
     const show=d=>lines.push(`  ${d.op} ${d.path||'/'}${d.id!==undefined?` [${d.id} @ ${d.index}]`:''}: ${Object.hasOwn(d,'before')?value(d.before):'(absent)'} → ${Object.hasOwn(d,'after')?value(d.after):'(absent)'}`);

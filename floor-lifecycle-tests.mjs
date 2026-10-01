@@ -97,6 +97,11 @@ try{
   {const first=JSON.parse(fs.readFileSync(out)).floors[0].id,stackPath=path.join(temp,'stack.edit.json');
    fs.writeFileSync(stackPath,JSON.stringify({version:1,operations:[{op:'floor.insert',id:'basement',belowFloorId:first},{op:'floor.duplicate',id:'copy',sourceFloorId:first,removeAffectedStairs:true}]}));
    const text=run(['edit',out,'--ops',stackPath,'--dry-run'],0,false);fs.rmSync(stackPath);
+   // Halcyon H15: long values print as a summary (a whole copied floor, a long label), never character by character.
+   assert.match(text,/add \/floors \[copy @ \d+\]: \(absent\) → \{id: "copy", .*walls: \d+.* characters; --json shows it in full\)/);
+   const labelPath=path.join(temp,'label.edit.json');fs.writeFileSync(labelPath,JSON.stringify({version:1,operations:[{op:'floor.update',id:first,value:{label:'Long label '.repeat(40)}}]}));
+   const labelText=run(['edit',out,'--ops',labelPath,'--dry-run'],0,false);fs.rmSync(labelPath);
+   assert.match(labelText,/→ "Long label Long label .*…" \(\d{3} characters; --json shows it in full\)/);assert.doesNotMatch(labelText,/\{0: "L"/);
    assert.match(text,new RegExp(`\n  Floor inserted: basement \\(below ${first}\\);`));assert.match(text,new RegExp(`\n  Floor duplicated: copy \\(copy of ${first}, placed above it\\);`));assert.doesNotMatch(text,/Top floor (inserted|duplicated)/);}
   run([...args,'--out',out],3);
   const bad=path.join(temp,'bad.edit.json'),dest=path.join(temp,'missing','rejected.json');

@@ -22,6 +22,7 @@ export function stairGuardRailings(building,floorIndex,stairId,{idPrefix,height=
   const stair=floor?.stairs?.find(s=>s.id===stairId);
   if(!stair)return {ok:false,reason:`Unknown stair: ${stairId}`};
   if(!upper)return {ok:false,reason:'The stair has no floor above to guard'};
+  if(upper.autoFloor===false)return {ok:false,reason:`Floor ${upper.label||upper.id} has no automatic floor, so the stair cuts no opening to guard`};
   if(!Number.isFinite(height)||height<.4)return {ok:false,reason:'Guard height must be at least 0.4 m'};
   if(!['two_rail','picket','cross_brace'].includes(style))return {ok:false,reason:'Guard style must be two_rail, picket or cross_brace'};
   const r=stairOpeningFootprint(stair),top={north:'minZ',south:'maxZ',east:'maxX',west:'minX'}[stair.direction]||'minZ';

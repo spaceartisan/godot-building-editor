@@ -135,6 +135,17 @@ const base=ok(room('floor_1','w'));
     [{op:'wall.split',floorId:'floor_1',id:'nope',newId:'n',distance:3},/Unknown wall/]]){
     const r=run([op],bridged);assert.equal(r.ok,false);assert.match(JSON.stringify(r.errors),pattern);
   }
+  // Shaped walls split collinearly (Kestrel's flared hull and a hex corridor
+  // through its hatch row) export with exactly the same surface areas: no
+  // seam faces at the split.
+  {
+    const fs=await import('node:fs'),{buildProfileMeshData}=await import('./src/exporter.js'),{floorView}=await import('./src/model.js');
+    const kestrel=JSON.parse(fs.readFileSync(new URL('./authoring/kestrel/output/kestrel.building.json',import.meta.url),'utf8'));
+    const splitK=ok([{op:'wall.split',floorId:'floor_1',id:'d1_hull1',newId:'d1_hull1b',at:{x:-9,z:-7}},{op:'wall.split',floorId:'floor_1',id:'d1_corr_port',newId:'d1_corr_port_b',distance:4}],kestrel);
+    const tri=w=>{let s=0;for(let i=0;i<w.vertices.length;i+=3){const [a,b,c]=w.vertices.slice(i,i+3),u={x:b.x-a.x,y:b.y-a.y,z:b.z-a.z},v={x:c.x-a.x,y:c.y-a.y,z:c.z-a.z};s+=Math.hypot(u.y*v.z-u.z*v.y,u.z*v.x-u.x*v.z,u.x*v.y-u.y*v.x)/2;}return s;};
+    const areas=b=>Object.fromEntries(Object.entries(buildProfileMeshData(floorView(b,0,false))).filter(([,w])=>w?.vertices).map(([k,w])=>[k,Math.round(tri(w)*1e4)/1e4]));
+    assert.deepEqual(areas(splitK),areas(kestrel),'same profile surface areas after splitting shaped walls');
+  }
   console.log('PASS wall.split: pieces keep properties and order, openings follow, T-junction outlines close, clear rejections');
 }
 {
@@ -154,5 +165,6 @@ const base=ok(room('floor_1','w'));
   const custom=ok([{op:'stair.guard',floorId:'floor_1',id:'st',value:{idPrefix:'g',height:1.1,style:'picket',label:'Well rail'}}],two).floors[1].railings;
   assert.deepEqual(custom.map(r=>[r.id,r.label,r.height,r.style]),[['g-east','Well rail east',1.1,'picket'],['g-south','Well rail south',1.1,'picket']]);
   rejects([{op:'stair.guard',floorId:'floor_1',id:'st',value:{style:'rope'}}],/style/,two);
+  rejects([{op:'floor.update',id:'up',value:{autoFloor:false}},{op:'stair.guard',floorId:'floor_1',id:'st'}],/no automatic floor, so the stair cuts no opening/,two);
   console.log('PASS stair.guard: rails on the opening footprint, wall-closed sides and the landing end skipped, options, rejections');
 }

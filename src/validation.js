@@ -166,7 +166,23 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
     for(const wall of view.walls){
       const type=wallTypeFor(building,wall);if(!type)continue;
       for(const o of view.openings.filter(o=>o.wallId===wall.id)){const problem=wallTypeOpeningProblem(type,wallHeightFor(view,wall),o,view.wallThickness,view);if(problem)error(p,`${wall.label||wall.id}: ${problem}`);}
-      if(type.stations.some(q=>Math.abs(q.offset)+q.thickness/2>wallLength(wall)*.45))error(p,`${wall.label||wall.id}: profile is too wide for this short wall; reduce the offset/thickness or lengthen the section.`);
+      // Each end's fitting may cut back up to the profile's reach. A plain join
+      // to one other shaped wall only cuts reach x tan(turn/2), so smooth curves
+      // built from short sections are allowed (Halcyon H12); every other end
+      // keeps the full reach. Both cuts must fit in 90% of the wall.
+      {
+        const reach=Math.max(...type.stations.map(q=>Math.abs(q.offset)+q.thickness/2)),length=wallLength(wall);
+        const setback=end=>{
+          const J=wall[end],far=wall[end==='a'?'b':'a'],joined=view.walls.filter(q=>q!==wall&&[q.a,q.b].some(v=>Math.hypot(v.x-J.x,v.z-J.z)<1e-5));
+          const passes=view.walls.some(q=>q!==wall&&!joined.includes(q)&&projectToWall(q,J).distance<1e-5);
+          if(joined.length!==1||passes||!wallTypeFor(building,joined[0]))return reach;
+          const q=joined[0],other=Math.hypot(q.a.x-J.x,q.a.z-J.z)<1e-5?q.b:q.a;
+          const u={x:J.x-far.x,z:J.z-far.z},v={x:other.x-J.x,z:other.z-J.z},cos=(u.x*v.x+u.z*v.z)/(Math.hypot(u.x,u.z)*Math.hypot(v.x,v.z));
+          const turn=Math.acos(Math.max(-1,Math.min(1,cos)));
+          return reach*Math.min(1,Math.tan(turn/2));
+        };
+        if(setback('a')+setback('b')>length*.9)error(p,`${wall.label||wall.id}: profile is too wide for this short wall; reduce the offset/thickness or lengthen the section.`);
+      }
       for(const end of ['a','b']){
         const neighbors=view.walls.filter(q=>q!==wall&&[q.a,q.b].some(v=>Math.hypot(v.x-wall[end].x,v.z-wall[end].z)<1e-5));
         if(neighbors.length>1&&!splitBranch(wall,end,neighbors))error(p,'Shaped walls currently need unbranched endpoint joins; use a Standard section at a T junction.');

@@ -949,13 +949,15 @@ $('#download-check-report-btn').addEventListener('click',()=>{
     setStatus(`Check report downloaded: ${report.counts.errors} errors, ${report.counts.warnings} warnings. Save the building JSON separately.`);
   }catch(err){setStatus(`Check report download failed: ${err.message}`);}
 });
+// Export options from the Godot Export panel (CLI: --no-collision, --no-markers, --placeholders, --share-door-scenes).
+function exportOptionsFromUi(){return {collision:$('#collision-toggle').checked,markers:$('#markers-toggle').checked,placeholderMaterials:$('#placeholder-materials-toggle').checked,shareDoorScenes:$('#share-doors-toggle').checked};}
 // Godot renders go through the local server (server.mjs with GODOT_BIN), which
 // applies the CLI's asset checks and godot-check --render views to this export.
 async function renderInGodot(){
   const button=$('#godot-render-btn'),status=$('#godot-render-status'),report=text=>{status.textContent=text;setStatus(text);};
   const result=showValidation();
   if(result.errors.length){revealValidation();report(`Render blocked: ${result.errors[0].message}`);return;}
-  const f=exportGodotFiles(building,{collision:$('#collision-toggle').checked,markers:$('#markers-toggle').checked,placeholderMaterials:$('#placeholder-materials-toggle').checked});
+  const f=exportGodotFiles(building,exportOptionsFromUi());
   const files=[{name:f.tscnName,text:f.tscn},...f.doors.map(d=>({name:d.filename,text:d.tscn}))];
   // The preview's projection uses focal = 0.78 × min(width, height): about a
   // 65° vertical field of view, which is also Godot's Camera3D convention.
@@ -994,7 +996,7 @@ $('#export-btn').addEventListener('click',()=>{
   try{
     const result=showValidation();
     if(result.errors.length){revealValidation();setStatus(`Export blocked: ${result.errors[0].message}`);return;}
-    downloadGodotTscn(building,{collision:$('#collision-toggle').checked,markers:$('#markers-toggle').checked,placeholderMaterials:$('#placeholder-materials-toggle').checked});
+    downloadGodotTscn(building,exportOptionsFromUi());
     if(result.warnings.length)revealValidation();
     setStatus(`Godot package exported. ${result.warnings.length} authoring warnings; see Godot Export.`);
   }catch(err){revealValidation();setStatus(`Export blocked: ${err.message}`);}

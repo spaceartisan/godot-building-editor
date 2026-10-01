@@ -38,6 +38,11 @@ try{
   const authoredChecks=check(authoredAssets,0,['--require-collision']);
   assert.equal(authoredChecks.checks.scenes,3);assert.equal(authoredChecks.checks.trimmedMeshComparisons,3);assert.equal(authoredChecks.checks.materialSurfaces,0);
   assert.ok(authoredChecks.checks.collisionShapes>0);
+  // Shared door scenes (--share-door-scenes) load and instance in Godot.
+  const sharedDir=path.join(temp,'shared-doors');run(['export',path.join(root,'examples/farmhouse.building.json'),'--out',sharedDir,'--share-door-scenes']);
+  const sharedFiles=fs.readdirSync(path.join(sharedDir,'doors')),perDoor=path.join(temp,'per-door');run(['export',path.join(root,'examples/farmhouse.building.json'),'--out',perDoor]);
+  assert.ok(sharedFiles.length<fs.readdirSync(path.join(perDoor,'doors')).length,'identical farmhouse doors share scenes');
+  assert.equal(check(sharedDir,0,['--require-collision']).checks.scenes,1+sharedFiles.length);
   console.log('PASS authored demo: CLI transaction → fresh JSON → scene/door export → Godot resource and roof collision checks');
   const levels=path.join(temp,'levels.building.json');
   run(['edit',path.join(root,'examples/twostory.building.json'),'--ops',path.join(root,'examples/transactions/twostory-levels.edit.json'),'--out',levels,'--warnings-as-errors']);

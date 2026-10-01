@@ -1,6 +1,6 @@
 # Halcyon findings: where the tool breaks
 
-Halcyon and the limit probes (see [README](README.md)) were run on 1.4.0 at `412e6e5`. Each finding was reproduced before any change. Every item below is now fixed except H9 and H12, which are left as they are for the reasons given. Each fix has a regression test that fails on the old code.
+Halcyon and the limit probes (see [README](README.md)) were run on 1.4.0 at `412e6e5`. Each finding was reproduced before any change. Every item below is now fixed. Each fix has a regression test that fails on the old code.
 
 ## Summary
 
@@ -14,10 +14,11 @@ Halcyon and the limit probes (see [README](README.md)) were run on 1.4.0 at `412
 | H6 | The CLI said "Top floor inserted/duplicated" for basements and mid-stack copies | Low | **Fixed** |
 | H7 | TRANSACTIONS.md still said CLI floor insertion and duplication were deferred | Low | **Fixed** |
 | H8 | `--surface-colors` left a manual roof exported as a `BoxMesh` in default grey, which reads as wall siding | Low (diagnostic) | **Fixed** |
-| H9 | One exported scene per door, many identical | Low | Not changed (see below) |
+| H9 | One exported scene per door, many identical | Low | **Fixed**: opt-in `--share-door-scenes` (web: **Share identical door scenes**) |
 | H10 | Copying a copied floor stacked ID prefixes (`l5-l4-x`) | Low | **Fixed** |
 | H11 | Railings around stair openings had to be placed by hand on a hidden 0.06 m margin. Halcyon's hand-placed rails missed one open side. | Medium | **Fixed**: `stair.guard` (web: **Guard opening above**) |
-| H12 | Smooth shaped curves are limited to about 64 segments at a 12 m radius | Low | Not changed (see below) |
+| H12 | Smooth shaped curves were limited to about 64 segments at a 12 m radius | Low | **Fixed**: the short-wall rule charges each end only what its join cuts |
+| H16 | With roof `none`, the ceiling's top face lay in the wall caps' plane under the walls and z-fought with them when seen from above | Medium (visual, top-down views) | **Fixed** |
 | H13 | Coordinates far from the origin lose precision in Godot without a warning | Low | **Fixed**: a warning beyond 10 km |
 | H14 | A loop that stops a millimetre short got the generic open-ends warning | Low | **Fixed**: the warning names the near miss |
 | H15 | A `floor.duplicate` dry run printed the whole copied floor as one 18.7 KB line | Low | **Fixed**: long values are summarised |
@@ -117,10 +118,31 @@ The open-ends warning now names free exterior ends within 5 cm of each other, fo
 
 In the human-readable edit summary, a value longer than 300 characters is summarised by its shape (keys and array counts) with its size; `--json` keeps the full value. Halcyon's longest dry-run line went from 18.7 KB to 282 characters.
 
+### H9: Shared door scenes
+
+Halcyon exported 141 door scenes, and 72 of them were byte-identical. The new opt-in export option makes doors with identical scenes instance one shared file: `--share-door-scenes` for `export` and `package`, or **Share identical door scenes** in the web Godot Export panel. Halcyon then exports 8 door scenes instead of 141 (9.8 MB → 7.6 MB). Every door is still placed, the Godot navmesh probe still reaches 22 of 22 targets, and `godot-check --require-collision` passes. It's off by default because one file per door keeps each door editable on its own in Godot, and existing exports stay byte-identical.
+
+- **Tests:** `export-scale-tests.mjs` (default unchanged; every instance's scene is declared once; the main scene differs only in door references; the CLI writes the same files), `web-parity-tests.mjs` (the toggle is off by default and the render posts the shared export) and `asset-engine-tests.mjs` (a shared farmhouse export loads in Godot with collision).
+
+### H12: Short sections of shaped walls
+
+Validation required every shaped wall to be at least 2.2 × its profile's reach long, as if both ends could be cut back by the full reach. That only happens at a free end, a T or a sharp corner. At a plain join to another shaped wall, the fitting cuts back the reach × tan(turn/2), which is about 1 cm per joint on a 128-section circle.
+
+- **Change:** each end is now charged reach × min(1, tan(turn/2)) at a plain join to one other shaped wall, and the full reach everywhere else. Both cuts must fit in 90% of the wall. The rule only ever gets looser, so nothing that was valid is rejected.
+- **Result:** a 12 m radius circle of the flared profile is now valid with 128 and 256 sections (64 before). The 0.15 m minimum wall length stops it at 512.
+- **Evidence:** rays from the centre through every joint and mid-section, at 5 heights, cross the 64-, 128- and 256-section shells exactly twice; the only exceptions are rays through the doorway in the 64- and 128-section loops. Surface-colour renders of 64 and 128 sections show no seams.
+- **Test:** `wall-profile-tests.mjs` checks that the 128-section curve is accepted and watertight, and that a free-standing short section and a short section at a right angle are still rejected.
+
+### H16: Ceiling tops z-fighting with wall caps
+
+Found while checking H12. Every automatic ceiling's top face sat exactly at wall-top height and ran under the walls to their centrelines, overlapping the wall-top caps. With roof `none`, viewed from above, the two flickered along every wall: a plain box room showed it too. Top-down game cameras would see it.
+
+- **Fix:** with roof `none`, the ceiling's top face is clipped against the wall solids, using the existing union clipper with walls taking priority, so it stops at the walls' inner faces. Under an automatic roof it's hidden and stays a full slab.
+- **Effect:** the ceiling's top surface (`RoofSideFaces`) changed in three supplied scenes: `examples/roof_attachment.tscn`, `independent_roof_demo.tscn` and `manual_surface_demo.tscn`. They were regenerated with `generate-examples.mjs`; nothing else in any fixture changed.
+- **Test:** `ceiling-tests.mjs`.
+
 ## Not changed
 
-- **H9: One scene per door.** Halcyon exports 141 door scenes, and 72 are byte-identical. Sharing identical door scenes would shrink exports, but it changes the export file layout and removes per-door editing in Godot. That's a product decision rather than a defect.
-- **H12: Shaped curves have a segment limit.** A 128-segment circle (12 m radius) of a 0.3 m-offset profile is rejected: "profile is too wide for this short wall" (0.59 m segments; the rule is offset + thickness/2 ≤ 45% of the length). 64 segments work. The rule prevents self-intersecting profile geometry, and its message says what to change.
 - **Rectangular manual roofs.** The entrance bay's roof can't follow its angled walls because manual roofs are rectangles. Polygon roofs would be architectural expansion (ROADMAP).
 
 ## Limits that held

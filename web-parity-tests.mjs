@@ -80,6 +80,27 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   console.log('PASS web stair guard: same railings as stair.guard, repeat is a no-op, undo');
 }
 {
+  // Halcyon H9: Share identical door scenes (CLI --share-door-scenes) is opt-in;
+  // the web render posts exactly the shared export.
+  const { exportGodotFiles } = await import('./src/exporter.js');
+  const W=(id,a,b)=>({op:'wall.add',floorId:'floor_1',id,value:{a:{x:a[0],z:a[1]},b:{x:b[0],z:b[1]},role:'exterior'}});
+  const doorsPlan=tx([W('s0',[0,0],[12,0]),W('s1',[12,0],[12,8]),W('s2',[12,8],[0,8]),W('s3',[0,8],[0,0]),
+    ...[2,6,10].map((x,i)=>({op:'opening.add',floorId:'floor_1',id:`d${i}`,value:{type:'door',wallId:'s0',at:{x,z:0},width:1,height:2.1,doorStyle:'room',label:`Door ${i}`}})),
+    {op:'opening.add',floorId:'floor_1',id:'big',value:{type:'door',wallId:'s2',at:{x:6,z:8},width:1.6,height:2.4,doorStyle:'exterior'}}]);
+  const calls=[];const r=await createEditorHarness({fetch:async(url,init)=>{calls.push({url,init});return {ok:true,status:200,json:async()=>({ok:true,engineVersion:'4.5.1.test',renderer:'test',views:[],images:[]})};}}),$r=r.$;
+  await r.loadBuildingData(structuredClone(doorsPlan));
+  assert.ok(!$r('#share-doors-toggle').checked,'off by default');
+  await $r('#godot-render-btn').click();
+  const files=body=>JSON.parse(body).files.map(f=>f.name);
+  assert.equal(files(calls[0].init.body).filter(n=>n.startsWith('doors/')).length,4,'one scene per door by default');
+  $r('#share-doors-toggle').checked=true;await $r('#godot-render-btn').click();
+  const expected=exportGodotFiles(r.snapshot(),{collision:true,markers:false,placeholderMaterials:false,shareDoorScenes:true});
+  assert.deepEqual(JSON.parse(calls[1].init.body).files,[{name:expected.tscnName,text:expected.tscn},...expected.doors.map(d=>({name:d.filename,text:d.tscn}))],'posts exactly the shared export');
+  assert.deepEqual(files(calls[1].init.body).filter(n=>n.startsWith('doors/')),['doors/new_building_door_001_room_100x210cm.tscn','doors/new_building_door_002_exterior_160x240cm.tscn']);
+  assert.deepEqual(r.errors,[]);
+  console.log('PASS web shared door scenes: opt-in toggle, render posts the same files as --share-door-scenes');
+}
+{
   // Route check: same warnings as validate --reachability, opt-in, navigable, in reports.
   const { reachabilityWarnings } = await import('./src/reachability.js');
   const fs = await import('node:fs');

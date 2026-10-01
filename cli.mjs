@@ -382,7 +382,11 @@ function human(result,verbose){
     const metres=n=>Number(n.toFixed(4))+' m';
     const level=v=>v===null?'(absent)':`base ${metres(v.elevation)}, walls ${metres(v.wallHeight)}, slab ${metres(v.floorThickness)}, wall top ${metres(v.wallTop)}`;
     const flight=v=>v===null?'(unconnected)':`${metres(v.bottomY)} to ${metres(v.topY)}, rise ${metres(v.rise)}`;
-    for(const change of result.floorStackChanges||[])lines.push(`  Top floor ${change.action}: ${change.floorId}; removed ${change.removedEntities.length} owned entities and ${change.removedIncomingStairs.length} incoming stairs`);
+    // floor.add-top/remove-top report aboveFloorId; insert/duplicate/move/remove act on any floor.
+    for(const change of result.floorStackChanges||[]){
+      const where=change.anchorFloorId?` (${change.position==='duplicate'?`copy of ${change.anchorFloorId}, placed above it`:`${change.position} ${change.anchorFloorId}`})`:'';
+      lines.push(`  ${change.aboveFloorId?'Top floor':'Floor'} ${change.action}: ${change.floorId}${where}; removed ${change.removedEntities.length} owned entities and ${change.removedIncomingStairs.length} incoming stairs`);
+    }
     for(const f of result.structuralChanges?.floors||[])lines.push(`  Resolved floor ${f.id}: ${level(f.before)} → ${level(f.after)}`);
     for(const s of result.structuralChanges?.stairs||[])lines.push(`  Stair ${s.id} (${s.floorId} → ${s.upperFloorId}): ${flight(s.before)} → ${flight(s.after)}`);
     for(const s of result.stairChanges||[]){

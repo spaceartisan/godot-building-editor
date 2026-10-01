@@ -1,0 +1,5979 @@
+{
+  "version": 1,
+  "operations": [
+    {
+      "op": "building.update",
+      "value": {
+        "name": "Halcyon twin towers",
+        "wallThickness": 0.3,
+        "wallHeight": 3.2,
+        "floorThickness": 0.3,
+        "roof": {
+          "type": "none"
+        }
+      }
+    },
+    {
+      "op": "floor.update",
+      "id": "floor_1",
+      "value": {
+        "label": "L1 mall concourse",
+        "wallHeight": 4.5
+      }
+    },
+    {
+      "op": "floor.insert",
+      "id": "b1",
+      "belowFloorId": "floor_1",
+      "value": {
+        "label": "B1 plant"
+      }
+    },
+    {
+      "op": "floor.insert",
+      "id": "b2",
+      "belowFloorId": "b1",
+      "value": {
+        "label": "B2 parking"
+      }
+    },
+    {
+      "op": "wallType.add",
+      "id": "bulge",
+      "value": {
+        "label": "Rotunda bulge",
+        "stations": [
+          {
+            "height": 0,
+            "offset": 0,
+            "thickness": 0.3
+          },
+          {
+            "height": 0.35,
+            "offset": 0,
+            "thickness": 0.3
+          },
+          {
+            "height": 0.75,
+            "offset": -0.45,
+            "thickness": 0.3
+          },
+          {
+            "height": 1,
+            "offset": 0,
+            "thickness": 0.3
+          }
+        ]
+      }
+    },
+    {
+      "op": "openingShape.add",
+      "id": "arch",
+      "value": {
+        "label": "Round arch",
+        "points": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 1,
+            "y": 0
+          },
+          {
+            "x": 1,
+            "y": 0.62
+          },
+          {
+            "x": 0.987464,
+            "y": 0.704558
+          },
+          {
+            "x": 0.950484,
+            "y": 0.784876
+          },
+          {
+            "x": 0.890916,
+            "y": 0.856926
+          },
+          {
+            "x": 0.811745,
+            "y": 0.917096
+          },
+          {
+            "x": 0.716942,
+            "y": 0.962368
+          },
+          {
+            "x": 0.61126,
+            "y": 0.990473
+          },
+          {
+            "x": 0.5,
+            "y": 1
+          },
+          {
+            "x": 0.38874,
+            "y": 0.990473
+          },
+          {
+            "x": 0.283058,
+            "y": 0.962368
+          },
+          {
+            "x": 0.188255,
+            "y": 0.917096
+          },
+          {
+            "x": 0.109084,
+            "y": 0.856926
+          },
+          {
+            "x": 0.049516,
+            "y": 0.784876
+          },
+          {
+            "x": 0.012536,
+            "y": 0.704558
+          },
+          {
+            "x": 0,
+            "y": 0.62
+          }
+        ]
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "ext_1",
+      "value": {
+        "a": {
+          "x": -40,
+          "z": -20
+        },
+        "b": {
+          "x": 40,
+          "z": -20
+        },
+        "role": "exterior",
+        "label": "B2 retaining wall 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "ext_2",
+      "value": {
+        "a": {
+          "x": 40,
+          "z": -20
+        },
+        "b": {
+          "x": 40,
+          "z": 20
+        },
+        "role": "exterior",
+        "label": "B2 retaining wall 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "ext_3",
+      "value": {
+        "a": {
+          "x": 40,
+          "z": 20
+        },
+        "b": {
+          "x": -40,
+          "z": 20
+        },
+        "role": "exterior",
+        "label": "B2 retaining wall 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "ext_4",
+      "value": {
+        "a": {
+          "x": -40,
+          "z": 20
+        },
+        "b": {
+          "x": -40,
+          "z": -20
+        },
+        "role": "exterior",
+        "label": "B2 retaining wall 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-32_-13_1",
+      "value": {
+        "a": {
+          "x": -32.3,
+          "z": -13.3
+        },
+        "b": {
+          "x": -31.7,
+          "z": -13.3
+        },
+        "role": "interior",
+        "label": "Pillar -32,-13 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-32_-13_2",
+      "value": {
+        "a": {
+          "x": -31.7,
+          "z": -13.3
+        },
+        "b": {
+          "x": -31.7,
+          "z": -12.7
+        },
+        "role": "interior",
+        "label": "Pillar -32,-13 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-32_-13_3",
+      "value": {
+        "a": {
+          "x": -31.7,
+          "z": -12.7
+        },
+        "b": {
+          "x": -32.3,
+          "z": -12.7
+        },
+        "role": "interior",
+        "label": "Pillar -32,-13 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-32_-13_4",
+      "value": {
+        "a": {
+          "x": -32.3,
+          "z": -12.7
+        },
+        "b": {
+          "x": -32.3,
+          "z": -13.3
+        },
+        "role": "interior",
+        "label": "Pillar -32,-13 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-32_13_1",
+      "value": {
+        "a": {
+          "x": -32.3,
+          "z": 12.7
+        },
+        "b": {
+          "x": -31.7,
+          "z": 12.7
+        },
+        "role": "interior",
+        "label": "Pillar -32,13 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-32_13_2",
+      "value": {
+        "a": {
+          "x": -31.7,
+          "z": 12.7
+        },
+        "b": {
+          "x": -31.7,
+          "z": 13.3
+        },
+        "role": "interior",
+        "label": "Pillar -32,13 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-32_13_3",
+      "value": {
+        "a": {
+          "x": -31.7,
+          "z": 13.3
+        },
+        "b": {
+          "x": -32.3,
+          "z": 13.3
+        },
+        "role": "interior",
+        "label": "Pillar -32,13 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-32_13_4",
+      "value": {
+        "a": {
+          "x": -32.3,
+          "z": 13.3
+        },
+        "b": {
+          "x": -32.3,
+          "z": 12.7
+        },
+        "role": "interior",
+        "label": "Pillar -32,13 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-24_-13_1",
+      "value": {
+        "a": {
+          "x": -24.3,
+          "z": -13.3
+        },
+        "b": {
+          "x": -23.7,
+          "z": -13.3
+        },
+        "role": "interior",
+        "label": "Pillar -24,-13 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-24_-13_2",
+      "value": {
+        "a": {
+          "x": -23.7,
+          "z": -13.3
+        },
+        "b": {
+          "x": -23.7,
+          "z": -12.7
+        },
+        "role": "interior",
+        "label": "Pillar -24,-13 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-24_-13_3",
+      "value": {
+        "a": {
+          "x": -23.7,
+          "z": -12.7
+        },
+        "b": {
+          "x": -24.3,
+          "z": -12.7
+        },
+        "role": "interior",
+        "label": "Pillar -24,-13 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-24_-13_4",
+      "value": {
+        "a": {
+          "x": -24.3,
+          "z": -12.7
+        },
+        "b": {
+          "x": -24.3,
+          "z": -13.3
+        },
+        "role": "interior",
+        "label": "Pillar -24,-13 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-24_-5_1",
+      "value": {
+        "a": {
+          "x": -24.3,
+          "z": -5.3
+        },
+        "b": {
+          "x": -23.7,
+          "z": -5.3
+        },
+        "role": "interior",
+        "label": "Pillar -24,-5 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-24_-5_2",
+      "value": {
+        "a": {
+          "x": -23.7,
+          "z": -5.3
+        },
+        "b": {
+          "x": -23.7,
+          "z": -4.7
+        },
+        "role": "interior",
+        "label": "Pillar -24,-5 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-24_-5_3",
+      "value": {
+        "a": {
+          "x": -23.7,
+          "z": -4.7
+        },
+        "b": {
+          "x": -24.3,
+          "z": -4.7
+        },
+        "role": "interior",
+        "label": "Pillar -24,-5 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-24_-5_4",
+      "value": {
+        "a": {
+          "x": -24.3,
+          "z": -4.7
+        },
+        "b": {
+          "x": -24.3,
+          "z": -5.3
+        },
+        "role": "interior",
+        "label": "Pillar -24,-5 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-24_5_1",
+      "value": {
+        "a": {
+          "x": -24.3,
+          "z": 4.7
+        },
+        "b": {
+          "x": -23.7,
+          "z": 4.7
+        },
+        "role": "interior",
+        "label": "Pillar -24,5 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-24_5_2",
+      "value": {
+        "a": {
+          "x": -23.7,
+          "z": 4.7
+        },
+        "b": {
+          "x": -23.7,
+          "z": 5.3
+        },
+        "role": "interior",
+        "label": "Pillar -24,5 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-24_5_3",
+      "value": {
+        "a": {
+          "x": -23.7,
+          "z": 5.3
+        },
+        "b": {
+          "x": -24.3,
+          "z": 5.3
+        },
+        "role": "interior",
+        "label": "Pillar -24,5 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-24_5_4",
+      "value": {
+        "a": {
+          "x": -24.3,
+          "z": 5.3
+        },
+        "b": {
+          "x": -24.3,
+          "z": 4.7
+        },
+        "role": "interior",
+        "label": "Pillar -24,5 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-24_13_1",
+      "value": {
+        "a": {
+          "x": -24.3,
+          "z": 12.7
+        },
+        "b": {
+          "x": -23.7,
+          "z": 12.7
+        },
+        "role": "interior",
+        "label": "Pillar -24,13 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-24_13_2",
+      "value": {
+        "a": {
+          "x": -23.7,
+          "z": 12.7
+        },
+        "b": {
+          "x": -23.7,
+          "z": 13.3
+        },
+        "role": "interior",
+        "label": "Pillar -24,13 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-24_13_3",
+      "value": {
+        "a": {
+          "x": -23.7,
+          "z": 13.3
+        },
+        "b": {
+          "x": -24.3,
+          "z": 13.3
+        },
+        "role": "interior",
+        "label": "Pillar -24,13 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-24_13_4",
+      "value": {
+        "a": {
+          "x": -24.3,
+          "z": 13.3
+        },
+        "b": {
+          "x": -24.3,
+          "z": 12.7
+        },
+        "role": "interior",
+        "label": "Pillar -24,13 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-16_-13_1",
+      "value": {
+        "a": {
+          "x": -16.3,
+          "z": -13.3
+        },
+        "b": {
+          "x": -15.7,
+          "z": -13.3
+        },
+        "role": "interior",
+        "label": "Pillar -16,-13 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-16_-13_2",
+      "value": {
+        "a": {
+          "x": -15.7,
+          "z": -13.3
+        },
+        "b": {
+          "x": -15.7,
+          "z": -12.7
+        },
+        "role": "interior",
+        "label": "Pillar -16,-13 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-16_-13_3",
+      "value": {
+        "a": {
+          "x": -15.7,
+          "z": -12.7
+        },
+        "b": {
+          "x": -16.3,
+          "z": -12.7
+        },
+        "role": "interior",
+        "label": "Pillar -16,-13 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-16_-13_4",
+      "value": {
+        "a": {
+          "x": -16.3,
+          "z": -12.7
+        },
+        "b": {
+          "x": -16.3,
+          "z": -13.3
+        },
+        "role": "interior",
+        "label": "Pillar -16,-13 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-16_-5_1",
+      "value": {
+        "a": {
+          "x": -16.3,
+          "z": -5.3
+        },
+        "b": {
+          "x": -15.7,
+          "z": -5.3
+        },
+        "role": "interior",
+        "label": "Pillar -16,-5 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-16_-5_2",
+      "value": {
+        "a": {
+          "x": -15.7,
+          "z": -5.3
+        },
+        "b": {
+          "x": -15.7,
+          "z": -4.7
+        },
+        "role": "interior",
+        "label": "Pillar -16,-5 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-16_-5_3",
+      "value": {
+        "a": {
+          "x": -15.7,
+          "z": -4.7
+        },
+        "b": {
+          "x": -16.3,
+          "z": -4.7
+        },
+        "role": "interior",
+        "label": "Pillar -16,-5 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-16_-5_4",
+      "value": {
+        "a": {
+          "x": -16.3,
+          "z": -4.7
+        },
+        "b": {
+          "x": -16.3,
+          "z": -5.3
+        },
+        "role": "interior",
+        "label": "Pillar -16,-5 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-16_5_1",
+      "value": {
+        "a": {
+          "x": -16.3,
+          "z": 4.7
+        },
+        "b": {
+          "x": -15.7,
+          "z": 4.7
+        },
+        "role": "interior",
+        "label": "Pillar -16,5 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-16_5_2",
+      "value": {
+        "a": {
+          "x": -15.7,
+          "z": 4.7
+        },
+        "b": {
+          "x": -15.7,
+          "z": 5.3
+        },
+        "role": "interior",
+        "label": "Pillar -16,5 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-16_5_3",
+      "value": {
+        "a": {
+          "x": -15.7,
+          "z": 5.3
+        },
+        "b": {
+          "x": -16.3,
+          "z": 5.3
+        },
+        "role": "interior",
+        "label": "Pillar -16,5 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-16_5_4",
+      "value": {
+        "a": {
+          "x": -16.3,
+          "z": 5.3
+        },
+        "b": {
+          "x": -16.3,
+          "z": 4.7
+        },
+        "role": "interior",
+        "label": "Pillar -16,5 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-16_13_1",
+      "value": {
+        "a": {
+          "x": -16.3,
+          "z": 12.7
+        },
+        "b": {
+          "x": -15.7,
+          "z": 12.7
+        },
+        "role": "interior",
+        "label": "Pillar -16,13 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-16_13_2",
+      "value": {
+        "a": {
+          "x": -15.7,
+          "z": 12.7
+        },
+        "b": {
+          "x": -15.7,
+          "z": 13.3
+        },
+        "role": "interior",
+        "label": "Pillar -16,13 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-16_13_3",
+      "value": {
+        "a": {
+          "x": -15.7,
+          "z": 13.3
+        },
+        "b": {
+          "x": -16.3,
+          "z": 13.3
+        },
+        "role": "interior",
+        "label": "Pillar -16,13 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-16_13_4",
+      "value": {
+        "a": {
+          "x": -16.3,
+          "z": 13.3
+        },
+        "b": {
+          "x": -16.3,
+          "z": 12.7
+        },
+        "role": "interior",
+        "label": "Pillar -16,13 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-8_-13_1",
+      "value": {
+        "a": {
+          "x": -8.3,
+          "z": -13.3
+        },
+        "b": {
+          "x": -7.7,
+          "z": -13.3
+        },
+        "role": "interior",
+        "label": "Pillar -8,-13 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-8_-13_2",
+      "value": {
+        "a": {
+          "x": -7.7,
+          "z": -13.3
+        },
+        "b": {
+          "x": -7.7,
+          "z": -12.7
+        },
+        "role": "interior",
+        "label": "Pillar -8,-13 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-8_-13_3",
+      "value": {
+        "a": {
+          "x": -7.7,
+          "z": -12.7
+        },
+        "b": {
+          "x": -8.3,
+          "z": -12.7
+        },
+        "role": "interior",
+        "label": "Pillar -8,-13 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-8_-13_4",
+      "value": {
+        "a": {
+          "x": -8.3,
+          "z": -12.7
+        },
+        "b": {
+          "x": -8.3,
+          "z": -13.3
+        },
+        "role": "interior",
+        "label": "Pillar -8,-13 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-8_-5_1",
+      "value": {
+        "a": {
+          "x": -8.3,
+          "z": -5.3
+        },
+        "b": {
+          "x": -7.7,
+          "z": -5.3
+        },
+        "role": "interior",
+        "label": "Pillar -8,-5 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-8_-5_2",
+      "value": {
+        "a": {
+          "x": -7.7,
+          "z": -5.3
+        },
+        "b": {
+          "x": -7.7,
+          "z": -4.7
+        },
+        "role": "interior",
+        "label": "Pillar -8,-5 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-8_-5_3",
+      "value": {
+        "a": {
+          "x": -7.7,
+          "z": -4.7
+        },
+        "b": {
+          "x": -8.3,
+          "z": -4.7
+        },
+        "role": "interior",
+        "label": "Pillar -8,-5 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-8_-5_4",
+      "value": {
+        "a": {
+          "x": -8.3,
+          "z": -4.7
+        },
+        "b": {
+          "x": -8.3,
+          "z": -5.3
+        },
+        "role": "interior",
+        "label": "Pillar -8,-5 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-8_5_1",
+      "value": {
+        "a": {
+          "x": -8.3,
+          "z": 4.7
+        },
+        "b": {
+          "x": -7.7,
+          "z": 4.7
+        },
+        "role": "interior",
+        "label": "Pillar -8,5 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-8_5_2",
+      "value": {
+        "a": {
+          "x": -7.7,
+          "z": 4.7
+        },
+        "b": {
+          "x": -7.7,
+          "z": 5.3
+        },
+        "role": "interior",
+        "label": "Pillar -8,5 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-8_5_3",
+      "value": {
+        "a": {
+          "x": -7.7,
+          "z": 5.3
+        },
+        "b": {
+          "x": -8.3,
+          "z": 5.3
+        },
+        "role": "interior",
+        "label": "Pillar -8,5 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-8_5_4",
+      "value": {
+        "a": {
+          "x": -8.3,
+          "z": 5.3
+        },
+        "b": {
+          "x": -8.3,
+          "z": 4.7
+        },
+        "role": "interior",
+        "label": "Pillar -8,5 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-8_13_1",
+      "value": {
+        "a": {
+          "x": -8.3,
+          "z": 12.7
+        },
+        "b": {
+          "x": -7.7,
+          "z": 12.7
+        },
+        "role": "interior",
+        "label": "Pillar -8,13 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-8_13_2",
+      "value": {
+        "a": {
+          "x": -7.7,
+          "z": 12.7
+        },
+        "b": {
+          "x": -7.7,
+          "z": 13.3
+        },
+        "role": "interior",
+        "label": "Pillar -8,13 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-8_13_3",
+      "value": {
+        "a": {
+          "x": -7.7,
+          "z": 13.3
+        },
+        "b": {
+          "x": -8.3,
+          "z": 13.3
+        },
+        "role": "interior",
+        "label": "Pillar -8,13 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_-8_13_4",
+      "value": {
+        "a": {
+          "x": -8.3,
+          "z": 13.3
+        },
+        "b": {
+          "x": -8.3,
+          "z": 12.7
+        },
+        "role": "interior",
+        "label": "Pillar -8,13 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_0_-13_1",
+      "value": {
+        "a": {
+          "x": -0.3,
+          "z": -13.3
+        },
+        "b": {
+          "x": 0.3,
+          "z": -13.3
+        },
+        "role": "interior",
+        "label": "Pillar 0,-13 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_0_-13_2",
+      "value": {
+        "a": {
+          "x": 0.3,
+          "z": -13.3
+        },
+        "b": {
+          "x": 0.3,
+          "z": -12.7
+        },
+        "role": "interior",
+        "label": "Pillar 0,-13 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_0_-13_3",
+      "value": {
+        "a": {
+          "x": 0.3,
+          "z": -12.7
+        },
+        "b": {
+          "x": -0.3,
+          "z": -12.7
+        },
+        "role": "interior",
+        "label": "Pillar 0,-13 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_0_-13_4",
+      "value": {
+        "a": {
+          "x": -0.3,
+          "z": -12.7
+        },
+        "b": {
+          "x": -0.3,
+          "z": -13.3
+        },
+        "role": "interior",
+        "label": "Pillar 0,-13 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_0_-5_1",
+      "value": {
+        "a": {
+          "x": -0.3,
+          "z": -5.3
+        },
+        "b": {
+          "x": 0.3,
+          "z": -5.3
+        },
+        "role": "interior",
+        "label": "Pillar 0,-5 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_0_-5_2",
+      "value": {
+        "a": {
+          "x": 0.3,
+          "z": -5.3
+        },
+        "b": {
+          "x": 0.3,
+          "z": -4.7
+        },
+        "role": "interior",
+        "label": "Pillar 0,-5 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_0_-5_3",
+      "value": {
+        "a": {
+          "x": 0.3,
+          "z": -4.7
+        },
+        "b": {
+          "x": -0.3,
+          "z": -4.7
+        },
+        "role": "interior",
+        "label": "Pillar 0,-5 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_0_-5_4",
+      "value": {
+        "a": {
+          "x": -0.3,
+          "z": -4.7
+        },
+        "b": {
+          "x": -0.3,
+          "z": -5.3
+        },
+        "role": "interior",
+        "label": "Pillar 0,-5 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_0_5_1",
+      "value": {
+        "a": {
+          "x": -0.3,
+          "z": 4.7
+        },
+        "b": {
+          "x": 0.3,
+          "z": 4.7
+        },
+        "role": "interior",
+        "label": "Pillar 0,5 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_0_5_2",
+      "value": {
+        "a": {
+          "x": 0.3,
+          "z": 4.7
+        },
+        "b": {
+          "x": 0.3,
+          "z": 5.3
+        },
+        "role": "interior",
+        "label": "Pillar 0,5 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_0_5_3",
+      "value": {
+        "a": {
+          "x": 0.3,
+          "z": 5.3
+        },
+        "b": {
+          "x": -0.3,
+          "z": 5.3
+        },
+        "role": "interior",
+        "label": "Pillar 0,5 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_0_5_4",
+      "value": {
+        "a": {
+          "x": -0.3,
+          "z": 5.3
+        },
+        "b": {
+          "x": -0.3,
+          "z": 4.7
+        },
+        "role": "interior",
+        "label": "Pillar 0,5 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_0_13_1",
+      "value": {
+        "a": {
+          "x": -0.3,
+          "z": 12.7
+        },
+        "b": {
+          "x": 0.3,
+          "z": 12.7
+        },
+        "role": "interior",
+        "label": "Pillar 0,13 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_0_13_2",
+      "value": {
+        "a": {
+          "x": 0.3,
+          "z": 12.7
+        },
+        "b": {
+          "x": 0.3,
+          "z": 13.3
+        },
+        "role": "interior",
+        "label": "Pillar 0,13 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_0_13_3",
+      "value": {
+        "a": {
+          "x": 0.3,
+          "z": 13.3
+        },
+        "b": {
+          "x": -0.3,
+          "z": 13.3
+        },
+        "role": "interior",
+        "label": "Pillar 0,13 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_0_13_4",
+      "value": {
+        "a": {
+          "x": -0.3,
+          "z": 13.3
+        },
+        "b": {
+          "x": -0.3,
+          "z": 12.7
+        },
+        "role": "interior",
+        "label": "Pillar 0,13 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_8_-13_1",
+      "value": {
+        "a": {
+          "x": 7.7,
+          "z": -13.3
+        },
+        "b": {
+          "x": 8.3,
+          "z": -13.3
+        },
+        "role": "interior",
+        "label": "Pillar 8,-13 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_8_-13_2",
+      "value": {
+        "a": {
+          "x": 8.3,
+          "z": -13.3
+        },
+        "b": {
+          "x": 8.3,
+          "z": -12.7
+        },
+        "role": "interior",
+        "label": "Pillar 8,-13 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_8_-13_3",
+      "value": {
+        "a": {
+          "x": 8.3,
+          "z": -12.7
+        },
+        "b": {
+          "x": 7.7,
+          "z": -12.7
+        },
+        "role": "interior",
+        "label": "Pillar 8,-13 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_8_-13_4",
+      "value": {
+        "a": {
+          "x": 7.7,
+          "z": -12.7
+        },
+        "b": {
+          "x": 7.7,
+          "z": -13.3
+        },
+        "role": "interior",
+        "label": "Pillar 8,-13 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_8_-5_1",
+      "value": {
+        "a": {
+          "x": 7.7,
+          "z": -5.3
+        },
+        "b": {
+          "x": 8.3,
+          "z": -5.3
+        },
+        "role": "interior",
+        "label": "Pillar 8,-5 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_8_-5_2",
+      "value": {
+        "a": {
+          "x": 8.3,
+          "z": -5.3
+        },
+        "b": {
+          "x": 8.3,
+          "z": -4.7
+        },
+        "role": "interior",
+        "label": "Pillar 8,-5 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_8_-5_3",
+      "value": {
+        "a": {
+          "x": 8.3,
+          "z": -4.7
+        },
+        "b": {
+          "x": 7.7,
+          "z": -4.7
+        },
+        "role": "interior",
+        "label": "Pillar 8,-5 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_8_-5_4",
+      "value": {
+        "a": {
+          "x": 7.7,
+          "z": -4.7
+        },
+        "b": {
+          "x": 7.7,
+          "z": -5.3
+        },
+        "role": "interior",
+        "label": "Pillar 8,-5 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_8_5_1",
+      "value": {
+        "a": {
+          "x": 7.7,
+          "z": 4.7
+        },
+        "b": {
+          "x": 8.3,
+          "z": 4.7
+        },
+        "role": "interior",
+        "label": "Pillar 8,5 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_8_5_2",
+      "value": {
+        "a": {
+          "x": 8.3,
+          "z": 4.7
+        },
+        "b": {
+          "x": 8.3,
+          "z": 5.3
+        },
+        "role": "interior",
+        "label": "Pillar 8,5 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_8_5_3",
+      "value": {
+        "a": {
+          "x": 8.3,
+          "z": 5.3
+        },
+        "b": {
+          "x": 7.7,
+          "z": 5.3
+        },
+        "role": "interior",
+        "label": "Pillar 8,5 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_8_5_4",
+      "value": {
+        "a": {
+          "x": 7.7,
+          "z": 5.3
+        },
+        "b": {
+          "x": 7.7,
+          "z": 4.7
+        },
+        "role": "interior",
+        "label": "Pillar 8,5 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_8_13_1",
+      "value": {
+        "a": {
+          "x": 7.7,
+          "z": 12.7
+        },
+        "b": {
+          "x": 8.3,
+          "z": 12.7
+        },
+        "role": "interior",
+        "label": "Pillar 8,13 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_8_13_2",
+      "value": {
+        "a": {
+          "x": 8.3,
+          "z": 12.7
+        },
+        "b": {
+          "x": 8.3,
+          "z": 13.3
+        },
+        "role": "interior",
+        "label": "Pillar 8,13 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_8_13_3",
+      "value": {
+        "a": {
+          "x": 8.3,
+          "z": 13.3
+        },
+        "b": {
+          "x": 7.7,
+          "z": 13.3
+        },
+        "role": "interior",
+        "label": "Pillar 8,13 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_8_13_4",
+      "value": {
+        "a": {
+          "x": 7.7,
+          "z": 13.3
+        },
+        "b": {
+          "x": 7.7,
+          "z": 12.7
+        },
+        "role": "interior",
+        "label": "Pillar 8,13 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_16_-13_1",
+      "value": {
+        "a": {
+          "x": 15.7,
+          "z": -13.3
+        },
+        "b": {
+          "x": 16.3,
+          "z": -13.3
+        },
+        "role": "interior",
+        "label": "Pillar 16,-13 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_16_-13_2",
+      "value": {
+        "a": {
+          "x": 16.3,
+          "z": -13.3
+        },
+        "b": {
+          "x": 16.3,
+          "z": -12.7
+        },
+        "role": "interior",
+        "label": "Pillar 16,-13 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_16_-13_3",
+      "value": {
+        "a": {
+          "x": 16.3,
+          "z": -12.7
+        },
+        "b": {
+          "x": 15.7,
+          "z": -12.7
+        },
+        "role": "interior",
+        "label": "Pillar 16,-13 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_16_-13_4",
+      "value": {
+        "a": {
+          "x": 15.7,
+          "z": -12.7
+        },
+        "b": {
+          "x": 15.7,
+          "z": -13.3
+        },
+        "role": "interior",
+        "label": "Pillar 16,-13 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_16_-5_1",
+      "value": {
+        "a": {
+          "x": 15.7,
+          "z": -5.3
+        },
+        "b": {
+          "x": 16.3,
+          "z": -5.3
+        },
+        "role": "interior",
+        "label": "Pillar 16,-5 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_16_-5_2",
+      "value": {
+        "a": {
+          "x": 16.3,
+          "z": -5.3
+        },
+        "b": {
+          "x": 16.3,
+          "z": -4.7
+        },
+        "role": "interior",
+        "label": "Pillar 16,-5 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_16_-5_3",
+      "value": {
+        "a": {
+          "x": 16.3,
+          "z": -4.7
+        },
+        "b": {
+          "x": 15.7,
+          "z": -4.7
+        },
+        "role": "interior",
+        "label": "Pillar 16,-5 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_16_-5_4",
+      "value": {
+        "a": {
+          "x": 15.7,
+          "z": -4.7
+        },
+        "b": {
+          "x": 15.7,
+          "z": -5.3
+        },
+        "role": "interior",
+        "label": "Pillar 16,-5 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_16_5_1",
+      "value": {
+        "a": {
+          "x": 15.7,
+          "z": 4.7
+        },
+        "b": {
+          "x": 16.3,
+          "z": 4.7
+        },
+        "role": "interior",
+        "label": "Pillar 16,5 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_16_5_2",
+      "value": {
+        "a": {
+          "x": 16.3,
+          "z": 4.7
+        },
+        "b": {
+          "x": 16.3,
+          "z": 5.3
+        },
+        "role": "interior",
+        "label": "Pillar 16,5 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_16_5_3",
+      "value": {
+        "a": {
+          "x": 16.3,
+          "z": 5.3
+        },
+        "b": {
+          "x": 15.7,
+          "z": 5.3
+        },
+        "role": "interior",
+        "label": "Pillar 16,5 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_16_5_4",
+      "value": {
+        "a": {
+          "x": 15.7,
+          "z": 5.3
+        },
+        "b": {
+          "x": 15.7,
+          "z": 4.7
+        },
+        "role": "interior",
+        "label": "Pillar 16,5 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_16_13_1",
+      "value": {
+        "a": {
+          "x": 15.7,
+          "z": 12.7
+        },
+        "b": {
+          "x": 16.3,
+          "z": 12.7
+        },
+        "role": "interior",
+        "label": "Pillar 16,13 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_16_13_2",
+      "value": {
+        "a": {
+          "x": 16.3,
+          "z": 12.7
+        },
+        "b": {
+          "x": 16.3,
+          "z": 13.3
+        },
+        "role": "interior",
+        "label": "Pillar 16,13 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_16_13_3",
+      "value": {
+        "a": {
+          "x": 16.3,
+          "z": 13.3
+        },
+        "b": {
+          "x": 15.7,
+          "z": 13.3
+        },
+        "role": "interior",
+        "label": "Pillar 16,13 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_16_13_4",
+      "value": {
+        "a": {
+          "x": 15.7,
+          "z": 13.3
+        },
+        "b": {
+          "x": 15.7,
+          "z": 12.7
+        },
+        "role": "interior",
+        "label": "Pillar 16,13 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_24_-13_1",
+      "value": {
+        "a": {
+          "x": 23.7,
+          "z": -13.3
+        },
+        "b": {
+          "x": 24.3,
+          "z": -13.3
+        },
+        "role": "interior",
+        "label": "Pillar 24,-13 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_24_-13_2",
+      "value": {
+        "a": {
+          "x": 24.3,
+          "z": -13.3
+        },
+        "b": {
+          "x": 24.3,
+          "z": -12.7
+        },
+        "role": "interior",
+        "label": "Pillar 24,-13 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_24_-13_3",
+      "value": {
+        "a": {
+          "x": 24.3,
+          "z": -12.7
+        },
+        "b": {
+          "x": 23.7,
+          "z": -12.7
+        },
+        "role": "interior",
+        "label": "Pillar 24,-13 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_24_-13_4",
+      "value": {
+        "a": {
+          "x": 23.7,
+          "z": -12.7
+        },
+        "b": {
+          "x": 23.7,
+          "z": -13.3
+        },
+        "role": "interior",
+        "label": "Pillar 24,-13 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_24_-5_1",
+      "value": {
+        "a": {
+          "x": 23.7,
+          "z": -5.3
+        },
+        "b": {
+          "x": 24.3,
+          "z": -5.3
+        },
+        "role": "interior",
+        "label": "Pillar 24,-5 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_24_-5_2",
+      "value": {
+        "a": {
+          "x": 24.3,
+          "z": -5.3
+        },
+        "b": {
+          "x": 24.3,
+          "z": -4.7
+        },
+        "role": "interior",
+        "label": "Pillar 24,-5 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_24_-5_3",
+      "value": {
+        "a": {
+          "x": 24.3,
+          "z": -4.7
+        },
+        "b": {
+          "x": 23.7,
+          "z": -4.7
+        },
+        "role": "interior",
+        "label": "Pillar 24,-5 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_24_-5_4",
+      "value": {
+        "a": {
+          "x": 23.7,
+          "z": -4.7
+        },
+        "b": {
+          "x": 23.7,
+          "z": -5.3
+        },
+        "role": "interior",
+        "label": "Pillar 24,-5 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_24_5_1",
+      "value": {
+        "a": {
+          "x": 23.7,
+          "z": 4.7
+        },
+        "b": {
+          "x": 24.3,
+          "z": 4.7
+        },
+        "role": "interior",
+        "label": "Pillar 24,5 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_24_5_2",
+      "value": {
+        "a": {
+          "x": 24.3,
+          "z": 4.7
+        },
+        "b": {
+          "x": 24.3,
+          "z": 5.3
+        },
+        "role": "interior",
+        "label": "Pillar 24,5 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_24_5_3",
+      "value": {
+        "a": {
+          "x": 24.3,
+          "z": 5.3
+        },
+        "b": {
+          "x": 23.7,
+          "z": 5.3
+        },
+        "role": "interior",
+        "label": "Pillar 24,5 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_24_5_4",
+      "value": {
+        "a": {
+          "x": 23.7,
+          "z": 5.3
+        },
+        "b": {
+          "x": 23.7,
+          "z": 4.7
+        },
+        "role": "interior",
+        "label": "Pillar 24,5 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_24_13_1",
+      "value": {
+        "a": {
+          "x": 23.7,
+          "z": 12.7
+        },
+        "b": {
+          "x": 24.3,
+          "z": 12.7
+        },
+        "role": "interior",
+        "label": "Pillar 24,13 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_24_13_2",
+      "value": {
+        "a": {
+          "x": 24.3,
+          "z": 12.7
+        },
+        "b": {
+          "x": 24.3,
+          "z": 13.3
+        },
+        "role": "interior",
+        "label": "Pillar 24,13 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_24_13_3",
+      "value": {
+        "a": {
+          "x": 24.3,
+          "z": 13.3
+        },
+        "b": {
+          "x": 23.7,
+          "z": 13.3
+        },
+        "role": "interior",
+        "label": "Pillar 24,13 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_24_13_4",
+      "value": {
+        "a": {
+          "x": 23.7,
+          "z": 13.3
+        },
+        "b": {
+          "x": 23.7,
+          "z": 12.7
+        },
+        "role": "interior",
+        "label": "Pillar 24,13 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_32_-13_1",
+      "value": {
+        "a": {
+          "x": 31.7,
+          "z": -13.3
+        },
+        "b": {
+          "x": 32.3,
+          "z": -13.3
+        },
+        "role": "interior",
+        "label": "Pillar 32,-13 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_32_-13_2",
+      "value": {
+        "a": {
+          "x": 32.3,
+          "z": -13.3
+        },
+        "b": {
+          "x": 32.3,
+          "z": -12.7
+        },
+        "role": "interior",
+        "label": "Pillar 32,-13 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_32_-13_3",
+      "value": {
+        "a": {
+          "x": 32.3,
+          "z": -12.7
+        },
+        "b": {
+          "x": 31.7,
+          "z": -12.7
+        },
+        "role": "interior",
+        "label": "Pillar 32,-13 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_32_-13_4",
+      "value": {
+        "a": {
+          "x": 31.7,
+          "z": -12.7
+        },
+        "b": {
+          "x": 31.7,
+          "z": -13.3
+        },
+        "role": "interior",
+        "label": "Pillar 32,-13 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_32_13_1",
+      "value": {
+        "a": {
+          "x": 31.7,
+          "z": 12.7
+        },
+        "b": {
+          "x": 32.3,
+          "z": 12.7
+        },
+        "role": "interior",
+        "label": "Pillar 32,13 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_32_13_2",
+      "value": {
+        "a": {
+          "x": 32.3,
+          "z": 12.7
+        },
+        "b": {
+          "x": 32.3,
+          "z": 13.3
+        },
+        "role": "interior",
+        "label": "Pillar 32,13 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_32_13_3",
+      "value": {
+        "a": {
+          "x": 32.3,
+          "z": 13.3
+        },
+        "b": {
+          "x": 31.7,
+          "z": 13.3
+        },
+        "role": "interior",
+        "label": "Pillar 32,13 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "pil_32_13_4",
+      "value": {
+        "a": {
+          "x": 31.7,
+          "z": 13.3
+        },
+        "b": {
+          "x": 31.7,
+          "z": 12.7
+        },
+        "role": "interior",
+        "label": "Pillar 32,13 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "core_w_1",
+      "value": {
+        "a": {
+          "x": -34,
+          "z": -6
+        },
+        "b": {
+          "x": -29,
+          "z": -6
+        },
+        "role": "interior",
+        "label": "West core 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "core_w_2",
+      "value": {
+        "a": {
+          "x": -29,
+          "z": -6
+        },
+        "b": {
+          "x": -29,
+          "z": 6
+        },
+        "role": "interior",
+        "label": "West core 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "core_w_3",
+      "value": {
+        "a": {
+          "x": -29,
+          "z": 6
+        },
+        "b": {
+          "x": -34,
+          "z": 6
+        },
+        "role": "interior",
+        "label": "West core 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "core_w_4",
+      "value": {
+        "a": {
+          "x": -34,
+          "z": 6
+        },
+        "b": {
+          "x": -34,
+          "z": -6
+        },
+        "role": "interior",
+        "label": "West core 4"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "b2",
+      "id": "d_core_w_n",
+      "value": {
+        "type": "door",
+        "wallId": "core_w_2",
+        "at": {
+          "x": -29,
+          "z": -4.75
+        },
+        "label": "W core north door",
+        "width": 1.2,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "b2",
+      "id": "d_core_w_s",
+      "value": {
+        "type": "door",
+        "wallId": "core_w_2",
+        "at": {
+          "x": -29,
+          "z": 4.75
+        },
+        "label": "W core south door",
+        "width": 1.2,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "b2",
+      "id": "r_core_w",
+      "value": {
+        "label": "West stair core",
+        "minX": -34,
+        "maxX": -29,
+        "minZ": -6,
+        "maxZ": 6
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "core_e_1",
+      "value": {
+        "a": {
+          "x": 29,
+          "z": -6
+        },
+        "b": {
+          "x": 34,
+          "z": -6
+        },
+        "role": "interior",
+        "label": "East core 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "core_e_2",
+      "value": {
+        "a": {
+          "x": 34,
+          "z": -6
+        },
+        "b": {
+          "x": 34,
+          "z": 6
+        },
+        "role": "interior",
+        "label": "East core 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "core_e_3",
+      "value": {
+        "a": {
+          "x": 34,
+          "z": 6
+        },
+        "b": {
+          "x": 29,
+          "z": 6
+        },
+        "role": "interior",
+        "label": "East core 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b2",
+      "id": "core_e_4",
+      "value": {
+        "a": {
+          "x": 29,
+          "z": 6
+        },
+        "b": {
+          "x": 29,
+          "z": -6
+        },
+        "role": "interior",
+        "label": "East core 4"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "b2",
+      "id": "d_core_e_n",
+      "value": {
+        "type": "door",
+        "wallId": "core_e_4",
+        "at": {
+          "x": 29,
+          "z": -4.75
+        },
+        "label": "E core north door",
+        "width": 1.2,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "b2",
+      "id": "d_core_e_s",
+      "value": {
+        "type": "door",
+        "wallId": "core_e_4",
+        "at": {
+          "x": 29,
+          "z": 4.75
+        },
+        "label": "E core south door",
+        "width": 1.2,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "b2",
+      "id": "r_core_e",
+      "value": {
+        "label": "East stair core",
+        "minX": 29,
+        "maxX": 34,
+        "minZ": -6,
+        "maxZ": 6
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "b2",
+      "id": "r_parking",
+      "value": {
+        "label": "Parking",
+        "minX": -40,
+        "maxX": 40,
+        "minZ": -20,
+        "maxZ": 20,
+        "kind": "garage"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b1",
+      "id": "ext_1",
+      "value": {
+        "a": {
+          "x": -40,
+          "z": -20
+        },
+        "b": {
+          "x": 40,
+          "z": -20
+        },
+        "role": "exterior",
+        "label": "B1 retaining wall 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b1",
+      "id": "ext_2",
+      "value": {
+        "a": {
+          "x": 40,
+          "z": -20
+        },
+        "b": {
+          "x": 40,
+          "z": 20
+        },
+        "role": "exterior",
+        "label": "B1 retaining wall 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b1",
+      "id": "ext_3",
+      "value": {
+        "a": {
+          "x": 40,
+          "z": 20
+        },
+        "b": {
+          "x": -40,
+          "z": 20
+        },
+        "role": "exterior",
+        "label": "B1 retaining wall 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b1",
+      "id": "ext_4",
+      "value": {
+        "a": {
+          "x": -40,
+          "z": 20
+        },
+        "b": {
+          "x": -40,
+          "z": -20
+        },
+        "role": "exterior",
+        "label": "B1 retaining wall 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b1",
+      "id": "svc",
+      "value": {
+        "a": {
+          "x": -40,
+          "z": -8
+        },
+        "b": {
+          "x": 40,
+          "z": -8
+        },
+        "role": "interior",
+        "label": "Service wall"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b1",
+      "id": "plant_-20",
+      "value": {
+        "a": {
+          "x": -20,
+          "z": -20
+        },
+        "b": {
+          "x": -20,
+          "z": -8
+        },
+        "role": "interior",
+        "label": "Plant partition -20"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b1",
+      "id": "plant_0",
+      "value": {
+        "a": {
+          "x": 0,
+          "z": -20
+        },
+        "b": {
+          "x": 0,
+          "z": -8
+        },
+        "role": "interior",
+        "label": "Plant partition 0"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b1",
+      "id": "plant_20",
+      "value": {
+        "a": {
+          "x": 20,
+          "z": -20
+        },
+        "b": {
+          "x": 20,
+          "z": -8
+        },
+        "role": "interior",
+        "label": "Plant partition 20"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "b1",
+      "id": "d_plant_1",
+      "value": {
+        "type": "door",
+        "wallId": "svc",
+        "at": {
+          "x": -30,
+          "z": -8
+        },
+        "label": "Plant room 1 door",
+        "width": 1.6,
+        "height": 2.4,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "b1",
+      "id": "r_plant_1",
+      "value": {
+        "label": "Plant room 1",
+        "minX": -40,
+        "maxX": -20,
+        "minZ": -20,
+        "maxZ": -8
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "b1",
+      "id": "d_plant_2",
+      "value": {
+        "type": "door",
+        "wallId": "svc",
+        "at": {
+          "x": -10,
+          "z": -8
+        },
+        "label": "Plant room 2 door",
+        "width": 1.6,
+        "height": 2.4,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "b1",
+      "id": "r_plant_2",
+      "value": {
+        "label": "Plant room 2",
+        "minX": -20,
+        "maxX": 0,
+        "minZ": -20,
+        "maxZ": -8
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "b1",
+      "id": "d_plant_3",
+      "value": {
+        "type": "door",
+        "wallId": "svc",
+        "at": {
+          "x": 10,
+          "z": -8
+        },
+        "label": "Plant room 3 door",
+        "width": 1.6,
+        "height": 2.4,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "b1",
+      "id": "r_plant_3",
+      "value": {
+        "label": "Plant room 3",
+        "minX": 0,
+        "maxX": 20,
+        "minZ": -20,
+        "maxZ": -8
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "b1",
+      "id": "d_plant_4",
+      "value": {
+        "type": "door",
+        "wallId": "svc",
+        "at": {
+          "x": 30,
+          "z": -8
+        },
+        "label": "Plant room 4 door",
+        "width": 1.6,
+        "height": 2.4,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "b1",
+      "id": "r_plant_4",
+      "value": {
+        "label": "Plant room 4",
+        "minX": 20,
+        "maxX": 40,
+        "minZ": -20,
+        "maxZ": -8
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b1",
+      "id": "core_w_1",
+      "value": {
+        "a": {
+          "x": -34,
+          "z": -6
+        },
+        "b": {
+          "x": -29,
+          "z": -6
+        },
+        "role": "interior",
+        "label": "West core 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b1",
+      "id": "core_w_2",
+      "value": {
+        "a": {
+          "x": -29,
+          "z": -6
+        },
+        "b": {
+          "x": -29,
+          "z": 6
+        },
+        "role": "interior",
+        "label": "West core 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b1",
+      "id": "core_w_3",
+      "value": {
+        "a": {
+          "x": -29,
+          "z": 6
+        },
+        "b": {
+          "x": -34,
+          "z": 6
+        },
+        "role": "interior",
+        "label": "West core 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b1",
+      "id": "core_w_4",
+      "value": {
+        "a": {
+          "x": -34,
+          "z": 6
+        },
+        "b": {
+          "x": -34,
+          "z": -6
+        },
+        "role": "interior",
+        "label": "West core 4"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "b1",
+      "id": "d_core_w_n",
+      "value": {
+        "type": "door",
+        "wallId": "core_w_2",
+        "at": {
+          "x": -29,
+          "z": -4.75
+        },
+        "label": "W core north door",
+        "width": 1.2,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "b1",
+      "id": "d_core_w_s",
+      "value": {
+        "type": "door",
+        "wallId": "core_w_2",
+        "at": {
+          "x": -29,
+          "z": 4.75
+        },
+        "label": "W core south door",
+        "width": 1.2,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "b1",
+      "id": "r_core_w",
+      "value": {
+        "label": "West stair core",
+        "minX": -34,
+        "maxX": -29,
+        "minZ": -6,
+        "maxZ": 6
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b1",
+      "id": "core_e_1",
+      "value": {
+        "a": {
+          "x": 29,
+          "z": -6
+        },
+        "b": {
+          "x": 34,
+          "z": -6
+        },
+        "role": "interior",
+        "label": "East core 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b1",
+      "id": "core_e_2",
+      "value": {
+        "a": {
+          "x": 34,
+          "z": -6
+        },
+        "b": {
+          "x": 34,
+          "z": 6
+        },
+        "role": "interior",
+        "label": "East core 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b1",
+      "id": "core_e_3",
+      "value": {
+        "a": {
+          "x": 34,
+          "z": 6
+        },
+        "b": {
+          "x": 29,
+          "z": 6
+        },
+        "role": "interior",
+        "label": "East core 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "b1",
+      "id": "core_e_4",
+      "value": {
+        "a": {
+          "x": 29,
+          "z": 6
+        },
+        "b": {
+          "x": 29,
+          "z": -6
+        },
+        "role": "interior",
+        "label": "East core 4"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "b1",
+      "id": "d_core_e_n",
+      "value": {
+        "type": "door",
+        "wallId": "core_e_4",
+        "at": {
+          "x": 29,
+          "z": -4.75
+        },
+        "label": "E core north door",
+        "width": 1.2,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "b1",
+      "id": "d_core_e_s",
+      "value": {
+        "type": "door",
+        "wallId": "core_e_4",
+        "at": {
+          "x": 29,
+          "z": 4.75
+        },
+        "label": "E core south door",
+        "width": 1.2,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "b1",
+      "id": "r_core_e",
+      "value": {
+        "label": "East stair core",
+        "minX": 29,
+        "maxX": 34,
+        "minZ": -6,
+        "maxZ": 6
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "b1",
+      "id": "r_hall",
+      "value": {
+        "label": "Loading hall",
+        "minX": -40,
+        "maxX": 40,
+        "minZ": -8,
+        "maxZ": 20,
+        "kind": "garage"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "ext_1",
+      "value": {
+        "a": {
+          "x": -40,
+          "z": -20
+        },
+        "b": {
+          "x": 40,
+          "z": -20
+        },
+        "role": "exterior",
+        "label": "Podium wall 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "ext_2",
+      "value": {
+        "a": {
+          "x": 40,
+          "z": -20
+        },
+        "b": {
+          "x": 40,
+          "z": 20
+        },
+        "role": "exterior",
+        "label": "Podium wall 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "ext_3",
+      "value": {
+        "a": {
+          "x": 40,
+          "z": 20
+        },
+        "b": {
+          "x": 10,
+          "z": 20
+        },
+        "role": "exterior",
+        "label": "Podium wall 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "ext_4",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": 20
+        },
+        "b": {
+          "x": 4,
+          "z": 26
+        },
+        "role": "exterior",
+        "label": "Podium wall 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "ext_5",
+      "value": {
+        "a": {
+          "x": 4,
+          "z": 26
+        },
+        "b": {
+          "x": -4,
+          "z": 26
+        },
+        "role": "exterior",
+        "label": "Podium wall 5"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "ext_6",
+      "value": {
+        "a": {
+          "x": -4,
+          "z": 26
+        },
+        "b": {
+          "x": -10,
+          "z": 20
+        },
+        "role": "exterior",
+        "label": "Podium wall 6"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "ext_7",
+      "value": {
+        "a": {
+          "x": -10,
+          "z": 20
+        },
+        "b": {
+          "x": -40,
+          "z": 20
+        },
+        "role": "exterior",
+        "label": "Podium wall 7"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "ext_8",
+      "value": {
+        "a": {
+          "x": -40,
+          "z": 20
+        },
+        "b": {
+          "x": -40,
+          "z": -20
+        },
+        "role": "exterior",
+        "label": "Podium wall 8"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "rot_1",
+      "value": {
+        "a": {
+          "x": 7.931559,
+          "z": 5.04421
+        },
+        "b": {
+          "x": 7.391036,
+          "z": 7.061467
+        },
+        "role": "interior",
+        "label": "Rotunda 1",
+        "wallTypeId": "bulge",
+        "inwardToward": {
+          "x": 0,
+          "z": 4
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "rot_2",
+      "value": {
+        "a": {
+          "x": 7.391036,
+          "z": 7.061467
+        },
+        "b": {
+          "x": 6.346827,
+          "z": 8.870091
+        },
+        "role": "interior",
+        "label": "Rotunda 2",
+        "wallTypeId": "bulge",
+        "inwardToward": {
+          "x": 0,
+          "z": 4
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "rot_3",
+      "value": {
+        "a": {
+          "x": 6.346827,
+          "z": 8.870091
+        },
+        "b": {
+          "x": 4.870091,
+          "z": 10.346827
+        },
+        "role": "interior",
+        "label": "Rotunda 3",
+        "wallTypeId": "bulge",
+        "inwardToward": {
+          "x": 0,
+          "z": 4
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "rot_4",
+      "value": {
+        "a": {
+          "x": 4.870091,
+          "z": 10.346827
+        },
+        "b": {
+          "x": 3.061467,
+          "z": 11.391036
+        },
+        "role": "interior",
+        "label": "Rotunda 4",
+        "wallTypeId": "bulge",
+        "inwardToward": {
+          "x": 0,
+          "z": 4
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "rot_5",
+      "value": {
+        "a": {
+          "x": 3.061467,
+          "z": 11.391036
+        },
+        "b": {
+          "x": 1.04421,
+          "z": 11.931559
+        },
+        "role": "interior",
+        "label": "Rotunda 5",
+        "wallTypeId": "bulge",
+        "inwardToward": {
+          "x": 0,
+          "z": 4
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "rot_6",
+      "value": {
+        "a": {
+          "x": 1.04421,
+          "z": 11.931559
+        },
+        "b": {
+          "x": -1.04421,
+          "z": 11.931559
+        },
+        "role": "interior",
+        "label": "Rotunda 6",
+        "wallTypeId": "bulge",
+        "inwardToward": {
+          "x": 0,
+          "z": 4
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "rot_7",
+      "value": {
+        "a": {
+          "x": -1.04421,
+          "z": 11.931559
+        },
+        "b": {
+          "x": -3.061467,
+          "z": 11.391036
+        },
+        "role": "interior",
+        "label": "Rotunda 7",
+        "wallTypeId": "bulge",
+        "inwardToward": {
+          "x": 0,
+          "z": 4
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "rot_8",
+      "value": {
+        "a": {
+          "x": -3.061467,
+          "z": 11.391036
+        },
+        "b": {
+          "x": -4.870091,
+          "z": 10.346827
+        },
+        "role": "interior",
+        "label": "Rotunda 8",
+        "wallTypeId": "bulge",
+        "inwardToward": {
+          "x": 0,
+          "z": 4
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "rot_9",
+      "value": {
+        "a": {
+          "x": -4.870091,
+          "z": 10.346827
+        },
+        "b": {
+          "x": -6.346827,
+          "z": 8.870091
+        },
+        "role": "interior",
+        "label": "Rotunda 9",
+        "wallTypeId": "bulge",
+        "inwardToward": {
+          "x": 0,
+          "z": 4
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "rot_10",
+      "value": {
+        "a": {
+          "x": -6.346827,
+          "z": 8.870091
+        },
+        "b": {
+          "x": -7.391036,
+          "z": 7.061467
+        },
+        "role": "interior",
+        "label": "Rotunda 10",
+        "wallTypeId": "bulge",
+        "inwardToward": {
+          "x": 0,
+          "z": 4
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "rot_11",
+      "value": {
+        "a": {
+          "x": -7.391036,
+          "z": 7.061467
+        },
+        "b": {
+          "x": -7.931559,
+          "z": 5.04421
+        },
+        "role": "interior",
+        "label": "Rotunda 11",
+        "wallTypeId": "bulge",
+        "inwardToward": {
+          "x": 0,
+          "z": 4
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "rot_12",
+      "value": {
+        "a": {
+          "x": -7.931559,
+          "z": 5.04421
+        },
+        "b": {
+          "x": -7.931559,
+          "z": 2.95579
+        },
+        "role": "interior",
+        "label": "Rotunda 12",
+        "wallTypeId": "bulge",
+        "inwardToward": {
+          "x": 0,
+          "z": 4
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "rot_13",
+      "value": {
+        "a": {
+          "x": -7.931559,
+          "z": 2.95579
+        },
+        "b": {
+          "x": -7.391036,
+          "z": 0.938533
+        },
+        "role": "interior",
+        "label": "Rotunda 13",
+        "wallTypeId": "bulge",
+        "inwardToward": {
+          "x": 0,
+          "z": 4
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "rot_14",
+      "value": {
+        "a": {
+          "x": -7.391036,
+          "z": 0.938533
+        },
+        "b": {
+          "x": -6.346827,
+          "z": -0.870091
+        },
+        "role": "interior",
+        "label": "Rotunda 14",
+        "wallTypeId": "bulge",
+        "inwardToward": {
+          "x": 0,
+          "z": 4
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "rot_15",
+      "value": {
+        "a": {
+          "x": -6.346827,
+          "z": -0.870091
+        },
+        "b": {
+          "x": -4.870091,
+          "z": -2.346827
+        },
+        "role": "interior",
+        "label": "Rotunda 15",
+        "wallTypeId": "bulge",
+        "inwardToward": {
+          "x": 0,
+          "z": 4
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "rot_16",
+      "value": {
+        "a": {
+          "x": -4.870091,
+          "z": -2.346827
+        },
+        "b": {
+          "x": -3.061467,
+          "z": -3.391036
+        },
+        "role": "interior",
+        "label": "Rotunda 16",
+        "wallTypeId": "bulge",
+        "inwardToward": {
+          "x": 0,
+          "z": 4
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "rot_17",
+      "value": {
+        "a": {
+          "x": -3.061467,
+          "z": -3.391036
+        },
+        "b": {
+          "x": -1.04421,
+          "z": -3.931559
+        },
+        "role": "interior",
+        "label": "Rotunda 17",
+        "wallTypeId": "bulge",
+        "inwardToward": {
+          "x": 0,
+          "z": 4
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "rot_18",
+      "value": {
+        "a": {
+          "x": -1.04421,
+          "z": -3.931559
+        },
+        "b": {
+          "x": 1.04421,
+          "z": -3.931559
+        },
+        "role": "interior",
+        "label": "Rotunda 18",
+        "wallTypeId": "bulge",
+        "inwardToward": {
+          "x": 0,
+          "z": 4
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "rot_19",
+      "value": {
+        "a": {
+          "x": 1.04421,
+          "z": -3.931559
+        },
+        "b": {
+          "x": 3.061467,
+          "z": -3.391036
+        },
+        "role": "interior",
+        "label": "Rotunda 19",
+        "wallTypeId": "bulge",
+        "inwardToward": {
+          "x": 0,
+          "z": 4
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "rot_20",
+      "value": {
+        "a": {
+          "x": 3.061467,
+          "z": -3.391036
+        },
+        "b": {
+          "x": 4.870091,
+          "z": -2.346827
+        },
+        "role": "interior",
+        "label": "Rotunda 20",
+        "wallTypeId": "bulge",
+        "inwardToward": {
+          "x": 0,
+          "z": 4
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "rot_21",
+      "value": {
+        "a": {
+          "x": 4.870091,
+          "z": -2.346827
+        },
+        "b": {
+          "x": 6.346827,
+          "z": -0.870091
+        },
+        "role": "interior",
+        "label": "Rotunda 21",
+        "wallTypeId": "bulge",
+        "inwardToward": {
+          "x": 0,
+          "z": 4
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "rot_22",
+      "value": {
+        "a": {
+          "x": 6.346827,
+          "z": -0.870091
+        },
+        "b": {
+          "x": 7.391036,
+          "z": 0.938533
+        },
+        "role": "interior",
+        "label": "Rotunda 22",
+        "wallTypeId": "bulge",
+        "inwardToward": {
+          "x": 0,
+          "z": 4
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "rot_23",
+      "value": {
+        "a": {
+          "x": 7.391036,
+          "z": 0.938533
+        },
+        "b": {
+          "x": 7.931559,
+          "z": 2.95579
+        },
+        "role": "interior",
+        "label": "Rotunda 23",
+        "wallTypeId": "bulge",
+        "inwardToward": {
+          "x": 0,
+          "z": 4
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "rot_24",
+      "value": {
+        "a": {
+          "x": 7.931559,
+          "z": 2.95579
+        },
+        "b": {
+          "x": 7.931559,
+          "z": 5.04421
+        },
+        "role": "interior",
+        "label": "Rotunda 24",
+        "wallTypeId": "bulge",
+        "inwardToward": {
+          "x": 0,
+          "z": 4
+        }
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "d_arch_east",
+      "value": {
+        "type": "door",
+        "wallId": "rot_24",
+        "at": {
+          "x": 7.931559,
+          "z": 4
+        },
+        "label": "Rotunda east arch",
+        "width": 1.7,
+        "height": 3.4,
+        "doorStyle": "empty",
+        "shapeId": "arch"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "d_arch_south",
+      "value": {
+        "type": "door",
+        "wallId": "rot_6",
+        "at": {
+          "x": 0,
+          "z": 11.931559
+        },
+        "label": "Rotunda south arch",
+        "width": 1.7,
+        "height": 3.4,
+        "doorStyle": "empty",
+        "shapeId": "arch"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "d_arch_west",
+      "value": {
+        "type": "door",
+        "wallId": "rot_12",
+        "at": {
+          "x": -7.931559,
+          "z": 4
+        },
+        "label": "Rotunda west arch",
+        "width": 1.7,
+        "height": 3.4,
+        "doorStyle": "empty",
+        "shapeId": "arch"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "d_arch_north",
+      "value": {
+        "type": "door",
+        "wallId": "rot_18",
+        "at": {
+          "x": 0,
+          "z": -3.931559
+        },
+        "label": "Rotunda north arch",
+        "width": 1.7,
+        "height": 3.4,
+        "doorStyle": "empty",
+        "shapeId": "arch"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "r_rotunda",
+      "value": {
+        "label": "Rotunda",
+        "polygon": [
+          {
+            "x": 7.931559,
+            "z": 5.04421
+          },
+          {
+            "x": 7.391036,
+            "z": 7.061467
+          },
+          {
+            "x": 6.346827,
+            "z": 8.870091
+          },
+          {
+            "x": 4.870091,
+            "z": 10.346827
+          },
+          {
+            "x": 3.061467,
+            "z": 11.391036
+          },
+          {
+            "x": 1.04421,
+            "z": 11.931559
+          },
+          {
+            "x": -1.04421,
+            "z": 11.931559
+          },
+          {
+            "x": -3.061467,
+            "z": 11.391036
+          },
+          {
+            "x": -4.870091,
+            "z": 10.346827
+          },
+          {
+            "x": -6.346827,
+            "z": 8.870091
+          },
+          {
+            "x": -7.391036,
+            "z": 7.061467
+          },
+          {
+            "x": -7.931559,
+            "z": 5.04421
+          },
+          {
+            "x": -7.931559,
+            "z": 2.95579
+          },
+          {
+            "x": -7.391036,
+            "z": 0.938533
+          },
+          {
+            "x": -6.346827,
+            "z": -0.870091
+          },
+          {
+            "x": -4.870091,
+            "z": -2.346827
+          },
+          {
+            "x": -3.061467,
+            "z": -3.391036
+          },
+          {
+            "x": -1.04421,
+            "z": -3.931559
+          },
+          {
+            "x": 1.04421,
+            "z": -3.931559
+          },
+          {
+            "x": 3.061467,
+            "z": -3.391036
+          },
+          {
+            "x": 4.870091,
+            "z": -2.346827
+          },
+          {
+            "x": 6.346827,
+            "z": -0.870091
+          },
+          {
+            "x": 7.391036,
+            "z": 0.938533
+          },
+          {
+            "x": 7.931559,
+            "z": 2.95579
+          }
+        ]
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "shopfront",
+      "value": {
+        "a": {
+          "x": -29,
+          "z": -12
+        },
+        "b": {
+          "x": 29,
+          "z": -12
+        },
+        "role": "interior",
+        "label": "Storefront"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "shop_end_w",
+      "value": {
+        "a": {
+          "x": -29,
+          "z": -20
+        },
+        "b": {
+          "x": -29,
+          "z": -12
+        },
+        "role": "interior",
+        "label": "Shop end west"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "shop_end_e",
+      "value": {
+        "a": {
+          "x": 29,
+          "z": -20
+        },
+        "b": {
+          "x": 29,
+          "z": -12
+        },
+        "role": "interior",
+        "label": "Shop end east"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "shop_1",
+      "value": {
+        "a": {
+          "x": -21.75,
+          "z": -20
+        },
+        "b": {
+          "x": -21.75,
+          "z": -12
+        },
+        "role": "interior",
+        "label": "Shop partition 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "shop_2",
+      "value": {
+        "a": {
+          "x": -14.5,
+          "z": -20
+        },
+        "b": {
+          "x": -14.5,
+          "z": -12
+        },
+        "role": "interior",
+        "label": "Shop partition 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "shop_3",
+      "value": {
+        "a": {
+          "x": -7.25,
+          "z": -20
+        },
+        "b": {
+          "x": -7.25,
+          "z": -12
+        },
+        "role": "interior",
+        "label": "Shop partition 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "shop_4",
+      "value": {
+        "a": {
+          "x": 0,
+          "z": -20
+        },
+        "b": {
+          "x": 0,
+          "z": -12
+        },
+        "role": "interior",
+        "label": "Shop partition 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "shop_5",
+      "value": {
+        "a": {
+          "x": 7.25,
+          "z": -20
+        },
+        "b": {
+          "x": 7.25,
+          "z": -12
+        },
+        "role": "interior",
+        "label": "Shop partition 5"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "shop_6",
+      "value": {
+        "a": {
+          "x": 14.5,
+          "z": -20
+        },
+        "b": {
+          "x": 14.5,
+          "z": -12
+        },
+        "role": "interior",
+        "label": "Shop partition 6"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "shop_7",
+      "value": {
+        "a": {
+          "x": 21.75,
+          "z": -20
+        },
+        "b": {
+          "x": 21.75,
+          "z": -12
+        },
+        "role": "interior",
+        "label": "Shop partition 7"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "d_shop_1",
+      "value": {
+        "type": "door",
+        "wallId": "shopfront",
+        "at": {
+          "x": -25.375,
+          "z": -12
+        },
+        "label": "Shop 1 door",
+        "width": 2,
+        "height": 2.6,
+        "doorStyle": "exterior"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_shop_1a",
+      "value": {
+        "type": "window",
+        "wallId": "shopfront",
+        "at": {
+          "x": -27.775,
+          "z": -12
+        },
+        "label": "Shop 1 display west",
+        "width": 1.8,
+        "height": 2.6,
+        "sill": 0.4,
+        "windowStyle": "four_pane"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_shop_1b",
+      "value": {
+        "type": "window",
+        "wallId": "shopfront",
+        "at": {
+          "x": -22.975,
+          "z": -12
+        },
+        "label": "Shop 1 display east",
+        "width": 1.8,
+        "height": 2.6,
+        "sill": 0.4,
+        "windowStyle": "four_pane"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "r_shop_1",
+      "value": {
+        "label": "Shop 1",
+        "minX": -29,
+        "maxX": -21.75,
+        "minZ": -20,
+        "maxZ": -12
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "d_shop_2",
+      "value": {
+        "type": "door",
+        "wallId": "shopfront",
+        "at": {
+          "x": -18.125,
+          "z": -12
+        },
+        "label": "Shop 2 door",
+        "width": 2,
+        "height": 2.6,
+        "doorStyle": "exterior"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_shop_2a",
+      "value": {
+        "type": "window",
+        "wallId": "shopfront",
+        "at": {
+          "x": -20.525,
+          "z": -12
+        },
+        "label": "Shop 2 display west",
+        "width": 1.8,
+        "height": 2.6,
+        "sill": 0.4,
+        "windowStyle": "four_pane"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_shop_2b",
+      "value": {
+        "type": "window",
+        "wallId": "shopfront",
+        "at": {
+          "x": -15.725,
+          "z": -12
+        },
+        "label": "Shop 2 display east",
+        "width": 1.8,
+        "height": 2.6,
+        "sill": 0.4,
+        "windowStyle": "four_pane"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "r_shop_2",
+      "value": {
+        "label": "Shop 2",
+        "minX": -21.75,
+        "maxX": -14.5,
+        "minZ": -20,
+        "maxZ": -12
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "d_shop_3",
+      "value": {
+        "type": "door",
+        "wallId": "shopfront",
+        "at": {
+          "x": -10.875,
+          "z": -12
+        },
+        "label": "Shop 3 door",
+        "width": 2,
+        "height": 2.6,
+        "doorStyle": "exterior"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_shop_3a",
+      "value": {
+        "type": "window",
+        "wallId": "shopfront",
+        "at": {
+          "x": -13.275,
+          "z": -12
+        },
+        "label": "Shop 3 display west",
+        "width": 1.8,
+        "height": 2.6,
+        "sill": 0.4,
+        "windowStyle": "four_pane"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_shop_3b",
+      "value": {
+        "type": "window",
+        "wallId": "shopfront",
+        "at": {
+          "x": -8.475,
+          "z": -12
+        },
+        "label": "Shop 3 display east",
+        "width": 1.8,
+        "height": 2.6,
+        "sill": 0.4,
+        "windowStyle": "four_pane"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "r_shop_3",
+      "value": {
+        "label": "Shop 3",
+        "minX": -14.5,
+        "maxX": -7.25,
+        "minZ": -20,
+        "maxZ": -12
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "d_shop_4",
+      "value": {
+        "type": "door",
+        "wallId": "shopfront",
+        "at": {
+          "x": -3.625,
+          "z": -12
+        },
+        "label": "Shop 4 door",
+        "width": 2,
+        "height": 2.6,
+        "doorStyle": "exterior"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_shop_4a",
+      "value": {
+        "type": "window",
+        "wallId": "shopfront",
+        "at": {
+          "x": -6.025,
+          "z": -12
+        },
+        "label": "Shop 4 display west",
+        "width": 1.8,
+        "height": 2.6,
+        "sill": 0.4,
+        "windowStyle": "four_pane"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_shop_4b",
+      "value": {
+        "type": "window",
+        "wallId": "shopfront",
+        "at": {
+          "x": -1.225,
+          "z": -12
+        },
+        "label": "Shop 4 display east",
+        "width": 1.8,
+        "height": 2.6,
+        "sill": 0.4,
+        "windowStyle": "four_pane"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "r_shop_4",
+      "value": {
+        "label": "Shop 4",
+        "minX": -7.25,
+        "maxX": 0,
+        "minZ": -20,
+        "maxZ": -12
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "d_shop_5",
+      "value": {
+        "type": "door",
+        "wallId": "shopfront",
+        "at": {
+          "x": 3.625,
+          "z": -12
+        },
+        "label": "Shop 5 door",
+        "width": 2,
+        "height": 2.6,
+        "doorStyle": "exterior"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_shop_5a",
+      "value": {
+        "type": "window",
+        "wallId": "shopfront",
+        "at": {
+          "x": 1.225,
+          "z": -12
+        },
+        "label": "Shop 5 display west",
+        "width": 1.8,
+        "height": 2.6,
+        "sill": 0.4,
+        "windowStyle": "four_pane"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_shop_5b",
+      "value": {
+        "type": "window",
+        "wallId": "shopfront",
+        "at": {
+          "x": 6.025,
+          "z": -12
+        },
+        "label": "Shop 5 display east",
+        "width": 1.8,
+        "height": 2.6,
+        "sill": 0.4,
+        "windowStyle": "four_pane"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "r_shop_5",
+      "value": {
+        "label": "Shop 5",
+        "minX": 0,
+        "maxX": 7.25,
+        "minZ": -20,
+        "maxZ": -12
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "d_shop_6",
+      "value": {
+        "type": "door",
+        "wallId": "shopfront",
+        "at": {
+          "x": 10.875,
+          "z": -12
+        },
+        "label": "Shop 6 door",
+        "width": 2,
+        "height": 2.6,
+        "doorStyle": "exterior"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_shop_6a",
+      "value": {
+        "type": "window",
+        "wallId": "shopfront",
+        "at": {
+          "x": 8.475,
+          "z": -12
+        },
+        "label": "Shop 6 display west",
+        "width": 1.8,
+        "height": 2.6,
+        "sill": 0.4,
+        "windowStyle": "four_pane"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_shop_6b",
+      "value": {
+        "type": "window",
+        "wallId": "shopfront",
+        "at": {
+          "x": 13.275,
+          "z": -12
+        },
+        "label": "Shop 6 display east",
+        "width": 1.8,
+        "height": 2.6,
+        "sill": 0.4,
+        "windowStyle": "four_pane"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "r_shop_6",
+      "value": {
+        "label": "Shop 6",
+        "minX": 7.25,
+        "maxX": 14.5,
+        "minZ": -20,
+        "maxZ": -12
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "d_shop_7",
+      "value": {
+        "type": "door",
+        "wallId": "shopfront",
+        "at": {
+          "x": 18.125,
+          "z": -12
+        },
+        "label": "Shop 7 door",
+        "width": 2,
+        "height": 2.6,
+        "doorStyle": "exterior"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_shop_7a",
+      "value": {
+        "type": "window",
+        "wallId": "shopfront",
+        "at": {
+          "x": 15.725,
+          "z": -12
+        },
+        "label": "Shop 7 display west",
+        "width": 1.8,
+        "height": 2.6,
+        "sill": 0.4,
+        "windowStyle": "four_pane"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_shop_7b",
+      "value": {
+        "type": "window",
+        "wallId": "shopfront",
+        "at": {
+          "x": 20.525,
+          "z": -12
+        },
+        "label": "Shop 7 display east",
+        "width": 1.8,
+        "height": 2.6,
+        "sill": 0.4,
+        "windowStyle": "four_pane"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "r_shop_7",
+      "value": {
+        "label": "Shop 7",
+        "minX": 14.5,
+        "maxX": 21.75,
+        "minZ": -20,
+        "maxZ": -12
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "d_shop_8",
+      "value": {
+        "type": "door",
+        "wallId": "shopfront",
+        "at": {
+          "x": 25.375,
+          "z": -12
+        },
+        "label": "Shop 8 door",
+        "width": 2,
+        "height": 2.6,
+        "doorStyle": "exterior"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_shop_8a",
+      "value": {
+        "type": "window",
+        "wallId": "shopfront",
+        "at": {
+          "x": 22.975,
+          "z": -12
+        },
+        "label": "Shop 8 display west",
+        "width": 1.8,
+        "height": 2.6,
+        "sill": 0.4,
+        "windowStyle": "four_pane"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_shop_8b",
+      "value": {
+        "type": "window",
+        "wallId": "shopfront",
+        "at": {
+          "x": 27.775,
+          "z": -12
+        },
+        "label": "Shop 8 display east",
+        "width": 1.8,
+        "height": 2.6,
+        "sill": 0.4,
+        "windowStyle": "four_pane"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "r_shop_8",
+      "value": {
+        "label": "Shop 8",
+        "minX": 21.75,
+        "maxX": 29,
+        "minZ": -20,
+        "maxZ": -12
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "core_w_1",
+      "value": {
+        "a": {
+          "x": -34,
+          "z": -6
+        },
+        "b": {
+          "x": -29,
+          "z": -6
+        },
+        "role": "interior",
+        "label": "West core 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "core_w_2",
+      "value": {
+        "a": {
+          "x": -29,
+          "z": -6
+        },
+        "b": {
+          "x": -29,
+          "z": 6
+        },
+        "role": "interior",
+        "label": "West core 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "core_w_3",
+      "value": {
+        "a": {
+          "x": -29,
+          "z": 6
+        },
+        "b": {
+          "x": -34,
+          "z": 6
+        },
+        "role": "interior",
+        "label": "West core 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "core_w_4",
+      "value": {
+        "a": {
+          "x": -34,
+          "z": 6
+        },
+        "b": {
+          "x": -34,
+          "z": -6
+        },
+        "role": "interior",
+        "label": "West core 4"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "d_core_w_n",
+      "value": {
+        "type": "door",
+        "wallId": "core_w_2",
+        "at": {
+          "x": -29,
+          "z": -4.75
+        },
+        "label": "W core north door",
+        "width": 1.2,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "d_core_w_s",
+      "value": {
+        "type": "door",
+        "wallId": "core_w_2",
+        "at": {
+          "x": -29,
+          "z": 4.75
+        },
+        "label": "W core south door",
+        "width": 1.2,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "r_core_w",
+      "value": {
+        "label": "West stair core",
+        "minX": -34,
+        "maxX": -29,
+        "minZ": -6,
+        "maxZ": 6
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "core_e_1",
+      "value": {
+        "a": {
+          "x": 29,
+          "z": -6
+        },
+        "b": {
+          "x": 34,
+          "z": -6
+        },
+        "role": "interior",
+        "label": "East core 1"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "core_e_2",
+      "value": {
+        "a": {
+          "x": 34,
+          "z": -6
+        },
+        "b": {
+          "x": 34,
+          "z": 6
+        },
+        "role": "interior",
+        "label": "East core 2"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "core_e_3",
+      "value": {
+        "a": {
+          "x": 34,
+          "z": 6
+        },
+        "b": {
+          "x": 29,
+          "z": 6
+        },
+        "role": "interior",
+        "label": "East core 3"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "core_e_4",
+      "value": {
+        "a": {
+          "x": 29,
+          "z": 6
+        },
+        "b": {
+          "x": 29,
+          "z": -6
+        },
+        "role": "interior",
+        "label": "East core 4"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "d_core_e_n",
+      "value": {
+        "type": "door",
+        "wallId": "core_e_4",
+        "at": {
+          "x": 29,
+          "z": -4.75
+        },
+        "label": "E core north door",
+        "width": 1.2,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "d_core_e_s",
+      "value": {
+        "type": "door",
+        "wallId": "core_e_4",
+        "at": {
+          "x": 29,
+          "z": 4.75
+        },
+        "label": "E core south door",
+        "width": 1.2,
+        "height": 2.2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "r_core_e",
+      "value": {
+        "label": "East stair core",
+        "minX": 29,
+        "maxX": 34,
+        "minZ": -6,
+        "maxZ": 6
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "d_main",
+      "value": {
+        "type": "door",
+        "wallId": "ext_5",
+        "at": {
+          "x": 0,
+          "z": 26
+        },
+        "label": "Main entrance",
+        "width": 3.2,
+        "height": 3,
+        "doorStyle": "exterior"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "d_bay_w",
+      "value": {
+        "type": "door",
+        "wallId": "ext_6",
+        "at": {
+          "x": -7,
+          "z": 23
+        },
+        "label": "Bay west door",
+        "width": 1.4,
+        "height": 2.6,
+        "doorStyle": "exterior"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "d_bay_e",
+      "value": {
+        "type": "door",
+        "wallId": "ext_4",
+        "at": {
+          "x": 7,
+          "z": 23
+        },
+        "label": "Bay east door",
+        "width": 1.4,
+        "height": 2.6,
+        "doorStyle": "exterior"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "d_side_w",
+      "value": {
+        "type": "door",
+        "wallId": "ext_8",
+        "at": {
+          "x": -40,
+          "z": 0
+        },
+        "label": "West side entrance",
+        "width": 2,
+        "height": 2.8,
+        "doorStyle": "exterior"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "d_side_e",
+      "value": {
+        "type": "door",
+        "wallId": "ext_2",
+        "at": {
+          "x": 40,
+          "z": 0
+        },
+        "label": "East side entrance",
+        "width": 2,
+        "height": 2.8,
+        "doorStyle": "exterior"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_w_-15",
+      "value": {
+        "type": "window",
+        "wallId": "ext_8",
+        "at": {
+          "x": -40,
+          "z": -15
+        },
+        "label": "West window",
+        "width": 2.4,
+        "height": 2.4,
+        "sill": 1,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_e_-15",
+      "value": {
+        "type": "window",
+        "wallId": "ext_2",
+        "at": {
+          "x": 40,
+          "z": -15
+        },
+        "label": "East window",
+        "width": 2.4,
+        "height": 2.4,
+        "sill": 1,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_w_-9",
+      "value": {
+        "type": "window",
+        "wallId": "ext_8",
+        "at": {
+          "x": -40,
+          "z": -9
+        },
+        "label": "West window",
+        "width": 2.4,
+        "height": 2.4,
+        "sill": 1,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_e_-9",
+      "value": {
+        "type": "window",
+        "wallId": "ext_2",
+        "at": {
+          "x": 40,
+          "z": -9
+        },
+        "label": "East window",
+        "width": 2.4,
+        "height": 2.4,
+        "sill": 1,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_w_9",
+      "value": {
+        "type": "window",
+        "wallId": "ext_8",
+        "at": {
+          "x": -40,
+          "z": 9
+        },
+        "label": "West window",
+        "width": 2.4,
+        "height": 2.4,
+        "sill": 1,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_e_9",
+      "value": {
+        "type": "window",
+        "wallId": "ext_2",
+        "at": {
+          "x": 40,
+          "z": 9
+        },
+        "label": "East window",
+        "width": 2.4,
+        "height": 2.4,
+        "sill": 1,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_w_15",
+      "value": {
+        "type": "window",
+        "wallId": "ext_8",
+        "at": {
+          "x": -40,
+          "z": 15
+        },
+        "label": "West window",
+        "width": 2.4,
+        "height": 2.4,
+        "sill": 1,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_e_15",
+      "value": {
+        "type": "window",
+        "wallId": "ext_2",
+        "at": {
+          "x": 40,
+          "z": 15
+        },
+        "label": "East window",
+        "width": 2.4,
+        "height": 2.4,
+        "sill": 1,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_s_-34",
+      "value": {
+        "type": "window",
+        "wallId": "ext_7",
+        "at": {
+          "x": -34,
+          "z": 20
+        },
+        "label": "South window",
+        "width": 2.4,
+        "height": 2.4,
+        "sill": 1,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_s_-24",
+      "value": {
+        "type": "window",
+        "wallId": "ext_7",
+        "at": {
+          "x": -24,
+          "z": 20
+        },
+        "label": "South window",
+        "width": 2.4,
+        "height": 2.4,
+        "sill": 1,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_s_-16",
+      "value": {
+        "type": "window",
+        "wallId": "ext_7",
+        "at": {
+          "x": -16,
+          "z": 20
+        },
+        "label": "South window",
+        "width": 2.4,
+        "height": 2.4,
+        "sill": 1,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_s_16",
+      "value": {
+        "type": "window",
+        "wallId": "ext_3",
+        "at": {
+          "x": 16,
+          "z": 20
+        },
+        "label": "South window",
+        "width": 2.4,
+        "height": 2.4,
+        "sill": 1,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_s_24",
+      "value": {
+        "type": "window",
+        "wallId": "ext_3",
+        "at": {
+          "x": 24,
+          "z": 20
+        },
+        "label": "South window",
+        "width": 2.4,
+        "height": 2.4,
+        "sill": 1,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "w_s_34",
+      "value": {
+        "type": "window",
+        "wallId": "ext_3",
+        "at": {
+          "x": 34,
+          "z": 20
+        },
+        "label": "South window",
+        "width": 2.4,
+        "height": 2.4,
+        "sill": 1,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "r_concourse",
+      "value": {
+        "label": "Concourse",
+        "minX": -40,
+        "maxX": 40,
+        "minZ": -12,
+        "maxZ": 20
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "r_bay",
+      "value": {
+        "label": "Entrance bay",
+        "polygon": [
+          {
+            "x": -10,
+            "z": 20
+          },
+          {
+            "x": 10,
+            "z": 20
+          },
+          {
+            "x": 4,
+            "z": 26
+          },
+          {
+            "x": -4,
+            "z": 26
+          }
+        ],
+        "kind": "bay"
+      }
+    },
+    {
+      "op": "floor.duplicate",
+      "id": "l2",
+      "sourceFloorId": "floor_1",
+      "value": {
+        "label": "L2 food court",
+        "wallHeight": 4
+      }
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l2",
+      "id": "l2-d_arch_east"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l2",
+      "id": "l2-d_arch_south"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l2",
+      "id": "l2-d_arch_west"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l2",
+      "id": "l2-d_arch_north"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l2",
+      "id": "l2-rot_1"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l2",
+      "id": "l2-rot_2"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l2",
+      "id": "l2-rot_3"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l2",
+      "id": "l2-rot_4"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l2",
+      "id": "l2-rot_5"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l2",
+      "id": "l2-rot_6"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l2",
+      "id": "l2-rot_7"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l2",
+      "id": "l2-rot_8"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l2",
+      "id": "l2-rot_9"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l2",
+      "id": "l2-rot_10"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l2",
+      "id": "l2-rot_11"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l2",
+      "id": "l2-rot_12"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l2",
+      "id": "l2-rot_13"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l2",
+      "id": "l2-rot_14"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l2",
+      "id": "l2-rot_15"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l2",
+      "id": "l2-rot_16"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l2",
+      "id": "l2-rot_17"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l2",
+      "id": "l2-rot_18"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l2",
+      "id": "l2-rot_19"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l2",
+      "id": "l2-rot_20"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l2",
+      "id": "l2-rot_21"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l2",
+      "id": "l2-rot_22"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l2",
+      "id": "l2-rot_23"
+    },
+    {
+      "op": "wall.remove",
+      "floorId": "l2",
+      "id": "l2-rot_24"
+    },
+    {
+      "op": "region.remove",
+      "floorId": "l2",
+      "id": "l2-r_rotunda"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l2",
+      "id": "l2-d_main"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l2",
+      "id": "l2-d_bay_w"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l2",
+      "id": "l2-d_bay_e"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l2",
+      "id": "l2-d_side_w"
+    },
+    {
+      "op": "opening.remove",
+      "floorId": "l2",
+      "id": "l2-d_side_e"
+    },
+    {
+      "op": "region.add",
+      "floorId": "l2",
+      "id": "r_atrium",
+      "value": {
+        "label": "Atrium void",
+        "polygon": [
+          {
+            "x": 7.534981,
+            "z": 4.991999
+          },
+          {
+            "x": 7.021484,
+            "z": 6.908394
+          },
+          {
+            "x": 6.029485,
+            "z": 8.626587
+          },
+          {
+            "x": 4.626587,
+            "z": 10.029485
+          },
+          {
+            "x": 2.908394,
+            "z": 11.021484
+          },
+          {
+            "x": 0.991999,
+            "z": 11.534981
+          },
+          {
+            "x": -0.991999,
+            "z": 11.534981
+          },
+          {
+            "x": -2.908394,
+            "z": 11.021484
+          },
+          {
+            "x": -4.626587,
+            "z": 10.029485
+          },
+          {
+            "x": -6.029485,
+            "z": 8.626587
+          },
+          {
+            "x": -7.021484,
+            "z": 6.908394
+          },
+          {
+            "x": -7.534981,
+            "z": 4.991999
+          },
+          {
+            "x": -7.534981,
+            "z": 3.008001
+          },
+          {
+            "x": -7.021484,
+            "z": 1.091606
+          },
+          {
+            "x": -6.029485,
+            "z": -0.626587
+          },
+          {
+            "x": -4.626587,
+            "z": -2.029485
+          },
+          {
+            "x": -2.908394,
+            "z": -3.021484
+          },
+          {
+            "x": -0.991999,
+            "z": -3.534981
+          },
+          {
+            "x": 0.991999,
+            "z": -3.534981
+          },
+          {
+            "x": 2.908394,
+            "z": -3.021484
+          },
+          {
+            "x": 4.626587,
+            "z": -2.029485
+          },
+          {
+            "x": 6.029485,
+            "z": -0.626587
+          },
+          {
+            "x": 7.021484,
+            "z": 1.091606
+          },
+          {
+            "x": 7.534981,
+            "z": 3.008001
+          }
+        ],
+        "effect": "void"
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_atrium_1",
+      "value": {
+        "a": {
+          "x": 7.534981,
+          "z": 4.991999
+        },
+        "b": {
+          "x": 7.021484,
+          "z": 6.908394
+        },
+        "label": "Atrium rail 1",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_atrium_2",
+      "value": {
+        "a": {
+          "x": 7.021484,
+          "z": 6.908394
+        },
+        "b": {
+          "x": 6.029485,
+          "z": 8.626587
+        },
+        "label": "Atrium rail 2",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_atrium_3",
+      "value": {
+        "a": {
+          "x": 6.029485,
+          "z": 8.626587
+        },
+        "b": {
+          "x": 4.626587,
+          "z": 10.029485
+        },
+        "label": "Atrium rail 3",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_atrium_4",
+      "value": {
+        "a": {
+          "x": 4.626587,
+          "z": 10.029485
+        },
+        "b": {
+          "x": 2.908394,
+          "z": 11.021484
+        },
+        "label": "Atrium rail 4",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_atrium_5",
+      "value": {
+        "a": {
+          "x": 2.908394,
+          "z": 11.021484
+        },
+        "b": {
+          "x": 0.991999,
+          "z": 11.534981
+        },
+        "label": "Atrium rail 5",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_atrium_6",
+      "value": {
+        "a": {
+          "x": 0.991999,
+          "z": 11.534981
+        },
+        "b": {
+          "x": -0.991999,
+          "z": 11.534981
+        },
+        "label": "Atrium rail 6",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_atrium_7",
+      "value": {
+        "a": {
+          "x": -0.991999,
+          "z": 11.534981
+        },
+        "b": {
+          "x": -2.908394,
+          "z": 11.021484
+        },
+        "label": "Atrium rail 7",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_atrium_8",
+      "value": {
+        "a": {
+          "x": -2.908394,
+          "z": 11.021484
+        },
+        "b": {
+          "x": -4.626587,
+          "z": 10.029485
+        },
+        "label": "Atrium rail 8",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_atrium_9",
+      "value": {
+        "a": {
+          "x": -4.626587,
+          "z": 10.029485
+        },
+        "b": {
+          "x": -6.029485,
+          "z": 8.626587
+        },
+        "label": "Atrium rail 9",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_atrium_10",
+      "value": {
+        "a": {
+          "x": -6.029485,
+          "z": 8.626587
+        },
+        "b": {
+          "x": -7.021484,
+          "z": 6.908394
+        },
+        "label": "Atrium rail 10",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_atrium_11",
+      "value": {
+        "a": {
+          "x": -7.021484,
+          "z": 6.908394
+        },
+        "b": {
+          "x": -7.534981,
+          "z": 4.991999
+        },
+        "label": "Atrium rail 11",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_atrium_12",
+      "value": {
+        "a": {
+          "x": -7.534981,
+          "z": 4.991999
+        },
+        "b": {
+          "x": -7.534981,
+          "z": 3.008001
+        },
+        "label": "Atrium rail 12",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_atrium_13",
+      "value": {
+        "a": {
+          "x": -7.534981,
+          "z": 3.008001
+        },
+        "b": {
+          "x": -7.021484,
+          "z": 1.091606
+        },
+        "label": "Atrium rail 13",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_atrium_14",
+      "value": {
+        "a": {
+          "x": -7.021484,
+          "z": 1.091606
+        },
+        "b": {
+          "x": -6.029485,
+          "z": -0.626587
+        },
+        "label": "Atrium rail 14",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_atrium_15",
+      "value": {
+        "a": {
+          "x": -6.029485,
+          "z": -0.626587
+        },
+        "b": {
+          "x": -4.626587,
+          "z": -2.029485
+        },
+        "label": "Atrium rail 15",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_atrium_16",
+      "value": {
+        "a": {
+          "x": -4.626587,
+          "z": -2.029485
+        },
+        "b": {
+          "x": -2.908394,
+          "z": -3.021484
+        },
+        "label": "Atrium rail 16",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_atrium_17",
+      "value": {
+        "a": {
+          "x": -2.908394,
+          "z": -3.021484
+        },
+        "b": {
+          "x": -0.991999,
+          "z": -3.534981
+        },
+        "label": "Atrium rail 17",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_atrium_18",
+      "value": {
+        "a": {
+          "x": -0.991999,
+          "z": -3.534981
+        },
+        "b": {
+          "x": 0.991999,
+          "z": -3.534981
+        },
+        "label": "Atrium rail 18",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_atrium_19",
+      "value": {
+        "a": {
+          "x": 0.991999,
+          "z": -3.534981
+        },
+        "b": {
+          "x": 2.908394,
+          "z": -3.021484
+        },
+        "label": "Atrium rail 19",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_atrium_20",
+      "value": {
+        "a": {
+          "x": 2.908394,
+          "z": -3.021484
+        },
+        "b": {
+          "x": 4.626587,
+          "z": -2.029485
+        },
+        "label": "Atrium rail 20",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_atrium_21",
+      "value": {
+        "a": {
+          "x": 4.626587,
+          "z": -2.029485
+        },
+        "b": {
+          "x": 6.029485,
+          "z": -0.626587
+        },
+        "label": "Atrium rail 21",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_atrium_22",
+      "value": {
+        "a": {
+          "x": 6.029485,
+          "z": -0.626587
+        },
+        "b": {
+          "x": 7.021484,
+          "z": 1.091606
+        },
+        "label": "Atrium rail 22",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_atrium_23",
+      "value": {
+        "a": {
+          "x": 7.021484,
+          "z": 1.091606
+        },
+        "b": {
+          "x": 7.534981,
+          "z": 3.008001
+        },
+        "label": "Atrium rail 23",
+        "style": "picket",
+        "height": 1.1
+      }
+    },
+    {
+      "op": "railing.add",
+      "floorId": "l2",
+      "id": "rail_atrium_24",
+      "value": {
+        "a": {
+          "x": 7.534981,
+          "z": 3.008001
+        },
+        "b": {
+          "x": 7.534981,
+          "z": 4.991999
+        },
+        "label": "Atrium rail 24",
+        "style": "picket",
+        "height": 1.1
+      }
+    }
+  ]
+}

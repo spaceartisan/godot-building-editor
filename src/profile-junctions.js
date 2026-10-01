@@ -6,7 +6,7 @@ const extent=(view,w)=>Math.max(...(wallTypeFor(view,w)?.stations||[{offset:0,th
 // the middle of one shaped host or the seam of two matching collinear hosts.
 // stateFor supplies the same physical inward direction used by the mesh builder.
 export function standardProfileJunction(view,branch,end,stateFor){
- if(wallTypeFor(view,branch))return null;
+ if(!(view.wallTypes||[]).length||wallTypeFor(view,branch))return null; // no shaped hosts without wall types
  const origin=branch[end],shaped=view.walls.filter(w=>w!==branch&&wallTypeFor(view,w));
  const middle=shaped.filter(w=>{const p=projectToWall(w,origin);return p.distance<EPS&&p.t>EPS&&p.t<1-EPS;});
  const touching=shaped.filter(w=>[w.a,w.b].some(p=>near(p,origin))),split=!middle.length&&touching.length>1,hosts=split?touching:middle;

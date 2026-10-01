@@ -1,0 +1,520 @@
+{
+  "engine": "4.5.1.stable.official.f62fdbde1",
+  "agent": {
+    "height": 1.8,
+    "max_climb": 0.3,
+    "max_slope": 46,
+    "radius": 0.3
+  },
+  "doorPanelsRemoved": 141,
+  "iteration": 2,
+  "mapRegions": 1,
+  "navBounds": [
+    -39.8500747680664,
+    -6.90000009536743,
+    -19.5499992370605,
+    39.8499221801758,
+    33.5,
+    25.9500007629395
+  ],
+  "navPolygons": 2917,
+  "results": [
+    {
+      "end": [
+        -20,
+        -6.90000009536743,
+        10
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "B2 parking west",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 67.4113169228658,
+      "snap": [
+        -20,
+        -6.90000009536743,
+        10
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        10,
+        -6.90000009536743,
+        4.76837158203125e-7
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "B2 parking east (ramp foot)",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 67.5896011702716,
+      "snap": [
+        10,
+        -6.90000009536743,
+        0
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -30,
+        -3.39999985694885,
+        -13.9999914169312
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "B1 plant room 1",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 56.3181647639722,
+      "snap": [
+        -30,
+        -3.39999985694885,
+        -14
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        28,
+        -3.39999985694885,
+        -1.19209289550781e-7
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "B1 loading hall (ramp top)",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 51.2335414965637,
+      "snap": [
+        28,
+        -3.39999985694885,
+        0
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -4.76837158203125e-7,
+        0.0999999046325684,
+        4.00000047683716
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "L1 rotunda centre",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 19.4999995231628,
+      "snap": [
+        0,
+        0.0999999046325684,
+        4
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -25.3999996185303,
+        0.0999999046325684,
+        -16
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "L1 shop 1",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 47.3416537642479,
+      "snap": [
+        -25.3999996185303,
+        0.0999999046325684,
+        -16
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        25.3999996185303,
+        0.0999999046325684,
+        -16
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "L1 shop 8",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 47.3415945693851,
+      "snap": [
+        25.3999996185303,
+        0.0999999046325684,
+        -16
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -20,
+        4.90000057220459,
+        12
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "L2 food court",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 69.0868571707979,
+      "snap": [
+        -20,
+        4.90000057220459,
+        12
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -3.60000014305115,
+        4.90000057220459,
+        -15.9999990463257
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "L2 shop 4",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 80.4189799753949,
+      "snap": [
+        -3.59999990463257,
+        4.90000057220459,
+        -16
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        0.0160188674926758,
+        9.20000076293945,
+        -16.0042495727539
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "L3 terrace middle",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 95.5853124819696,
+      "snap": [
+        0,
+        9.20000076293945,
+        -16
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -37,
+        9.20000076293945,
+        0.00000124526559375226
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "L3 terrace west of west tower",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 120.573577568401,
+      "snap": [
+        -37,
+        9.20000076293945,
+        0
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -16.4999980926514,
+        12.7000007629395,
+        -6
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "L4 west suite N3",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 87.591142540623,
+      "snap": [
+        -16.5,
+        12.7000007629395,
+        -6
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        28.9999980926514,
+        16.2000007629395,
+        9
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "L5 east suite S1",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 82.7936247896869,
+      "snap": [
+        29,
+        16.2000007629395,
+        9
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -0.000178813934326172,
+        19.7000007629395,
+        0.0000139027833938599
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "L6 sky bridge",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 117.095665630652,
+      "snap": [
+        0,
+        19.7000007629395,
+        0
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        18,
+        19.7000007629395,
+        0
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "L6 east corridor",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 99.128077581292,
+      "snap": [
+        18,
+        19.7000007629395,
+        0
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        29,
+        23.2000007629395,
+        -9
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "L7 east suite N1",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 108.454607787804,
+      "snap": [
+        29,
+        23.2000007629395,
+        -9
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        24,
+        26.7000007629395,
+        8
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "L8 east roof deck",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 116.005128898891,
+      "snap": [
+        24,
+        26.7000007629395,
+        8
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -21.5,
+        26.7000007629395,
+        6
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "L8 west suite S2",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 119.051156250935,
+      "snap": [
+        -21.5,
+        26.7000007629395,
+        6
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -29,
+        30.2000007629395,
+        -9
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "L9 penthouse N1",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 126.463919719856,
+      "snap": [
+        -29,
+        30.2000007629395,
+        -9
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        18,
+        19.7000007629395,
+        0
+      ],
+      "floorCovered": true,
+      "maxLength": 40,
+      "name": "Bridge leg: west corridor -> east corridor",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 35.9999980926514,
+      "snap": [
+        18,
+        19.7000007629395,
+        0
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -26.5,
+        30.2000007629395,
+        -6.70552253723145e-8
+      ],
+      "floorCovered": true,
+      "maxLength": 140,
+      "name": "Core leg: L4 west lobby -> L9 west lobby",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 58.5438832209911,
+      "snap": [
+        -26.5,
+        30.2000007629395,
+        0
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        28,
+        -3.39999985694885,
+        -1.19209289550781e-7
+      ],
+      "floorCovered": true,
+      "maxLength": 30,
+      "name": "Ramp leg: B2 ramp foot -> B1 ramp top",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 18.5105430968106,
+      "snap": [
+        28,
+        -3.39999985694885,
+        0
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    }
+  ],
+  "start": [
+    0,
+    0,
+    23.5
+  ],
+  "startCovered": true,
+  "startSnap": [
+    0,
+    0.0999999046325684,
+    23.5
+  ],
+  "startSnapDistance": 0,
+  "unreachable": 0
+}

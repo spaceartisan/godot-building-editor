@@ -192,7 +192,8 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
       if(levels.some(y=>[-1,1].some(side=>{const across={x:-d.z*side*view.wallThickness/2,z:d.x*side*view.wallThickness/2};const ends=states.map((q,i)=>(i?length:0)+(q?(sampleWallType(q.type,y/q.height,view.wallThickness).offset-q.n.x*across.x-q.n.z*across.z)/(q.n.x*d.x+q.n.z*d.z):0));return ends[1]-ends[0]<.01;})))error(p,`${wall.label||wall.id}: fitted ends collapse this Standard wall; lengthen it or reduce the host offsets.`);
     }
     // A neighboring miter can occupy the plan space of a near-corner opening.
-    for(const wall of view.walls)for(const end of ['a','b']){
+    // Only shaped walls are checked, so plans without wall types skip the scan.
+    if((building.wallTypes||[]).length)for(const wall of view.walls)for(const end of ['a','b']){
       const origin=wall[end],own=wall[end==='a'?'b':'a'],type=wallTypeFor(building,wall);
       for(const q of view.walls.filter(q=>q!==wall&&[q.a,q.b].some(v=>Math.hypot(v.x-origin.x,v.z-origin.z)<1e-5))){
         const otherType=wallTypeFor(building,q);if(!type&&!otherType)continue;
@@ -212,12 +213,15 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
     }
     for(const issue of validateOpeningLayout(view))if(['overlap','missing_wall'].includes(issue.type))error(p,issue.message,[issue.opening,issue.other].filter(Boolean).map(q=>({type:'opening',id:q.id,floorId:f.id})));
     const walls=f.walls||[];
-    for(let a=0;a<walls.length;a++)for(let b=a+1;b<walls.length;b++){
-      const u=walls[a],v=walls[b],dx=u.b.x-u.a.x,dz=u.b.z-u.a.z,L=wallLength(u);
+    for(let a=0;a<walls.length;a++){
+      const u=walls[a],dx=u.b.x-u.a.x,dz=u.b.z-u.a.z,L=wallLength(u);
       const cross=q=>dx*(q.z-u.a.z)-dz*(q.x-u.a.x);
+      for(let b=a+1;b<walls.length;b++){
+      const v=walls[b];
       if(Math.abs(cross(v.a))<1e-5*L&&Math.abs(cross(v.b))<1e-5*L){
         const t=q=>((q.x-u.a.x)*dx+(q.z-u.a.z)*dz)/L;
         if(Math.min(L,Math.max(t(v.a),t(v.b)))-Math.max(0,Math.min(t(v.a),t(v.b)))>1e-4)warn(p,`walls ${u.id} / ${v.id} overlap; remove redundant geometry`,[u,v].map(q=>({type:'wall',id:q.id,floorId:f.id})));
+      }
       }
     }
     const exterior=walls.filter(w=>w.role==='exterior');
@@ -235,13 +239,26 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
       if(free.length&&f.boundaryMode!=='intentional_open')warn(p,`exterior walls have free-standing ends (${free.slice(0,6).map(w=>w.label||w.id).join(', ')}${free.length>6?', …':''}); join them to another wall, or mark intentional access openings in Floors`,free.map(w=>({type:'wall',id:w.id,floorId:f.id})));
     }
     else if(exterior.length&&[...degree.values()].some(n=>n>2))warn(p,'exterior boundary is branched; check wall layout and automatic footprint');
-    else if(exterior.length&&[...degree.values()].some(n=>n===1)&&f.boundaryMode!=='intentional_open')warn(p,'exterior boundary has open ends; mark intentional access openings in Floors or close the wall loop');
+    else if(exterior.length&&[...degree.values()].some(n=>n===1)&&f.boundaryMode!=='intentional_open'){
+      // An end that stops partway along another exterior wall (a T) closes
+      // nothing: the outline needs that host split at the junction.
+      const tees=exterior.flatMap(w=>['a','b'].filter(end=>degree.get(key(w[end]))===1).flatMap(end=>{const host=exterior.find(q=>q!==w&&(()=>{const r=projectToWall(q,w[end]);return r.distance<=1e-4&&r.t>1e-6&&r.t<1-1e-6;})());return host?[{wall:w,host,at:w[end]}]:[];}));
+      const detail=tees.length?` ${tees.slice(0,3).map(t=>`${t.wall.label||t.wall.id} ends partway along ${t.host.label||t.host.id} at (${+t.at.x.toFixed(3)}, ${+t.at.z.toFixed(3)})`).join('; ')}${tees.length>3?'; …':''}: an outline only closes at shared endpoints, so split the host wall there (remove it and add two walls meeting at that point), or set Floor Footprints for the coverage.`:'';
+      warn(p,`exterior boundary has open ends; mark intentional access openings in Floors or close the wall loop.${detail}`,[...new Set(tees.flatMap(t=>[t.wall,t.host]))].map(q=>({type:'wall',id:q.id,floorId:f.id})));
+    }
     const footprintIssue=exteriorFootprintIssue(view);
     if(exterior.length&&footprintIssue&&!(f.slabs?.length)&&!f.regions?.some(r=>r.effect==='solid'))warn(p,`automatic footprint uses rectangular bounds here. ${f.boundaryMode==='intentional_open'?'The intentional opening needs explicit coverage.':footprintIssue} Use Floor Footprint to define the intended coverage.`);
     if(f.slabs?.length&&f.regions?.some(r=>r.effect==='solid'))warn(p,'Floor Footprints take precedence over solid regions; void regions still cut automatic surfaces');
     if(f.regions?.some(r=>r.effect==='void')){
       if(building.roof?.type!=='none'&&(building.roof?.overhang||0)>0)warn(p,'roof eaves can overhang region cutouts; use zero overhang to keep their exact outline clear');
-      if((building.manualFloors?.length||building.manualCeilings?.length||building.roofSections?.length||f.platforms?.length))warn(p,'region cutouts affect automatic surfaces only; review independent floors, ceilings, roofs and platforms');
+      // Only independent pieces that overlap a void in plan, within this
+      // story's height (its slab up to the next floor), can fill or cover it.
+      const voids=f.regions.filter(r=>r.effect==='void'&&rectValid(r)),margin=r=>Math.max(0,Number(r.overhang)||0);
+      const bottom=floorElevation(building,i)-floorSlabThickness(building,i),top=i+1<floors.length?floorElevation(building,i+1):floorElevation(building,i)+floorWallHeight(building,i)+floorSlabThickness(building,i);
+      const inStory=y=>!Number.isFinite(Number(y))||(Number(y)>=bottom-1e-6&&Number(y)<=top+1e-6);
+      const overlapsVoid=r=>rectValid(r)&&voids.some(v=>Math.min(r.maxX+margin(r),v.maxX)-Math.max(r.minX-margin(r),v.minX)>1e-6&&Math.min(r.maxZ+margin(r),v.maxZ)-Math.max(r.minZ-margin(r),v.minZ)>1e-6);
+      const independent=[...[...(building.manualFloors||[]),...(building.manualCeilings||[])].filter(r=>inStory(r.topY)),...(building.roofSections||[]).filter(r=>inStory(r.baseY)),...(f.platforms||[])];
+      if(independent.some(overlapsVoid))warn(p,'region cutouts affect automatic surfaces only; review independent floors, ceilings, roofs and platforms over the void');
     }
     const stairs=f.stairs||[];
     for(let a=0;a<stairs.length;a++)for(let b=a+1;b<stairs.length;b++){

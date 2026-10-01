@@ -149,6 +149,9 @@ func _apply_surface_colors(root: Node) -> void:
 				surface_name = (mi.mesh as ArrayMesh).surface_get_name(i)
 			if not materials.has(surface_name):
 				surface_name = str(mi.name)
+			# A manual roof that meets nothing exports as an unnamed BoxMesh.
+			if not materials.has(surface_name) and not (mi.mesh is ArrayMesh) and _under(mi, "ManualRoofs"):
+				surface_name = "RoofFaces"
 			if interior and surface_name == "EdgeFaces":
 				surface_name = "InteriorEdgeFaces"
 			if materials.has(surface_name):

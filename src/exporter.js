@@ -70,7 +70,17 @@ function writeMiterFaces(edgeWriter,building,wall,raw){
   }
 }
 
+// Cached per building object like wallMiters: the scan below visits every
+// wall, and segments ask for the same end many times.
+const joinOffsetCache=new WeakMap();
 function endpointJoinOffset(building, wall, atStart, mesh = false) {
+  let byWall=joinOffsetCache.get(building);if(!byWall){byWall=new Map();joinOffsetCache.set(building,byWall);}
+  let cached=byWall.get(wall);if(!cached){cached=[];byWall.set(wall,cached);}
+  const slot=(atStart?0:2)+(mesh?1:0);
+  if(cached[slot]===undefined)cached[slot]=computeEndpointJoinOffset(building,wall,atStart,mesh);
+  return cached[slot];
+}
+function computeEndpointJoinOffset(building, wall, atStart, mesh) {
   if (mesh) {
     const m = wallMiters(building, wall)[atStart ? 'a' : 'b'];
     if (m) return atStart ? -m.ext : m.ext;

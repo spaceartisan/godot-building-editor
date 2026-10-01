@@ -119,7 +119,7 @@ node cli.mjs export ../third-floor.building.json --out ../third-floor-assets --w
 node cli.mjs edit ../third-floor.building.json --ops examples/transactions/remove-third-floor.edit.json --out ../restored.building.json --warnings-as-errors
 ```
 
-The preview needs the optional canvas backend. Source plans remain untouched and destinations must be new. The restored blueprint exports byte-identically to the original. CLI basement/middle insertion, duplication and swapping are deferred; use the web builder for those edits. There are no generic `floor.add` or `floor.remove` commands.
+The preview needs the optional canvas backend. Source plans remain untouched and destinations must be new. The restored blueprint exports byte-identically to the original. Basement and middle insertion, duplication, reordering and removal of any floor use `floor.insert`, `floor.duplicate`, `floor.move` and `floor.remove` (see the operation table). There is no generic `floor.add` command.
 
 ### Floor updates (0.16)
 

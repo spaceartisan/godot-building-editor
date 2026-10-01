@@ -1,0 +1,57 @@
+{
+  "engineVersion": "4.5.1.stable.official.f62fdbde1",
+  "colorMode": "surfaces",
+  "renderer": "4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.1 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)",
+  "virtualDisplay": false,
+  "scenes": [
+    "halcyon_twin_towers.tscn"
+  ],
+  "views": [
+    {
+      "eye": [
+        78,
+        52,
+        82
+      ],
+      "file": "southeast-aerial.png",
+      "fov": 45,
+      "look": [
+        0,
+        8,
+        0
+      ],
+      "scene": "assets/halcyon_twin_towers.tscn"
+    },
+    {
+      "eye": [
+        0,
+        1.6,
+        10.8
+      ],
+      "file": "rotunda-interior.png",
+      "fov": 70,
+      "look": [
+        0,
+        3,
+        -4
+      ],
+      "scene": "assets/halcyon_twin_towers.tscn"
+    },
+    {
+      "eye": [
+        -12.5,
+        21.3,
+        0
+      ],
+      "file": "sky-bridge-interior.png",
+      "fov": 65,
+      "look": [
+        14,
+        21,
+        0
+      ],
+      "scene": "assets/halcyon_twin_towers.tscn"
+    }
+  ],
+  "note": "Scenes loaded unmodified (empty materials render as default grey); only camera, sky, sun, ambient light and a camera headlamp were added; exported Glass surfaces render with a clear material. Lighting in a game scene will differ."
+}

@@ -1,0 +1,4422 @@
+{
+  "version": 1,
+  "operations": [
+    {
+      "op": "roof.add",
+      "id": "roof_bay",
+      "value": {
+        "label": "Entrance bay roof",
+        "minX": -10,
+        "maxX": 10,
+        "minZ": 20,
+        "maxZ": 26,
+        "type": "flat",
+        "baseY": 8.8,
+        "overhang": 0
+      }
+    },
+    {
+      "op": "roof.add",
+      "id": "roof_bridge",
+      "value": {
+        "label": "Sky bridge roof",
+        "minX": -14,
+        "maxX": 14,
+        "minZ": -2,
+        "maxZ": 2,
+        "type": "flat",
+        "baseY": 22.8,
+        "overhang": 0
+      }
+    },
+    {
+      "op": "roof.add",
+      "id": "roof_west",
+      "value": {
+        "label": "West tower roof",
+        "minX": -34,
+        "maxX": -14,
+        "minZ": -12,
+        "maxZ": 12,
+        "type": "flat",
+        "baseY": 33.300000000000004,
+        "overhang": 0
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_r_core_w",
+      "value": {
+        "label": "West stair core light",
+        "position": {
+          "x": -31.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_r_core_e",
+      "value": {
+        "label": "East stair core light",
+        "position": {
+          "x": 31.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_r_plant_1",
+      "value": {
+        "label": "Plant room 1 light",
+        "position": {
+          "x": -30,
+          "y": 2.8000000000000003,
+          "z": -14
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 14,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_r_plant_2",
+      "value": {
+        "label": "Plant room 2 light",
+        "position": {
+          "x": -10,
+          "y": 2.8000000000000003,
+          "z": -14
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 14,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_r_plant_3",
+      "value": {
+        "label": "Plant room 3 light",
+        "position": {
+          "x": 10,
+          "y": 2.8000000000000003,
+          "z": -14
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 14,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_r_plant_4",
+      "value": {
+        "label": "Plant room 4 light",
+        "position": {
+          "x": 30,
+          "y": 2.8000000000000003,
+          "z": -14
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 14,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_r_core_w",
+      "value": {
+        "label": "West stair core light",
+        "position": {
+          "x": -31.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_r_core_e",
+      "value": {
+        "label": "East stair core light",
+        "position": {
+          "x": 31.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "light_r_rotunda",
+      "value": {
+        "label": "Rotunda light",
+        "position": {
+          "x": 0,
+          "y": 4.1,
+          "z": 4
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 13.5,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "light_r_shop_1",
+      "value": {
+        "label": "Shop 1 light",
+        "position": {
+          "x": -25.375,
+          "y": 4.1,
+          "z": -16
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.5,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l2",
+      "id": "light_l2-r_shop_1",
+      "value": {
+        "label": "Shop 1 light",
+        "position": {
+          "x": -25.375,
+          "y": 3.6,
+          "z": -16
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.5,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "light_r_shop_2",
+      "value": {
+        "label": "Shop 2 light",
+        "position": {
+          "x": -18.125,
+          "y": 4.1,
+          "z": -16
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.5,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l2",
+      "id": "light_l2-r_shop_2",
+      "value": {
+        "label": "Shop 2 light",
+        "position": {
+          "x": -18.125,
+          "y": 3.6,
+          "z": -16
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.5,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "light_r_shop_3",
+      "value": {
+        "label": "Shop 3 light",
+        "position": {
+          "x": -10.875,
+          "y": 4.1,
+          "z": -16
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.5,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l2",
+      "id": "light_l2-r_shop_3",
+      "value": {
+        "label": "Shop 3 light",
+        "position": {
+          "x": -10.875,
+          "y": 3.6,
+          "z": -16
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.5,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "light_r_shop_4",
+      "value": {
+        "label": "Shop 4 light",
+        "position": {
+          "x": -3.625,
+          "y": 4.1,
+          "z": -16
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.5,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l2",
+      "id": "light_l2-r_shop_4",
+      "value": {
+        "label": "Shop 4 light",
+        "position": {
+          "x": -3.625,
+          "y": 3.6,
+          "z": -16
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.5,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "light_r_shop_5",
+      "value": {
+        "label": "Shop 5 light",
+        "position": {
+          "x": 3.625,
+          "y": 4.1,
+          "z": -16
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.5,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l2",
+      "id": "light_l2-r_shop_5",
+      "value": {
+        "label": "Shop 5 light",
+        "position": {
+          "x": 3.625,
+          "y": 3.6,
+          "z": -16
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.5,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "light_r_shop_6",
+      "value": {
+        "label": "Shop 6 light",
+        "position": {
+          "x": 10.875,
+          "y": 4.1,
+          "z": -16
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.5,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l2",
+      "id": "light_l2-r_shop_6",
+      "value": {
+        "label": "Shop 6 light",
+        "position": {
+          "x": 10.875,
+          "y": 3.6,
+          "z": -16
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.5,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "light_r_shop_7",
+      "value": {
+        "label": "Shop 7 light",
+        "position": {
+          "x": 18.125,
+          "y": 4.1,
+          "z": -16
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.5,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l2",
+      "id": "light_l2-r_shop_7",
+      "value": {
+        "label": "Shop 7 light",
+        "position": {
+          "x": 18.125,
+          "y": 3.6,
+          "z": -16
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.5,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "light_r_shop_8",
+      "value": {
+        "label": "Shop 8 light",
+        "position": {
+          "x": 25.375,
+          "y": 4.1,
+          "z": -16
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.5,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l2",
+      "id": "light_l2-r_shop_8",
+      "value": {
+        "label": "Shop 8 light",
+        "position": {
+          "x": 25.375,
+          "y": 3.6,
+          "z": -16
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.5,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "light_r_core_w",
+      "value": {
+        "label": "West stair core light",
+        "position": {
+          "x": -31.5,
+          "y": 4.1,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l2",
+      "id": "light_l2-r_core_w",
+      "value": {
+        "label": "West stair core light",
+        "position": {
+          "x": -31.5,
+          "y": 3.6,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "light_r_core_e",
+      "value": {
+        "label": "East stair core light",
+        "position": {
+          "x": 31.5,
+          "y": 4.1,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l2",
+      "id": "light_l2-r_core_e",
+      "value": {
+        "label": "East stair core light",
+        "position": {
+          "x": 31.5,
+          "y": 3.6,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "light_r_concourse",
+      "value": {
+        "label": "Concourse light",
+        "position": {
+          "x": 0,
+          "y": 4.1,
+          "z": 4
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 51.7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l2",
+      "id": "light_l2-r_concourse",
+      "value": {
+        "label": "Concourse light",
+        "position": {
+          "x": 0,
+          "y": 3.6,
+          "z": 4
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 51.7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "light_r_bay",
+      "value": {
+        "label": "Entrance bay light",
+        "position": {
+          "x": 0,
+          "y": 4.1,
+          "z": 23
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 12.5,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l2",
+      "id": "light_l2-r_bay",
+      "value": {
+        "label": "Entrance bay light",
+        "position": {
+          "x": 0,
+          "y": 3.6,
+          "z": 23
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 12.5,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_w_r_n1",
+      "value": {
+        "label": "West n1 light",
+        "position": {
+          "x": -29,
+          "y": 2.8000000000000003,
+          "z": -9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "light_l4-w_r_n1",
+      "value": {
+        "label": "West n1 light",
+        "position": {
+          "x": -29,
+          "y": 2.8000000000000003,
+          "z": -9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "light_l5-w_r_n1",
+      "value": {
+        "label": "West n1 light",
+        "position": {
+          "x": -29,
+          "y": 2.8000000000000003,
+          "z": -9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l6",
+      "id": "light_l6-w_r_n1",
+      "value": {
+        "label": "West n1 light",
+        "position": {
+          "x": -29,
+          "y": 2.8000000000000003,
+          "z": -9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l7",
+      "id": "light_l7-w_r_n1",
+      "value": {
+        "label": "West n1 light",
+        "position": {
+          "x": -29,
+          "y": 2.8000000000000003,
+          "z": -9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l8",
+      "id": "light_l8-w_r_n1",
+      "value": {
+        "label": "West n1 light",
+        "position": {
+          "x": -29,
+          "y": 2.8000000000000003,
+          "z": -9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l9",
+      "id": "light_l9-w_r_n1",
+      "value": {
+        "label": "West n1 light",
+        "position": {
+          "x": -29,
+          "y": 2.8000000000000003,
+          "z": -9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_w_r_n2",
+      "value": {
+        "label": "West n2 light",
+        "position": {
+          "x": -21.5,
+          "y": 2.8000000000000003,
+          "z": -6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "light_l4-w_r_n2",
+      "value": {
+        "label": "West n2 light",
+        "position": {
+          "x": -21.5,
+          "y": 2.8000000000000003,
+          "z": -6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "light_l5-w_r_n2",
+      "value": {
+        "label": "West n2 light",
+        "position": {
+          "x": -21.5,
+          "y": 2.8000000000000003,
+          "z": -6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l6",
+      "id": "light_l6-w_r_n2",
+      "value": {
+        "label": "West n2 light",
+        "position": {
+          "x": -21.5,
+          "y": 2.8000000000000003,
+          "z": -6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l7",
+      "id": "light_l7-w_r_n2",
+      "value": {
+        "label": "West n2 light",
+        "position": {
+          "x": -21.5,
+          "y": 2.8000000000000003,
+          "z": -6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l8",
+      "id": "light_l8-w_r_n2",
+      "value": {
+        "label": "West n2 light",
+        "position": {
+          "x": -21.5,
+          "y": 2.8000000000000003,
+          "z": -6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l9",
+      "id": "light_l9-w_r_n2",
+      "value": {
+        "label": "West n2 light",
+        "position": {
+          "x": -21.5,
+          "y": 2.8000000000000003,
+          "z": -6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_w_r_n3",
+      "value": {
+        "label": "West n3 light",
+        "position": {
+          "x": -16.5,
+          "y": 2.8000000000000003,
+          "z": -6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "light_l4-w_r_n3",
+      "value": {
+        "label": "West n3 light",
+        "position": {
+          "x": -16.5,
+          "y": 2.8000000000000003,
+          "z": -6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "light_l5-w_r_n3",
+      "value": {
+        "label": "West n3 light",
+        "position": {
+          "x": -16.5,
+          "y": 2.8000000000000003,
+          "z": -6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l6",
+      "id": "light_l6-w_r_n3",
+      "value": {
+        "label": "West n3 light",
+        "position": {
+          "x": -16.5,
+          "y": 2.8000000000000003,
+          "z": -6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l7",
+      "id": "light_l7-w_r_n3",
+      "value": {
+        "label": "West n3 light",
+        "position": {
+          "x": -16.5,
+          "y": 2.8000000000000003,
+          "z": -6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l8",
+      "id": "light_l8-w_r_n3",
+      "value": {
+        "label": "West n3 light",
+        "position": {
+          "x": -16.5,
+          "y": 2.8000000000000003,
+          "z": -6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l9",
+      "id": "light_l9-w_r_n3",
+      "value": {
+        "label": "West n3 light",
+        "position": {
+          "x": -16.5,
+          "y": 2.8000000000000003,
+          "z": -6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_w_r_s1",
+      "value": {
+        "label": "West s1 light",
+        "position": {
+          "x": -29,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "light_l4-w_r_s1",
+      "value": {
+        "label": "West s1 light",
+        "position": {
+          "x": -29,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "light_l5-w_r_s1",
+      "value": {
+        "label": "West s1 light",
+        "position": {
+          "x": -29,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l6",
+      "id": "light_l6-w_r_s1",
+      "value": {
+        "label": "West s1 light",
+        "position": {
+          "x": -29,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l7",
+      "id": "light_l7-w_r_s1",
+      "value": {
+        "label": "West s1 light",
+        "position": {
+          "x": -29,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l8",
+      "id": "light_l8-w_r_s1",
+      "value": {
+        "label": "West s1 light",
+        "position": {
+          "x": -29,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l9",
+      "id": "light_l9-w_r_s1",
+      "value": {
+        "label": "West s1 light",
+        "position": {
+          "x": -29,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_w_r_s2",
+      "value": {
+        "label": "West s2 light",
+        "position": {
+          "x": -21.5,
+          "y": 2.8000000000000003,
+          "z": 6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "light_l4-w_r_s2",
+      "value": {
+        "label": "West s2 light",
+        "position": {
+          "x": -21.5,
+          "y": 2.8000000000000003,
+          "z": 6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "light_l5-w_r_s2",
+      "value": {
+        "label": "West s2 light",
+        "position": {
+          "x": -21.5,
+          "y": 2.8000000000000003,
+          "z": 6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l6",
+      "id": "light_l6-w_r_s2",
+      "value": {
+        "label": "West s2 light",
+        "position": {
+          "x": -21.5,
+          "y": 2.8000000000000003,
+          "z": 6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l7",
+      "id": "light_l7-w_r_s2",
+      "value": {
+        "label": "West s2 light",
+        "position": {
+          "x": -21.5,
+          "y": 2.8000000000000003,
+          "z": 6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l8",
+      "id": "light_l8-w_r_s2",
+      "value": {
+        "label": "West s2 light",
+        "position": {
+          "x": -21.5,
+          "y": 2.8000000000000003,
+          "z": 6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l9",
+      "id": "light_l9-w_r_s2",
+      "value": {
+        "label": "West s2 light",
+        "position": {
+          "x": -21.5,
+          "y": 2.8000000000000003,
+          "z": 6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_w_r_s3",
+      "value": {
+        "label": "West s3 light",
+        "position": {
+          "x": -16.5,
+          "y": 2.8000000000000003,
+          "z": 6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "light_l4-w_r_s3",
+      "value": {
+        "label": "West s3 light",
+        "position": {
+          "x": -16.5,
+          "y": 2.8000000000000003,
+          "z": 6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "light_l5-w_r_s3",
+      "value": {
+        "label": "West s3 light",
+        "position": {
+          "x": -16.5,
+          "y": 2.8000000000000003,
+          "z": 6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l6",
+      "id": "light_l6-w_r_s3",
+      "value": {
+        "label": "West s3 light",
+        "position": {
+          "x": -16.5,
+          "y": 2.8000000000000003,
+          "z": 6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l7",
+      "id": "light_l7-w_r_s3",
+      "value": {
+        "label": "West s3 light",
+        "position": {
+          "x": -16.5,
+          "y": 2.8000000000000003,
+          "z": 6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l8",
+      "id": "light_l8-w_r_s3",
+      "value": {
+        "label": "West s3 light",
+        "position": {
+          "x": -16.5,
+          "y": 2.8000000000000003,
+          "z": 6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l9",
+      "id": "light_l9-w_r_s3",
+      "value": {
+        "label": "West s3 light",
+        "position": {
+          "x": -16.5,
+          "y": 2.8000000000000003,
+          "z": 6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_w_r_lobby",
+      "value": {
+        "label": "West lobby light",
+        "position": {
+          "x": -26.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "light_l4-w_r_lobby",
+      "value": {
+        "label": "West lobby light",
+        "position": {
+          "x": -26.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "light_l5-w_r_lobby",
+      "value": {
+        "label": "West lobby light",
+        "position": {
+          "x": -26.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l6",
+      "id": "light_l6-w_r_lobby",
+      "value": {
+        "label": "West lobby light",
+        "position": {
+          "x": -26.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l7",
+      "id": "light_l7-w_r_lobby",
+      "value": {
+        "label": "West lobby light",
+        "position": {
+          "x": -26.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l8",
+      "id": "light_l8-w_r_lobby",
+      "value": {
+        "label": "West lobby light",
+        "position": {
+          "x": -26.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l9",
+      "id": "light_l9-w_r_lobby",
+      "value": {
+        "label": "West lobby light",
+        "position": {
+          "x": -26.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_w_r_corr",
+      "value": {
+        "label": "West corr light",
+        "position": {
+          "x": -19,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.2,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "light_l4-w_r_corr",
+      "value": {
+        "label": "West corr light",
+        "position": {
+          "x": -19,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.2,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "light_l5-w_r_corr",
+      "value": {
+        "label": "West corr light",
+        "position": {
+          "x": -19,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.2,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l6",
+      "id": "light_l6-w_r_corr",
+      "value": {
+        "label": "West corr light",
+        "position": {
+          "x": -19,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.2,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l7",
+      "id": "light_l7-w_r_corr",
+      "value": {
+        "label": "West corr light",
+        "position": {
+          "x": -19,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.2,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l8",
+      "id": "light_l8-w_r_corr",
+      "value": {
+        "label": "West corr light",
+        "position": {
+          "x": -19,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.2,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l9",
+      "id": "light_l9-w_r_corr",
+      "value": {
+        "label": "West corr light",
+        "position": {
+          "x": -19,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.2,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_w_r_shaft",
+      "value": {
+        "label": "West shaft light",
+        "position": {
+          "x": -31.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "light_l4-w_r_shaft",
+      "value": {
+        "label": "West shaft light",
+        "position": {
+          "x": -31.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "light_l5-w_r_shaft",
+      "value": {
+        "label": "West shaft light",
+        "position": {
+          "x": -31.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l6",
+      "id": "light_l6-w_r_shaft",
+      "value": {
+        "label": "West shaft light",
+        "position": {
+          "x": -31.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l7",
+      "id": "light_l7-w_r_shaft",
+      "value": {
+        "label": "West shaft light",
+        "position": {
+          "x": -31.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l8",
+      "id": "light_l8-w_r_shaft",
+      "value": {
+        "label": "West shaft light",
+        "position": {
+          "x": -31.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l9",
+      "id": "light_l9-w_r_shaft",
+      "value": {
+        "label": "West shaft light",
+        "position": {
+          "x": -31.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_e_r_n1",
+      "value": {
+        "label": "East n1 light",
+        "position": {
+          "x": 29,
+          "y": 2.8000000000000003,
+          "z": -9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "light_l4-e_r_n1",
+      "value": {
+        "label": "East n1 light",
+        "position": {
+          "x": 29,
+          "y": 2.8000000000000003,
+          "z": -9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "light_l5-e_r_n1",
+      "value": {
+        "label": "East n1 light",
+        "position": {
+          "x": 29,
+          "y": 2.8000000000000003,
+          "z": -9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l6",
+      "id": "light_l6-e_r_n1",
+      "value": {
+        "label": "East n1 light",
+        "position": {
+          "x": 29,
+          "y": 2.8000000000000003,
+          "z": -9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l7",
+      "id": "light_l7-e_r_n1",
+      "value": {
+        "label": "East n1 light",
+        "position": {
+          "x": 29,
+          "y": 2.8000000000000003,
+          "z": -9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_e_r_n2",
+      "value": {
+        "label": "East n2 light",
+        "position": {
+          "x": 21.5,
+          "y": 2.8000000000000003,
+          "z": -6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "light_l4-e_r_n2",
+      "value": {
+        "label": "East n2 light",
+        "position": {
+          "x": 21.5,
+          "y": 2.8000000000000003,
+          "z": -6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "light_l5-e_r_n2",
+      "value": {
+        "label": "East n2 light",
+        "position": {
+          "x": 21.5,
+          "y": 2.8000000000000003,
+          "z": -6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l6",
+      "id": "light_l6-e_r_n2",
+      "value": {
+        "label": "East n2 light",
+        "position": {
+          "x": 21.5,
+          "y": 2.8000000000000003,
+          "z": -6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l7",
+      "id": "light_l7-e_r_n2",
+      "value": {
+        "label": "East n2 light",
+        "position": {
+          "x": 21.5,
+          "y": 2.8000000000000003,
+          "z": -6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_e_r_n3",
+      "value": {
+        "label": "East n3 light",
+        "position": {
+          "x": 16.5,
+          "y": 2.8000000000000003,
+          "z": -6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "light_l4-e_r_n3",
+      "value": {
+        "label": "East n3 light",
+        "position": {
+          "x": 16.5,
+          "y": 2.8000000000000003,
+          "z": -6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "light_l5-e_r_n3",
+      "value": {
+        "label": "East n3 light",
+        "position": {
+          "x": 16.5,
+          "y": 2.8000000000000003,
+          "z": -6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l6",
+      "id": "light_l6-e_r_n3",
+      "value": {
+        "label": "East n3 light",
+        "position": {
+          "x": 16.5,
+          "y": 2.8000000000000003,
+          "z": -6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l7",
+      "id": "light_l7-e_r_n3",
+      "value": {
+        "label": "East n3 light",
+        "position": {
+          "x": 16.5,
+          "y": 2.8000000000000003,
+          "z": -6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_e_r_s1",
+      "value": {
+        "label": "East s1 light",
+        "position": {
+          "x": 29,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "light_l4-e_r_s1",
+      "value": {
+        "label": "East s1 light",
+        "position": {
+          "x": 29,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "light_l5-e_r_s1",
+      "value": {
+        "label": "East s1 light",
+        "position": {
+          "x": 29,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l6",
+      "id": "light_l6-e_r_s1",
+      "value": {
+        "label": "East s1 light",
+        "position": {
+          "x": 29,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l7",
+      "id": "light_l7-e_r_s1",
+      "value": {
+        "label": "East s1 light",
+        "position": {
+          "x": 29,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_e_r_s2",
+      "value": {
+        "label": "East s2 light",
+        "position": {
+          "x": 21.5,
+          "y": 2.8000000000000003,
+          "z": 6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "light_l4-e_r_s2",
+      "value": {
+        "label": "East s2 light",
+        "position": {
+          "x": 21.5,
+          "y": 2.8000000000000003,
+          "z": 6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "light_l5-e_r_s2",
+      "value": {
+        "label": "East s2 light",
+        "position": {
+          "x": 21.5,
+          "y": 2.8000000000000003,
+          "z": 6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l6",
+      "id": "light_l6-e_r_s2",
+      "value": {
+        "label": "East s2 light",
+        "position": {
+          "x": 21.5,
+          "y": 2.8000000000000003,
+          "z": 6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l7",
+      "id": "light_l7-e_r_s2",
+      "value": {
+        "label": "East s2 light",
+        "position": {
+          "x": 21.5,
+          "y": 2.8000000000000003,
+          "z": 6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_e_r_s3",
+      "value": {
+        "label": "East s3 light",
+        "position": {
+          "x": 16.5,
+          "y": 2.8000000000000003,
+          "z": 6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "light_l4-e_r_s3",
+      "value": {
+        "label": "East s3 light",
+        "position": {
+          "x": 16.5,
+          "y": 2.8000000000000003,
+          "z": 6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "light_l5-e_r_s3",
+      "value": {
+        "label": "East s3 light",
+        "position": {
+          "x": 16.5,
+          "y": 2.8000000000000003,
+          "z": 6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l6",
+      "id": "light_l6-e_r_s3",
+      "value": {
+        "label": "East s3 light",
+        "position": {
+          "x": 16.5,
+          "y": 2.8000000000000003,
+          "z": 6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l7",
+      "id": "light_l7-e_r_s3",
+      "value": {
+        "label": "East s3 light",
+        "position": {
+          "x": 16.5,
+          "y": 2.8000000000000003,
+          "z": 6.625
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.1,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_e_r_lobby",
+      "value": {
+        "label": "East lobby light",
+        "position": {
+          "x": 26.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "light_l4-e_r_lobby",
+      "value": {
+        "label": "East lobby light",
+        "position": {
+          "x": 26.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "light_l5-e_r_lobby",
+      "value": {
+        "label": "East lobby light",
+        "position": {
+          "x": 26.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l6",
+      "id": "light_l6-e_r_lobby",
+      "value": {
+        "label": "East lobby light",
+        "position": {
+          "x": 26.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l7",
+      "id": "light_l7-e_r_lobby",
+      "value": {
+        "label": "East lobby light",
+        "position": {
+          "x": 26.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_e_r_corr",
+      "value": {
+        "label": "East corr light",
+        "position": {
+          "x": 19,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.2,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "light_l4-e_r_corr",
+      "value": {
+        "label": "East corr light",
+        "position": {
+          "x": 19,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.2,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "light_l5-e_r_corr",
+      "value": {
+        "label": "East corr light",
+        "position": {
+          "x": 19,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.2,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l6",
+      "id": "light_l6-e_r_corr",
+      "value": {
+        "label": "East corr light",
+        "position": {
+          "x": 19,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.2,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l7",
+      "id": "light_l7-e_r_corr",
+      "value": {
+        "label": "East corr light",
+        "position": {
+          "x": 19,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 6.2,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_e_r_shaft",
+      "value": {
+        "label": "East shaft light",
+        "position": {
+          "x": 31.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "light_l4-e_r_shaft",
+      "value": {
+        "label": "East shaft light",
+        "position": {
+          "x": 31.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "light_l5-e_r_shaft",
+      "value": {
+        "label": "East shaft light",
+        "position": {
+          "x": 31.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l6",
+      "id": "light_l6-e_r_shaft",
+      "value": {
+        "label": "East shaft light",
+        "position": {
+          "x": 31.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l7",
+      "id": "light_l7-e_r_shaft",
+      "value": {
+        "label": "East shaft light",
+        "position": {
+          "x": 31.5,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 7.8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l6",
+      "id": "light_r_bridge",
+      "value": {
+        "label": "Sky bridge light",
+        "position": {
+          "x": 0,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 17,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_-36_-15",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": -36,
+          "y": 2.8000000000000003,
+          "z": -15
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_-36_-3",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": -36,
+          "y": 2.8000000000000003,
+          "z": -3
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_-36_9",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": -36,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_-36_17",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": -36,
+          "y": 2.8000000000000003,
+          "z": 17
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_-24_-15",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": -24,
+          "y": 2.8000000000000003,
+          "z": -15
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_-24_-3",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": -24,
+          "y": 2.8000000000000003,
+          "z": -3
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_-24_9",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": -24,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_-24_17",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": -24,
+          "y": 2.8000000000000003,
+          "z": 17
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_-12_-15",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": -12,
+          "y": 2.8000000000000003,
+          "z": -15
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_-12_-3",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": -12,
+          "y": 2.8000000000000003,
+          "z": -3
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_-12_9",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": -12,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_-12_17",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": -12,
+          "y": 2.8000000000000003,
+          "z": 17
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_0_-15",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": 0,
+          "y": 2.8000000000000003,
+          "z": -15
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_0_-3",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": 0,
+          "y": 2.8000000000000003,
+          "z": -3
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_0_9",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": 0,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_0_17",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": 0,
+          "y": 2.8000000000000003,
+          "z": 17
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_12_-15",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": 12,
+          "y": 2.8000000000000003,
+          "z": -15
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_12_-3",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": 12,
+          "y": 2.8000000000000003,
+          "z": -3
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_12_9",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": 12,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_12_17",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": 12,
+          "y": 2.8000000000000003,
+          "z": 17
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_24_-15",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": 24,
+          "y": 2.8000000000000003,
+          "z": -15
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_24_-3",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": 24,
+          "y": 2.8000000000000003,
+          "z": -3
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_24_9",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": 24,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_24_17",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": 24,
+          "y": 2.8000000000000003,
+          "z": 17
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_36_-15",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": 36,
+          "y": 2.8000000000000003,
+          "z": -15
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_36_-3",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": 36,
+          "y": 2.8000000000000003,
+          "z": -3
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_36_9",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": 36,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b2",
+      "id": "light_b2_grid_36_17",
+      "value": {
+        "label": "B2 grid light",
+        "position": {
+          "x": 36,
+          "y": 2.8000000000000003,
+          "z": 17
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_b1_grid_-36_-3",
+      "value": {
+        "label": "B1 grid light",
+        "position": {
+          "x": -36,
+          "y": 2.8000000000000003,
+          "z": -3
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_b1_grid_-36_9",
+      "value": {
+        "label": "B1 grid light",
+        "position": {
+          "x": -36,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_b1_grid_-36_17",
+      "value": {
+        "label": "B1 grid light",
+        "position": {
+          "x": -36,
+          "y": 2.8000000000000003,
+          "z": 17
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_b1_grid_-24_-3",
+      "value": {
+        "label": "B1 grid light",
+        "position": {
+          "x": -24,
+          "y": 2.8000000000000003,
+          "z": -3
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_b1_grid_-24_9",
+      "value": {
+        "label": "B1 grid light",
+        "position": {
+          "x": -24,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_b1_grid_-24_17",
+      "value": {
+        "label": "B1 grid light",
+        "position": {
+          "x": -24,
+          "y": 2.8000000000000003,
+          "z": 17
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_b1_grid_-12_-3",
+      "value": {
+        "label": "B1 grid light",
+        "position": {
+          "x": -12,
+          "y": 2.8000000000000003,
+          "z": -3
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_b1_grid_-12_9",
+      "value": {
+        "label": "B1 grid light",
+        "position": {
+          "x": -12,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_b1_grid_-12_17",
+      "value": {
+        "label": "B1 grid light",
+        "position": {
+          "x": -12,
+          "y": 2.8000000000000003,
+          "z": 17
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_b1_grid_0_-3",
+      "value": {
+        "label": "B1 grid light",
+        "position": {
+          "x": 0,
+          "y": 2.8000000000000003,
+          "z": -3
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_b1_grid_0_9",
+      "value": {
+        "label": "B1 grid light",
+        "position": {
+          "x": 0,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_b1_grid_0_17",
+      "value": {
+        "label": "B1 grid light",
+        "position": {
+          "x": 0,
+          "y": 2.8000000000000003,
+          "z": 17
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_b1_grid_12_-3",
+      "value": {
+        "label": "B1 grid light",
+        "position": {
+          "x": 12,
+          "y": 2.8000000000000003,
+          "z": -3
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_b1_grid_12_9",
+      "value": {
+        "label": "B1 grid light",
+        "position": {
+          "x": 12,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_b1_grid_12_17",
+      "value": {
+        "label": "B1 grid light",
+        "position": {
+          "x": 12,
+          "y": 2.8000000000000003,
+          "z": 17
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_b1_grid_24_-3",
+      "value": {
+        "label": "B1 grid light",
+        "position": {
+          "x": 24,
+          "y": 2.8000000000000003,
+          "z": -3
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_b1_grid_24_9",
+      "value": {
+        "label": "B1 grid light",
+        "position": {
+          "x": 24,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_b1_grid_24_17",
+      "value": {
+        "label": "B1 grid light",
+        "position": {
+          "x": 24,
+          "y": 2.8000000000000003,
+          "z": 17
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_b1_grid_36_-3",
+      "value": {
+        "label": "B1 grid light",
+        "position": {
+          "x": 36,
+          "y": 2.8000000000000003,
+          "z": -3
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_b1_grid_36_9",
+      "value": {
+        "label": "B1 grid light",
+        "position": {
+          "x": 36,
+          "y": 2.8000000000000003,
+          "z": 9
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "b1",
+      "id": "light_b1_grid_36_17",
+      "value": {
+        "label": "B1 grid light",
+        "position": {
+          "x": 36,
+          "y": 2.8000000000000003,
+          "z": 17
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 9,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_terrace_-30_-14",
+      "value": {
+        "label": "Terrace light",
+        "position": {
+          "x": -30,
+          "y": 2.8000000000000003,
+          "z": -14
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_terrace_-15_-14",
+      "value": {
+        "label": "Terrace light",
+        "position": {
+          "x": -15,
+          "y": 2.8000000000000003,
+          "z": -14
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_terrace_15_-14",
+      "value": {
+        "label": "Terrace light",
+        "position": {
+          "x": 15,
+          "y": 2.8000000000000003,
+          "z": -14
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_terrace_30_-14",
+      "value": {
+        "label": "Terrace light",
+        "position": {
+          "x": 30,
+          "y": 2.8000000000000003,
+          "z": -14
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_terrace_-30_0",
+      "value": {
+        "label": "Terrace light",
+        "position": {
+          "x": -30,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_terrace_-15_0",
+      "value": {
+        "label": "Terrace light",
+        "position": {
+          "x": -15,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_terrace_15_0",
+      "value": {
+        "label": "Terrace light",
+        "position": {
+          "x": 15,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_terrace_30_0",
+      "value": {
+        "label": "Terrace light",
+        "position": {
+          "x": 30,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_terrace_-30_14",
+      "value": {
+        "label": "Terrace light",
+        "position": {
+          "x": -30,
+          "y": 2.8000000000000003,
+          "z": 14
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_terrace_-15_14",
+      "value": {
+        "label": "Terrace light",
+        "position": {
+          "x": -15,
+          "y": 2.8000000000000003,
+          "z": 14
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_terrace_15_14",
+      "value": {
+        "label": "Terrace light",
+        "position": {
+          "x": 15,
+          "y": 2.8000000000000003,
+          "z": 14
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l3",
+      "id": "light_terrace_30_14",
+      "value": {
+        "label": "Terrace light",
+        "position": {
+          "x": 30,
+          "y": 2.8000000000000003,
+          "z": 14
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l6",
+      "id": "light_bridge_w",
+      "value": {
+        "label": "Bridge light west",
+        "position": {
+          "x": -7,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l6",
+      "id": "light_bridge_e",
+      "value": {
+        "label": "Bridge light east",
+        "position": {
+          "x": 7,
+          "y": 2.8000000000000003,
+          "z": 0
+        },
+        "color": {
+          "r": 1,
+          "g": 0.94,
+          "b": 0.85
+        },
+        "energy": 1.2,
+        "range": 8,
+        "shadows": false
+      }
+    },
+    {
+      "op": "marker.add",
+      "floorId": "floor_1",
+      "id": "spawn_main",
+      "value": {
+        "label": "Player spawn: main entrance",
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 28
+        },
+        "details": "Outside the bay doors, facing north."
+      }
+    },
+    {
+      "op": "marker.add",
+      "floorId": "b2",
+      "id": "spawn_parking",
+      "value": {
+        "label": "Player spawn: parking",
+        "position": {
+          "x": -20,
+          "y": 0,
+          "z": 10
+        },
+        "details": ""
+      }
+    },
+    {
+      "op": "marker.add",
+      "floorId": "l9",
+      "id": "goal_penthouse",
+      "value": {
+        "label": "Goal: penthouse",
+        "position": {
+          "x": -21.5,
+          "y": 0,
+          "z": -6
+        },
+        "details": ""
+      }
+    },
+    {
+      "op": "marker.add",
+      "floorId": "l8",
+      "id": "goal_east_roof",
+      "value": {
+        "label": "Goal: east roof deck",
+        "position": {
+          "x": 24,
+          "y": 0,
+          "z": 0
+        },
+        "details": ""
+      }
+    },
+    {
+      "op": "marker.add",
+      "floorId": "l6",
+      "id": "mid_bridge",
+      "value": {
+        "label": "Sky bridge midpoint",
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "details": ""
+      }
+    }
+  ]
+}

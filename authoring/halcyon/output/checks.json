@@ -1,0 +1,119 @@
+{
+  "kind": "building-check-report",
+  "formatVersion": 1,
+  "policy": {
+    "warningsAsErrors": true
+  },
+  "ok": true,
+  "counts": {
+    "documents": 1,
+    "errors": 0,
+    "warnings": 0
+  },
+  "results": [
+    {
+      "file": "halcyon.building.json",
+      "building": {
+        "name": "Halcyon twin towers",
+        "schemaVersion": 10
+      },
+      "validationStage": "prepared-document",
+      "normalized": false,
+      "ok": true,
+      "counts": {
+        "errors": 0,
+        "warnings": 0
+      },
+      "errors": [],
+      "warnings": [],
+      "routeCheck": {
+        "ok": true,
+        "from": [
+          "open ground outside the ground floor",
+          "route start (0, 24) on floor_1"
+        ],
+        "starts": [
+          {
+            "x": 0,
+            "z": 24,
+            "floorId": "floor_1",
+            "ok": true
+          }
+        ],
+        "settings": {
+          "cell": 0.1,
+          "radius": 0.25,
+          "minArea": 1,
+          "bodyHeight": 1.8
+        },
+        "floors": [
+          {
+            "floorId": "b2",
+            "walkableArea": 2928.27,
+            "reachedArea": 2928.27
+          },
+          {
+            "floorId": "b1",
+            "walkableArea": 2864.93,
+            "reachedArea": 2864.93
+          },
+          {
+            "floorId": "floor_1",
+            "walkableArea": 2954.29,
+            "reachedArea": 2954.29
+          },
+          {
+            "floorId": "l2",
+            "walkableArea": 2803.19,
+            "reachedArea": 2803.19
+          },
+          {
+            "floorId": "l3",
+            "walkableArea": 2798.44,
+            "reachedArea": 2798.44
+          },
+          {
+            "floorId": "l4",
+            "walkableArea": 705.53,
+            "reachedArea": 705.53
+          },
+          {
+            "floorId": "l5",
+            "walkableArea": 699.76,
+            "reachedArea": 699.76
+          },
+          {
+            "floorId": "l6",
+            "walkableArea": 794.33,
+            "reachedArea": 794.33
+          },
+          {
+            "floorId": "l7",
+            "walkableArea": 699.76,
+            "reachedArea": 699.76
+          },
+          {
+            "floorId": "l8",
+            "walkableArea": 792.37,
+            "reachedArea": 792.37
+          },
+          {
+            "floorId": "l9",
+            "walkableArea": 359.12,
+            "reachedArea": 359.12
+          }
+        ],
+        "unreachableAreas": 0,
+        "stairIssues": 0,
+        "note": "Static connectivity from open ground (and any route start points) through doors, empty passages and stairs; walls/railings are inflated by the walker radius, shaped walls by their profile up to body height. Not a physics, headroom or door-swing check."
+      }
+    }
+  ],
+  "verification": {
+    "scope": "Authoring validation only. A clear report does not certify geometry, collision clearance or playability.",
+    "godot": "not-run",
+    "collisionClearance": "not-verified",
+    "routeCheck": "static-check-run"
+  },
+  "usage": "Diagnostic snapshot, not a building file. Save the building JSON separately to reproduce or edit it."
+}

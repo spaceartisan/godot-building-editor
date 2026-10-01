@@ -3,6 +3,8 @@
 ## Current direction: cleanup
 
 - [x] 1.4.0: Kestrel starship stress test (wall-type, doorway-shape and light transactions; route starts and profile-aware route check; uniform ceilings; junction miters) and a code audit (scene-text escaping, route check in reports, wall-loop closing, render guard, malformed-light errors, browser suite repaired).
+- [x] Halcyon limit test ([findings](authoring/halcyon/FINDINGS.md)): up to 15× faster export and 4.5× faster edits on large plans (byte-identical output), void review warning scoped to overlapping surfaces, T-junction outline advice, floor-stack wording, surface colours for primitive roofs.
+- [ ] Halcyon decisions: ceilings under open sky with roof `none` (H3), acute exterior corner spikes (H5), a shared `wall.split` operation (H1).
 - [x] Web/CLI parity: transactions for markers, manual floors/ceilings, Floor Footprints, floor insertion/duplication/reordering/removal, group move and door/window mesh settings.
 - [x] 1.3.0: fix the AI-authoring findings from the Ravenhold castle exercise: `new`, `building.update`, floor surface/boundary fields, opt-in `--reachability`, `godot-check --render`, `wall.crenellate`, railing transactions, world-point openings, per-ID diffs, coverage-aware boundary warnings. Per-wall thickness and per-region open-to-sky remain open.
 

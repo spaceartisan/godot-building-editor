@@ -1,10 +1,12 @@
 import { regionPolygonProblem, regionBounds } from './regions.js';
 import { prepareDocument, resolvedFloorDimensions, inspectStair, inspectPlatform, inspectFloorCoverage } from './diagnostics.js';
 import { validateBuilding } from './validation.js';
-import { makeOmniLight, floorView, makeRegion, makeRoofSection, makeStair, makePlatform, makeRailing, wallLength, rectValid, REGION_KINDS, REGION_EFFECTS, validateOpeningLayout } from './model.js';
+import { makeOmniLight, makeManualSurface, makeRectArea, floorView, makeRegion, makeRoofSection, makeStair, makePlatform, makeRailing, wallLength, rectValid, REGION_KINDS, REGION_EFFECTS, validateOpeningLayout } from './model.js';
 import { proposeEndpointMove } from './wall-edit.js';
 import { wallSegmentProblem, proposePlatformUpdate, proposeCrenellation } from './authoring.js';
 import {proposeFloorStackEdit} from './floor-stack.js';
+import {markerProblem} from './markers.js';
+import {proposeGroupMove} from './group-edit.js';
 import {wallTypeProblem,followWallThickness} from './wall-types.js';
 import {openingShapeProblem} from './opening-shapes.js';
 
@@ -24,8 +26,9 @@ function number(value,where,min=-1e6,max=1e6){if(typeof value!=='number'||!Numbe
 function choice(value,allowed,where){if(!allowed.includes(value))fail(`Expected one of: ${allowed.join(', ')}`,where);}
 function point(value,where){keys(value,['x','z'],where);number(value.x,`${where}/x`);number(value.z,`${where}/z`);}
 const rectKeys=['minX','maxX','minZ','maxZ'];
+const GROUP_TYPES=['wall','opening','light','marker','stair','railing','region','slab','platform','manualFloor','manualCeiling','roofSection'];
 const fields={
-  building:['name','exportProfile','wallHeight','wallThickness','floorThickness','gridSize','roof','ceiling'],
+  building:['name','exportProfile','wallHeight','wallThickness','floorThickness','gridSize','roof','ceiling','doorMesh','windowMesh'],
   floor:['label','elevation','wallHeight','floorThickness','autoFloor','autoCeiling','boundaryMode'],
   platform:['label',...rectKeys,'kind','height','covered'],
   stair:['label','x','z','width','run','direction','style','steps','blockBelow'],
@@ -36,6 +39,13 @@ const fields={
   railing:['label','a','b','height','style'],
   // Omni lights, as placed by the web Light tool; position.y is the height above the floor.
   light:['label','position','color','energy','range','shadows'],
+  // Named reference points (web Marker tool); position.y is height above the floor.
+  marker:['label','details','position'],
+  // Floor Footprints (web Floor Footprint tool) override the automatic slab outline.
+  slab:['label',...rectKeys],
+  // Independent building-level slabs with absolute top heights (web Manual Floor/Ceiling).
+  manualFloor:['label',...rectKeys,'topY','thickness'],
+  manualCeiling:['label',...rectKeys,'topY','thickness'],
   opening:['label','type','wallId','t','at','width','height','sill','doorStyle','windowStyle','shapeId'],
   roof:['label',...rectKeys,'type','direction','baseY','pitch','overhang','gableEnds','hostRoofId','edgeModes'],
   region:['label',...rectKeys,'kind','effect','polygon'],
@@ -72,6 +82,12 @@ function checkValue(kind,value,action,where){
         if(v.pitch!==undefined)number(v.pitch,`${p}/pitch`,5,70);
         if(v.overhang!==undefined)number(v.overhang,`${p}/overhang`,0,100);
       }else if(key==='ceiling'){keys(v,['thickness'],p);if(v.thickness===undefined)fail('Provide ceiling thickness',p);number(v.thickness,`${p}/thickness`,.02,100);}
+      else if(key==='doorMesh'||key==='windowMesh'){
+        // Minimums match the web Door/Window mesh settings.
+        const limits=key==='doorMesh'?{frameWidth:.03,frameDepth:.03,panelThickness:.02,detailDepth:.005}:{frameWidth:.02,frameDepth:.02,glassThickness:.005};
+        keys(v,['enabled',...Object.keys(limits)],p);if(!Object.keys(v).length)fail(`Provide at least one ${key} field`,p);
+        for(const [field,value] of Object.entries(v)){if(field==='enabled'){if(typeof value!=='boolean')fail('Expected a boolean',`${p}/${field}`);}else number(value,`${p}/${field}`,limits[field],100);}
+      }
       else number(v,p,key==='wallHeight'?.2:key==='wallThickness'?.02:.001,key==='wallHeight'||key==='gridSize'?1000:100);
     }
     else if(kind==='floor'){
@@ -84,6 +100,11 @@ function checkValue(kind,value,action,where){
     else if(kind==='wall'&&key==='wallTypeId'){if(v!==null)text(v,p);}
     else if(kind==='wall'&&key==='inwardSide')choice(v,['auto','left','right'],p);
     else if(kind==='wall'&&key==='inwardToward')point(v,p);
+    else if(kind==='marker'){
+      if(key==='details'){if(v!==null&&typeof v!=='string')fail('Expected text',p);}
+      else if(key==='position'){keys(v,['x','y','z'],p);for(const axis of ['x','y','z']){if(!Object.hasOwn(v,axis))fail(`Missing required field: ${axis}`,p);number(v[axis],`${p}/${axis}`);}}
+    }
+    else if(kind==='manualFloor'||kind==='manualCeiling'){number(v,p,key==='thickness'?.01:-1e6,key==='thickness'?10000:1e6);}
     else if(kind==='light'){
       if(key==='position'){keys(v,['x','y','z'],p);for(const axis of ['x','y','z']){if(!Object.hasOwn(v,axis))fail(`Missing required field: ${axis}`,p);number(v[axis],`${p}/${axis}`);}}
       else if(key==='color'){keys(v,['r','g','b','a'],p);for(const c of ['r','g','b']){if(!Object.hasOwn(v,c))fail(`Missing required field: ${c}`,p);number(v[c],`${p}/${c}`,0,1);}if(v.a!==undefined)number(v.a,`${p}/a`,0,1);}
@@ -123,7 +144,9 @@ function checkValue(kind,value,action,where){
   if(action==='add'&&(kind==='wallType'||kind==='openingShape'))for(const required of ['label',kind==='wallType'?'stations':'points'])if(!Object.hasOwn(value,required))fail(`Missing required field: ${required}`,where);
   if(kind==='crenellation')for(const required of ['crenelWidth','merlonWidth','depth'])if(!Object.hasOwn(value,required))fail(`Missing required field: ${required}`,where);
   if(action==='add'&&kind==='light'&&!Object.hasOwn(value,'position'))fail('Missing required field: position',where);
-  if(action==='add'&&kind!=='wallType'&&kind!=='openingShape'&&kind!=='light')for(const required of kind==='stair'?['x','z','width','run','direction']:kind==='wall'||kind==='railing'?['a','b']:kind==='opening'?['type','wallId',Object.hasOwn(value,'at')?'at':'t','width','height']:kind==='region'&&value.polygon?['polygon']:rectKeys)
+  if(action==='add'&&kind==='marker'&&!Object.hasOwn(value,'position'))fail('Missing required field: position',where);
+  if(action==='add'&&(kind==='manualFloor'||kind==='manualCeiling'))for(const required of [...rectKeys,'topY'])if(!Object.hasOwn(value,required))fail(`Missing required field: ${required}`,where);
+  if(action==='add'&&!['wallType','openingShape','light','marker','manualFloor','manualCeiling'].includes(kind))for(const required of kind==='stair'?['x','z','width','run','direction']:kind==='wall'||kind==='railing'?['a','b']:kind==='opening'?['type','wallId',Object.hasOwn(value,'at')?'at':'t','width','height']:kind==='region'&&value.polygon?['polygon']:rectKeys)
     if(!Object.hasOwn(value,required))fail(`Missing required field: ${required}`,where);
 }
 
@@ -136,19 +159,37 @@ export function validateTransaction(transaction){
     const p=`operations/${index}`;
     if(!object(op)||typeof op.op!=='string')fail('Expected an operation object with an op name',p);
     const [kind,action,...extra]=op.op.split('.');
-    if(extra.length||!Object.hasOwn(fields,kind)||!(kind==='floor'?['update','add-top','remove-top']:kind==='building'?['update']:['add','update','remove',...(kind==='wall'?['move-endpoint','crenellate']:[])]).includes(action))fail(`Unknown operation: ${op.op}`,p);
+    const actions=kind==='floor'?['update','add-top','remove-top','insert','duplicate','move','remove']:kind==='building'?['update']:kind==='group'?['move']:['add','update','remove',...(kind==='wall'?['move-endpoint','crenellate']:[])];
+    if(extra.length||!(Object.hasOwn(fields,kind)||kind==='group')||!actions.includes(action))fail(`Unknown operation: ${op.op}`,p);
+    if(kind==='group'){
+      // group.move: the web Move selection / group drag, on one floor.
+      keys(op,['op','floorId','items','delta','connected'],p);text(op.floorId,`${p}/floorId`);
+      if(!Array.isArray(op.items)||!op.items.length||op.items.length>10000)fail('items must be a nonempty array of {type, id}',`${p}/items`);
+      op.items.forEach((item,i)=>{keys(item,['type','id'],`${p}/items/${i}`);choice(item.type,GROUP_TYPES,`${p}/items/${i}/type`);text(item.id,`${p}/items/${i}/id`);});
+      point(op.delta,`${p}/delta`);if(op.connected!==undefined&&typeof op.connected!=='boolean')fail('connected must be boolean',`${p}/connected`);
+      return;
+    }
     if(kind==='wall'&&action==='crenellate'){
       keys(op,['op','id','floorId','value'],p);text(op.id,`${p}/id`);text(op.floorId,`${p}/floorId`);
       checkValue('crenellation',op.value,'crenellate',`${p}/value`);return;
     }
     if(kind==='building'){keys(op,['op','value'],p);checkValue(kind,op.value,action,`${p}/value`);return;}
     if(kind==='floor'&&action!=='update'){
-      keys(op,['op','id',...(action==='add-top'?['aboveFloorId','value']:['removeContents','removeAffectedStairs'])],p);text(op.id,`${p}/id`);
+      const allowed={'add-top':['aboveFloorId','value'],'remove-top':['removeContents','removeAffectedStairs'],remove:['removeContents','removeAffectedStairs'],
+        insert:['aboveFloorId','belowFloorId','value','removeAffectedStairs'],duplicate:['sourceFloorId','value','removeAffectedStairs'],move:['direction','removeAffectedStairs']}[action];
+      keys(op,['op','id',...allowed],p);text(op.id,`${p}/id`);
       if(action==='add-top'){text(op.aboveFloorId,`${p}/aboveFloorId`);if(op.value!==undefined)checkValue(kind,op.value,action,`${p}/value`);}
-      else for(const key of ['removeContents','removeAffectedStairs'])if(op[key]!==undefined&&typeof op[key]!=='boolean')fail('Expected a boolean',`${p}/${key}`);
+      if(action==='insert'){
+        if(Object.hasOwn(op,'aboveFloorId')===Object.hasOwn(op,'belowFloorId'))fail('Give exactly one of aboveFloorId or belowFloorId',p);
+        text(op.aboveFloorId??op.belowFloorId,`${p}/${Object.hasOwn(op,'aboveFloorId')?'aboveFloorId':'belowFloorId'}`);
+        if(op.value!==undefined)checkValue(kind,op.value,'add-top',`${p}/value`);
+      }
+      if(action==='duplicate'){text(op.sourceFloorId,`${p}/sourceFloorId`);if(op.value!==undefined)checkValue(kind,op.value,'add-top',`${p}/value`);}
+      if(action==='move')choice(op.direction,['up','down'],`${p}/direction`);
+      for(const key of ['removeContents','removeAffectedStairs'])if(op[key]!==undefined&&typeof op[key]!=='boolean')fail('Expected a boolean',`${p}/${key}`);
       return;
     }
-    const scoped=!['roof','floor','wallType','openingShape'].includes(kind);
+    const scoped=!['roof','floor','wallType','openingShape','manualFloor','manualCeiling'].includes(kind);
     keys(op,['op','id',...(scoped?['floorId']:[]),...(['add','update'].includes(action)?['value']:action==='move-endpoint'?['end','point','connected']:[])],p);
     text(op.id,`${p}/id`);if(scoped)text(op.floorId,`${p}/floorId`);
     if(['add','update'].includes(action))checkValue(kind,op.value,action,`${p}/value`);
@@ -195,7 +236,7 @@ function applyOperation(building,op,index){
     // Nested settings merge field by field; numeric changes are checked by
     // final validation (opening fit, stair rise, junction clearance).
     for(const [key,value] of Object.entries(op.value)){
-      if(key==='roof'||key==='ceiling')building[key]={...(building[key]||{}),...value};
+      if(['roof','ceiling','doorMesh','windowMesh'].includes(key))building[key]={...(building[key]||{}),...value};
       else{
         // Profile stations at the old wall thickness follow the new one (shared with the web setting).
         if(key==='wallThickness')followWallThickness(building,building.wallThickness,value);
@@ -227,6 +268,7 @@ function applyOperation(building,op,index){
       building.floors=result.building.floors;
       return {action:'removed',floorId:op.id,aboveFloorId:building.floors.at(-1).id,removedEntities:contents,removedIncomingStairs:result.affectedStairs};
     }
+    if(['insert','duplicate','move','remove'].includes(action))return applyFloorStack(building,op,action,p);
     const floor=building.floors.find(f=>f.id===op.id);
     if(!floor)fail(`Unknown floor ID: ${op.id}`,p);
     for(const [key,value] of Object.entries(op.value)){
@@ -236,9 +278,32 @@ function applyOperation(building,op,index){
     return;
   }
   if(kind==='wallType'||kind==='openingShape')return applySharedDefinition(building,op,kind,action,p);
+  if(kind==='group'){
+    const fi=building.floors.findIndex(f=>f.id===op.floorId);if(fi<0)fail(`Unknown floor ID: ${op.floorId}`,p);
+    // Same proposal as the web Move selection; validated again with the final building.
+    const result=proposeGroupMove(building,fi,op.items,op.delta,{connected:op.connected!==false});
+    if(!result.ok)fail(result.reason,p);
+    Object.assign(building,result.building);return;
+  }
+  if(kind==='manualFloor'||kind==='manualCeiling'){
+    const key=kind==='manualFloor'?'manualFloors':'manualCeilings',list=building[key] ||= [],item=list.find(v=>v.id===op.id);
+    if(action==='add'&&item)fail(`ID already exists: ${op.id}`,p);
+    if(action!=='add'&&!item)fail(`Unknown ${kind} ID: ${op.id}`,p);
+    if(action==='remove'){list.splice(list.indexOf(item),1);return;}
+    const v=op.value,isCeiling=kind==='manualCeiling';
+    if(action==='add'){
+      // Defaults match the web tools: building floor / ceiling thickness.
+      const thickness=v.thickness??(isCeiling?Number(building.ceiling?.thickness)||.12:Number(building.floorThickness)||.18);
+      const made=makeManualSurface({x:v.minX,z:v.minZ},{x:v.maxX,z:v.maxZ},isCeiling?'ceiling':'floor',v.topY,thickness,v.label||'');
+      list.push({...made,minX:v.minX,maxX:v.maxX,minZ:v.minZ,maxZ:v.maxZ,id:op.id});
+    }else Object.assign(item,structuredClone(v));
+    const updated=list.find(q=>q.id===op.id);
+    if(!rectValid(updated)||updated.minX>updated.maxX||updated.minZ>updated.maxZ)fail('Rectangle needs minX < maxX and minZ < maxZ, at least 0.1 m each',p);
+    return;
+  }
   const fi=kind==='roof'?-1:building.floors.findIndex(f=>f.id===op.floorId);
   if(kind!=='roof'&&fi<0)fail(`Unknown floor ID: ${op.floorId}`,p);
-  const floor=building.floors[fi],collection={light:'lights',wall:'walls',railing:'railings',opening:'openings',roof:'roofSections',region:'regions',stair:'stairs',platform:'platforms'}[kind];
+  const floor=building.floors[fi],collection={marker:'markers',slab:'slabs',light:'lights',wall:'walls',railing:'railings',opening:'openings',roof:'roofSections',region:'regions',stair:'stairs',platform:'platforms'}[kind];
   const list=kind==='roof'?building.roofSections:(floor[collection] ||= []),item=list.find(v=>v.id===op.id);
   if(action==='add'&&item)fail(`ID already exists: ${op.id}`,p);
   if(action!=='add'&&!item)fail(`Unknown ${kind} ID: ${op.id}`,p);
@@ -288,6 +353,8 @@ function applyOperation(building,op,index){
     let defaults;
     if(kind==='wall')defaults={label:'',role:'interior',height:null};
     else if(kind==='light'){const l=makeOmniLight(0,0,2.2,`Light ${list.length+1}`);delete l.id;defaults=l;if(value.color)value.color={a:1,...value.color};}
+    else if(kind==='marker')defaults={label:`Marker ${list.length+1}`,details:''};
+    else if(kind==='slab'){const r=makeRectArea({x:value.minX,z:value.minZ},{x:value.maxX,z:value.maxZ},`Floor Footprint ${list.length+1}`);delete r.id;defaults=r;}
     else if(kind==='railing'){const r=makeRailing(value.a,value.b,value.label||'Railing',value.height??1,value.style||'two_rail');delete r.id;defaults=r;}
     else if(kind==='stair')defaults=makeStair({x:0,z:0},{x:0,z:-value.run},value.width,value.style||'ramp',value.steps??12,value.label||'');
     else if(kind==='opening')defaults={label:value.type==='door'?'Door':'Window',...(value.type==='window'?{sill:.9,windowStyle:'plain'}:{doorStyle:'room'})};
@@ -302,6 +369,8 @@ function applyOperation(building,op,index){
   if(kind==='region'&&updated.polygon)Object.assign(updated,regionBounds(updated.polygon));
   if(kind==='roof'&&updated.hostRoofId===null)delete updated.hostRoofId;
   if(kind==='roof'||kind==='region')if(!rectValid(updated))fail('Rectangle must have positive width and depth of at least 0.1 m each',p);
+  if(kind==='slab'&&(!rectValid(updated)||updated.minX>updated.maxX||updated.minZ>updated.maxZ))fail('Rectangle needs minX < maxX and minZ < maxZ, at least 0.1 m each',p);
+  if(kind==='marker'){if(updated.details===null)updated.details='';const problem=markerProblem(updated);if(problem)fail(problem,p);}
   if(kind==='railing'){
     if(wallLength(updated)<=.15)fail('Railing segments must be longer than 0.15 m',p);
     if(updated.height>floorView(building,fi).wallHeight)fail('Railing height exceeds the story height',p);
@@ -320,6 +389,44 @@ function applyOperation(building,op,index){
     if(updated.type==='door'&&('sill' in value||'windowStyle' in value))fail('Door edits cannot set window fields',p);
     if(updated.type==='window'&&'doorStyle' in value)fail('Window edits cannot set doorStyle',p);
   }
+}
+
+// Floor stack edits use the web's proposeFloorStackEdit (Add above/below,
+// Duplicate, Move up/down, Delete). New floors take the operation's id; a
+// duplicate's copied contents get deterministic IDs "<new floor id>-<old id>"
+// (the web assigns random IDs) so recipes stay reproducible.
+// The shared proposal names the web checkbox; the CLI equivalent is a flag.
+const cliReason=reason=>reason.replace('Enable Remove affected stairs','Set removeAffectedStairs: true');
+function applyFloorStack(building,op,action,p){
+  const indexOf=id=>building.floors.findIndex(f=>f.id===id);
+  const removeAffectedStairs=op.removeAffectedStairs===true;
+  if(action==='insert'||action==='duplicate'){
+    if(indexOf(op.id)>=0)fail(`Floor ID already exists: ${op.id}`,p);
+    const anchorId=action==='duplicate'?op.sourceFloorId:op.aboveFloorId??op.belowFloorId,anchor=indexOf(anchorId);
+    if(anchor<0)fail(`Unknown floor ID: ${anchorId}`,p);
+    const stackAction=action==='duplicate'?'duplicate':Object.hasOwn(op,'aboveFloorId')?'above':'below';
+    const result=proposeFloorStackEdit(building,anchor,stackAction,{removeAffectedStairs,validateResult:false});if(!result.ok)fail(cliReason(result.reason),p);
+    const added=result.building.floors[result.activeIndex];added.id=op.id;
+    if(action==='duplicate'){
+      const source=building.floors[anchor],rename=(list,original)=>list.forEach((e,i)=>{e.id=`${op.id}-${original[i].id}`;});
+      for(const key of ['walls','openings','lights','markers','regions','slabs','platforms','railings'])rename(added[key]||[],source[key]||[]);
+      const wallIds=new Map(source.walls.map(w=>[w.id,`${op.id}-${w.id}`]));for(const o of added.openings)o.wallId=wallIds.get(source.openings.find(q=>`${op.id}-${q.id}`===o.id).wallId);
+    }
+    for(const [key,value] of Object.entries(op.value||{}))if(value!==null)added[key]=value;
+    if(added.boundaryMode==='closed')delete added.boundaryMode;
+    building.floors=result.building.floors;
+    return {action:action==='duplicate'?'duplicated':'inserted',floorId:op.id,anchorFloorId:anchorId,position:stackAction,removedEntities:[],removedIncomingStairs:result.affectedStairs};
+  }
+  const index=indexOf(op.id);if(index<0)fail(`Unknown floor ID: ${op.id}`,p);
+  if(action==='remove'){
+    const floor=building.floors[index];
+    const contents=['walls','openings','lights','markers','stairs','regions','slabs','platforms','railings','roofSections'].flatMap(kind=>(floor[kind]||[]).map(item=>({kind,id:item.id,label:item.label||item.id})));
+    if(contents.length&&!op.removeContents)fail(`Floor contains ${contents.length} entities; set removeContents: true to remove them, or remove its contents explicitly first`,p);
+  }
+  const result=proposeFloorStackEdit(building,index,action==='move'?op.direction:'remove',{removeAffectedStairs,validateResult:false});if(!result.ok)fail(cliReason(result.reason),p);
+  const removedEntities=action==='remove'?['walls','openings','lights','markers','stairs','regions','slabs','platforms','railings','roofSections'].flatMap(kind=>(building.floors[index][kind]||[]).map(item=>({kind,id:item.id,label:item.label||item.id}))):[];
+  building.floors=result.building.floors;
+  return {action:action==='move'?`moved-${op.direction}`:'removed',floorId:op.id,removedEntities,removedIncomingStairs:result.affectedStairs};
 }
 
 // Shared wall types and doorway shapes: the same records and removal rules as

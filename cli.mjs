@@ -342,7 +342,7 @@ async function execute({command,options,files}){
   if(command==='inspect'){
     response.results.forEach((r,i)=>{if(loaded[i].building&&!loaded[i].errors.length){
       const b=loaded[i].building;r.inspection=inspectBuilding(b);
-      if(options.entities)r.entities={floors:b.floors.map(f=>({id:f.id,label:f.label,overrides:{elevation:f.elevation??null,wallHeight:f.wallHeight??null,floorThickness:f.floorThickness??null},walls:f.walls,openings:f.openings,regions:f.regions,stairs:f.stairs,platforms:f.platforms,railings:f.railings||[],lights:f.lights||[],markers:f.markers||[],profileInward:profileInward(b,f)})),roofs:b.roofSections,wallTypes:b.wallTypes||[],openingShapes:b.openingShapes||[]};
+      if(options.entities)r.entities={floors:b.floors.map(f=>({id:f.id,label:f.label,overrides:{elevation:f.elevation??null,wallHeight:f.wallHeight??null,floorThickness:f.floorThickness??null},walls:f.walls,openings:f.openings,regions:f.regions,stairs:f.stairs,platforms:f.platforms,railings:f.railings||[],lights:f.lights||[],markers:f.markers||[],slabs:f.slabs||[],profileInward:profileInward(b,f)})),roofs:b.roofSections,manualFloors:b.manualFloors||[],manualCeilings:b.manualCeilings||[],wallTypes:b.wallTypes||[],openingShapes:b.openingShapes||[]};
     }});return response;
   }
   if(exitCode)return response; // All input documents must pass before any write.
@@ -418,8 +418,9 @@ function human(result,verbose){
     if(r.entities){
       for(const t of r.entities.wallTypes)lines.push(`  wallType: ${JSON.stringify(t)}`);
       for(const s of r.entities.openingShapes)lines.push(`  openingShape: ${JSON.stringify(s)}`);
-      for(const f of r.entities.floors){lines.push(`  Floor ID ${f.id} (${f.label})`, `    overrides: ${JSON.stringify(f.overrides)} (null = automatic/default)`);for(const k of ['walls','openings','regions','stairs','platforms','railings','lights','markers'])for(const entity of f[k])lines.push(`    ${k}: ${JSON.stringify(entity)}`);for(const q of f.profileInward)lines.push(`    profile inward: ${q.wallId} (${q.inwardSide}) → ${JSON.stringify(q.inward)}`);}
+      for(const f of r.entities.floors){lines.push(`  Floor ID ${f.id} (${f.label})`, `    overrides: ${JSON.stringify(f.overrides)} (null = automatic/default)`);for(const k of ['walls','openings','regions','stairs','platforms','railings','lights','markers','slabs'])for(const entity of f[k])lines.push(`    ${k}: ${JSON.stringify(entity)}`);for(const q of f.profileInward)lines.push(`    profile inward: ${q.wallId} (${q.inwardSide}) → ${JSON.stringify(q.inward)}`);}
       for(const roof of r.entities.roofs)lines.push(`  roof: ${JSON.stringify(roof)}`);
+      for(const k of ['manualFloors','manualCeilings'])for(const s of r.entities[k])lines.push(`  ${k}: ${JSON.stringify(s)}`);
     }
     if(verbose||!r.ok){if(r.stdout)lines.push(r.stdout.trimEnd());if(r.stderr)lines.push(r.stderr.trimEnd());if(r.error)lines.push(r.error);}
   }

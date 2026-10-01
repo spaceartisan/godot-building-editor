@@ -150,3 +150,47 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   assert.deepEqual(w.errors,[]);
   console.log('PASS web route start: same starts, warnings and parse errors as CLI --from');
 }
+{
+  // Parity project (audit A9): each web control equals its CLI operation.
+  const { selectableItems } = await import('./src/group-edit.js');
+  const room=(floorId,p)=>[[-4,-3,4,-3],[4,-3,4,3],[4,3,-4,3],[-4,3,-4,-3]].map(([ax,az,bx,bz],i)=>({op:'wall.add',floorId,id:`${p}${i}`,value:{a:{x:ax,z:az},b:{x:bx,z:bz},role:'exterior'}}));
+  const base=tx([...room('floor_1','w'),{op:'floor.add-top',id:'up',aboveFloorId:'floor_1'},...room('up','u'),
+    {op:'marker.add',floorId:'floor_1',id:'mk',value:{position:{x:1,y:0,z:1}}},{op:'slab.add',floorId:'floor_1',id:'fp',value:{minX:-4,maxX:4,minZ:-3,maxZ:3}},
+    {op:'manualFloor.add',id:'mezz',value:{minX:-4,maxX:0,minZ:-3,maxZ:0,topY:1.4}}]);
+  const w=await createEditorHarness(),$w=w.$,field=label=>w.$('#selection-form').children.find(c=>c.textContent.startsWith(label))?.querySelector('input');
+  const set=async(el,v)=>{el.value=String(v);await el.dispatch('change');};
+  const same=(web,ops,message)=>assert.deepEqual(web,tx(ops,base),message);
+  // Marker, Floor Footprint and manual floor panels.
+  await w.loadBuildingData(structuredClone(base));w.chooseSelection({type:'marker',id:'mk'});await set(field('Marker name'),'Spawn');
+  same(w.snapshot(),[{op:'marker.update',floorId:'floor_1',id:'mk',value:{label:'Spawn'}}],'marker panel equals marker.update');
+  await w.loadBuildingData(structuredClone(base));w.chooseSelection({type:'slab',id:'fp'});await set(field('Max X'),2);
+  same(w.snapshot(),[{op:'slab.update',floorId:'floor_1',id:'fp',value:{maxX:2}}],'Floor Footprint panel equals slab.update');
+  await w.loadBuildingData(structuredClone(base));w.chooseSelection({type:'manualFloor',id:'mezz'});await set(field('Top height Y'),1.5);
+  same(w.snapshot(),[{op:'manualFloor.update',id:'mezz',value:{topY:1.5}}],'manual floor panel equals manualFloor.update');
+  // Door/window mesh settings.
+  await w.loadBuildingData(structuredClone(base));await set($w('#door-frame-width'),.12);await set($w('#window-frame-depth'),.15);
+  same(w.snapshot(),[{op:'building.update',value:{doorMesh:{frameWidth:.12},windowMesh:{frameDepth:.15}}}],'mesh settings equal building.update');
+  // Group move: Select all + Move by distance equals group.move over the same items.
+  await w.loadBuildingData(structuredClone(base));await $w('#select-all-btn').click();
+  const items=w.selections();await set($w('#group-dx'),.5);await set($w('#group-dz'),-1);await $w('#apply-group-offset').click();
+  same(w.snapshot(),[{op:'group.move',floorId:'floor_1',items,delta:{x:.5,z:-1}}],'Move by distance equals group.move');
+  assert.ok(items.length>=6,`select-all picked ${items.length} items`);
+  // Floor stack: move and delete keep IDs, so documents match exactly.
+  const stack=async(floorIndex,button,ops)=>{await w.loadBuildingData(structuredClone(base));await set($w('#floor-select'),floorIndex);await $w(button).click();return ops?same(w.snapshot(),ops,button):w.snapshot();};
+  await stack(1,'#move-floor-down-btn',[{op:'floor.move',id:'up',direction:'down'}]);
+  await stack(0,'#move-floor-up-btn',[{op:'floor.move',id:'floor_1',direction:'up'}]);
+  // New floors get random IDs in the web; compare after mapping them to the CLI's IDs.
+  const renameFloor=(doc,from,to)=>{const s=JSON.stringify(doc).replaceAll(`"${from}`,`"${to}`);return JSON.parse(s);};
+  const below=await stack(0,'#add-floor-below-btn');const belowId=below.floors[0].id;
+  assert.deepEqual(below,renameFloor(tx([{op:'floor.insert',id:belowId,belowFloorId:'floor_1'}],base),belowId,belowId),'Add below equals floor.insert belowFloorId');
+  const above=await stack(0,'#add-floor-btn');const aboveId=above.floors[1].id;
+  assert.deepEqual(above,tx([{op:'floor.insert',id:aboveId,aboveFloorId:'floor_1'}],base),'Add above equals floor.insert aboveFloorId');
+  const dup=await stack(1,'#duplicate-floor-btn');const copy=dup.floors[2];
+  const cli=tx([{op:'floor.duplicate',id:copy.id,sourceFloorId:'up'}],base);
+  // Copied entity IDs differ by design (random in the web, "<floor>-<id>" in the CLI); everything else matches.
+  const stripIds=f=>JSON.parse(JSON.stringify(f,(k,v)=>k==='id'||k==='wallId'?undefined:v));
+  assert.deepEqual(stripIds(copy),stripIds(cli.floors[2]),'Duplicate equals floor.duplicate apart from copied IDs');
+  assert.deepEqual(dup.floors.slice(0,2),cli.floors.slice(0,2));
+  assert.deepEqual(w.errors,[]);
+  console.log('PASS web parity A9: marker, Floor Footprint, manual floor, mesh settings, Move by distance and floor stack equal the CLI operations');
+}

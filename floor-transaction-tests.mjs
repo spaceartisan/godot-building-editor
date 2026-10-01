@@ -54,7 +54,8 @@ try{
 
   for(const [value,pattern] of [[{label:''},/nonempty/],[{label:' '},/nonempty/],[{label:null},/text/],[{},/at least/],[{wallHeight:'4'},/finite/],[{wallHeight:.19},/finite/],[{wallHeight:1001},/finite/],[{floorThickness:0},/finite/],[{floorThickness:101},/finite/],[{elevation:Infinity},/finite/],[{elevation:1000001},/finite/],[{autoFloor:'no'},/boolean/],[{autoCeiling:null},/boolean/],[{boundaryMode:'open'},/one of/],[{id:'new'},/Unknown field/],[{stairs:[]},/Unknown field/]])reject([op(lower,value)],pattern);
   reject([op('missing',{label:'No'})],/Unknown floor/);
-  for(const action of ['add','remove','move-endpoint'])reject([{op:`floor.${action}`,id:lower}],/Unknown operation/);
+  // floor.remove (any floor) is supported since 1.4.0; see parity-transaction-tests.mjs.
+  for(const action of ['add','move-endpoint'])reject([{op:`floor.${action}`,id:lower}],/Unknown operation/);
   reject([{...op(lower,{label:'No'}),floorId:lower}],/Unknown field/);
   reject([op(upper,{elevation:0})],/above the preceding/);
   reject([op(lower,{wallHeight:1})],/exceeds|out.of.bounds|fit/i);

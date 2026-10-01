@@ -19,7 +19,16 @@ Code audit fixes (each reproduced first, with a regression test):
 - **Clear errors for malformed lights.** A light `color` or `position` that is not an object is a validation error instead of a raw JavaScript TypeError.
 - **Tests and docs.** `npm run test:browser` passes again (ambiguous selector, phone-width click); the test runner allows 10 minutes per file and reports timeouts plainly; LLM_GUIDE lists the light operations; the version is 1.4.0; unused legacy interior-mesh code is removed.
 
-Remaining web/CLI parity gaps (markers, manual floors/ceilings, Floor Footprints, floor insertion/duplication/reordering, group move, door/window mesh settings) are planned as a separate project.
+Web/CLI parity: every web editing capability now has a CLI transaction, through the same shared code, each with a web-parity test.
+
+| Capability | CLI | Web editor |
+| --- | --- | --- |
+| Markers | `marker.add/update/remove` | Marker tool and panel |
+| Floor Footprints | `slab.add/update/remove` | Floor Footprint tool and panel |
+| Manual floors/ceilings | `manualFloor.*`, `manualCeiling.*` | Manual Floor/Ceiling tools and panels |
+| Floor stack | `floor.insert` (above/below), `floor.duplicate`, `floor.move`, `floor.remove` | Add above/below, Duplicate, Move up/down, Delete |
+| Move a selection | `group.move` | Move selection, Move by distance |
+| Door/window meshes | `building.update` `doorMesh`/`windowMesh` | Door and window mesh settings |
 
 ### Kestrel starship stress test
 

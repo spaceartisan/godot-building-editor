@@ -5,6 +5,15 @@ import { boundsOfBuilding, boundsOfStructuralFloor, constrainedOpening, floorEle
 import { stairOpeningFootprint } from './model.js';
 import { buildExteriorMeshData, buildProfileMeshData, hasProfileWalls, openingAnchor, floorRectanglesForView, buildDoorMeshData, storyCeilingRectangles } from './exporter.js';
 import {openingShapeFor} from './opening-shapes.js';
+// Every edit rebuilds the whole preview; shaped-wall meshes are the slowest
+// part, so reuse them while a floor's content (ignoring labels) is unchanged.
+const profileMeshCache=new Map();
+function cachedProfileMeshData(view){
+  const key=JSON.stringify(view,(k,v)=>k==='label'?undefined:v);
+  let data=profileMeshCache.get(key);
+  if(!data){data=buildProfileMeshData(view);if(profileMeshCache.size>=32)profileMeshCache.delete(profileMeshCache.keys().next().value);profileMeshCache.set(key,data);}
+  return data;
+}
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const sub=(a,b)=>({x:a.x-b.x,y:a.y-b.y,z:a.z-b.z});
 const dot=(a,b)=>a.x*b.x+a.y*b.y+a.z*b.z;
@@ -203,7 +212,7 @@ export class Preview3D{
 
     const profiled=hasProfileWalls(view);
     if(profiled){
-      const data=buildProfileMeshData(view);
+      const data=cachedProfileMeshData(view);
       for(const [key,m] of Object.entries(data))if(m.vertices.length){const vertices=m.vertices.map(p=>({...p,y:p.y+elevation})),faces=[];for(let i=0;i<vertices.length;i+=3)faces.push([i,i+2,i+1]);objs.push({mesh:{vertices,faces},color:key==='outside'?wallExterior:key.toLowerCase().includes('edge')?trimExterior:wallInterior,strokeAlpha:0,uniformFog:true});}
     }
     for(const wall of profiled?[]:view.walls){

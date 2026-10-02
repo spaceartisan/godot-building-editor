@@ -21,6 +21,7 @@ Halcyon and the limit probes (see [README](README.md)) were run on 1.4.0 at `412
 | H16 | With roof `none`, the ceiling's top face lay in the wall caps' plane under the walls and z-fought with them when seen from above | Medium (visual, top-down views) | **Fixed** |
 | H17 | Manual roofs were rectangles only, so the bay roof overhung the angled bay walls | Low (visual) | **Fixed**: polygon footprints for flat roofs (convex or concave) and hip roofs (convex); `hip` manual roofs |
 | H18 | Splitting a many-cornered concave outline into convex cells took seconds: 12 s for a 128-corner star, 45 s for 256 corners, and a 23 s export with a star region and roof | Medium (usability) | **Fixed**: the cell merge skips pairs that cannot merge; region cells are cached by corner coordinates. The star export takes 1.4 s, with byte-identical output. |
+| H19 | Each web edit on Halcyon took about 0.3 s, even renaming a wall; 90% was the 3D preview rebuilding the rotunda's shaped walls | Low (usability) | **Fixed**: the preview reuses shaped-wall meshes while a floor is unchanged apart from labels. Edits take about 0.1 s. |
 | H13 | Coordinates far from the origin lose precision in Godot without a warning | Low | **Fixed**: a warning beyond 10 km |
 | H14 | A loop that stops a millimetre short got the generic open-ends warning | Low | **Fixed**: the warning names the near miss |
 | H15 | A `floor.duplicate` dry run printed the whole copied floor as one 18.7 KB line | Low | **Fixed**: long values are summarised |
@@ -160,6 +161,14 @@ Found while testing concave roofs. `wallPolygonAreas`, which splits an outline i
 - **Fix:** `mergeConvexAreas` skips pairs whose bounds are apart, and pairs it has already rejected while neither cell has changed. It tries the remaining pairs in the same order as before, so it makes the same merges. `regionAreaCells` caches each polygon's cells by its corner coordinates (an edited polygon gets new cells) and returns copies.
 - **Result:** the 256-corner star splits in 0.6 s. A building with a 128-corner star region and a matching flat roof exports in 1.4 s instead of 23 s, with an identical scene, and all 35 supplied buildings export byte-identically.
 - **Test:** `polygon-tests.mjs` (a 256-corner star splits within the time limit, with exact area).
+
+### H19: Slow web edits on a large building
+
+Profiling a wall rename on Halcyon in the editor harness (handlers only, no canvas drawing) showed about 0.3 s per edit. Most of it was `buildProfileMeshData` rebuilding the shaped-wall meshes for the L1 rotunda, because every edit rebuilds the whole preview.
+
+- **Fix:** the preview (`src/preview.js`) keeps the shaped-wall meshes for up to 32 floor states, keyed by the floor's content with labels left out, since labels never affect geometry. Any other change to the floor rebuilds them. Export doesn't use this cache.
+- **Result:** edits take about 0.1 s and undo about 0.18 s, down from 0.3 s and 0.4 s.
+- **Test:** `web-preview-tests.mjs` (a label change reuses the meshes; moving a wall or changing a profile rebuilds them).
 
 ## Limits that held
 

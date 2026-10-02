@@ -20,6 +20,7 @@ Halcyon and the limit probes (see [README](README.md)) were run on 1.4.0 at `412
 | H12 | Smooth shaped curves were limited to about 64 segments at a 12 m radius | Low | **Fixed**: the short-wall rule charges each end only what its join cuts |
 | H16 | With roof `none`, the ceiling's top face lay in the wall caps' plane under the walls and z-fought with them when seen from above | Medium (visual, top-down views) | **Fixed** |
 | H17 | Manual roofs were rectangles only, so the bay roof overhung the angled bay walls | Low (visual) | **Fixed**: polygon footprints for flat roofs (convex or concave) and hip roofs (convex); `hip` manual roofs |
+| H18 | Splitting a many-cornered concave outline into convex cells took seconds: 12 s for a 128-corner star, 45 s for 256 corners, and a 23 s export with a star region and roof | Medium (usability) | **Fixed**: the cell merge skips pairs that cannot merge; region cells are cached by corner coordinates. The star export takes 1.4 s, with byte-identical output. |
 | H13 | Coordinates far from the origin lose precision in Godot without a warning | Low | **Fixed**: a warning beyond 10 km |
 | H14 | A loop that stops a millimetre short got the generic open-ends warning | Low | **Fixed**: the warning names the near miss |
 | H15 | A `floor.duplicate` dry run printed the whole copied floor as one 18.7 KB line | Low | **Fixed**: long values are summarised |
@@ -151,6 +152,14 @@ The entrance bay's roof could only be a rectangle, so its corners overhung the a
 - **Also polygon-aware:** the open-sky ceiling cover (H3) and the automatic-roof override at a manual roof's level now use the polygon, not its bounds.
 - **Halcyon:** the bay roof follows the bay walls (`godot-renders/surface-colors/` and `entrance-bay.png`).
 - **Tests:** `parity-transaction-tests.mjs` (bounds from corners, roof geometry inside the outline plus overhang, one hip face per polygon edge, an L-shaped flat roof whose pieces cover the grown outline exactly, every rejection including a concave hip and a self-crossing overhang, back to a rectangle), `web-parity-tests.mjs` (Footprint equals `roof.update` for convex and concave regions, Hip, shared rejection, undo) and `asset-engine-tests.mjs` (polygon and hip roofs load in Godot with collision).
+
+### H18: Slow splits of many-cornered concave outlines
+
+Found while testing concave roofs. `wallPolygonAreas`, which splits an outline into convex cells for polygon regions, wall-loop floors and concave roofs, cut it into scan-band trapezoids and then merged them. After each merge, the loop restarted and recomputed a convex hull for every pair of cells. On a 128-corner star that meant 500 trapezoids and tens of millions of hulls. The earlier 256-corner probe used a convex outline, so it never reached this case.
+
+- **Fix:** `mergeConvexAreas` skips pairs whose bounds are apart, and pairs it has already rejected while neither cell has changed. It tries the remaining pairs in the same order as before, so it makes the same merges. `regionAreaCells` caches each polygon's cells by its corner coordinates (an edited polygon gets new cells) and returns copies.
+- **Result:** the 256-corner star splits in 0.6 s. A building with a 128-corner star region and a matching flat roof exports in 1.4 s instead of 23 s, with an identical scene, and all 35 supplied buildings export byte-identically.
+- **Test:** `polygon-tests.mjs` (a 256-corner star splits within the time limit, with exact area).
 
 ## Limits that held
 

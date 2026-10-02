@@ -51,9 +51,16 @@ function hull(points){
 }
 export function mergeConvexAreas(areas){
   const out=unionPolygonAreas(areas);
+  // Two cells whose bounds are apart cannot form a convex union, and a pair
+  // already rejected stays rejected until one cell changes; skipping both
+  // keeps many-cornered outlines from taking seconds.
+  const apart=(r,q)=>r.minX>q.maxX+1e-3||q.minX>r.maxX+1e-3||r.minZ>q.maxZ+1e-3||q.minZ>r.maxZ+1e-3;
+  const rejected=new WeakMap();
   for(let i=0;i<out.length;i++)for(let j=i+1;j<out.length;j++){
+    if(apart(out[i],out[j])||rejected.get(out[i])?.has(out[j]))continue;
     const h=polygonArea(hull([...areaPoints(out[i]),...areaPoints(out[j])]));
     if(h&&Math.abs(areaSize(h)-areaSize(out[i])-areaSize(out[j]))<EPS){out[i]=h;out.splice(j,1);i=-1;break;}
+    if(!rejected.has(out[i]))rejected.set(out[i],new Set());rejected.get(out[i]).add(out[j]);
   }
   return out;
 }

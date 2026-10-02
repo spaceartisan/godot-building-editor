@@ -24,9 +24,19 @@ export function polygonRegion(points,metadata={}){
   const problem=regionPolygonProblem(points);if(problem)throw new Error(problem);
   return {...metadata,...regionBounds(points),polygon:points.map(p=>({x:p.x,z:p.z}))};
 }
+// Keyed by corner coordinates, so an edited polygon never reuses stale cells;
+// callers get copies. One export asks for the same region's cells many times.
+const cellCache=new Map();
 export function regionAreaCells(region){
   if(!region.polygon)return [region];
-  return wallPolygonAreas(region.polygon.map((a,i)=>({a,b:region.polygon[(i+1)%region.polygon.length]})));
+  const key=region.polygon.map(p=>`${p.x},${p.z}`).join(';');
+  let cells=cellCache.get(key);
+  if(!cells){
+    cells=wallPolygonAreas(region.polygon.map((a,i)=>({a,b:region.polygon[(i+1)%region.polygon.length]})));
+    if(cellCache.size>=256)cellCache.delete(cellCache.keys().next().value);
+    cellCache.set(key,cells);
+  }
+  return cells.map(c=>({...c,polygon:c.polygon.map(p=>({...p}))}));
 }
 export function pointInRegion(region,p){
   const points=areaPoints(region);let inside=false;

@@ -38,6 +38,21 @@ try{
   const authoredChecks=check(authoredAssets,0,['--require-collision']);
   assert.equal(authoredChecks.checks.scenes,3);assert.equal(authoredChecks.checks.trimmedMeshComparisons,3);assert.equal(authoredChecks.checks.materialSurfaces,0);
   assert.ok(authoredChecks.checks.collisionShapes>0);
+  // Polygon (flat, hip, concave flat) and rectangular hip manual roofs export with collision.
+  const roofOps=path.join(temp,'roofs.edit.json'),roofBase=path.join(temp,'roof-base.json'),roofed=path.join(temp,'roofed.json');
+  run(['new','--out',roofBase,'--name','Roof shapes']);
+  fs.writeFileSync(roofOps,JSON.stringify({version:1,operations:[{op:'building.update',value:{roof:{type:'none'}}},
+    {op:'roof.add',id:'bay',value:{type:'flat',polygon:[{x:-10,z:20},{x:10,z:20},{x:4,z:26},{x:-4,z:26}],baseY:3,overhang:.2}},
+    {op:'roof.add',id:'hex',value:{type:'hip',polygon:[{x:40,z:0},{x:44,z:-2},{x:48,z:0},{x:48,z:4},{x:44,z:6},{x:40,z:4}],baseY:3,pitch:30}},
+    {op:'roof.add',id:'hip',value:{type:'hip',minX:20,maxX:26,minZ:0,maxZ:4,baseY:3}},
+    {op:'roof.add',id:'ell',value:{type:'flat',polygon:[{x:60,z:0},{x:70,z:0},{x:70,z:4},{x:64,z:4},{x:64,z:10},{x:60,z:10}],baseY:3,overhang:.5}}]}));
+  run(['edit',roofBase,'--ops',roofOps,'--out',roofed]);const roofAssets=path.join(temp,'roof-assets');run(['export',roofed,'--out',roofAssets]);
+  const roofChecks=check(roofAssets,0,['--require-collision']);assert.ok(roofChecks.checks.collisionShapes>=12,'one collision shape per roof part');
+  // Shared door scenes (--share-door-scenes) load and instance in Godot.
+  const sharedDir=path.join(temp,'shared-doors');run(['export',path.join(root,'examples/farmhouse.building.json'),'--out',sharedDir,'--share-door-scenes']);
+  const sharedFiles=fs.readdirSync(path.join(sharedDir,'doors')),perDoor=path.join(temp,'per-door');run(['export',path.join(root,'examples/farmhouse.building.json'),'--out',perDoor]);
+  assert.ok(sharedFiles.length<fs.readdirSync(path.join(perDoor,'doors')).length,'identical farmhouse doors share scenes');
+  assert.equal(check(sharedDir,0,['--require-collision']).checks.scenes,1+sharedFiles.length);
   console.log('PASS authored demo: CLI transaction → fresh JSON → scene/door export → Godot resource and roof collision checks');
   const levels=path.join(temp,'levels.building.json');
   run(['edit',path.join(root,'examples/twostory.building.json'),'--ops',path.join(root,'examples/transactions/twostory-levels.edit.json'),'--out',levels,'--warnings-as-errors']);

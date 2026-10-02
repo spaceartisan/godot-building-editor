@@ -19,7 +19,7 @@ These sections record earlier releases and their then-current counts/capabilitie
 - Godot 4.5.1 headless polygon validator: six exported scenes and 70 physics rays for floors, ceilings, excluded square corners, courtyard holes, stair openings, roof contact heights/overhangs and canopy clearance. Both exterior and interior lighting shells must exist in every case. Warning-as-error parsing is enabled.
 - Actual canvas previews: `qa/previews/round_bounding_hip.png`, `round_bounding_floor.png`, and `round_bounding_plan.png`. Browser CSS/layout and Godot 4.7 remain unverified here.
 - Catalog: 25 plans and 53 TSCNs including door dependencies. All 24 v0.22 plans and 51 scenes remain byte-identical. New release gates include 24 core scripts and seven engine-asset scripts.
-- Scope: convex hipped roofs are continuous. Concave/cutout coverage uses separate convex roof sections; continuous concave hip valleys remain future work. Polygon flat roofs are supported. Automatic gable/shed and independent manual roof sections remain rectangular and are described as such in the UI/docs.
+- Scope: convex hipped roofs are continuous. Concave/cutout coverage uses separate convex roof sections; continuous concave hip valleys remain future work. Polygon flat roofs are supported. Automatic gable/shed roof sections remain rectangular and are described as such in the UI/docs. (Since the Halcyon follow-ups, manual roofs also take flat and hip polygon footprints.)
 - Final aggregate gate results are supplied in the ZIP's `release-report.json`; no runtime-generated project is included in the building asset export.
 
 # Building Studio 0.22.0 — floor stacks and named markers

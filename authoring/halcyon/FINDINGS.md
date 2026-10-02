@@ -1,6 +1,6 @@
 # Halcyon findings: where the tool breaks
 
-Halcyon and the limit probes (see [README](README.md)) were run on 1.4.0 at `412e6e5`. Each finding was reproduced before any change. Every item below is now fixed except H9 and H12, which are left as they are for the reasons given. Each fix has a regression test that fails on the old code.
+Halcyon and the limit probes (see [README](README.md)) were run on 1.4.0 at `412e6e5`. Each finding was reproduced before any change. Every item below is now fixed. Each fix has a regression test that fails on the old code.
 
 ## Summary
 
@@ -14,10 +14,14 @@ Halcyon and the limit probes (see [README](README.md)) were run on 1.4.0 at `412
 | H6 | The CLI said "Top floor inserted/duplicated" for basements and mid-stack copies | Low | **Fixed** |
 | H7 | TRANSACTIONS.md still said CLI floor insertion and duplication were deferred | Low | **Fixed** |
 | H8 | `--surface-colors` left a manual roof exported as a `BoxMesh` in default grey, which reads as wall siding | Low (diagnostic) | **Fixed** |
-| H9 | One exported scene per door, many identical | Low | Not changed (see below) |
+| H9 | One exported scene per door, many identical | Low | **Fixed**: opt-in `--share-door-scenes` (web: **Share identical door scenes**) |
 | H10 | Copying a copied floor stacked ID prefixes (`l5-l4-x`) | Low | **Fixed** |
 | H11 | Railings around stair openings had to be placed by hand on a hidden 0.06 m margin. Halcyon's hand-placed rails missed one open side. | Medium | **Fixed**: `stair.guard` (web: **Guard opening above**) |
-| H12 | Smooth shaped curves are limited to about 64 segments at a 12 m radius | Low | Not changed (see below) |
+| H12 | Smooth shaped curves were limited to about 64 segments at a 12 m radius | Low | **Fixed**: the short-wall rule charges each end only what its join cuts |
+| H16 | With roof `none`, the ceiling's top face lay in the wall caps' plane under the walls and z-fought with them when seen from above | Medium (visual, top-down views) | **Fixed** |
+| H17 | Manual roofs were rectangles only, so the bay roof overhung the angled bay walls | Low (visual) | **Fixed**: polygon footprints for flat roofs (convex or concave) and hip roofs (convex); `hip` manual roofs |
+| H18 | Splitting a many-cornered concave outline into convex cells took seconds: 12 s for a 128-corner star, 45 s for 256 corners, and a 23 s export with a star region and roof | Medium (usability) | **Fixed**: the cell merge skips pairs that cannot merge; region cells are cached by corner coordinates. The star export takes 1.4 s, with byte-identical output. |
+| H19 | Each web edit on Halcyon took about 0.3 s, even renaming a wall; 90% was the 3D preview rebuilding the rotunda's shaped walls | Low (usability) | **Fixed**: the preview reuses shaped-wall meshes while a floor is unchanged apart from labels. Edits take about 0.1 s. |
 | H13 | Coordinates far from the origin lose precision in Godot without a warning | Low | **Fixed**: a warning beyond 10 km |
 | H14 | A loop that stops a millimetre short got the generic open-ends warning | Low | **Fixed**: the warning names the near miss |
 | H15 | A `floor.duplicate` dry run printed the whole copied floor as one 18.7 KB line | Low | **Fixed**: long values are summarised |
@@ -117,11 +121,55 @@ The open-ends warning now names free exterior ends within 5 cm of each other, fo
 
 In the human-readable edit summary, a value longer than 300 characters is summarised by its shape (keys and array counts) with its size; `--json` keeps the full value. Halcyon's longest dry-run line went from 18.7 KB to 282 characters.
 
-## Not changed
+### H9: Shared door scenes
 
-- **H9: One scene per door.** Halcyon exports 141 door scenes, and 72 are byte-identical. Sharing identical door scenes would shrink exports, but it changes the export file layout and removes per-door editing in Godot. That's a product decision rather than a defect.
-- **H12: Shaped curves have a segment limit.** A 128-segment circle (12 m radius) of a 0.3 m-offset profile is rejected: "profile is too wide for this short wall" (0.59 m segments; the rule is offset + thickness/2 ≤ 45% of the length). 64 segments work. The rule prevents self-intersecting profile geometry, and its message says what to change.
-- **Rectangular manual roofs.** The entrance bay's roof can't follow its angled walls because manual roofs are rectangles. Polygon roofs would be architectural expansion (ROADMAP).
+Halcyon exported 141 door scenes, and 72 of them were byte-identical. The new opt-in export option makes doors with identical scenes instance one shared file: `--share-door-scenes` for `export` and `package`, or **Share identical door scenes** in the web Godot Export panel. Halcyon then exports 8 door scenes instead of 141 (9.8 MB → 7.6 MB). Every door is still placed, the Godot navmesh probe still reaches 22 of 22 targets, and `godot-check --require-collision` passes. It's off by default because one file per door keeps each door editable on its own in Godot, and existing exports stay byte-identical.
+
+- **Tests:** `export-scale-tests.mjs` (default unchanged; every instance's scene is declared once; the main scene differs only in door references; the CLI writes the same files), `web-parity-tests.mjs` (the toggle is off by default and the render posts the shared export) and `asset-engine-tests.mjs` (a shared farmhouse export loads in Godot with collision).
+
+### H12: Short sections of shaped walls
+
+Validation required every shaped wall to be at least 2.2 × its profile's reach long, as if both ends could be cut back by the full reach. That only happens at a free end, a T or a sharp corner. At a plain join to another shaped wall, the fitting cuts back the reach × tan(turn/2), which is about 1 cm per joint on a 128-section circle.
+
+- **Change:** each end is now charged reach × min(1, tan(turn/2)) at a plain join to one other shaped wall, and the full reach everywhere else. Both cuts must fit in 90% of the wall. The rule only ever gets looser, so nothing that was valid is rejected.
+- **Result:** a 12 m radius circle of the flared profile is now valid with 128 and 256 sections (64 before). The 0.15 m minimum wall length stops it at 512.
+- **Evidence:** rays from the centre through every joint and mid-section, at 5 heights, cross the 64-, 128- and 256-section shells exactly twice; the only exceptions are rays through the doorway in the 64- and 128-section loops. Surface-colour renders of 64 and 128 sections show no seams.
+- **Test:** `wall-profile-tests.mjs` checks that the 128-section curve is accepted and watertight, and that a free-standing short section and a short section at a right angle are still rejected.
+
+### H16: Ceiling tops z-fighting with wall caps
+
+Found while checking H12. Every automatic ceiling's top face sat exactly at wall-top height and ran under the walls to their centrelines, overlapping the wall-top caps. With roof `none`, viewed from above, the two flickered along every wall: a plain box room showed it too. Top-down game cameras would see it.
+
+- **Fix:** with roof `none`, the ceiling's top face is clipped against the wall solids, using the existing union clipper with walls taking priority, so it stops at the walls' inner faces. Under an automatic roof it's hidden and stays a full slab.
+- **Effect:** the ceiling's top surface (`RoofSideFaces`) changed in three supplied scenes: `examples/roof_attachment.tscn`, `independent_roof_demo.tscn` and `manual_surface_demo.tscn`. They were regenerated with `generate-examples.mjs`; nothing else in any fixture changed.
+- **Test:** `ceiling-tests.mjs`.
+
+### H17: Rectangular manual roofs
+
+The entrance bay's roof could only be a rectangle, so its corners overhung the angled bay walls. Manual roofs now take a `polygon` footprint for flat and hip roofs, and `hip` is a manual roof type. Hip roofs need a convex outline; flat roofs may be concave.
+
+- **Shared code:** the rules live in `src/roof-outline.js` (3–256 corners, flat or hip, hip convex only, no host attachment or edge modes) and are used by validation, transactions and the web roof panel. Geometry uses the automatic roof's existing polygon path (`polygonRoofParts`) with the manual roof's own overhang and pitch. A concave flat roof is grown by its overhang (`offsetOutline`, which rejects an overhang that would make the outline cross itself) and split into convex pieces (`roofFootprintAreas`), because roof solids and the polygon subtraction used for interior blockers need convex pieces. The same pieces drive the open-sky ceiling cover and the automatic-roof override.
+- **Routes:** the CLI takes `polygon` and type `hip` on `roof.add`/`roof.update`, and `polygon: null` returns the roof to its rectangle. In the web editor, the roof panel's **Footprint** select copies the outline of a polygon region on any floor, and **Hip** is a type. A concave region turns a hip roof flat, with a status message. The plan draws the polygon outline.
+- **Overhang:** validation checks the overhang the geometry uses (`manualRoofOverhang`: the roof's own, else the building roof's), and the web **Overhang** field is validated like `roof.update`, so a too-wide overhang on a concave roof is refused on both routes instead of the roof disappearing from the export.
+- **Also polygon-aware:** the open-sky ceiling cover (H3) and the automatic-roof override at a manual roof's level now use the polygon, not its bounds.
+- **Halcyon:** the bay roof follows the bay walls (`godot-renders/surface-colors/` and `entrance-bay.png`).
+- **Tests:** `parity-transaction-tests.mjs` (bounds from corners, roof geometry inside the outline plus overhang, one hip face per polygon edge, an L-shaped flat roof whose pieces cover the grown outline exactly, every rejection including a concave hip and a self-crossing overhang, back to a rectangle), `web-parity-tests.mjs` (Footprint equals `roof.update` for convex and concave regions, Hip, shared rejection, undo) and `asset-engine-tests.mjs` (polygon and hip roofs load in Godot with collision).
+
+### H18: Slow splits of many-cornered concave outlines
+
+Found while testing concave roofs. `wallPolygonAreas`, which splits an outline into convex cells for polygon regions, wall-loop floors and concave roofs, cut it into scan-band trapezoids and then merged them. After each merge, the loop restarted and recomputed a convex hull for every pair of cells. On a 128-corner star that meant 500 trapezoids and tens of millions of hulls. The earlier 256-corner probe used a convex outline, so it never reached this case.
+
+- **Fix:** `mergeConvexAreas` skips pairs whose bounds are apart, and pairs it has already rejected while neither cell has changed. It tries the remaining pairs in the same order as before, so it makes the same merges. `regionAreaCells` caches each polygon's cells by its corner coordinates (an edited polygon gets new cells) and returns copies.
+- **Result:** the 256-corner star splits in 0.6 s. A building with a 128-corner star region and a matching flat roof exports in 1.4 s instead of 23 s, with an identical scene, and all 35 supplied buildings export byte-identically.
+- **Test:** `polygon-tests.mjs` (a 256-corner star splits within the time limit, with exact area).
+
+### H19: Slow web edits on a large building
+
+Profiling a wall rename on Halcyon in the editor harness (handlers only, no canvas drawing) showed about 0.3 s per edit. Most of it was `buildProfileMeshData` rebuilding the shaped-wall meshes for the L1 rotunda, because every edit rebuilds the whole preview.
+
+- **Fix:** the preview (`src/preview.js`) keeps the shaped-wall meshes for up to 32 floor states, keyed by the floor's content with labels left out, since labels never affect geometry. Any other change to the floor rebuilds them. Export doesn't use this cache.
+- **Result:** edits take about 0.1 s and undo about 0.18 s, down from 0.3 s and 0.4 s.
+- **Test:** `web-preview-tests.mjs` (a label change reuses the meshes; moving a wall or changing a profile rebuilds them).
 
 ## Limits that held
 

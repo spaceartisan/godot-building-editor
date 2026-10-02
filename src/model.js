@@ -1,4 +1,5 @@
 import { regionAreaCells } from './regions.js';
+import { roofFootprintAreas } from './roof-outline.js';
 import { areaSize, wallPolygonAreas, unionPolygonAreas, subtractPolygonAreas, mergeConvexAreas } from './polygon-areas.js';
 export const DEFAULT_OMNI_LIGHT = Object.freeze({
   color: { r: 1.0, g: 0.65, b: 0.34, a: 1.0 },
@@ -247,7 +248,7 @@ export function makeRoofSection(a, b, type = 'gable', direction = 'x', label = '
   const r = makeRectArea(a, b, label);
   return {
     ...r,
-    type: ['gable','shed','flat'].includes(type) ? type : 'gable',
+    type: ['gable','shed','flat','hip'].includes(type) ? type : 'gable',
     direction: direction === 'z' ? 'z' : 'x',
     baseY: Number.isFinite(Number(baseY)) ? Number(baseY) : 2.8,
     pitch: Math.max(5, Math.min(70, Number(pitch) || 35)),
@@ -563,7 +564,8 @@ export function subtractRectAreas(baseRects=[], blockerRects=[]) {
 export function manualSurfaceRectanglesAtLevel(building, kind, topY, tolerance = 0.05) {
   const list=kind==='ceiling'?(building.manualCeilings||[]):(building.manualFloors||[]);
   const target=Number(topY)||0;
-  return unionRectAreas(list.filter(r=>rectValid(r)&&Math.abs((Number(r.topY)||0)-target)<=tolerance).map(r=>({minX:r.minX,maxX:r.maxX,minZ:r.minZ,maxZ:r.maxZ})));
+  return unionRectAreas(list.filter(r=>rectValid(r)&&Math.abs((Number(r.topY)||0)-target)<=tolerance)// Polygon roofs override their exact outline (convex pieces for concave ones).
+  .flatMap(r=>roofFootprintAreas(r)));
 }
 
 export function manualFloorRectanglesAtLevel(building, topY, tolerance = 0.05) {

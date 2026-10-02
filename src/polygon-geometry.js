@@ -33,9 +33,8 @@ export function offsetConvexArea(area,distance){
 }
 // Equal-pitch hips are the lower envelope of inward-rising eave planes.
 // This produces a ridge on a rectangle and a faceted peak on round outlines.
-export function polygonRoofParts(section,roof,baseY,index=0){
+export function polygonRoofParts(section,roof,baseY,index=0,name=`Roof_${String(index+1).padStart(3,'0')}`){
   const overhang=Math.max(0,Number(roof.overhang)||0),expanded=offsetConvexArea(section,overhang);if(!expanded)return [];
-  const name=`Roof_${String(index+1).padStart(3,'0')}`;
   if((section.type||roof.type)==='flat')return [{name:name+'_Flat',solid:polygonPrism(expanded,baseY+.12,baseY)}];
   const planes=edgePlanes(areaPoints(section)),pitch=Math.tan(Math.max(5,Math.min(70,Number(section.pitch)||Number(roof.pitch)||35))*Math.PI/180),out=[];
   planes.forEach((edge,i)=>{

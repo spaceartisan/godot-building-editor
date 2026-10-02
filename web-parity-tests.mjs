@@ -80,6 +80,75 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   console.log('PASS web stair guard: same railings as stair.guard, repeat is a no-op, undo');
 }
 {
+  // Halcyon H9: Share identical door scenes (CLI --share-door-scenes) is opt-in;
+  // the web render posts exactly the shared export.
+  const { exportGodotFiles } = await import('./src/exporter.js');
+  const W=(id,a,b)=>({op:'wall.add',floorId:'floor_1',id,value:{a:{x:a[0],z:a[1]},b:{x:b[0],z:b[1]},role:'exterior'}});
+  const doorsPlan=tx([W('s0',[0,0],[12,0]),W('s1',[12,0],[12,8]),W('s2',[12,8],[0,8]),W('s3',[0,8],[0,0]),
+    ...[2,6,10].map((x,i)=>({op:'opening.add',floorId:'floor_1',id:`d${i}`,value:{type:'door',wallId:'s0',at:{x,z:0},width:1,height:2.1,doorStyle:'room',label:`Door ${i}`}})),
+    {op:'opening.add',floorId:'floor_1',id:'big',value:{type:'door',wallId:'s2',at:{x:6,z:8},width:1.6,height:2.4,doorStyle:'exterior'}}]);
+  const calls=[];const r=await createEditorHarness({fetch:async(url,init)=>{calls.push({url,init});return {ok:true,status:200,json:async()=>({ok:true,engineVersion:'4.5.1.test',renderer:'test',views:[],images:[]})};}}),$r=r.$;
+  await r.loadBuildingData(structuredClone(doorsPlan));
+  assert.ok(!$r('#share-doors-toggle').checked,'off by default');
+  await $r('#godot-render-btn').click();
+  const files=body=>JSON.parse(body).files.map(f=>f.name);
+  assert.equal(files(calls[0].init.body).filter(n=>n.startsWith('doors/')).length,4,'one scene per door by default');
+  $r('#share-doors-toggle').checked=true;await $r('#godot-render-btn').click();
+  const expected=exportGodotFiles(r.snapshot(),{collision:true,markers:false,placeholderMaterials:false,shareDoorScenes:true});
+  assert.deepEqual(JSON.parse(calls[1].init.body).files,[{name:expected.tscnName,text:expected.tscn},...expected.doors.map(d=>({name:d.filename,text:d.tscn}))],'posts exactly the shared export');
+  assert.deepEqual(files(calls[1].init.body).filter(n=>n.startsWith('doors/')),['doors/new_building_door_001_room_100x210cm.tscn','doors/new_building_door_002_exterior_160x240cm.tscn']);
+  assert.deepEqual(r.errors,[]);
+  console.log('PASS web shared door scenes: opt-in toggle, render posts the same files as --share-door-scenes');
+}
+{
+  // Halcyon: a manual roof's Footprint can follow a convex polygon region's
+  // outline (roof.update polygon), and Hip is a roof type; same results as the CLI.
+  const fs=await import('node:fs');
+  const halcyon=JSON.parse(fs.readFileSync(new URL('./authoring/halcyon/output/halcyon.building.json',import.meta.url),'utf8'));
+  const flatBay=tx([{op:'roof.update',id:'roof_bay',value:{polygon:null,minX:-10,maxX:10}}],halcyon);
+  await e.loadBuildingData(structuredClone(flatBay));e.chooseSelection({type:'roofSection',id:'roof_bay'});
+  const footprint=$('#roof-footprint');assert.equal(footprint.value,'','starts rectangular');
+  footprint.value='floor_1/r_bay';await footprint.dispatch('change');
+  const bayPolygon=flatBay.floors[2].regions.find(r=>r.id==='r_bay').polygon;
+  assert.deepEqual(e.snapshot().roofSections,tx([{op:'roof.update',id:'roof_bay',value:{polygon:bayPolygon}}],flatBay).roofSections,'web footprint equals roof.update polygon');
+  assert.match($('#status-text').textContent,/Roof footprint follows Entrance bay/);
+  e.chooseSelection({type:'roofSection',id:'roof_bay'});await change(property('Type'),'hip');
+  assert.equal(e.snapshot().roofSections.find(r=>r.id==='roof_bay').type,'hip');
+  e.chooseSelection({type:'roofSection',id:'roof_bay'});await change(property('Type'),'gable');
+  assert.equal(e.snapshot().roofSections.find(r=>r.id==='roof_bay').type,'hip','gable on a polygon footprint is refused');
+  assert.match($('#status-text').textContent,/must be flat or hip/);
+  e.chooseSelection({type:'roofSection',id:'roof_bay'});const back=$('#roof-footprint');back.value='';await back.dispatch('change');
+  assert.equal(e.snapshot().roofSections.find(r=>r.id==='roof_bay').polygon,undefined,'Rectangle removes the polygon');
+  await $('#undo-btn').click();assert.ok(e.snapshot().roofSections.find(r=>r.id==='roof_bay').polygon,'undo restores it');
+  // A roof attached to a host, with edge modes, drops both when it takes a polygon footprint.
+  const attached=tx([{op:'roof.add',id:'host_roof',value:{type:'gable',minX:-12,maxX:12,minZ:18,maxZ:28,baseY:20}},{op:'roof.update',id:'roof_bay',value:{polygon:null,minX:-10,maxX:10,type:'shed',hostRoofId:'host_roof',edgeModes:{minX:'flush'}}}],halcyon);
+  await e.loadBuildingData(structuredClone(attached));e.chooseSelection({type:'roofSection',id:'roof_bay'});
+  const fp=$('#roof-footprint');fp.value='floor_1/r_bay';await fp.dispatch('change');
+  const changed=e.snapshot().roofSections.find(r=>r.id==='roof_bay');
+  assert.ok(changed.polygon&&changed.hostRoofId===undefined&&changed.edgeModes===undefined&&changed.type==='flat','attachment cleared, type flat');
+  assert.match($('#status-text').textContent,/so those were cleared/);
+  // A concave (L-shaped) region gives a flat roof; a hip roof turns flat, as roof.update requires.
+  const ell=[{x:-10,z:30},{x:0,z:30},{x:0,z:34},{x:-6,z:34},{x:-6,z:40},{x:-10,z:40}];
+  const withEll=tx([{op:'region.add',floorId:'floor_1',id:'r_ell',value:{polygon:ell,label:'Ell'}},{op:'roof.update',id:'roof_bay',value:{polygon:null,minX:-10,maxX:10,type:'hip'}}],halcyon);
+  await e.loadBuildingData(structuredClone(withEll));e.chooseSelection({type:'roofSection',id:'roof_bay'});
+  const ellInput=$('#roof-footprint');ellInput.value='floor_1/r_ell';await ellInput.dispatch('change');
+  assert.deepEqual(e.snapshot().roofSections,tx([{op:'roof.update',id:'roof_bay',value:{polygon:ell,type:'flat'}}],withEll).roofSections,'concave footprint equals roof.update polygon with type flat');
+  assert.match($('#status-text').textContent,/concave, so the hip roof became flat/);
+  e.chooseSelection({type:'roofSection',id:'roof_bay'});await change(property('Type'),'hip');
+  assert.equal(e.snapshot().roofSections.find(r=>r.id==='roof_bay').type,'flat','hip on a concave footprint is refused');
+  assert.match($('#status-text').textContent,/hip roof needs a convex outline/);
+  // An overhang that makes the concave outline cross itself is refused, as roof.update refuses it.
+  const tooWide=tx([{op:'roof.update',id:'roof_bay',value:{polygon:[{x:-10,z:30},{x:-5,z:30},{x:-5,z:34},{x:-7,z:34},{x:-7,z:31},{x:-8,z:31},{x:-8,z:34},{x:-10,z:34}],type:'flat',overhang:.2}}],withEll);
+  await e.loadBuildingData(structuredClone(tooWide));e.chooseSelection({type:'roofSection',id:'roof_bay'});await change(property('Overhang'),1);
+  assert.equal(e.snapshot().roofSections.find(r=>r.id==='roof_bay').overhang,.2,'overhang refused');
+  assert.match($('#status-text').textContent,/overhang makes this concave outline cross itself/);
+  assert.equal(applyTransaction(tooWide,{version:1,operations:[{op:'roof.update',id:'roof_bay',value:{overhang:1}}]}).ok,false);
+  e.chooseSelection({type:'roofSection',id:'roof_bay'});await change(property('Overhang'),.4);
+  assert.deepEqual(e.snapshot().roofSections,tx([{op:'roof.update',id:'roof_bay',value:{overhang:.4}}],tooWide).roofSections,'a valid overhang equals roof.update');
+  assert.deepEqual(e.errors,[]);
+  console.log('PASS web polygon roofs: Footprint follows a region outline like roof.update (concave outlines flat), Hip type, shared rejection, undo');
+}
+{
   // Route check: same warnings as validate --reachability, opt-in, navigable, in reports.
   const { reachabilityWarnings } = await import('./src/reachability.js');
   const fs = await import('node:fs');

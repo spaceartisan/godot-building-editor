@@ -4,6 +4,7 @@
 
 - [x] 1.4.0: Kestrel starship stress test (wall-type, doorway-shape and light transactions; route starts and profile-aware route check; uniform ceilings; junction miters) and a code audit (scene-text escaping, route check in reports, wall-loop closing, render guard, malformed-light errors, browser suite repaired).
 - [x] Halcyon limit test ([findings](authoring/halcyon/FINDINGS.md)): up to 15× faster export and 4.5× faster edits (byte-identical output); open-sky ceilings with roof `none`; a miter limit for sharp corners; `wall.split` and `stair.guard` (web: **Split wall**, **Guard opening above**); clearer outline, near-miss and far-coordinate warnings; flatter duplicate IDs; summarised dry-run values.
+- [x] Halcyon follow-ups: opt-in shared door scenes (`--share-door-scenes`, web **Share identical door scenes**), short sections for smooth shaped-wall curves, open-top ceilings no longer z-fight with wall caps, and manual roofs take polygon footprints (flat roofs convex or concave, hip roofs convex) and a hip type.
 - [x] Web/CLI parity: transactions for markers, manual floors/ceilings, Floor Footprints, floor insertion/duplication/reordering/removal, group move and door/window mesh settings.
 - [x] 1.3.0: fix the AI-authoring findings from the Ravenhold castle exercise: `new`, `building.update`, floor surface/boundary fields, opt-in `--reachability`, `godot-check --render`, `wall.crenellate`, railing transactions, world-point openings, per-ID diffs, coverage-aware boundary warnings. Per-wall thickness and per-region open-to-sky remain open.
 
@@ -70,7 +71,7 @@ Focus on web/CLI usability, reproducible defects, consistency, maintainability a
 - [x] Convex automatic hipped roofs and polygon flat roofs, with adjustable pitch/overhang.
 - [x] Supplied round building example, web roof controls and Godot regression rays.
 - [ ] Continuous concave hipped roofs with automatic valleys and unified overhang boundaries.
-- [ ] Authored polygon manual roof/surface tools; manual footprints remain rectangles.
+- [ ] Authored polygon manual surface tools; manual floors/ceilings remain rectangles (manual roofs take polygons; concave hip roofs with valleys remain future work).
 
 Checked items shipped through 1.2.0. Unchecked items are future work, not implied capabilities. Keep future passes independently testable and preserve backward compatibility.
 

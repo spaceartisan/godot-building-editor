@@ -61,3 +61,14 @@ const base=tx([{op:'building.update',value:{roof:{type:'flat'}}},...loop('floor_
   assert.ok(Math.abs(area(storyCeilingRectangles(enclosed,0))-96)<1e-6&&Math.abs(area(storyCeilingRectangles(enclosed,1))-48)<1e-6,'rooms inside a closed outline keep their ceilings with roof none');
   console.log('PASS open-sky ceilings: roof none leaves terraces outside the wall outline open unless a manual roof covers them');
 }
+{
+  // With roof none the ceiling's top face is open to view; it is clipped where
+  // it runs under the walls so it does not z-fight with the wall-top caps.
+  // Under an automatic roof it stays a full slab (hidden, unchanged output).
+  const topArea=(b,name)=>{const m=new RegExp(`\\[sub_resource type="ArrayMesh" id="F01_CeilingMesh"\\][\\s\\S]*?"name": "RoofSideFaces"`).exec(exportGodotFiles(b).tscn)[0];const aabb=[...m.matchAll(/"aabb": AABB\(([^)]*)\)/g)].at(-1)[1].split(',').map(Number);return aabb[3]*aabb[5];};
+  const open=tx([{op:'building.update',value:{roof:{type:'none'},wallThickness:.2}},...loop('floor_1','w',-4,-3,4,3)]);
+  assert.ok(Math.abs(topArea(open)-7.8*5.8)<1e-6,'roof none: ceiling top spans the room between the walls\' inner faces');
+  const roofed=tx([{op:'building.update',value:{roof:{type:'flat'}}}],open);
+  assert.ok(Math.abs(topArea(roofed)-8*6)<1e-6,'under a roof the ceiling top keeps its full outline');
+  console.log('PASS open-top ceilings: the top face stops at the walls, so it no longer z-fights with wall caps');
+}

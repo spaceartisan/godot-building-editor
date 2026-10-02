@@ -168,3 +168,62 @@ const base=ok(room('floor_1','w'));
   rejects([{op:'floor.update',id:'up',value:{autoFloor:false}},{op:'stair.guard',floorId:'floor_1',id:'st'}],/no automatic floor, so the stair cuts no opening/,two);
   console.log('PASS stair.guard: rails on the opening footprint, wall-closed sides and the landing end skipped, options, rejections');
 }
+{
+  // Halcyon: manual roofs take a convex polygon footprint (flat or hip), and a
+  // rectangular hip type. Gable/shed stay rectangular; polygon and hip roofs do
+  // not attach to hosts. The exported roof stays inside its outline + overhang.
+  const {exportGodotFiles}=await import('./src/exporter.js');
+  const bay=[{x:-10,z:20},{x:10,z:20},{x:4,z:26},{x:-4,z:26}];
+  const roofed=ok([{op:'roof.add',id:'bay',value:{polygon:bay,type:'flat',baseY:3,overhang:.2}},{op:'roof.add',id:'hip',value:{type:'hip',minX:20,maxX:26,minZ:0,maxZ:4,baseY:3,pitch:30}},{op:'roof.add',id:'hexhip',value:{type:'hip',polygon:[{x:40,z:0},{x:44,z:-2},{x:48,z:0},{x:48,z:4},{x:44,z:6},{x:40,z:4}],baseY:3}}]);
+  const bayRoof=roofed.roofSections.find(r=>r.id==='bay');
+  assert.deepEqual([bayRoof.minX,bayRoof.maxX,bayRoof.minZ,bayRoof.maxZ],[-10,10,20,26],'bounds come from the corners');
+  const scene=exportGodotFiles(roofed).tscn;
+  assert.match(scene,/\[node name="ManualRoof_001_Flat" type="MeshInstance3D"/);assert.match(scene,/\[node name="ManualRoof_001_Flat_Collision"/);
+  assert.match(scene,/\[node name="ManualRoof_002_Hip_01"/);assert.ok((scene.match(/\[node name="ManualRoof_003_Hip_\d+" type="MeshInstance3D"/g)||[]).length===6,'one hip face per polygon edge');
+  // Every bay-roof vertex lies inside the trapezoid grown by its 0.2 m overhang
+  // (roofBoxParts is what the exporter and the web preview build from).
+  const {roofBoxParts}=await import('./src/roof-geometry.js');
+  const pts=roofBoxParts(bayRoof,roofed.roof,3,0,true).flatMap(part=>part.solid.faces.flatMap(f=>f.points));
+  const signed=(p,a,b)=>((b.x-a.x)*(p.z-a.z)-(b.z-a.z)*(p.x-a.x))/Math.hypot(b.x-a.x,b.z-a.z);
+  const orient=Math.sign(signed(bay[2],bay[0],bay[1]));
+  assert.ok(pts.length>=8&&pts.every(p=>bay.every((a,i)=>orient*signed(p,a,bay[(i+1)%bay.length])>=-.2-1e-6)),'the bay roof follows its outline (no rectangular corners)');
+  assert.equal(pts.some(p=>Math.abs(p.x)>9.9&&p.z>25),false,'no corner at the bounding rectangle');
+  for(const [ops,pattern] of [
+    [[{op:'roof.add',id:'g',value:{polygon:bay,type:'gable',baseY:3}}],/must be flat or hip/],
+    [[{op:'roof.add',id:'c',value:{polygon:[{x:0,z:0},{x:4,z:0},{x:2,z:1},{x:4,z:4},{x:0,z:4}],type:'hip',baseY:3}}],/hip roof needs a convex outline/],
+    [[{op:'roof.add',id:'c',value:{polygon:[{x:0,z:0},{x:5,z:0},{x:5,z:4},{x:3,z:4},{x:3,z:1},{x:2,z:1},{x:2,z:4},{x:0,z:4}],type:'flat',baseY:3,overhang:1}}],/overhang makes this concave outline cross itself/],
+    [[{op:'roof.update',id:'bay',value:{minX:-9}}],/Edit polygon corners instead/],
+    [[{op:'roof.update',id:'bay',value:{hostRoofId:'hip'}}],/cannot attach to a host roof/],
+    [[{op:'roof.add',id:'kid',value:{minX:20,maxX:22,minZ:1,maxZ:3,baseY:3.5,type:'shed',hostRoofId:'hip'}}],/cannot attach to a hip roof/],
+    [[{op:'roof.add',id:'tri',value:{polygon:[{x:0,z:0},{x:1,z:0}],type:'flat',baseY:3}}],/3–256 corners/]]){
+    const r=run(ops,roofed);assert.equal(r.ok,false);assert.match(JSON.stringify(r.errors),pattern);
+  }
+  // An attached roof takes a polygon only when the same operation clears its host and edge modes (the web panel clears them for you).
+  const attached=ok([{op:'roof.add',id:'host',value:{type:'gable',minX:-12,maxX:12,minZ:18,maxZ:28,baseY:6}},{op:'roof.add',id:'kid',value:{type:'shed',minX:-10,maxX:10,minZ:20,maxZ:26,baseY:3,hostRoofId:'host',edgeModes:{minX:'flush'}}}],roofed);
+  assert.match(JSON.stringify(run([{op:'roof.update',id:'kid',value:{polygon:bay,type:'flat'}}],attached).errors),/cannot attach to a host roof/);
+  const freed=ok([{op:'roof.update',id:'kid',value:{polygon:bay,type:'flat',hostRoofId:null,edgeModes:{}}}],attached).roofSections.find(r=>r.id==='kid');
+  assert.ok(freed.polygon&&freed.hostRoofId===undefined);
+  const rect=ok([{op:'roof.update',id:'bay',value:{polygon:null,minX:-8,maxX:8}}],roofed).roofSections.find(r=>r.id==='bay');
+  assert.equal(rect.polygon,undefined);assert.deepEqual([rect.minX,rect.maxX],[-8,8],'polygon: null returns to a rectangle');
+  // A concave (L-shaped) outline makes a flat roof of convex pieces that
+  // together cover the outline grown by its overhang: 64 + 40*0.5 + 4*0.25 m².
+  const ell=[{x:60,z:0},{x:70,z:0},{x:70,z:4},{x:64,z:4},{x:64,z:10},{x:60,z:10}];
+  const lroofed=ok([{op:'roof.add',id:'ell',value:{polygon:ell,type:'flat',baseY:3,overhang:.5}}],roofed);
+  const ellRoof=lroofed.roofSections.find(r=>r.id==='ell');
+  const {roofFootprintAreas}=await import('./src/roof-outline.js');
+  const shoelace=pts=>Math.abs(pts.reduce((sum,a,i)=>{const b=pts[(i+1)%pts.length];return sum+a.x*b.z-b.x*a.z;},0))/2;
+  const ellPieces=roofFootprintAreas(ellRoof,.5);
+  assert.equal(ellPieces.length,2);
+  assert.ok(Math.abs(ellPieces.reduce((sum,piece)=>sum+shoelace(piece.polygon),0)-85)<1e-6,'pieces cover the grown L exactly');
+  const lscene=exportGodotFiles(lroofed).tscn;
+  assert.match(lscene,/\[node name="ManualRoof_004_Flat_01" type="MeshInstance3D"/);assert.match(lscene,/\[node name="ManualRoof_004_Flat_02_Collision"/);
+  // A roof without its own overhang (unprepared data; loading fills 0.35 m) uses
+  // the building roof's, in validation as in geometry.
+  const slot=[{x:80,z:0},{x:85,z:0},{x:85,z:4},{x:83,z:4},{x:83,z:1},{x:82,z:1},{x:82,z:4},{x:80,z:4}];
+  const slotted=ok([{op:'roof.add',id:'slot',value:{polygon:slot,type:'flat',baseY:3,overhang:.2}}],roofed);
+  const inherited=structuredClone(slotted);delete inherited.roofSections.find(r=>r.id==='slot').overhang;inherited.roof.overhang=1;
+  const {validateBuilding}=await import('./src/validation.js');
+  assert.match(JSON.stringify(validateBuilding(inherited).errors),/1 m overhang makes this concave outline cross itself/);
+  inherited.roof.overhang=.2;assert.deepEqual(validateBuilding(inherited).errors,[]);
+  console.log('PASS polygon and hip manual roofs: outline-following export, bounds from corners, concave flat roofs in convex pieces, inherited overhang checked, shared rejections, back to a rectangle');
+}

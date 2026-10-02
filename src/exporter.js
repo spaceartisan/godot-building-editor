@@ -2,6 +2,7 @@ import { wallTypeFor, sampleWallType } from './wall-types.js';
 import { openingShapeFor, shapedDoorLayout } from './opening-shapes.js';
 import { profileWallState, profileWallSolids } from './wall-profile-geometry.js';
 import { polygonSlabFaces } from './polygon-geometry.js';
+import { roofFootprintAreas, manualRoofOverhang } from './roof-outline.js';
 import { areaPoints, unionPolygonAreas, subtractPolygonAreas } from './polygon-areas.js';
 import { roofBoxParts, roofInteriorBlockers, roofAttachmentBlockers, trimRoofBox, trimmedGableEnds } from './roof-geometry.js';
 import { higherFloorBlockerRectangles, exteriorFootprintRectangles, unionRectAreas, automaticRoofRectangles, automaticRoofSections, boundsOfAutomaticRoof, boundsOfBuilding, boundsOfStructuralFloor, constrainedOpening, floorElevation, floorView, findWall, manualCeilingRectanglesAtLevel, manualFloorRectanglesAtLevel, pointOnWall, rectValid, roofSectionsForFloor, stairFootprint, storyHeight, structuralFloorRectangles, subtractRectAreas, splitWallIntoSolidSegments, validateOpeningLayout, wallLength } from './model.js';
@@ -1221,8 +1222,9 @@ export function slabRectangles(bounds, holes=[]) {
 }
 
 
-export function buildSlabFaceMeshData(rects, thickness, topY = 0) {
-  const top=meshWriter(),bottom=meshWriter(),edges=meshWriter();
+// writers.top may replace the top-face writer (e.g. a clipping writer).
+export function buildSlabFaceMeshData(rects, thickness, topY = 0, writers = {}) {
+  const top=writers.top||meshWriter(),bottom=meshWriter(),edges=meshWriter();
   const t=Math.max(.001,Number(thickness)||.18), y1=Number(topY)||0, y0=y1-t;
   if(rects.some(r=>r.polygon)){
     const faces=polygonSlabFaces(unionPolygonAreas(rects),t,y1);
@@ -1328,7 +1330,7 @@ export function storyCeilingRectangles(building, fi) {
   const exposed=subtractRectAreas(subtractRectAreas(structural,blockers),outline);
   if(!exposed.length)return ceiling;
   const independent=[
-    ...(building.roofSections||[]).filter(r=>rectValid(r)&&Number(r.baseY)>=storyTop-tolerance).map(r=>{const o=Math.max(0,Number(r.overhang)||0);return {minX:r.minX-o,maxX:r.maxX+o,minZ:r.minZ-o,maxZ:r.maxZ+o};}),
+    ...(building.roofSections||[]).filter(r=>rectValid(r)&&Number(r.baseY)>=storyTop-tolerance).flatMap(r=>roofFootprintAreas(r,manualRoofOverhang(r,building.roof))),
     ...[...(building.manualCeilings||[]),...(building.manualFloors||[])].filter(r=>rectValid(r)&&Number(r.topY)>=storyTop-tolerance).map(r=>({minX:r.minX,maxX:r.maxX,minZ:r.minZ,maxZ:r.maxZ}))];
   const sky=independent.length?subtractRectAreas(exposed,unionRectAreas(independent)):exposed;
   return sky.length?subtractRectAreas(ceiling,sky):ceiling;
@@ -1547,7 +1549,8 @@ export function exportGodotTscn(building, options={collision:true, markers:true}
   addRes('StandardMaterial3D',matRailing,['albedo_color = Color(0.76, 0.70, 0.58, 1)','roughness = 0.9']);
 
   const doorScenes=suppliedDoorScenes||doorSceneDescriptors(building);
-  for(const d of doorScenes) extResources.push(`[ext_resource type="PackedScene" path="${d.filename}" id="${d.extId}"]`);
+  const doorExtIds=new Set();
+  for(const d of doorScenes) if(!doorExtIds.has(d.extId)){doorExtIds.add(d.extId);extResources.push(`[ext_resource type="PackedScene" path="${d.filename}" id="${d.extId}"]`);}
 
   nodes.push(`[node name="${nodeClean(building.name)}" type="Node3D"]`);
 
@@ -1795,7 +1798,12 @@ shape = SubResource("${shapeId}")`);
         const t=Math.max(.02,Number(ceiling.thickness)||.12),ceilingTopAbs=elevation+view.wallHeight;
         const manualCeilingOverrides=manualCeilingRectanglesAtLevel(building,ceilingTopAbs,Math.max(.05,t*.6));
         const ceilingRects=subtractRectAreas(exposedCeilingRects,manualCeilingOverrides);
-        const ceilingFaces=buildSlabFaceMeshData(ceilingRects,t,view.wallHeight);
+        // With roof none the ceiling's top is open to view, and it lies in the
+        // plane of the wall-top caps where it runs under the walls; clip it out
+        // there so the two do not z-fight.
+        const ceilingTop=meshWriter(),openTop=building.roof?.type==='none'&&view.walls.length;
+        const topWriter=openTop?unionFaceWriter(ceilingTop,Infinity,hasProfileWalls(view)?profileWallSolids(view,exteriorWallOutsideSign,isExteriorWall):wallUnionSolids(view)):ceilingTop;
+        const ceilingFaces={...buildSlabFaceMeshData(ceilingRects,t,view.wallHeight,{top:topWriter}),top:ceilingTop};
         const ceilingMeshId=`${prefix}CeilingMesh`;
         const ceilingRes=multiSurfaceArrayMeshResource([
           {mesh:ceilingFaces.bottom,materialId:matCeilingBottom,surfaceName:'RoomFaces'},
@@ -2003,7 +2011,7 @@ shape = SubResource("${shapeId}")`);}
     for(let ri=0;ri<manualRoofs.length;ri++){
       const rs=manualRoofs[ri],idx=String(ri+1).padStart(3,'0'),cx=(rs.minX+rs.maxX)/2,cz=(rs.minZ+rs.maxZ)/2,w=rs.maxX-rs.minX,d=rs.maxZ-rs.minZ;
       if(w<=.05||d<=.05)continue;
-      const type=['gable','shed','flat'].includes(rs.type)?rs.type:'gable',dir=rs.direction==='z'?'z':'x';
+      const type=['gable','shed','flat','hip'].includes(rs.type)?rs.type:'gable',dir=rs.direction==='z'?'z':'x';
       const baseY=Number.isFinite(Number(rs.baseY))?Number(rs.baseY):(Number(building.wallHeight)||2.8);
       const pitch=Math.max(5,Math.min(70,Number(rs.pitch)||Number(building.roof?.pitch)||35))*Math.PI/180;
       const parent='ManualRoofs',collisionParent=options.collision?'ManualRoofCollision':null;
@@ -2064,7 +2072,20 @@ export function exportGodotFiles(building, options={collision:true,markers:true}
   const validation=assertValidBuilding(building);
   const base=fileBase(building.name),tscnName=`${base}.tscn`;
   const doorScenes=doorSceneDescriptors(building);
-  const doors=doorScenes.map(d=>({filename:d.filename,tscn:exportDoorTscn(d.view,d.opening,options),opening:d.opening,floorIndex:d.floorIndex}));
+  let doors=doorScenes.map(d=>({filename:d.filename,tscn:exportDoorTscn(d.view,d.opening,options),opening:d.opening,floorIndex:d.floorIndex}));
+  if(options.shareDoorScenes===true){
+    // Opt-in: doors whose scenes are byte-identical (same size, style, shape
+    // and frame) instance one shared file. Off by default, so each door keeps
+    // its own editable scene and existing exports are unchanged.
+    const shared=new Map();
+    doorScenes.forEach((d,i)=>{
+      const text=doors[i].tscn;if(text==null)return;
+      let scene=shared.get(text);
+      if(!scene){const n=String(shared.size+1).padStart(3,'0');scene={filename:`doors/${base}_door_${n}_${fileSlug(d.opening.doorStyle||'door')}_${Math.round(d.opening.width*100)}x${Math.round(d.opening.height*100)}cm.tscn`,extId:`DoorScene_${n}`,text,users:[]};shared.set(text,scene);}
+      d.filename=scene.filename;d.extId=scene.extId;scene.users.push(d.opening);
+    });
+    doors=[...[...shared.values()].map(q=>({filename:q.filename,tscn:q.text,openings:q.users,shared:q.users.length})),...doors.filter(d=>d.tscn==null)];
+  }
   return {base,tscnName,tscn:exportGodotTscn(building,options,doorScenes),doors,warnings:validation.warnings};
 }
 

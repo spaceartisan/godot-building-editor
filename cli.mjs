@@ -29,7 +29,7 @@ function profileInward(building,floor){
   const i=building.floors.indexOf(floor),view=floorView(building,i);
   return (view.walls||[]).filter(w=>w.wallTypeId).map(w=>{const n=profileWallState(view,w,exteriorWallOutsideSign,isExteriorWall).n;return {wallId:w.id,inwardSide:w.inwardSide||'auto',inward:{x:Math.round(n.x*1e6)/1e6+0,z:Math.round(n.z*1e6)/1e6+0}};});
 }
-const specs={new:['out','name'],edit:['ops','out','dry-run','warnings-as-errors'],validate:['warnings-as-errors','out','reachability','from'],inspect:['warnings-as-errors','entities','reachability','from'],export:['out','profile','no-collision','no-markers','placeholders','warnings-as-errors'],package:['out','profile','no-collision','no-markers','placeholders','warnings-as-errors','include-json'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision','render','views','out','surface-colors'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof']};
+const specs={new:['out','name'],edit:['ops','out','dry-run','warnings-as-errors'],validate:['warnings-as-errors','out','reachability','from'],inspect:['warnings-as-errors','entities','reachability','from'],export:['out','profile','no-collision','no-markers','placeholders','share-door-scenes','warnings-as-errors'],package:['out','profile','no-collision','no-markers','placeholders','share-door-scenes','warnings-as-errors','include-json'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision','render','views','out','surface-colors'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof']};
 const values=new Set(['from','name','views','ops','out','profile','suite','godot','assets','yaw','pitch','distance','floor','view','compare','overlay','roof','canvas','engine','timeout']);
 class CliError extends Error{constructor(message,code=2){super(message);this.code=code;}}
 const help=`Building Studio ${version}
@@ -66,7 +66,7 @@ Usage: node cli.mjs COMMAND [FILES...] [OPTIONS]
 
 Global: --json (one result on stdout), --quiet, --verbose, --help, --version
 Validate/inspect/export/package/edit: --warnings-as-errors
-Export/package: --profile generic|get_probed --no-collision --no-markers --placeholders
+Export/package: --profile generic|get_probed --no-collision --no-markers --placeholders --share-door-scenes
 Package: --include-json (original input; never normalized silently)
 Preview: --view building|floor|roofs --compare AFTER.json
          --overlay none|footprint|attachments [--roof MANUAL_ROOF_ID]
@@ -147,7 +147,7 @@ function documents(files,strict){
   return {loaded,exitCode};
 }
 const publicDocument=d=>({file:d.file,ok:d.ok,normalized:d.normalized??false,errors:d.errors,warnings:d.warnings});
-const exportOptions=o=>({profile:o.profile,collision:!o['no-collision'],markers:!o['no-markers'],placeholderMaterials:!!o.placeholders});
+const exportOptions=o=>({profile:o.profile,collision:!o['no-collision'],markers:!o['no-markers'],placeholderMaterials:!!o.placeholders,shareDoorScenes:!!o['share-door-scenes']});
 
 // Preflight every artifact and input before making any output visible. Batch
 // directories use input names, not authored building names, to prevent collisions.

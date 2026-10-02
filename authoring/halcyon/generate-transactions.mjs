@@ -241,7 +241,9 @@ tx('tx-3-circulation.edit.json', ops);
 ops = [];
 const elev = {}; { let y = -2 * (3.2 + SLAB); for (const f of FLOORS) { elev[f] = y; y += storyHeight(f); } }
 const roof = (id, label, b, baseY) => ops.push({ op: 'roof.add', id, value: { label, minX: b[0], maxX: b[1], minZ: b[2], maxZ: b[3], type: 'flat', baseY, overhang: 0 } });
-roof('roof_bay', 'Entrance bay roof', [-10, 10, 20, 26], elev.l2 + H.l2);
+// The bay roof follows the angled bay walls with a polygon footprint (flat roofs
+// may be convex polygons; see FINDINGS, rectangular manual roofs).
+ops.push({ op: 'roof.add', id: 'roof_bay', value: { label: 'Entrance bay roof', polygon: [P(-10, 20), P(10, 20), P(4, 26), P(-4, 26)], type: 'flat', baseY: elev.l2 + H.l2, overhang: 0 } });
 roof('roof_bridge', 'Sky bridge roof', [-14, 14, -2, 2], elev.l6 + 3.2);
 roof('roof_west', 'West tower roof', [-34, -14, -12, 12], elev.l9 + 3.2);
 // One ceiling light per authored room-sized region, a grid in the car park.

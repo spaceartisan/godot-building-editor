@@ -22,6 +22,7 @@ import { reachabilityWarnings, parseRouteStarts } from './reachability.js';
 import { snapPlanPoint, samePoint, wallSegmentProblem, wallJunctions, proposePlatformUpdate, proposeCrenellation, CRENELLATION_DEFAULTS } from './authoring.js';
 import { endpointMoveTargets, proposeEndpointMove, proposeWallSplit } from './wall-edit.js';
 import { stairGuardRailings } from './stair-guards.js';
+import { roofPolygonBounds, convexOutline } from './roof-outline.js';
 import { WebPreview3D as Preview3D, webReviewDescription } from './preview-web.js';
 import { createHistory } from './history.js';
 import { assertValidBuilding, validateBuilding } from './validation.js';
@@ -305,7 +306,8 @@ function drawPlan(){
   const activeRoofY=defaultRoofBaseY();
   for(const r of building.roofSections||[]){
     const isSel=highlights.has('roofSection:'+r.id), sameLevel=Math.abs((Number(r.baseY)||0)-activeRoofY)<=Math.max(.1,building.floorThickness*.75);
-    drawRectEntity(r,isSel?'rgba(255,244,123,.14)':sameLevel?'rgba(120,71,62,.11)':'rgba(120,71,62,.035)',sameLevel?'#a56e66':'rgba(143,94,88,.38)',isSel,true);
+    if(r.polygon){ctx.save();tracePlanArea(r);ctx.fillStyle=isSel?'rgba(255,244,123,.14)':sameLevel?'rgba(120,71,62,.11)':'rgba(120,71,62,.035)';ctx.fill();ctx.strokeStyle=isSel?'#fff47b':sameLevel?'#a56e66':'rgba(143,94,88,.38)';ctx.lineWidth=isSel?3:1.5;ctx.setLineDash([3,3]);ctx.stroke();ctx.restore();}
+    else drawRectEntity(r,isSel?'rgba(255,244,123,.14)':sameLevel?'rgba(120,71,62,.11)':'rgba(120,71,62,.035)',sameLevel?'#a56e66':'rgba(143,94,88,.38)',isSel,true);
     if(isSel||sameLevel){const p=worldToScreen({x:r.minX,z:r.minZ});ctx.fillStyle=isSel?'#fff47b':'#a98780';ctx.font='10px ui-monospace, monospace';ctx.fillText(`${r.label||'Roof'} @ ${Number(r.baseY).toFixed(2)}m`,p.x+4,p.y-5);}
   }
   const regionLabelBoxes=[];
@@ -596,9 +598,26 @@ function updatePlatformSettings(platform,patch){
   if(!result.ok){refreshSelection();setStatus(result.reason);return;}
   Object.assign(platform,result.platform);commit('Platform updated');
 }
+// Host attachment and edge modes apply only to rectangular gable/shed/flat roofs.
+function roofAttachmentReset(r){return {...(r.hostRoofId?{hostRoofId:undefined}:{}),...(r.edgeModes?{edgeModes:undefined}:{})};}
+// Manual roof footprint: its rectangle, or the outline of a polygon region on
+// any floor (shares roof.update's polygon rules: flat or hip, hip convex only).
+function roofFootprintInput(r){
+  const sources=building.floors.flatMap((f,i)=>(f.regions||[]).filter(g=>g.polygon).map(g=>[`${f.id}/${g.id}`,`${g.label||g.id} outline (floor ${i+1})`,g]));
+  const current=r.polygon?(sources.find(([,,g])=>JSON.stringify(g.polygon)===JSON.stringify(r.polygon))?.[0]||'custom'):'';
+  const options=[['','Rectangle'],...(current==='custom'?[['custom',`Polygon (${r.polygon.length} corners)`]]:[]),...sources.map(([v,l])=>[v,l])];
+  const input=selectInput('Footprint',current,options,v=>{
+    if(v==='custom')return;
+    if(!v){updateRoofSettings(r,{polygon:undefined},'Roof footprint set to its rectangle');return;}
+    const g=sources.find(([key])=>key===v)[2],polygon=g.polygon.map(p=>({x:p.x,z:p.z}));
+    const cleared=r.hostRoofId||r.edgeModes,concaveHip=r.type==='hip'&&!convexOutline(polygon);
+    updateRoofSettings(r,{polygon,...roofPolygonBounds(polygon),...(['gable','shed'].includes(r.type)||concaveHip?{type:'flat'}:{}),...roofAttachmentReset(r)},`Roof footprint follows ${g.label||g.id}${concaveHip?'; the outline is concave, so the hip roof became flat':''}${cleared?'; polygon roofs have no host attachment or edge modes, so those were cleared':''}`);
+  });
+  input.querySelector('select').id='roof-footprint';return input;
+}
 function updateRoofSettings(roof,patch,status){
   const before=structuredClone(roof);Object.assign(roof,patch);
-  if(roof.hostRoofId===undefined)delete roof.hostRoofId;
+  for(const key of ['hostRoofId','polygon','edgeModes'])if(roof[key]===undefined)delete roof[key];
   const errors=validateBuilding(building).errors;
   if(errors.length){for(const key of Object.keys(roof))delete roof[key];Object.assign(roof,before);setStatus(errors[0].message);refreshSelection();return;}
   commit(status);
@@ -680,10 +699,11 @@ function refreshSelection(){
   }else if(selected.type==='slab'){const r=f.slabs.find(x=>x.id===selected.id);if(!r){selected=null;return refreshSelection();}form.append(textInput('Name',r.label,v=>{r.label=v||'Floor Footprint';commit('Floor footprint updated');}),numInput('Min X',r.minX,v=>{r.minX=v;commit('Floor footprint updated');}),numInput('Max X',r.maxX,v=>{r.maxX=v;commit('Floor footprint updated');}),numInput('Min Z',r.minZ,v=>{r.minZ=v;commit('Floor footprint updated');}),numInput('Max Z',r.maxZ,v=>{r.maxZ=v;commit('Floor footprint updated');}));const sm=document.createElement('div');sm.className='muted';sm.textContent='Overrides the automatic slab footprint on the active story. It remains tied to this floor elevation.';form.append(sm);
   }else if(selected.type==='manualFloor'||selected.type==='manualCeiling'){const isCeiling=selected.type==='manualCeiling',list=isCeiling?building.manualCeilings:building.manualFloors,r=list.find(x=>x.id===selected.id);if(!r){selected=null;return refreshSelection();}const kind=isCeiling?'Ceiling':'Floor';form.append(textInput('Name',r.label,v=>{r.label=v||`Manual ${kind}`;commit(`Manual ${kind.toLowerCase()} updated`);}),numInput('Top height Y',r.topY,v=>{r.topY=v;commit(`Manual ${kind.toLowerCase()} height updated`);}),numInput('Thickness',r.thickness,v=>{r.thickness=Math.max(.01,v);commit(`Manual ${kind.toLowerCase()} thickness updated`);},'.01'),numInput('Min X',r.minX,v=>{r.minX=v;commit(`Manual ${kind.toLowerCase()} footprint updated`);}),numInput('Max X',r.maxX,v=>{r.maxX=v;commit(`Manual ${kind.toLowerCase()} footprint updated`);}),numInput('Min Z',r.minZ,v=>{r.minZ=v;commit(`Manual ${kind.toLowerCase()} footprint updated`);}),numInput('Max Z',r.maxZ,v=>{r.maxZ=v;commit(`Manual ${kind.toLowerCase()} footprint updated`);}));const sm=document.createElement('div');sm.className='muted';sm.textContent=`Independent building-level ${kind.toLowerCase()} slab. Thickness extends downward from Top height Y; same-height overlap replaces automatic ${kind.toLowerCase()} geometry.`;form.append(sm);
   }else if(selected.type==='platform'){const r=f.platforms.find(x=>x.id===selected.id);if(!r){selected=null;return refreshSelection();}form.append(textInput('Name',r.label,v=>updatePlatformSettings(r,{label:v||'Platform'})),selectInput('Type',r.kind,[['porch','Porch'],['deck','Deck']],v=>updatePlatformSettings(r,{kind:v})),checkboxInput('Covered by roof',r.covered,v=>updatePlatformSettings(r,{covered:v})),numInput('Height offset',r.height||0,v=>updatePlatformSettings(r,{height:v})),numInput('Min X',r.minX,v=>updatePlatformSettings(r,{minX:v})),numInput('Max X',r.maxX,v=>updatePlatformSettings(r,{maxX:v})),numInput('Min Z',r.minZ,v=>updatePlatformSettings(r,{minZ:v})),numInput('Max Z',r.maxZ,v=>updatePlatformSettings(r,{maxZ:v})));
-  }else if(selected.type==='roofSection'){const r=building.roofSections.find(x=>x.id===selected.id);if(!r){selected=null;return refreshSelection();}form.append(textInput('Name',r.label,v=>{r.label=v||'Roof';commit('Roof updated');}),selectInput('Type',r.type||'gable',[['gable','Gable'],['shed','Shed / Lean-to'],['flat','Flat']],v=>{r.type=v;commit('Roof updated');}),selectInput('Ridge / slope axis',r.direction||'x',[['x','X axis'],['z','Z axis']],v=>{r.direction=v;commit('Roof updated');}),numInput('Base height Y',r.baseY,v=>{r.baseY=v;commit('Roof height updated');}),numInput('Pitch °',r.pitch||building.roof.pitch,v=>{r.pitch=Math.max(5,Math.min(70,v));commit('Roof pitch updated');}),numInput('Overhang',r.overhang??building.roof.overhang,v=>{r.overhang=Math.max(0,v);commit('Roof overhang updated');}),selectInput('Gable end fill',r.gableEnds||'both',[['both','Both ends'],['min','Min-axis end only'],['max','Max-axis end only'],['none','No gable fill']],v=>{r.gableEnds=v;commit('Roof gable fill updated');}),numInput('Min X',r.minX,v=>{r.minX=v;commit('Roof footprint updated');}),numInput('Max X',r.maxX,v=>{r.maxX=v;commit('Roof footprint updated');}),numInput('Min Z',r.minZ,v=>{r.minZ=v;commit('Roof footprint updated');}),numInput('Max Z',r.maxZ,v=>{r.maxZ=v;commit('Roof footprint updated');}));const hosts=building.roofSections.filter(q=>q.id!==r.id&&!q.hostRoofId);
+  }else if(selected.type==='roofSection'){const r=building.roofSections.find(x=>x.id===selected.id);if(!r){selected=null;return refreshSelection();}form.append(textInput('Name',r.label,v=>{r.label=v||'Roof';commit('Roof updated');}),selectInput('Type',r.type||'gable',[['gable','Gable'],['shed','Shed / Lean-to'],['flat','Flat'],['hip','Hip']],v=>updateRoofSettings(r,{type:v,...(v==='hip'?roofAttachmentReset(r):{})},`Roof updated${v==='hip'&&(r.hostRoofId||r.edgeModes)?'; hip roofs have no host attachment or edge modes, so those were cleared':''}`)),roofFootprintInput(r),selectInput('Ridge / slope axis',r.direction||'x',[['x','X axis'],['z','Z axis']],v=>{r.direction=v;commit('Roof updated');}),numInput('Base height Y',r.baseY,v=>{r.baseY=v;commit('Roof height updated');}),numInput('Pitch °',r.pitch||building.roof.pitch,v=>{r.pitch=Math.max(5,Math.min(70,v));commit('Roof pitch updated');}),numInput('Overhang',r.overhang??building.roof.overhang,v=>updateRoofSettings(r,{overhang:Math.max(0,v)},'Roof overhang updated')),selectInput('Gable end fill',r.gableEnds||'both',[['both','Both ends'],['min','Min-axis end only'],['max','Max-axis end only'],['none','No gable fill']],v=>{r.gableEnds=v;commit('Roof gable fill updated');}),...(r.polygon?[]:[numInput('Min X',r.minX,v=>{r.minX=v;commit('Roof footprint updated');})]),...(r.polygon?[]:[numInput('Max X',r.maxX,v=>{r.maxX=v;commit('Roof footprint updated');})]),...(r.polygon?[]:[numInput('Min Z',r.minZ,v=>{r.minZ=v;commit('Roof footprint updated');})]),...(r.polygon?[]:[numInput('Max Z',r.maxZ,v=>{r.maxZ=v;commit('Roof footprint updated');})]));const hosts=building.roofSections.filter(q=>q.id!==r.id&&!q.hostRoofId&&!q.polygon&&q.type!=='hip');
+    if(r.polygon||r.type==='hip'){const note=document.createElement('div');note.className='muted';note.textContent=r.polygon?`Polygon footprint (${r.polygon.length} corners, ${convexOutline(r.polygon)?'convex':'concave'}). Flat or hip only (hip needs a convex outline); overhang applies to every edge; no host attachment or edge modes.`:'Hip roofs have no host attachment or edge modes.';form.append(note);}else{
     form.append(selectInput('Trim to host roof',r.hostRoofId||'',[['','No roof attachment'],...hosts.map(q=>[q.id,q.label||q.id])],v=>updateRoofSettings(r,{hostRoofId:v||undefined},'Roof attachment updated')));
     for(const [edge,label] of [['minX','West edge'],['maxX','East edge'],['minZ','North edge'],['maxZ','South edge']])form.append(selectInput(label,r.edgeModes?.[edge]||'overhang',[['overhang','Use roof overhang'],['flush','Flush with footprint']],v=>updateRoofSettings(r,{edgeModes:{...(r.edgeModes||{}),[edge]:v}},'Roof edge updated')));
-    const rm=document.createElement('div');rm.className='muted';rm.textContent='Attachment trims this roof’s slabs against the selected host. The host stays intact. Review gable end fills separately. Flush edges remove overhang including slab thickness.';form.append(rm);
+    const rm=document.createElement('div');rm.className='muted';rm.textContent='Attachment trims this roof’s slabs against the selected host. The host stays intact. Review gable end fills separately. Flush edges remove overhang including slab thickness.';form.append(rm);}
   }else if(selected.type==='railing'){const r=f.railings.find(x=>x.id===selected.id);if(!r){selected=null;return refreshSelection();}form.append(textInput('Name',r.label,v=>{r.label=v||'Railing';commit('Railing updated');}),selectInput('Style',r.style||'two_rail',[['two_rail','Two rail'],['picket','Picket'],['cross_brace','Cross brace']],v=>{r.style=v;commit('Railing style updated');}),numInput('Start X',r.a.x,v=>{r.a.x=v;commit('Railing updated');}),numInput('Start Z',r.a.z,v=>{r.a.z=v;commit('Railing updated');}),numInput('End X',r.b.x,v=>{r.b.x=v;commit('Railing updated');}),numInput('End Z',r.b.z,v=>{r.b.z=v;commit('Railing updated');}),numInput('Height',r.height||1,v=>{r.height=Math.max(.4,v);commit('Railing updated');}));
   }else{const o=f.openings.find(x=>x.id===selected.id);if(!o){selected=null;return refreshSelection();}form.append(textInput('Label',o.label,v=>{o.label=v;commit('Opening updated');}),numInput('Position along wall %',o.t*100,v=>updateOpening(o,{t:v/100},'Opening moved'),'1'),numInput('Width',o.width,v=>updateOpening(o,{width:v},'Opening width updated')),numInput('Height',o.height,v=>updateOpening(o,{height:v},'Opening height updated')));if(o.type==='window')form.append(selectInput('Window style',o.windowStyle||'plain',[['plain','Plain'],['double_hung','Double-hung'],['four_pane','Four-pane'],['empty','Empty opening']] ,v=>{o.windowStyle=v;commit('Window style updated');}),numInput('Sill height',o.sill,v=>updateOpening(o,{sill:v},'Window sill updated')));if(o.type==='door'){form.append(selectInput('Doorway shape',o.shapeId||'',[['','Rectangle'],...(building.openingShapes||[]).map(s=>[s.id,s.label])],v=>updateOpening(o,{shapeId:v||undefined},'Doorway shape updated')));const edit=document.createElement('button');edit.type='button';edit.textContent=o.shapeId?'Edit shared doorway shape…':'Create doorway shape…';edit.addEventListener('click',()=>openingShapeEditor.open(o.shapeId||'',[o.id]));form.append(edit);}if(o.type==='door')form.append(selectInput('Door type',o.doorStyle||'room',[["exterior","Exterior door"],["room","Room door"],["closet","Closet door"],["empty","Empty opening"]],v=>updateOpening(o,{doorStyle:v},'Door type updated')));}
   const del=document.createElement('button');del.className='danger';del.textContent='Delete selection';del.style.marginTop='12px';del.title='Delete the selected item (Delete key)';del.addEventListener('click',deleteSelectedEntity);form.append(del);
@@ -949,13 +969,15 @@ $('#download-check-report-btn').addEventListener('click',()=>{
     setStatus(`Check report downloaded: ${report.counts.errors} errors, ${report.counts.warnings} warnings. Save the building JSON separately.`);
   }catch(err){setStatus(`Check report download failed: ${err.message}`);}
 });
+// Export options from the Godot Export panel (CLI: --no-collision, --no-markers, --placeholders, --share-door-scenes).
+function exportOptionsFromUi(){return {collision:$('#collision-toggle').checked,markers:$('#markers-toggle').checked,placeholderMaterials:$('#placeholder-materials-toggle').checked,shareDoorScenes:$('#share-doors-toggle').checked};}
 // Godot renders go through the local server (server.mjs with GODOT_BIN), which
 // applies the CLI's asset checks and godot-check --render views to this export.
 async function renderInGodot(){
   const button=$('#godot-render-btn'),status=$('#godot-render-status'),report=text=>{status.textContent=text;setStatus(text);};
   const result=showValidation();
   if(result.errors.length){revealValidation();report(`Render blocked: ${result.errors[0].message}`);return;}
-  const f=exportGodotFiles(building,{collision:$('#collision-toggle').checked,markers:$('#markers-toggle').checked,placeholderMaterials:$('#placeholder-materials-toggle').checked});
+  const f=exportGodotFiles(building,exportOptionsFromUi());
   const files=[{name:f.tscnName,text:f.tscn},...f.doors.map(d=>({name:d.filename,text:d.tscn}))];
   // The preview's projection uses focal = 0.78 × min(width, height): about a
   // 65° vertical field of view, which is also Godot's Camera3D convention.
@@ -994,7 +1016,7 @@ $('#export-btn').addEventListener('click',()=>{
   try{
     const result=showValidation();
     if(result.errors.length){revealValidation();setStatus(`Export blocked: ${result.errors[0].message}`);return;}
-    downloadGodotTscn(building,{collision:$('#collision-toggle').checked,markers:$('#markers-toggle').checked,placeholderMaterials:$('#placeholder-materials-toggle').checked});
+    downloadGodotTscn(building,exportOptionsFromUi());
     if(result.warnings.length)revealValidation();
     setStatus(`Godot package exported. ${result.warnings.length} authoring warnings; see Godot Export.`);
   }catch(err){revealValidation();setStatus(`Export blocked: ${err.message}`);}

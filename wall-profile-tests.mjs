@@ -46,3 +46,24 @@ e.chooseSelection({type:'wall',id:'wall_1'});let direction=e.$('#selection-form'
 await change('#new-wall-type','hull');await click('#wall-types-btn');const original=e.snapshot();const offset=e.$('#wall-type-levels').querySelectorAll('input')[4];offset.value='oops';await offset.dispatch('change');await click('#wall-type-save');assert.equal(e.$('#wall-type-dialog').open,true);assert.deepEqual(e.snapshot(),original);await click('#wall-type-cancel');
 await click('#wall-types-btn');const plot=e.$('#wall-type-preview'),level={clientX:(50+(.35+.45)*500/1.04)*1100/600,clientY:(44+.84*286)*2};await plot.dispatch('pointerdown',level);await plot.dispatch('pointermove',{...level,clientX:level.clientX+50,pointerId:2});await plot.dispatch('pointerup',{...level,pointerId:2});await plot.dispatch('pointermove',{...level,clientX:level.clientX+50});await plot.dispatch('pointerup',level);await click('#wall-type-save');assert.ok(e.snapshot().wallTypes[0].stations[1].offset>.39);await click('#undo-btn');assert.deepEqual(e.snapshot(),original);
 assert.equal(e.errors.length,0);console.log('PASS grouped type application, inward flip/undo, invalid draft isolation and profile pointer ownership');
+{
+  // Halcyon H12: the short-wall rule charges each end only what its join can
+  // cut. A smooth 128-section curve of a flared profile (0.59 m sections, 0.39 m
+  // reach) is valid and watertight; a short section at a free end or a right
+  // angle is still rejected as before.
+  const {applyTransaction}=await import('./src/transactions.js'),{prepareDocument}=await import('./src/diagnostics.js'),{buildExteriorMeshData}=await import('./src/exporter.js');
+  const base=(()=>{const b=makeEmptyBuilding();b.floors[0].id='floor_1';return prepareDocument(b).building;})();
+  const flare={op:'wallType.add',id:'flare',value:{label:'Flare',stations:[{height:0,offset:0,thickness:.18},{height:.5,offset:-.3,thickness:.18},{height:1,offset:0,thickness:.18}]}};
+  const W=(id,a,b,extra={})=>({op:'wall.add',floorId:'floor_1',id,value:{a:{x:a[0],z:a[1]},b:{x:b[0],z:b[1]},role:'exterior',...extra}});
+  const ring=n=>{const pts=Array.from({length:n},(_,k)=>{const a=2*Math.PI*k/n;return [+(12*Math.cos(a)).toFixed(6),+(12*Math.sin(a)).toFixed(6)];});
+    return [{op:'building.update',value:{roof:{type:'none'}}},flare,...pts.map((p,k)=>W(`p${k}`,p,pts[(k+1)%n],{wallTypeId:'flare',inwardToward:{x:0,z:0}}))];};
+  const curve=applyTransaction(base,{version:1,operations:ring(128)});assert.equal(curve.ok,true,JSON.stringify(curve.errors));
+  // Rays from the centre through every joint and mid-section cross the shell exactly twice.
+  const m=buildExteriorMeshData(floorView(curve.building,0,true)),tris=[];for(const w of [m.outside,m.inside,m.edges])for(let j=0;j<w.vertices.length;j+=3)tris.push(w.vertices.slice(j,j+3));
+  const crossings=(y,a)=>{const r={x:Math.cos(a),y:0,z:Math.sin(a)},seen=new Set();for(const [p0,p1,p2] of tris){const e1=sub(p1,p0),e2=sub(p2,p0),p=cross(r,e2),det=dot(e1,p);if(Math.abs(det)<1e-12)continue;const s=sub({x:0,y,z:0},p0),u=dot(s,p)/det;if(u<-1e-9||u>1+1e-9)continue;const q=cross(s,e1),v=dot(r,q)/det;if(v<-1e-9||u+v>1+1e-9)continue;const t=dot(e2,q)/det;if(t>1e-9)seen.add(t.toFixed(5));}return seen.size;};
+  for(let k=0;k<128;k+=4)for(const f of [0,.5])for(const y of [.3,1.4,2.6])assert.equal(crossings(y,2*Math.PI*(k+f)/128),2,`ray at section ${k}+${f}, y ${y}`);
+  const reject=(ops,label)=>{const r=applyTransaction(base,{version:1,operations:[flare,...ops]});assert.equal(r.ok,false,label);assert.match(JSON.stringify(r.errors),/profile is too wide for this short wall/,label);};
+  reject([W('stub',[0,0],[.6,0],{wallTypeId:'flare'})],'free-standing short section');
+  reject([W('a',[0,0],[.6,0],{wallTypeId:'flare'}),W('b',[.6,0],[.6,4],{wallTypeId:'flare'})],'short section at a right angle');
+  console.log('PASS short shaped sections: smooth 128-section curves are valid and watertight; free ends and corners keep the full reach');
+}

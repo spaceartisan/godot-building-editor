@@ -79,3 +79,19 @@ assert.throws(()=>preview.setReview({view:'bogus'}));assert.deepEqual(preview.re
 assert.throws(()=>preview.setReview({roof:'missing'}));assert.deepEqual(preview.review,state);
 assert.deepEqual(e.errors,[]);
 console.log('PASS supplied-plan export parity, undo isolation, empty states and atomic selector rejection');
+{
+  // The preview reuses shaped-wall meshes while a floor is unchanged apart from
+  // labels; any geometric change (a wall end, a wall type's profile) rebuilds.
+  const base=JSON.parse(fs.readFileSync('examples/shaped_walls.building.json','utf8'));
+  const meshes=b=>JSON.stringify(reviewScene(b,{floor:1}).objects.filter(o=>o.mesh).map(o=>o.mesh));
+  const before=meshes(base);
+  const relabeled=structuredClone(base);relabeled.floors[0].walls[1].label='Renamed';relabeled.wallTypes[0].label='Renamed type';
+  assert.equal(meshes(relabeled),before,'labels do not change shaped-wall meshes');
+  const moved=structuredClone(base);moved.floors[0].walls[1].b.z=4;moved.floors[0].walls[2].a.z=4;
+  const movedMeshes=meshes(moved);assert.notEqual(movedMeshes,before,'a moved wall rebuilds');
+  assert.ok(JSON.parse(movedMeshes).some(m=>m.vertices.some(p=>Math.abs(p.z-4)<.5)),'rebuilt meshes reach the moved corner');
+  const reshaped=structuredClone(base);reshaped.wallTypes[0].stations[1].offset=.2;reshaped.wallTypes[0].stations[2].offset=.2;
+  assert.notEqual(meshes(reshaped),before,'a changed profile rebuilds');
+  assert.equal(meshes(base),before,'returning to the original reuses its meshes');
+  console.log('PASS preview shaped-wall mesh reuse: labels reuse, wall and profile changes rebuild');
+}

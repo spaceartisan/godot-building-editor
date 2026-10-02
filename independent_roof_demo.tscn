@@ -99,14 +99,14 @@ _surfaces = [{
 "vertex_data": PackedByteArray("AADAwLgeRUAAAKDAAADAQLgeRUAAAKBAAADAQLgeRUAAAKDAAADAwLgeRUAAAKDAAADAwLgeRUAAAKBAAADAQLgeRUAAAKBA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA")
 },
 {
-"aabb": AABB(-6, 3.2, -5, 12, 0, 10),
-"attribute_data": PackedByteArray("AADAwAAAoMAAAMBAAACgQAAAwMAAAKBAAADAwAAAoMAAAMBAAACgwAAAwEAAAKBA"),
+"aabb": AABB(-5.91, 3.2, -4.91, 11.82, 0, 9.82),
+"attribute_data": PackedByteArray("uB69wLgencC4Hr1AuB6dQLgevcC4Hp1AuB69wLgencC4Hr1AuB6dwLgevUC4Hp1A"),
 "format": 34359738387,
 "name": "RoofSideFaces",
 "primitive": 3,
 "uv_scale": Vector4(0, 0, 0, 0),
 "vertex_count": 6,
-"vertex_data": PackedByteArray("AADAwM3MTEAAAKDAAADAQM3MTEAAAKBAAADAwM3MTEAAAKBAAADAwM3MTEAAAKDAAADAQM3MTEAAAKDAAADAQM3MTEAAAKBA/3////9/////f////3////9/////f///")
+"vertex_data": PackedByteArray("uB69wM3MTEC4Hp3AuB69QM3MTEC4Hp1AuB69wM3MTEC4Hp1AuB69wM3MTEC4Hp3AuB69QM3MTEC4Hp3AuB69QM3MTEC4Hp1A/3////9/////f////3////9/////f///")
 },
 {
 "aabb": AABB(-6, 3.08, -5, 12, 0.12, 10),
@@ -234,14 +234,14 @@ _surfaces = [{
 "vertex_data": PackedByteArray("AAAAwLgeRUAAACDAAACAQLgeRUAAACBAAACAQLgeRUAAACDAAAAAwLgeRUAAACDAAAAAwLgeRUAAACBAAACAQLgeRUAAACBA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA")
 },
 {
-"aabb": AABB(-2, 3.2, -2.5, 6, 0, 5),
-"attribute_data": PackedByteArray("AAAAwAAAIMAAAIBAAAAgQAAAAMAAACBAAAAAwAAAIMAAAIBAAAAgwAAAgEAAACBA"),
+"aabb": AABB(-1.91, 3.2, -2.41, 5.82, 0, 4.82),
+"attribute_data": PackedByteArray("4Xr0v3E9GsBxPXpAcT0aQOF69L9xPRpA4Xr0v3E9GsBxPXpAcT0awHE9ekBxPRpA"),
 "format": 34359738387,
 "name": "RoofSideFaces",
 "primitive": 3,
 "uv_scale": Vector4(0, 0, 0, 0),
 "vertex_count": 6,
-"vertex_data": PackedByteArray("AAAAwM3MTEAAACDAAACAQM3MTEAAACBAAAAAwM3MTEAAACBAAAAAwM3MTEAAACDAAACAQM3MTEAAACDAAACAQM3MTEAAACBA/3////9/////f////3////9/////f///")
+"vertex_data": PackedByteArray("4Xr0v83MTEBxPRrAcT16QM3MTEBxPRpA4Xr0v83MTEBxPRpA4Xr0v83MTEBxPRrAcT16QM3MTEBxPRrAcT16QM3MTEBxPRpA/3////9/////f////3////9/////f///")
 },
 {
 "aabb": AABB(-2, 3.08, -2.5, 6, 0.12, 5),

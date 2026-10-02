@@ -99,14 +99,14 @@ _surfaces = [{
 "vertex_data": PackedByteArray("AADAwOxROEAAAIDAAADAQOxROEAAAIBAAADAQOxROEAAAIDAAADAwOxROEAAAIDAAADAwOxROEAAAIBAAADAQOxROEAAAIBA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA")
 },
 {
-"aabb": AABB(-6, 3, -4, 12, 0, 8),
-"attribute_data": PackedByteArray("AADAwAAAgMAAAMBAAACAQAAAwMAAAIBAAADAwAAAgMAAAMBAAACAwAAAwEAAAIBA"),
+"aabb": AABB(-5.91, 3, -3.91, 11.82, 0, 7.82),
+"attribute_data": PackedByteArray("uB69wHE9esC4Hr1AcT16QLgevcBxPXpAuB69wHE9esC4Hr1AcT16wLgevUBxPXpA"),
 "format": 34359738387,
 "name": "RoofSideFaces",
 "primitive": 3,
 "uv_scale": Vector4(0, 0, 0, 0),
 "vertex_count": 6,
-"vertex_data": PackedByteArray("AADAwAAAQEAAAIDAAADAQAAAQEAAAIBAAADAwAAAQEAAAIBAAADAwAAAQEAAAIDAAADAQAAAQEAAAIDAAADAQAAAQEAAAIBA/3////9/////f////3////9/////f///")
+"vertex_data": PackedByteArray("uB69wAAAQEBxPXrAuB69QAAAQEBxPXpAuB69wAAAQEBxPXpAuB69wAAAQEBxPXrAuB69QAAAQEBxPXrAuB69QAAAQEBxPXpA/3////9/////f////3////9/////f///")
 },
 {
 "aabb": AABB(-6, 2.88, -4, 12, 0.12, 8),

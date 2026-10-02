@@ -58,3 +58,14 @@ e.$('#roof-type').value='flat';await e.$('#roof-type').dispatch('change');assert
 await e.$('#undo-btn').click();assert.equal(e.snapshot().roof.type,'hip');assert.equal(e.errors.length,0);
 const old=load();old.roof.type='gable';assert.ok(validateBuilding(old).warnings.some(w=>/choose Hip/.test(w.message)));assert.ok(!validateBuilding(load()).warnings.length);
 console.log('PASS real web roof selector, outline feedback, undo, export parity and legacy gable guidance');
+{
+  // Many-cornered concave outlines (a 256-corner star) split into convex cells
+  // quickly and exactly; the cell merge used to take about 45 s here.
+  const {wallPolygonAreas}=await import('./src/polygon-areas.js');
+  const n=256,star=Array.from({length:n},(_,i)=>{const a=-i/n*Math.PI*2,r=i%2?9:10;return {x:+(Math.cos(a)*r).toFixed(3),z:+(Math.sin(a)*r).toFixed(3)};});
+  const started=performance.now(),cells=wallPolygonAreas(star.map((a,i)=>({a,b:star[(i+1)%n]})));
+  assert.ok(performance.now()-started<8000,`star split took ${performance.now()-started} ms`);
+  const exact=Math.abs(star.reduce((s,a,i)=>{const b=star[(i+1)%n];return s+a.x*b.z-b.x*a.z;},0))/2;
+  close(cells.reduce((s,c)=>s+areaSize(c),0),exact);
+  console.log('PASS 256-corner concave outline: fast convex cell split with exact area');
+}

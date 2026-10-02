@@ -1,4 +1,5 @@
 import { regionAreaCells } from './regions.js';
+import { roofFootprintAreas } from './roof-outline.js';
 import { areaSize, wallPolygonAreas, unionPolygonAreas, subtractPolygonAreas, mergeConvexAreas } from './polygon-areas.js';
 export const DEFAULT_OMNI_LIGHT = Object.freeze({
   color: { r: 1.0, g: 0.65, b: 0.34, a: 1.0 },
@@ -563,8 +564,8 @@ export function subtractRectAreas(baseRects=[], blockerRects=[]) {
 export function manualSurfaceRectanglesAtLevel(building, kind, topY, tolerance = 0.05) {
   const list=kind==='ceiling'?(building.manualCeilings||[]):(building.manualFloors||[]);
   const target=Number(topY)||0;
-  return unionRectAreas(list.filter(r=>rectValid(r)&&Math.abs((Number(r.topY)||0)-target)<=tolerance)// Polygon roofs (flat/hip) override their exact outline.
-  .map(r=>({minX:r.minX,maxX:r.maxX,minZ:r.minZ,maxZ:r.maxZ,...(r.polygon?{polygon:r.polygon}:{})})));
+  return unionRectAreas(list.filter(r=>rectValid(r)&&Math.abs((Number(r.topY)||0)-target)<=tolerance)// Polygon roofs override their exact outline (convex pieces for concave ones).
+  .flatMap(r=>roofFootprintAreas(r)));
 }
 
 export function manualFloorRectanglesAtLevel(building, topY, tolerance = 0.05) {

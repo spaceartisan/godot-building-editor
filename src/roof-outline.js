@@ -1,11 +1,13 @@
-import { regionPolygonProblem, regionBounds } from './regions.js';
+import { regionPolygonProblem, regionBounds, regionAreaCells } from './regions.js';
+import { mergeConvexAreas, polygonArea } from './polygon-areas.js';
+import { offsetConvexArea } from './polygon-geometry.js';
 
-// Manual roof footprints: a rectangle (minX..maxZ), or a convex polygon for
-// flat and hip roofs. Shared by validation, transactions and the web roof panel.
+// Manual roof footprints: a rectangle (minX..maxZ), a convex polygon for flat
+// and hip roofs, or a concave polygon for flat roofs. Shared by validation, transactions and the web roof panel.
 export const MANUAL_ROOF_TYPES=['gable','shed','flat','hip'];
 export const POLYGON_ROOF_TYPES=['flat','hip'];
 export const roofPolygonBounds=regionBounds;
-function convex(points){
+export function convexOutline(points){
   let sign=0;
   for(let i=0;i<points.length;i++){
     const a=points[i],b=points[(i+1)%points.length],c=points[(i+2)%points.length];
@@ -26,10 +28,39 @@ export function manualRoofOutlineProblem(roof,roofs=[]){
   if(roof?.polygon==null)return null;
   const problem=regionPolygonProblem(roof.polygon);
   if(problem)return problem.replace('A polygon region','A polygon roof').replace('Region corners','Roof corners').replace('Region width','Roof width');
-  if(!convex(roof.polygon))return 'A polygon roof must be convex; split a concave outline into several roofs.';
   if(!POLYGON_ROOF_TYPES.includes(roof.type))return 'A polygon roof must be flat or hip; gable and shed roofs use rectangular footprints.';
+  const isConvex=convexOutline(roof.polygon);
+  if(!isConvex&&roof.type==='hip')return 'A hip roof needs a convex outline; concave outlines can be flat roofs.';
+  if(!isConvex&&Number(roof.overhang)>0&&!offsetOutline(roof.polygon,Number(roof.overhang)))return `A ${Number(roof.overhang)} m overhang makes this concave outline cross itself; reduce the overhang.`;
   if(roof.hostRoofId)return 'A polygon roof cannot attach to a host roof.';
   if(roof.edgeModes&&Object.keys(roof.edgeModes).length)return 'A polygon roof has no edge modes; its overhang applies to every edge.';
   if(hosted)return 'Other roofs cannot attach to a polygon roof.';
   return null;
+}
+
+// Grows a simple polygon outward by distance (mitered corners); null if the
+// result would cross itself.
+export function offsetOutline(points,distance){
+  if(!(distance>0))return points.map(p=>({x:p.x,z:p.z}));
+  let signed=0;for(let i=0;i<points.length;i++){const a=points[i],b=points[(i+1)%points.length];signed+=a.x*b.z-b.x*a.z;}
+  const side=signed>0?1:-1,n=points.length,lines=points.map((a,i)=>{const b=points[(i+1)%n],l=Math.hypot(b.x-a.x,b.z-a.z),nx=side*(b.z-a.z)/l,nz=-side*(b.x-a.x)/l;return {nx,nz,d:nx*a.x+nz*a.z+distance};});
+  const out=[];
+  for(let i=0;i<n;i++){
+    const p=lines[(i+n-1)%n],q=lines[i],det=p.nx*q.nz-p.nz*q.nx;
+    if(Math.abs(det)<1e-9){out.push({x:points[i].x+q.nx*distance,z:points[i].z+q.nz*distance});continue;}
+    out.push({x:(p.d*q.nz-p.nz*q.d)/det,z:(p.nx*q.d-p.d*q.nx)/det});
+  }
+  // Too large an offset at a reflex corner reverses an edge; reject that too.
+  for(let i=0;i<n;i++){const a=points[i],b=points[(i+1)%n],c=out[i],d=out[(i+1)%n];if((b.x-a.x)*(d.x-c.x)+(b.z-a.z)*(d.z-c.z)<=0)return null;}
+  return regionPolygonProblem(out)?null:out;
+}
+// Convex pieces covering a manual roof's footprint grown by overhang: the
+// rectangle, the convex polygon, or a concave polygon split into convex
+// parts. Polygon subtraction and roof solids need convex pieces.
+export function roofFootprintAreas(roof,overhang=0){
+  const o=Math.max(0,Number(overhang)||0);
+  if(!roof.polygon)return [{minX:roof.minX-o,maxX:roof.maxX+o,minZ:roof.minZ-o,maxZ:roof.maxZ+o}];
+  if(convexOutline(roof.polygon))return [o>0?offsetConvexArea(roof,o):polygonArea(roof.polygon.map(p=>({x:p.x,z:p.z})))].filter(Boolean);
+  const grown=offsetOutline(roof.polygon,o);if(!grown)return [];
+  return mergeConvexAreas(regionAreaCells({polygon:grown,...regionBounds(grown)}));
 }

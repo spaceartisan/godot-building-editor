@@ -190,7 +190,8 @@ const base=ok(room('floor_1','w'));
   assert.equal(pts.some(p=>Math.abs(p.x)>9.9&&p.z>25),false,'no corner at the bounding rectangle');
   for(const [ops,pattern] of [
     [[{op:'roof.add',id:'g',value:{polygon:bay,type:'gable',baseY:3}}],/must be flat or hip/],
-    [[{op:'roof.add',id:'c',value:{polygon:[{x:0,z:0},{x:4,z:0},{x:2,z:1},{x:4,z:4},{x:0,z:4}],type:'flat',baseY:3}}],/must be convex/],
+    [[{op:'roof.add',id:'c',value:{polygon:[{x:0,z:0},{x:4,z:0},{x:2,z:1},{x:4,z:4},{x:0,z:4}],type:'hip',baseY:3}}],/hip roof needs a convex outline/],
+    [[{op:'roof.add',id:'c',value:{polygon:[{x:0,z:0},{x:5,z:0},{x:5,z:4},{x:3,z:4},{x:3,z:1},{x:2,z:1},{x:2,z:4},{x:0,z:4}],type:'flat',baseY:3,overhang:1}}],/overhang makes this concave outline cross itself/],
     [[{op:'roof.update',id:'bay',value:{minX:-9}}],/Edit polygon corners instead/],
     [[{op:'roof.update',id:'bay',value:{hostRoofId:'hip'}}],/cannot attach to a host roof/],
     [[{op:'roof.add',id:'kid',value:{minX:20,maxX:22,minZ:1,maxZ:3,baseY:3.5,type:'shed',hostRoofId:'hip'}}],/cannot attach to a hip roof/],
@@ -204,5 +205,17 @@ const base=ok(room('floor_1','w'));
   assert.ok(freed.polygon&&freed.hostRoofId===undefined);
   const rect=ok([{op:'roof.update',id:'bay',value:{polygon:null,minX:-8,maxX:8}}],roofed).roofSections.find(r=>r.id==='bay');
   assert.equal(rect.polygon,undefined);assert.deepEqual([rect.minX,rect.maxX],[-8,8],'polygon: null returns to a rectangle');
-  console.log('PASS polygon and hip manual roofs: outline-following export, bounds from corners, shared rejections, back to a rectangle');
+  // A concave (L-shaped) outline makes a flat roof of convex pieces that
+  // together cover the outline grown by its overhang: 64 + 40*0.5 + 4*0.25 m².
+  const ell=[{x:60,z:0},{x:70,z:0},{x:70,z:4},{x:64,z:4},{x:64,z:10},{x:60,z:10}];
+  const lroofed=ok([{op:'roof.add',id:'ell',value:{polygon:ell,type:'flat',baseY:3,overhang:.5}}],roofed);
+  const ellRoof=lroofed.roofSections.find(r=>r.id==='ell');
+  const {roofFootprintAreas}=await import('./src/roof-outline.js');
+  const shoelace=pts=>Math.abs(pts.reduce((sum,a,i)=>{const b=pts[(i+1)%pts.length];return sum+a.x*b.z-b.x*a.z;},0))/2;
+  const ellPieces=roofFootprintAreas(ellRoof,.5);
+  assert.equal(ellPieces.length,2);
+  assert.ok(Math.abs(ellPieces.reduce((sum,piece)=>sum+shoelace(piece.polygon),0)-85)<1e-6,'pieces cover the grown L exactly');
+  const lscene=exportGodotFiles(lroofed).tscn;
+  assert.match(lscene,/\[node name="ManualRoof_004_Flat_01" type="MeshInstance3D"/);assert.match(lscene,/\[node name="ManualRoof_004_Flat_02_Collision"/);
+  console.log('PASS polygon and hip manual roofs: outline-following export, bounds from corners, concave flat roofs in convex pieces, shared rejections, back to a rectangle');
 }

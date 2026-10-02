@@ -19,7 +19,7 @@ Halcyon and the limit probes (see [README](README.md)) were run on 1.4.0 at `412
 | H11 | Railings around stair openings had to be placed by hand on a hidden 0.06 m margin. Halcyon's hand-placed rails missed one open side. | Medium | **Fixed**: `stair.guard` (web: **Guard opening above**) |
 | H12 | Smooth shaped curves were limited to about 64 segments at a 12 m radius | Low | **Fixed**: the short-wall rule charges each end only what its join cuts |
 | H16 | With roof `none`, the ceiling's top face lay in the wall caps' plane under the walls and z-fought with them when seen from above | Medium (visual, top-down views) | **Fixed** |
-| H17 | Manual roofs were rectangles only, so the bay roof overhung the angled bay walls | Low (visual) | **Fixed**: convex polygon footprints for flat and hip roofs; `hip` manual roofs |
+| H17 | Manual roofs were rectangles only, so the bay roof overhung the angled bay walls | Low (visual) | **Fixed**: polygon footprints for flat roofs (convex or concave) and hip roofs (convex); `hip` manual roofs |
 | H13 | Coordinates far from the origin lose precision in Godot without a warning | Low | **Fixed**: a warning beyond 10 km |
 | H14 | A loop that stops a millimetre short got the generic open-ends warning | Low | **Fixed**: the warning names the near miss |
 | H15 | A `floor.duplicate` dry run printed the whole copied floor as one 18.7 KB line | Low | **Fixed**: long values are summarised |
@@ -144,13 +144,13 @@ Found while checking H12. Every automatic ceiling's top face sat exactly at wall
 
 ### H17: Rectangular manual roofs
 
-The entrance bay's roof could only be a rectangle, so its corners overhung the angled bay walls. Manual roofs now take a convex `polygon` footprint for flat and hip roofs, and `hip` is a manual roof type.
+The entrance bay's roof could only be a rectangle, so its corners overhung the angled bay walls. Manual roofs now take a `polygon` footprint for flat and hip roofs, and `hip` is a manual roof type. Hip roofs need a convex outline; flat roofs may be concave.
 
-- **Shared code:** the rules live in `src/roof-outline.js` (convex, 3–256 corners, flat or hip, no host attachment or edge modes) and are used by validation, transactions and the web roof panel. Geometry uses the automatic roof's existing polygon path (`polygonRoofParts`) with the manual roof's own overhang and pitch.
-- **Routes:** the CLI takes `polygon` and type `hip` on `roof.add`/`roof.update`, and `polygon: null` returns the roof to its rectangle. In the web editor, the roof panel's **Footprint** select copies the outline of a polygon region on any floor, and **Hip** is a type. The plan draws the polygon outline.
+- **Shared code:** the rules live in `src/roof-outline.js` (3–256 corners, flat or hip, hip convex only, no host attachment or edge modes) and are used by validation, transactions and the web roof panel. Geometry uses the automatic roof's existing polygon path (`polygonRoofParts`) with the manual roof's own overhang and pitch. A concave flat roof is grown by its overhang (`offsetOutline`, which rejects an overhang that would make the outline cross itself) and split into convex pieces (`roofFootprintAreas`), because roof solids and the polygon subtraction used for interior blockers need convex pieces. The same pieces drive the open-sky ceiling cover and the automatic-roof override.
+- **Routes:** the CLI takes `polygon` and type `hip` on `roof.add`/`roof.update`, and `polygon: null` returns the roof to its rectangle. In the web editor, the roof panel's **Footprint** select copies the outline of a polygon region on any floor, and **Hip** is a type. A concave region turns a hip roof flat, with a status message. The plan draws the polygon outline.
 - **Also polygon-aware:** the open-sky ceiling cover (H3) and the automatic-roof override at a manual roof's level now use the polygon, not its bounds.
 - **Halcyon:** the bay roof follows the bay walls (`godot-renders/surface-colors/` and `entrance-bay.png`).
-- **Tests:** `parity-transaction-tests.mjs` (bounds from corners, roof geometry inside the outline plus overhang, one hip face per polygon edge, every rejection, back to a rectangle), `web-parity-tests.mjs` (Footprint equals `roof.update`, Hip, shared rejection, undo) and `asset-engine-tests.mjs` (polygon and hip roofs load in Godot with collision).
+- **Tests:** `parity-transaction-tests.mjs` (bounds from corners, roof geometry inside the outline plus overhang, one hip face per polygon edge, an L-shaped flat roof whose pieces cover the grown outline exactly, every rejection including a concave hip and a self-crossing overhang, back to a rectangle), `web-parity-tests.mjs` (Footprint equals `roof.update` for convex and concave regions, Hip, shared rejection, undo) and `asset-engine-tests.mjs` (polygon and hip roofs load in Godot with collision).
 
 ## Limits that held
 

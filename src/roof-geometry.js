@@ -1,5 +1,6 @@
 import {profileRoomSolids,excludeRoofFootprint,boundedSolid} from './profile-roof-envelope.js';
 import { polygonRoofParts, polygonPrism, offsetConvexArea } from './polygon-geometry.js';
+import { convexOutline, roofFootprintAreas } from './roof-outline.js';
 import { floorElevation, floorView, structuralFloorRectangles, subtractRectAreas } from './model.js';
 import { unionFaceWriter } from './wall-union.js';
 
@@ -23,8 +24,10 @@ export function roofBoxParts(rs,roof,baseY,index=0,manual=false){
   // Manual hip roofs and polygon footprints share the automatic polygon path,
   // with the manual roof's own overhang and pitch (Halcyon: angled entrance bay).
   if(manual&&(rs.type==='hip'||rs.polygon)){
-    const overhang=Math.max(0,Number.isFinite(Number(rs.overhang))?Number(rs.overhang):Number(roof.overhang)||0);
-    return polygonRoofParts(rs,{overhang,pitch:Number(rs.pitch)||Number(roof.pitch)||35},baseY,index,`ManualRoof_${String(index+1).padStart(3,'0')}`);
+    const overhang=Math.max(0,Number.isFinite(Number(rs.overhang))?Number(rs.overhang):Number(roof.overhang)||0),name=`ManualRoof_${String(index+1).padStart(3,'0')}`;
+    // A concave flat outline is built from convex pieces of its grown outline.
+    if(rs.polygon&&!convexOutline(rs.polygon))return roofFootprintAreas(rs,overhang).map((piece,i)=>({name:`${name}_Flat_${String(i+1).padStart(2,'0')}`,solid:polygonPrism(piece,baseY+.12,baseY)}));
+    return polygonRoofParts(rs,{overhang,pitch:Number(rs.pitch)||Number(roof.pitch)||35},baseY,index,name);
   }
   const type=rs.type||roof.type,dir=rs.direction==='z'?'z':'x',t=.12;
   const w=rs.maxX-rs.minX,d=rs.maxZ-rs.minZ,cx=(rs.minX+rs.maxX)/2,cz=(rs.minZ+rs.maxZ)/2;
@@ -58,9 +61,11 @@ export function roofInteriorBlockers(building,rs,baseY,originY=0){
   for(let i=0;i<(building.floors||[]).length;i++){
     const view=floorView(building,i),e=floorElevation(building,i),top=e+view.wallHeight;
     const shaped=profileRoomSolids(view,e,originY);
-    if(shaped.active&&!shaped.reason){for(const solid of shaped.solids)for(const piece of baseY>=top-.00001?excludeRoofFootprint(solid,rs):[solid])out.push(boundedSolid(piece));continue;}
+    // Polygon subtraction needs convex blockers: use the roof's footprint pieces.
+    const footprint=roofFootprintAreas(rs);
+    if(shaped.active&&!shaped.reason){for(const solid of shaped.solids)for(const piece of baseY>=top-.00001?footprint.reduce((list,area)=>list.flatMap(s=>excludeRoofFootprint(s,area)),[solid]):[solid])out.push(boundedSolid(piece));continue;}
     let rects=structuralFloorRectangles(view);
-    if(baseY>=top-.00001)rects=subtractRectAreas(rects,[rs]);
+    if(baseY>=top-.00001)rects=subtractRectAreas(rects,footprint);
     for(const r of rects){if(r.polygon){const solid=polygonPrism(offsetConvexArea(r,inset),top-originY,e-view.floorThickness-originY);out.push({...solid,solid});continue;}out.push({minX:r.minX-inset,maxX:r.maxX+inset,minZ:r.minZ-inset,maxZ:r.maxZ+inset,minY:e-view.floorThickness-originY,maxY:top-originY});}
   }
   return out;

@@ -127,8 +127,18 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   const changed=e.snapshot().roofSections.find(r=>r.id==='roof_bay');
   assert.ok(changed.polygon&&changed.hostRoofId===undefined&&changed.edgeModes===undefined&&changed.type==='flat','attachment cleared, type flat');
   assert.match($('#status-text').textContent,/so those were cleared/);
+  // A concave (L-shaped) region gives a flat roof; a hip roof turns flat, as roof.update requires.
+  const ell=[{x:-10,z:30},{x:0,z:30},{x:0,z:34},{x:-6,z:34},{x:-6,z:40},{x:-10,z:40}];
+  const withEll=tx([{op:'region.add',floorId:'floor_1',id:'r_ell',value:{polygon:ell,label:'Ell'}},{op:'roof.update',id:'roof_bay',value:{polygon:null,minX:-10,maxX:10,type:'hip'}}],halcyon);
+  await e.loadBuildingData(structuredClone(withEll));e.chooseSelection({type:'roofSection',id:'roof_bay'});
+  const ellInput=$('#roof-footprint');ellInput.value='floor_1/r_ell';await ellInput.dispatch('change');
+  assert.deepEqual(e.snapshot().roofSections,tx([{op:'roof.update',id:'roof_bay',value:{polygon:ell,type:'flat'}}],withEll).roofSections,'concave footprint equals roof.update polygon with type flat');
+  assert.match($('#status-text').textContent,/concave, so the hip roof became flat/);
+  e.chooseSelection({type:'roofSection',id:'roof_bay'});await change(property('Type'),'hip');
+  assert.equal(e.snapshot().roofSections.find(r=>r.id==='roof_bay').type,'flat','hip on a concave footprint is refused');
+  assert.match($('#status-text').textContent,/hip roof needs a convex outline/);
   assert.deepEqual(e.errors,[]);
-  console.log('PASS web polygon roofs: Footprint follows a region outline like roof.update, Hip type, shared rejection, undo');
+  console.log('PASS web polygon roofs: Footprint follows a region outline like roof.update (concave outlines flat), Hip type, shared rejection, undo');
 }
 {
   // Route check: same warnings as validate --reachability, opt-in, navigable, in reports.

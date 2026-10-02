@@ -2,7 +2,7 @@ import { wallTypeFor, sampleWallType } from './wall-types.js';
 import { openingShapeFor, shapedDoorLayout } from './opening-shapes.js';
 import { profileWallState, profileWallSolids } from './wall-profile-geometry.js';
 import { polygonSlabFaces } from './polygon-geometry.js';
-import { roofFootprintAreas } from './roof-outline.js';
+import { roofFootprintAreas, manualRoofOverhang } from './roof-outline.js';
 import { areaPoints, unionPolygonAreas, subtractPolygonAreas } from './polygon-areas.js';
 import { roofBoxParts, roofInteriorBlockers, roofAttachmentBlockers, trimRoofBox, trimmedGableEnds } from './roof-geometry.js';
 import { higherFloorBlockerRectangles, exteriorFootprintRectangles, unionRectAreas, automaticRoofRectangles, automaticRoofSections, boundsOfAutomaticRoof, boundsOfBuilding, boundsOfStructuralFloor, constrainedOpening, floorElevation, floorView, findWall, manualCeilingRectanglesAtLevel, manualFloorRectanglesAtLevel, pointOnWall, rectValid, roofSectionsForFloor, stairFootprint, storyHeight, structuralFloorRectangles, subtractRectAreas, splitWallIntoSolidSegments, validateOpeningLayout, wallLength } from './model.js';
@@ -1330,7 +1330,7 @@ export function storyCeilingRectangles(building, fi) {
   const exposed=subtractRectAreas(subtractRectAreas(structural,blockers),outline);
   if(!exposed.length)return ceiling;
   const independent=[
-    ...(building.roofSections||[]).filter(r=>rectValid(r)&&Number(r.baseY)>=storyTop-tolerance).flatMap(r=>roofFootprintAreas(r,Math.max(0,Number(r.overhang)||0))),
+    ...(building.roofSections||[]).filter(r=>rectValid(r)&&Number(r.baseY)>=storyTop-tolerance).flatMap(r=>roofFootprintAreas(r,manualRoofOverhang(r,building.roof))),
     ...[...(building.manualCeilings||[]),...(building.manualFloors||[])].filter(r=>rectValid(r)&&Number(r.topY)>=storyTop-tolerance).map(r=>({minX:r.minX,maxX:r.maxX,minZ:r.minZ,maxZ:r.maxZ}))];
   const sky=independent.length?subtractRectAreas(exposed,unionRectAreas(independent)):exposed;
   return sky.length?subtractRectAreas(ceiling,sky):ceiling;

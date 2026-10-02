@@ -121,7 +121,7 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
   collections(building,['manualFloors','manualCeilings','roofSections'],'building');
   if(Array.isArray(building.roofSections))for(const roof of building.roofSections){
     // Polygon and hip footprints (Halcyon): shared outline rules; polygon bounds must match.
-    {const problem=manualRoofOutlineProblem(roof,building.roofSections);if(problem)error('roofSections',`${roof?.label||roof?.id}: ${problem}`,[{type:'roofSection',id:roof?.id}]);
+    {const problem=manualRoofOutlineProblem(roof,building.roofSections,building.roof);if(problem)error('roofSections',`${roof?.label||roof?.id}: ${problem}`,[{type:'roofSection',id:roof?.id}]);
      if(!problem&&roof?.polygon){const b=roofPolygonBounds(roof.polygon);if(['minX','maxX','minZ','maxZ'].some(k=>Math.abs(b[k]-roof[k])>1e-6))error('roofSections',`${roof.label||roof.id}: roof bounds must match its polygon corners`,[{type:'roofSection',id:roof.id}]);}}
     if(!roof?.hostRoofId)continue;
     const host=building.roofSections.find(r=>r?.id===roof.hostRoofId);

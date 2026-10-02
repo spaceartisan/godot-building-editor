@@ -398,7 +398,7 @@ function applyOperation(building,op,index){
   const updated=list.find(v=>v.id===op.id);
   if((kind==='region'||kind==='roof')&&updated.polygon)Object.assign(updated,regionBounds(updated.polygon));
   if(kind==='roof'&&updated.polygon===null)delete updated.polygon;
-  if(kind==='roof'){const problem=manualRoofOutlineProblem(updated,building.roofSections);if(problem)fail(problem,p);}
+  if(kind==='roof'){const problem=manualRoofOutlineProblem(updated,building.roofSections,building.roof);if(problem)fail(problem,p);}
   if(kind==='roof'&&updated.hostRoofId===null)delete updated.hostRoofId;
   if(kind==='roof'||kind==='region')if(!rectValid(updated))fail('Rectangle must have positive width and depth of at least 0.1 m each',p);
   if(kind==='slab'&&(!rectValid(updated)||updated.minX>updated.maxX||updated.minZ>updated.maxZ))fail('Rectangle needs minX < maxX and minZ < maxZ, at least 0.1 m each',p);

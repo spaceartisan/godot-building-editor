@@ -17,7 +17,11 @@ export function convexOutline(points){
   }
   return true;
 }
-export function manualRoofOutlineProblem(roof,roofs=[]){
+// A manual roof's own overhang, else the building roof's (as geometry uses).
+export function manualRoofOverhang(roof,buildingRoof){
+  return Math.max(0,Number.isFinite(Number(roof?.overhang))?Number(roof.overhang):Number(buildingRoof?.overhang)||0);
+}
+export function manualRoofOutlineProblem(roof,roofs=[],buildingRoof=null){
   // Host attachment trims rectangular gable/shed/flat slabs only.
   const hosted=roofs.some(r=>r!==roof&&r?.hostRoofId!=null&&r.hostRoofId===roof?.id);
   if(roof?.type==='hip'&&roof.polygon==null){
@@ -31,7 +35,8 @@ export function manualRoofOutlineProblem(roof,roofs=[]){
   if(!POLYGON_ROOF_TYPES.includes(roof.type))return 'A polygon roof must be flat or hip; gable and shed roofs use rectangular footprints.';
   const isConvex=convexOutline(roof.polygon);
   if(!isConvex&&roof.type==='hip')return 'A hip roof needs a convex outline; concave outlines can be flat roofs.';
-  if(!isConvex&&Number(roof.overhang)>0&&!offsetOutline(roof.polygon,Number(roof.overhang)))return `A ${Number(roof.overhang)} m overhang makes this concave outline cross itself; reduce the overhang.`;
+  const overhang=manualRoofOverhang(roof,buildingRoof);
+  if(!isConvex&&overhang>0&&!offsetOutline(roof.polygon,overhang))return `A ${overhang} m overhang makes this concave outline cross itself; reduce the overhang.`;
   if(roof.hostRoofId)return 'A polygon roof cannot attach to a host roof.';
   if(roof.edgeModes&&Object.keys(roof.edgeModes).length)return 'A polygon roof has no edge modes; its overhang applies to every edge.';
   if(hosted)return 'Other roofs cannot attach to a polygon roof.';

@@ -137,6 +137,14 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   e.chooseSelection({type:'roofSection',id:'roof_bay'});await change(property('Type'),'hip');
   assert.equal(e.snapshot().roofSections.find(r=>r.id==='roof_bay').type,'flat','hip on a concave footprint is refused');
   assert.match($('#status-text').textContent,/hip roof needs a convex outline/);
+  // An overhang that makes the concave outline cross itself is refused, as roof.update refuses it.
+  const tooWide=tx([{op:'roof.update',id:'roof_bay',value:{polygon:[{x:-10,z:30},{x:-5,z:30},{x:-5,z:34},{x:-7,z:34},{x:-7,z:31},{x:-8,z:31},{x:-8,z:34},{x:-10,z:34}],type:'flat',overhang:.2}}],withEll);
+  await e.loadBuildingData(structuredClone(tooWide));e.chooseSelection({type:'roofSection',id:'roof_bay'});await change(property('Overhang'),1);
+  assert.equal(e.snapshot().roofSections.find(r=>r.id==='roof_bay').overhang,.2,'overhang refused');
+  assert.match($('#status-text').textContent,/overhang makes this concave outline cross itself/);
+  assert.equal(applyTransaction(tooWide,{version:1,operations:[{op:'roof.update',id:'roof_bay',value:{overhang:1}}]}).ok,false);
+  e.chooseSelection({type:'roofSection',id:'roof_bay'});await change(property('Overhang'),.4);
+  assert.deepEqual(e.snapshot().roofSections,tx([{op:'roof.update',id:'roof_bay',value:{overhang:.4}}],tooWide).roofSections,'a valid overhang equals roof.update');
   assert.deepEqual(e.errors,[]);
   console.log('PASS web polygon roofs: Footprint follows a region outline like roof.update (concave outlines flat), Hip type, shared rejection, undo');
 }

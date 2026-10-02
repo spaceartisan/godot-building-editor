@@ -217,5 +217,13 @@ const base=ok(room('floor_1','w'));
   assert.ok(Math.abs(ellPieces.reduce((sum,piece)=>sum+shoelace(piece.polygon),0)-85)<1e-6,'pieces cover the grown L exactly');
   const lscene=exportGodotFiles(lroofed).tscn;
   assert.match(lscene,/\[node name="ManualRoof_004_Flat_01" type="MeshInstance3D"/);assert.match(lscene,/\[node name="ManualRoof_004_Flat_02_Collision"/);
-  console.log('PASS polygon and hip manual roofs: outline-following export, bounds from corners, concave flat roofs in convex pieces, shared rejections, back to a rectangle');
+  // A roof without its own overhang (unprepared data; loading fills 0.35 m) uses
+  // the building roof's, in validation as in geometry.
+  const slot=[{x:80,z:0},{x:85,z:0},{x:85,z:4},{x:83,z:4},{x:83,z:1},{x:82,z:1},{x:82,z:4},{x:80,z:4}];
+  const slotted=ok([{op:'roof.add',id:'slot',value:{polygon:slot,type:'flat',baseY:3,overhang:.2}}],roofed);
+  const inherited=structuredClone(slotted);delete inherited.roofSections.find(r=>r.id==='slot').overhang;inherited.roof.overhang=1;
+  const {validateBuilding}=await import('./src/validation.js');
+  assert.match(JSON.stringify(validateBuilding(inherited).errors),/1 m overhang makes this concave outline cross itself/);
+  inherited.roof.overhang=.2;assert.deepEqual(validateBuilding(inherited).errors,[]);
+  console.log('PASS polygon and hip manual roofs: outline-following export, bounds from corners, concave flat roofs in convex pieces, inherited overhang checked, shared rejections, back to a rectangle');
 }

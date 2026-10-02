@@ -1,6 +1,6 @@
 import {profileRoomSolids,excludeRoofFootprint,boundedSolid} from './profile-roof-envelope.js';
 import { polygonRoofParts, polygonPrism, offsetConvexArea } from './polygon-geometry.js';
-import { convexOutline, roofFootprintAreas } from './roof-outline.js';
+import { convexOutline, roofFootprintAreas, manualRoofOverhang } from './roof-outline.js';
 import { floorElevation, floorView, structuralFloorRectangles, subtractRectAreas } from './model.js';
 import { unionFaceWriter } from './wall-union.js';
 
@@ -24,7 +24,7 @@ export function roofBoxParts(rs,roof,baseY,index=0,manual=false){
   // Manual hip roofs and polygon footprints share the automatic polygon path,
   // with the manual roof's own overhang and pitch (Halcyon: angled entrance bay).
   if(manual&&(rs.type==='hip'||rs.polygon)){
-    const overhang=Math.max(0,Number.isFinite(Number(rs.overhang))?Number(rs.overhang):Number(roof.overhang)||0),name=`ManualRoof_${String(index+1).padStart(3,'0')}`;
+    const overhang=manualRoofOverhang(rs,roof),name=`ManualRoof_${String(index+1).padStart(3,'0')}`;
     // A concave flat outline is built from convex pieces of its grown outline.
     if(rs.polygon&&!convexOutline(rs.polygon))return roofFootprintAreas(rs,overhang).map((piece,i)=>({name:`${name}_Flat_${String(i+1).padStart(2,'0')}`,solid:polygonPrism(piece,baseY+.12,baseY)}));
     return polygonRoofParts(rs,{overhang,pitch:Number(rs.pitch)||Number(roof.pitch)||35},baseY,index,name);
@@ -33,7 +33,7 @@ export function roofBoxParts(rs,roof,baseY,index=0,manual=false){
   const w=rs.maxX-rs.minX,d=rs.maxZ-rs.minZ,cx=(rs.minX+rs.maxX)/2,cz=(rs.minZ+rs.maxZ)/2;
   if(w<=.05||d<=.05)return [];
   const pitch=(manual?Math.max(5,Math.min(70,Number(rs.pitch)||Number(roof.pitch)||35)):Number(rs.pitch)||roof.pitch||35)*Math.PI/180;
-  const o=manual?Math.max(0,Number.isFinite(Number(rs.overhang))?Number(rs.overhang):Number(roof.overhang)||0):roof.overhang||0;
+  const o=manual?manualRoofOverhang(rs,roof):roof.overhang||0;
   const idx=String(index+1).padStart(3,'0'),out=[];
   const add=(name,size,pos,rot={x:0,y:0,z:0})=>out.push({name,size,pos,rot});
   if(type==='flat')add(manual?`ManualRoof_${idx}_Flat`:`RoofSection_${idx}`,{x:w+2*o,y:t,z:d+2*o},{x:cx,y:baseY+t/2,z:cz});

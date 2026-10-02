@@ -197,6 +197,11 @@ const base=ok(room('floor_1','w'));
     [[{op:'roof.add',id:'tri',value:{polygon:[{x:0,z:0},{x:1,z:0}],type:'flat',baseY:3}}],/3–256 corners/]]){
     const r=run(ops,roofed);assert.equal(r.ok,false);assert.match(JSON.stringify(r.errors),pattern);
   }
+  // An attached roof takes a polygon only when the same operation clears its host and edge modes (the web panel clears them for you).
+  const attached=ok([{op:'roof.add',id:'host',value:{type:'gable',minX:-12,maxX:12,minZ:18,maxZ:28,baseY:6}},{op:'roof.add',id:'kid',value:{type:'shed',minX:-10,maxX:10,minZ:20,maxZ:26,baseY:3,hostRoofId:'host',edgeModes:{minX:'flush'}}}],roofed);
+  assert.match(JSON.stringify(run([{op:'roof.update',id:'kid',value:{polygon:bay,type:'flat'}}],attached).errors),/cannot attach to a host roof/);
+  const freed=ok([{op:'roof.update',id:'kid',value:{polygon:bay,type:'flat',hostRoofId:null,edgeModes:{}}}],attached).roofSections.find(r=>r.id==='kid');
+  assert.ok(freed.polygon&&freed.hostRoofId===undefined);
   const rect=ok([{op:'roof.update',id:'bay',value:{polygon:null,minX:-8,maxX:8}}],roofed).roofSections.find(r=>r.id==='bay');
   assert.equal(rect.polygon,undefined);assert.deepEqual([rect.minX,rect.maxX],[-8,8],'polygon: null returns to a rectangle');
   console.log('PASS polygon and hip manual roofs: outline-following export, bounds from corners, shared rejections, back to a rectangle');

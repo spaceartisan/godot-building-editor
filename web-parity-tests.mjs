@@ -120,6 +120,13 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   e.chooseSelection({type:'roofSection',id:'roof_bay'});const back=$('#roof-footprint');back.value='';await back.dispatch('change');
   assert.equal(e.snapshot().roofSections.find(r=>r.id==='roof_bay').polygon,undefined,'Rectangle removes the polygon');
   await $('#undo-btn').click();assert.ok(e.snapshot().roofSections.find(r=>r.id==='roof_bay').polygon,'undo restores it');
+  // A roof attached to a host, with edge modes, drops both when it takes a polygon footprint.
+  const attached=tx([{op:'roof.add',id:'host_roof',value:{type:'gable',minX:-12,maxX:12,minZ:18,maxZ:28,baseY:20}},{op:'roof.update',id:'roof_bay',value:{polygon:null,minX:-10,maxX:10,type:'shed',hostRoofId:'host_roof',edgeModes:{minX:'flush'}}}],halcyon);
+  await e.loadBuildingData(structuredClone(attached));e.chooseSelection({type:'roofSection',id:'roof_bay'});
+  const fp=$('#roof-footprint');fp.value='floor_1/r_bay';await fp.dispatch('change');
+  const changed=e.snapshot().roofSections.find(r=>r.id==='roof_bay');
+  assert.ok(changed.polygon&&changed.hostRoofId===undefined&&changed.edgeModes===undefined&&changed.type==='flat','attachment cleared, type flat');
+  assert.match($('#status-text').textContent,/so those were cleared/);
   assert.deepEqual(e.errors,[]);
   console.log('PASS web polygon roofs: Footprint follows a region outline like roof.update, Hip type, shared rejection, undo');
 }

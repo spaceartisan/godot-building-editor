@@ -46,3 +46,10 @@ try{
   assert.equal(displayRoute({platform:'linux',env:{},hasXvfb:none}),null);
   console.log('PASS render display route: Windows/macOS direct; Linux DISPLAY, WAYLAND_DISPLAY, xvfb-run or none');
 }
+{
+  // Without the canvas backend or a Godot executable, preview explains both options.
+  const env={...process.env,CANVAS_MODULE:path.join(os.tmpdir(),'no-such-canvas')};delete env.GODOT_BIN;
+  const r=spawnSync(process.execPath,[path.join(path.dirname(fileURLToPath(import.meta.url)),'cli.mjs'),'preview',path.join(path.dirname(fileURLToPath(import.meta.url)),'examples/farmhouse.building.json'),'--out',path.join(os.tmpdir(),`never-${process.pid}.png`)],{env,encoding:'utf8'});
+  assert.equal(r.status,3);assert.match(r.stdout+r.stderr,/Preview needs @napi-rs\/canvas, or a Godot executable \(--godot PATH or GODOT_BIN\)/);
+  console.log('PASS preview without canvas: names the canvas install and the Godot fallback');
+}

@@ -60,6 +60,16 @@ export CANVAS_MODULE="$(cd ../canvas-backend && pwd)/node_modules/@napi-rs/canva
 node cli.mjs preview examples/twostory.building.json --out ../twostory.png
 ```
 
+On Windows (PowerShell):
+
+```powershell
+npm install --prefix ..\canvas-backend @napi-rs/canvas
+$env:CANVAS_MODULE = (Resolve-Path ..\canvas-backend\node_modules\@napi-rs\canvas).Path
+node cli.mjs preview examples\twostory.building.json --out ..\twostory.png
+```
+
+Without the canvas backend, `preview` falls back to one Godot aerial render of the exported scene when a Godot 4 executable is available (`--godot PATH` or `GODOT_BIN`). Only `--yaw` applies to that render; the result is a real Godot screenshot (empty materials render as Godot's default grey), not the software view. For more views use `godot-check --assets DIR --render`.
+
 The software preview is an approximation for quick geometry checks; use `godot-check --assets DIR --render --out NEW_DIR` to see how the exported scene looks in Godot. All output paths must be new. Invalid input on either side, invalid camera/floor options, and an existing destination prevent image creation. No blueprint is rewritten.
 
 `--json` returns ordinary input diagnostics plus `preview`: view mode, output dimensions, input paths, shared camera/bounds, and each panel's floor ID/label/elevation and visible/hidden object counts. Counts are software preview objects, not exported Godot mesh counts or triangle/collision statistics. Empty views report `empty:true`. The human report gives view dimensions and visible/hidden counts.

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
@@ -15,7 +16,7 @@ import { renderPreparedScenes, parseViews, RenderError } from './godot-render.mj
 import { EXAMPLE_CATALOG } from './src/examples.js';
 import { checkExampleExpectation } from './src/example-check.js';
 import { applyTransaction } from './src/transactions.js';
-import { makeEmptyBuilding, floorView } from './src/model.js';
+import { makeEmptyBuilding, floorView, floorElevation, boundsOfBuilding } from './src/model.js';
 import { reachabilityWarnings, parseRouteStarts } from './src/reachability.js';
 import { attachmentSummary } from './src/roof-diagnostics.js';
 import { runReleaseCheck, assertExternalReport } from './release-check.mjs';
@@ -29,7 +30,7 @@ function profileInward(building,floor){
   const i=building.floors.indexOf(floor),view=floorView(building,i);
   return (view.walls||[]).filter(w=>w.wallTypeId).map(w=>{const n=profileWallState(view,w,exteriorWallOutsideSign,isExteriorWall).n;return {wallId:w.id,inwardSide:w.inwardSide||'auto',inward:{x:Math.round(n.x*1e6)/1e6+0,z:Math.round(n.z*1e6)/1e6+0}};});
 }
-const specs={new:['out','name'],edit:['ops','out','dry-run','warnings-as-errors'],validate:['warnings-as-errors','out','reachability','from'],inspect:['warnings-as-errors','entities','reachability','from'],export:['out','profile','no-collision','no-markers','placeholders','share-door-scenes','warnings-as-errors'],package:['out','profile','no-collision','no-markers','placeholders','share-door-scenes','warnings-as-errors','include-json'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision','render','views','out','surface-colors'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof']};
+const specs={new:['out','name'],edit:['ops','out','dry-run','warnings-as-errors'],validate:['warnings-as-errors','out','reachability','from'],inspect:['warnings-as-errors','entities','reachability','from'],export:['out','profile','no-collision','no-markers','placeholders','share-door-scenes','warnings-as-errors'],package:['out','profile','no-collision','no-markers','placeholders','share-door-scenes','warnings-as-errors','include-json'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision','render','views','out','surface-colors'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof','godot']};
 const values=new Set(['from','name','views','ops','out','profile','suite','godot','assets','yaw','pitch','distance','floor','view','compare','overlay','roof','canvas','engine','timeout']);
 class CliError extends Error{constructor(message,code=2){super(message);this.code=code;}}
 const help=`Building Studio ${version}
@@ -46,7 +47,8 @@ Usage: node cli.mjs COMMAND [FILES...] [OPTIONS]
   edit FILE --ops JSON --out FILE  Save the validated edit to a NEW building JSON
   export FILE... --out DIR   Export TSCNs and doors to a NEW directory
   package FILE... --out ZIP  Package those assets in a NEW ZIP
-  preview FILE --out PNG     Software 3D preview (optional canvas dependency)
+  preview FILE --out PNG     Software 3D preview (optional canvas dependency;
+                        without it, --godot PATH or GODOT_BIN renders in Godot)
   release-check          Check an isolated source copy; optionally --out NEW.json
     --canvas auto|required|skip --engine auto|required|skip (default auto)
     --godot PATH --timeout SECONDS (per gate, 1–600, default 180)
@@ -225,11 +227,32 @@ async function preview(docs,options,out){
   if(!Number.isInteger(floor))throw new CliError('--floor must be an integer');
   if(options.roof)for(const doc of docs)if(!doc.building.roofSections.some(r=>r.id===options.roof))throw new CliError(`${doc.file}: unknown manual roof ID ${options.roof}`);
   const require=createRequire(import.meta.url);let createCanvas;
-  try{({createCanvas}=require(process.env.CANVAS_MODULE||'@napi-rs/canvas'));}catch{throw new CliError('Preview needs @napi-rs/canvas. Install it (for example: npm install --prefix ../canvas-backend @napi-rs/canvas) and set CANVAS_MODULE to the installed package directory (../canvas-backend/node_modules/@napi-rs/canvas).',3);}
+  const godot=options.godot||process.env.GODOT_BIN;
+  try{({createCanvas}=require(process.env.CANVAS_MODULE||'@napi-rs/canvas'));}catch{
+    if(godot&&docs.length===1)return godotPreview(docs[0],godot,yaw,out);
+    throw new CliError('Preview needs @napi-rs/canvas, or a Godot executable (--godot PATH or GODOT_BIN) for a Godot aerial render instead. Install it (for example: npm install --prefix ../canvas-backend @napi-rs/canvas) and set CANVAS_MODULE to the installed package directory (../canvas-backend/node_modules/@napi-rs/canvas).',3);}
   const {renderReview}=await import('./src/preview-review.js');
   const {canvas,report}=renderReview(docs.map(d=>d.building),createCanvas,{view:options.view||'building',floor,yaw,pitch,distance,overlay:options.overlay||'none',roof:options.roof});
   writeNewFile(out,canvas.toBuffer('image/png'));
   return {...report,floor,inputs:docs.map(d=>d.file)};
+}
+
+// Without the canvas backend, preview falls back to one Godot aerial render of
+// the exported scene (same safety preparation as godot-check --render).
+function godotPreview(doc,executable,yaw,out){
+  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'building-preview-'));
+  try{
+    const result=exportGodotFiles(doc.building,{});
+    fs.writeFileSync(path.join(temp,result.tscnName),result.tscn);
+    for(const door of result.doors){const target=path.join(temp,...door.filename.split('/'));fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,door.tscn);}
+    const b=doc.building,last=b.floors.length-1,top=floorElevation(b,last)+(Number(floorView(b,last).wallHeight)||0),box=boundsOfBuilding(b);
+    const c=[(box.minX+box.maxX)/2,top/2,(box.minZ+box.maxZ)/2],r=Math.max(4,Math.hypot(box.maxX-box.minX,box.maxZ-box.minZ,top)/2);
+    const views=parseViews(JSON.stringify({views:[{name:'aerial',eye:[c[0]+Math.sin(yaw)*r*1.9,c[1]+r*1.1,c[2]+Math.cos(yaw)*r*1.9],look:c,fov:45}]}));
+    let prepared;try{prepared=prepareAssetDirectory(temp);}catch(e){throw new CliError(e.message,1);}
+    let render;try{render=renderPreparedScenes({executable,prepared,views});}catch(e){throw new CliError(e.message,e.code||3);}
+    writeNewFile(out,render.entries[0].data);
+    return {renderer:'godot',note:'Godot aerial render (@napi-rs/canvas is not installed); software-preview options other than --yaw do not apply.',engineRenderer:render.renderer,virtualDisplay:render.virtualDisplay,inputs:[doc.file]};
+  }finally{fs.rmSync(temp,{recursive:true,force:true});}
 }
 
 async function execute({command,options,files}){
@@ -435,7 +458,9 @@ function human(result,verbose){
     if(verbose||!r.ok){if(r.stdout)lines.push(r.stdout.trimEnd());if(r.stderr)lines.push(r.stderr.trimEnd());if(r.error)lines.push(r.error);}
   }
   if(result.engineVersion)lines.push('Godot '+result.engineVersion);
-  if(result.preview){
+  if(result.preview?.renderer==='godot'){
+    const p=result.preview;lines.push(`Preview: Godot aerial render · ${p.engineRenderer||'renderer unknown'}${p.virtualDisplay?' · virtual display':''}`,p.note);
+  }else if(result.preview){
     const p=result.preview;lines.push(`Preview: ${p.view} · ${p.width} × ${p.height}${p.panels.length===2?' · shared camera':''}`);
     for(const [i,panel] of p.panels.entries())lines.push(`  ${p.panels.length===2?(i?'After':'Before'):'View'}: ${panel.objectCount} preview objects · ${panel.hiddenObjectCount} hidden${panel.empty?' · no geometry':''}`);
     for(const panel of p.panels)if(panel.overlay?.kind!=='none'){

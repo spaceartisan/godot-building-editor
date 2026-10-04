@@ -502,7 +502,10 @@ function structuralChanges(before,after){
     const oldFlight=flight(before,oi),newFlight=flight(after,ni);
     if(JSON.stringify(oldFlight)!==JSON.stringify(newFlight))for(const stair of after.floors[ni].stairs.filter(s=>before.floors[oi].stairs.some(old=>old.id===s.id)))stairs.push({id:stair.id,floorId:id,upperFloorId:after.floors[ni+1]?.id??null,before:oldFlight,after:newFlight});
   }
-  const independentSurfaces=floors.length?['roofSections','manualFloors','manualCeilings'].flatMap(kind=>after[kind].map(s=>({kind,id:s.id,height:kind==='roofSections'?s.baseY:s.topY}))):[];
+  // Only surfaces authored before this transaction and left at their height can
+  // be stranded; ones added or moved in it were placed against the new stack.
+  const heightOf=(kind,s)=>kind==='roofSections'?s.baseY:s.topY;
+  const independentSurfaces=floors.length?['roofSections','manualFloors','manualCeilings'].flatMap(kind=>after[kind].filter(s=>{const old=(before[kind]||[]).find(o=>o.id===s.id);return old&&heightOf(kind,old)===heightOf(kind,s);}).map(s=>({kind,id:s.id,height:heightOf(kind,s)}))):[];
   return {floors,stairs,independentSurfaces};
 }
 

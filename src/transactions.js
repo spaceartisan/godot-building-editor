@@ -1,7 +1,7 @@
 import { regionPolygonProblem, regionBounds } from './regions.js';
 import { prepareDocument, resolvedFloorDimensions, inspectStair, inspectPlatform, inspectFloorCoverage } from './diagnostics.js';
 import { validateBuilding } from './validation.js';
-import { makeOmniLight, makeManualSurface, makeRectArea, floorView, makeRegion, makeRoofSection, makeStair, makePlatform, makeRailing, wallLength, rectValid, REGION_KINDS, REGION_EFFECTS, validateOpeningLayout } from './model.js';
+import { makeOmniLight, makeManualSurface, makeRectArea, floorView, makeRegion, makeRoofSection, makeStair, makePlatform, makeRailing, wallLength, rectValid, REGION_KINDS, REGION_EFFECTS, validateOpeningLayout, addRoom } from './model.js';
 import { proposeEndpointMove, proposeWallSplit } from './wall-edit.js';
 import { stairGuardRailings } from './stair-guards.js';
 import { wallSegmentProblem, proposePlatformUpdate, proposeCrenellation } from './authoring.js';
@@ -153,6 +153,26 @@ function checkValue(kind,value,action,where){
     if(!Object.hasOwn(value,required))fail(`Missing required field: ${required}`,where);
 }
 
+// Named points (recipe convenience): transaction.points maps names to {x, z};
+// any point field (a, b, at, point, polygon corners) may give a name instead.
+const POINT_FIELDS=['a','b','at','point'];
+export function resolveNamedPoints(transaction){
+  if(transaction?.points===undefined)return transaction;
+  const points=transaction.points;
+  if(!object(points))fail('points must be an object of {x, z} by name','transaction/points');
+  for(const [name,value] of Object.entries(points)){if(!/^[A-Za-z_][A-Za-z0-9_.-]{0,63}$/.test(name))fail('Point names must start with a letter or _ and use letters, digits, _ . or - (up to 64)',`transaction/points/${name}`);point(value,`transaction/points/${name}`);}
+  const lookup=(name,where)=>{if(!Object.hasOwn(points,name))fail(`Unknown point name: ${name}`,where);return {x:points[name].x,z:points[name].z};};
+  const resolve=(value,where)=>{
+    if(Array.isArray(value))return value.map((v,i)=>resolve(v,`${where}/${i}`));
+    if(!object(value))return value;
+    return Object.fromEntries(Object.entries(value).map(([k,v])=>[k,
+      POINT_FIELDS.includes(k)&&typeof v==='string'?lookup(v,`${where}/${k}`):
+      k==='polygon'&&Array.isArray(v)?v.map((c,i)=>typeof c==='string'?lookup(c,`${where}/${k}/${i}`):c):resolve(v,`${where}/${k}`)]));
+  };
+  const {points:_,...rest}=transaction;
+  return {...rest,operations:Array.isArray(rest.operations)?rest.operations.map((op,i)=>resolve(op,`operations/${i}`)):rest.operations};
+}
+
 export function validateTransaction(transaction){
   keys(transaction,['version','expectedSourceSha256','operations'],'transaction');
   if(transaction.version!==1)fail('Unsupported transaction version; expected 1');
@@ -162,6 +182,17 @@ export function validateTransaction(transaction){
     const p=`operations/${index}`;
     if(!object(op)||typeof op.op!=='string')fail('Expected an operation object with an op name',p);
     const [kind,action,...extra]=op.op.split('.');
+    if(kind==='room'){
+      // room.add: the web Room tool, a closed rectangle of four walls.
+      if(action!=='add'||extra.length)fail(`Unknown operation: ${op.op}`,p);
+      keys(op,['op','id','floorId','value'],p);text(op.id,`${p}/id`);text(op.floorId,`${p}/floorId`);
+      keys(op.value,[...rectKeys,'role','height','wallTypeId','label'],`${p}/value`);
+      for(const k of rectKeys){if(!Object.hasOwn(op.value,k))fail(`Missing required field: ${k}`,`${p}/value`);number(op.value[k],`${p}/value/${k}`);}
+      if(op.value.role!==undefined)choice(op.value.role,['exterior','interior'],`${p}/value/role`);
+      if(op.value.height!==undefined&&op.value.height!==null)number(op.value.height,`${p}/value/height`,.1,1000);
+      for(const k of ['wallTypeId','label'])if(op.value[k]!==undefined)text(op.value[k],`${p}/value/${k}`);
+      return;
+    }
     const actions=kind==='floor'?['update','add-top','remove-top','insert','duplicate','move','remove']:kind==='building'?['update']:kind==='group'?['move']:['add','update','remove',...(kind==='wall'?['move-endpoint','crenellate','split']:kind==='stair'?['guard']:[])];
     if(extra.length||!(Object.hasOwn(fields,kind)||kind==='group')||!actions.includes(action))fail(`Unknown operation: ${op.op}`,p);
     if(kind==='group'){
@@ -253,6 +284,14 @@ export function documentDiff(before,after,path=''){
 
 function applyOperation(building,op,index){
   const p=`operations/${index}`,[kind,action]=op.op.split('.');
+  if(kind==='room'){
+    // Corners from the web Room tool's addRoom; each side goes through wall.add
+    // (IDs <id>-north/-east/-south/-west, north being -Z).
+    const v=op.value;if(v.maxX-v.minX<.2||v.maxZ-v.minZ<.2)fail('A room needs at least 0.2 m in both directions',`${p}/value`);
+    const sides=addRoom({walls:[]},{x:v.minX,z:v.minZ},{x:v.maxX,z:v.maxZ},v.role||'exterior',v.height??null);
+    ['north','east','south','west'].forEach((side,i)=>{const w=sides[i];applyOperation(building,{op:'wall.add',floorId:op.floorId,id:`${op.id}-${side}`,value:{a:w.a,b:w.b,role:w.role,height:w.height,label:v.label?`${v.label} ${side}`:'',...(v.wallTypeId?{wallTypeId:v.wallTypeId}:{})}},index);});
+    return;
+  }
   if(kind==='building'){
     // Nested settings merge field by field; numeric changes are checked by
     // final validation (opening fit, stair rise, junction clearance).
@@ -512,6 +551,7 @@ function structuralChanges(before,after){
 export function applyTransaction(source,transaction,{warningsAsErrors=false,sourceSha256}={}){
   const report={ok:false,building:null,errors:[],warnings:[],normalizationChanges:[],changes:[],operations:[],floorStackChanges:[],stairChanges:[],platformChanges:[],floorCoverageChanges:[],structuralChanges:{floors:[],stairs:[],independentSurfaces:[]}};
   try{
+    transaction=resolveNamedPoints(transaction);
     validateTransaction(transaction);
     if(transaction.expectedSourceSha256&&transaction.expectedSourceSha256!==sourceSha256)fail('Source SHA-256 mismatch; inspect the current source and review the transaction again');
     const prepared=prepareDocument(source);

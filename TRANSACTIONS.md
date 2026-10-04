@@ -33,7 +33,18 @@ Load `exports/porch-entry.building.json` using the web editor's Load action to c
 }
 ```
 
-Only `version`, optional `expectedSourceSha256`, and `operations` are accepted at the top level. The transaction format version is independent of the building schema (9, or 10 for shared doorway outlines). Up to 1,000 ordered operations are accepted. An empty list explicitly produces only a normalized-copy diff. Unknown operation names/fields and incorrect value types are errors; executable scripts, arbitrary property paths and automatic ID renaming are not supported.
+Only `version`, optional `expectedSourceSha256`, optional `points`, and `operations` are accepted at the top level. The transaction format version is independent of the building schema (9, or 10 for shared doorway outlines). Up to 1,000 ordered operations are accepted. An empty list explicitly produces only a normalized-copy diff. Unknown operation names/fields and incorrect value types are errors; executable scripts, arbitrary property paths and automatic ID renaming are not supported.
+
+**Named points.** `points` maps names to `{x, z}` coordinates so a recipe gives each corner once. Any point field (`a`, `b`, `at`, `point`, and `polygon` corners) can then name a point instead of spelling out coordinates; names resolve before anything else, and the result is identical to the spelled-out recipe. Names start with a letter or `_` and use letters, digits, `_`, `.` or `-`. An unknown name is an error at that field.
+
+```json
+{"version": 1, "points": {"nw": {"x": -6, "z": -4}, "ne": {"x": 6, "z": -4}, "entry": {"x": 0, "z": -4}},
+ "operations": [
+  {"op": "wall.add", "floorId": "floor_1", "id": "front", "value": {"a": "nw", "b": "ne", "role": "exterior"}},
+  {"op": "opening.add", "floorId": "floor_1", "id": "door", "value": {"type": "door", "wallId": "front", "at": "entry", "width": 1.8, "height": 2.2, "doorStyle": "exterior", "leaves": 2}}]}
+```
+
+For loops or computed layouts, generate the recipe with a short script (as `authoring/halcyon/generate-transactions.mjs` does); recipes themselves stay plain data.
 
 The optional `expectedSourceSha256` is a 64-character lowercase SHA-256 of the exact input bytes. Copy `sourceSha256` from a reviewed dry run into that field to prevent application to a different revision, including whitespace changes. It is optional for reusable recipes such as the demo. A save checks that the source bytes have not changed while it prepared the edit. The output is deterministic pretty-printed JSON with a trailing newline; `resultSha256` is identical for dry-run and save with the same source and transaction.
 
@@ -58,6 +69,7 @@ All operations except `building.update` require `op` and `id`; `building.update`
 | `stair.add` | `value` with `x`, `z`, `width`, `run`, `direction`; optional label/style/steps/blockBelow | Adds a flight with the specified new ID. Requires an adjacent upper floor. Defaults: ramp, 12 steps retained, blocked underside, constructor label. |
 | `stair.remove` | No value | Removes only the existing selected flight. Can remove an imported orphan. |
 | `wall.add` | `value` with `a`, `b`; optional `label`, `role`, `height`, `wallTypeId`, `inwardSide` or `inwardToward` | Adds a wall. Defaults: interior role, full-story height (`null`), empty label, Standard profile. Overlapping collinear segments are rejected. |
+| `room.add` | `floorId`, `id`, `value` with `minX`, `maxX`, `minZ`, `maxZ`; optional `role` (default `exterior`), `height`, `wallTypeId`, `label` | Adds a closed rectangle of four walls, as the web **Room** tool does. The walls are `<id>-north`, `<id>-east`, `<id>-south`, `<id>-west` (north is −Z), labelled `<label> north` and so on when a label is given. Each side goes through `wall.add`, so overlap rules apply. |
 | `wall.update` | `value` containing `label`, `role`, `height`, `wallTypeId`, `inwardSide` and/or `inwardToward` | Changes properties while retaining endpoints and ID. Height may be `null` or a number from 0.1 m through the story height. `wallTypeId` names an existing wall type; `null` returns the wall to Standard. `inwardSide` is `auto` (removes the field), `left` or `right` of A → B in plan. Alternatively, `inwardToward: {x, z}` is any plan point on the side the profile's positive (inward) offset should face; it is stored as `left`/`right` and rejected if it lies on the wall line. The profile, junction and opening rules are checked on the final building. |
 | `wallType.add` | `value` with `label` and `stations` | Adds a shared wall profile, as in the web **Wall types** dialog. Stations are 2–16 `{height, offset, thickness}` levels: height is a fraction 0–1 that must start at 0, end at 1 and increase; offset (±10 m, positive = inward) and thickness (0.01–10 m) are metres. Heights are fractions so one type fits walls of different heights. End levels at offset 0 with the building thickness avoid the floor/top-edge review warning; stations at the building thickness follow later wall-thickness changes. |
 | `wallType.update` | `value` with `label` and/or `stations` | Replaces the given fields; every wall using the type changes with it. |

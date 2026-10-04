@@ -320,3 +320,13 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   assert.deepEqual(e.errors,[]);
   console.log('PASS web double-leaf doors: Leaves select equals opening.update, hidden for closet doors');
 }
+{
+  // room.add (CLI) is the web Room tool: same four walls in the same order; only IDs differ.
+  await e.loadBuildingData(structuredClone(blank));
+  await $('[data-tool="room"]').click();const plan=$('#plan-canvas'),a=e.coordinates({x:-6,z:-4}),c=e.coordinates({x:6,z:4});
+  await plan.dispatch('pointerdown',{clientX:a.x,clientY:a.y});await plan.dispatch('pointerup',{clientX:c.x,clientY:c.y});
+  const strip=walls=>walls.map(({id,...w})=>w);
+  assert.deepEqual(strip(e.snapshot().floors[0].walls),strip(tx([{op:'room.add',floorId:'floor_1',id:'shop',value:{minX:-6,maxX:6,minZ:-4,maxZ:4}}]).floors[0].walls));
+  assert.deepEqual(e.errors,[]);
+  console.log('PASS web Room tool equals room.add (walls, order, role, height)');
+}

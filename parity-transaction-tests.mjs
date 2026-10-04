@@ -245,3 +245,31 @@ const base=ok(room('floor_1','w'));
   rejects([{op:'opening.update',floorId:'floor_1',id:'front',value:{doorStyle:'closet',leaves:1}}],/Closet doors always have two leaves/,doubled);
   console.log('PASS double-leaf doors: leaves 2 exports Hinge + Hinge2 with double_hinge guidance, one leaf default, shared rejections');
 }
+{
+  // Feedback: higher-level layout. room.add is the web Room tool (four walls);
+  // named points let a recipe give a coordinate once and reuse it.
+  const shop=ok([{op:'room.add',floorId:'floor_1',id:'shop',value:{minX:-6,maxX:6,minZ:-4,maxZ:4,label:'Shop'}},{op:'room.add',floorId:'floor_1',id:'store',value:{minX:-5,maxX:-2,minZ:-3,maxZ:0,role:'interior',height:2.4}}]);
+  const walls=shop.floors[0].walls;
+  assert.deepEqual(walls.map(w=>w.id),['shop-north','shop-east','shop-south','shop-west','store-north','store-east','store-south','store-west']);
+  assert.deepEqual(walls[0],{id:'shop-north',label:'Shop north',role:'exterior',height:null,a:{x:-6,z:-4},b:{x:6,z:-4}});
+  assert.ok(walls.slice(4).every(w=>w.role==='interior'&&w.height===2.4&&w.label===''));
+  rejects([{op:'room.add',floorId:'floor_1',id:'over',value:{minX:2,maxX:6,minZ:0,maxZ:4}}],/operations\/0.*overlaps an existing wall|overlaps an existing wall/,shop);
+  rejects([{op:'room.add',floorId:'floor_1',id:'thin',value:{minX:0,maxX:.1,minZ:0,maxZ:4}}],/at least 0.2 m/);
+  rejects([{op:'room.add',floorId:'floor_1',id:'x',value:{minX:0,maxX:4,minZ:0}}],/Missing required field: maxZ/);
+  rejects([{op:'room.update',floorId:'floor_1',id:'shop',value:{}}],/Unknown operation: room.update/);
+  // Named points resolve before anything else; the result equals spelled-out coordinates.
+  const named=applyTransaction(blank,{version:1,points:{nw:{x:-6,z:-4},ne:{x:6,z:-4},door:{x:0,z:-4}},operations:[
+    {op:'wall.add',floorId:'floor_1',id:'front',value:{a:'nw',b:'ne',role:'exterior'}},
+    {op:'opening.add',floorId:'floor_1',id:'d',value:{type:'door',wallId:'front',at:'door',width:1.8,height:2.2,doorStyle:'exterior',leaves:2}},
+    {op:'region.add',floorId:'floor_1',id:'r',value:{polygon:['nw','ne',{x:0,z:2}],label:'Tri'}}]});
+  assert.equal(named.ok,true,JSON.stringify(named.errors));
+  const spelled=ok([{op:'wall.add',floorId:'floor_1',id:'front',value:{a:{x:-6,z:-4},b:{x:6,z:-4},role:'exterior'}},
+    {op:'opening.add',floorId:'floor_1',id:'d',value:{type:'door',wallId:'front',at:{x:0,z:-4},width:1.8,height:2.2,doorStyle:'exterior',leaves:2}},
+    {op:'region.add',floorId:'floor_1',id:'r',value:{polygon:[{x:-6,z:-4},{x:6,z:-4},{x:0,z:2}],label:'Tri'}}]);
+  assert.deepEqual(named.building,spelled);
+  const unknown=applyTransaction(blank,{version:1,points:{a:{x:0,z:0}},operations:[{op:'wall.add',floorId:'floor_1',id:'w',value:{a:'a',b:'missing'}}]});
+  assert.equal(unknown.ok,false);assert.match(JSON.stringify(unknown.errors),/Unknown point name: missing.*operations\/0\/value\/b|operations\/0\/value\/b.*Unknown point name: missing/);
+  assert.equal(applyTransaction(blank,{version:1,points:{'1bad':{x:0,z:0}},operations:[]}).ok,false);
+  assert.equal(applyTransaction(blank,{version:1,points:{p:{x:0}},operations:[]}).ok,false);
+  console.log('PASS room.add (four walls like the web Room tool) and named points in recipes');
+}

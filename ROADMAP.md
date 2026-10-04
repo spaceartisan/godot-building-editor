@@ -2,6 +2,7 @@
 
 ## Current direction: cleanup
 
+- [x] 1.5.0: game-build feedback: Windows/macOS Godot rendering without DISPLAY, double-leaf doors, mansard roofs (`flatTopHeight`), `room.add` and named recipe points, optional game layer (`--game-layer`), preview Godot fallback, narrower independent-surface warning, parapet and terrain recipes.
 - [x] 1.4.0: Kestrel starship stress test (wall-type, doorway-shape and light transactions; route starts and profile-aware route check; uniform ceilings; junction miters) and a code audit (scene-text escaping, route check in reports, wall-loop closing, render guard, malformed-light errors, browser suite repaired).
 - [x] Halcyon limit test ([findings](authoring/halcyon/FINDINGS.md)): up to 15× faster export and 4.5× faster edits (byte-identical output); open-sky ceilings with roof `none`; a miter limit for sharp corners; `wall.split` and `stair.guard` (web: **Split wall**, **Guard opening above**); clearer outline, near-miss and far-coordinate warnings; flatter duplicate IDs; summarised dry-run values.
 - [x] Halcyon follow-ups: opt-in shared door scenes (`--share-door-scenes`, web **Share identical door scenes**), short sections for smooth shaped-wall curves, open-top ceilings no longer z-fight with wall caps, and manual roofs take polygon footprints (flat roofs convex or concave, hip roofs convex) and a hip type.

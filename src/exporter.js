@@ -1,8 +1,9 @@
 import { wallTypeFor, sampleWallType } from './wall-types.js';
-import { openingShapeFor, shapedDoorLayout } from './opening-shapes.js';
+import { openingShapeFor, shapedDoorLayout, doorLeafCount } from './opening-shapes.js';
 import { profileWallState, profileWallSolids } from './wall-profile-geometry.js';
 import { polygonSlabFaces } from './polygon-geometry.js';
 import { roofFootprintAreas, manualRoofOverhang } from './roof-outline.js';
+import { applyGameLayer } from './game-layer.js';
 import { areaPoints, unionPolygonAreas, subtractPolygonAreas } from './polygon-areas.js';
 import { roofBoxParts, roofInteriorBlockers, roofAttachmentBlockers, trimRoofBox, trimmedGableEnds } from './roof-geometry.js';
 import { higherFloorBlockerRectangles, exteriorFootprintRectangles, unionRectAreas, automaticRoofRectangles, automaticRoofSections, boundsOfAutomaticRoof, boundsOfBuilding, boundsOfStructuralFloor, constrainedOpening, floorElevation, floorView, findWall, manualCeilingRectanglesAtLevel, manualFloorRectanglesAtLevel, pointOnWall, rectValid, roofSectionsForFloor, stairFootprint, storyHeight, structuralFloorRectangles, subtractRectAreas, splitWallIntoSolidSegments, validateOpeningLayout, wallLength } from './model.js';
@@ -440,6 +441,9 @@ export function buildDoorMeshData(building, opening) {
       addLocalBoxToMesh(panel,{x:bandW,y:bandH,z:detailDepth},{x:sx*(leafWidth+centerGap)/2,y,z:frontZ});
       addLocalBoxToMesh(panel,{x:bandW,y:bandH,z:detailDepth},{x:sx*(leafWidth+centerGap)/2,y,z:backZ});
     }
+  }else if(doorLeafCount(safe)===2){
+    const centerGap=Math.min(.025,innerWidth*.04),leafWidth=Math.max(.03,(innerWidth-centerGap)/2);
+    for(const side of ['left','right'])addStyledDoorLeaf(panel,null,style,{leafWidth,innerHeight,panelThickness,detailDepth,panelCenterY},side,(side==='left'?-1:1)*(leafWidth+centerGap)/2);
   }else{
     addLocalBoxToMesh(panel,{x:innerWidth,y:innerHeight,z:panelThickness},{x:0,y:panelCenterY,z:0});
     const panelW=innerWidth*(style==='exterior'?.34:.72);
@@ -467,6 +471,9 @@ export function buildDoorMeshData(building, opening) {
       addLocalBoxToMesh(hardware,{x:.025,y:.18,z:.028},{x:-handleX,y:handleY,z});
       addLocalBoxToMesh(hardware,{x:.025,y:.18,z:.028},{x:handleX,y:handleY,z});
     }
+  }else if(doorLeafCount(safe)===2){
+    const centerGap=Math.min(.025,innerWidth*.04),leafWidth=Math.max(.03,(innerWidth-centerGap)/2);
+    for(const side of ['left','right'])addStyledDoorLeaf(null,hardware,style,{leafWidth,innerHeight,panelThickness,detailDepth,panelCenterY},side,(side==='left'?-1:1)*(leafWidth+centerGap)/2);
   }else{
     const knobX=innerWidth/2-Math.min(.11,innerWidth*.14);
     const knobY=panelCenterY-Math.min(.08,innerHeight*.04);
@@ -478,6 +485,33 @@ export function buildDoorMeshData(building, opening) {
   return { frame, panel, hardware, width, height, style, frameWidth, frameDepth, panelThickness, detailDepth, innerWidth, innerHeight, panelCenterY };
 }
 
+
+// One leaf of a double exterior or room door, centred at ox: the style's raised
+// panels on both faces and a knob near the meeting edge (+X on the left leaf).
+function addStyledDoorLeaf(panel,hardware,style,{leafWidth,innerHeight,panelThickness,detailDepth,panelCenterY},side,ox=0){
+  const frontZ=panelThickness/2+detailDepth/2,backZ=-frontZ;
+  if(panel){
+    addLocalBoxToMesh(panel,{x:leafWidth,y:innerHeight,z:panelThickness},{x:ox,y:panelCenterY,z:0});
+    const panelW=leafWidth*(style==='exterior'?.68:.72);
+    const rows=style==='exterior'?[[innerHeight*.245,.22],[innerHeight*.245*1.12,-.20]]:[[innerHeight*.24,.20],[innerHeight*.32,-.22]];
+    for(const [h,at] of rows)for(const z of [frontZ,backZ])addLocalBoxToMesh(panel,{x:panelW,y:Math.max(.06,h),z:detailDepth},{x:ox,y:panelCenterY+innerHeight*at,z});
+  }
+  if(hardware){
+    const k=style==='exterior'?.065:.055,inset=Math.min(.11,leafWidth*.14),knobX=ox+(side==='left'?1:-1)*(leafWidth/2-inset);
+    const knobY=panelCenterY-Math.min(.08,innerHeight*.04),knobZ=panelThickness/2+k*.38;
+    for(const z of [knobZ,-knobZ])addLocalBoxToMesh(hardware,{x:k,y:k,z:k},{x:knobX,y:knobY,z});
+  }
+}
+// Double exterior/room doors (leaves: 2) export like closet pairs: each leaf in
+// its own hinge's local coordinates.
+export function buildDoubleDoorLeafMeshData(building,opening){
+  const base=buildDoorMeshData(building,opening);
+  if(!base||base.custom||doorLeafCount(opening)!==2)return null;
+  if(base.style==='closet')return buildClosetDoorLeafMeshData(building,opening);
+  const centerGap=Math.min(.025,base.innerWidth*.04),leafWidth=Math.max(.03,(base.innerWidth-centerGap)/2);
+  const makeLeaf=side=>{const panel=meshWriter(),hardware=meshWriter();addStyledDoorLeaf(panel,hardware,base.style,{...base,leafWidth},side);return {panel,hardware};};
+  return {...base,centerGap,leafWidth,left:makeLeaf('left'),right:makeLeaf('right')};
+}
 
 // Closet doors are exported as two independently hinged leaves. This helper
 // rebuilds each half in hinge-local coordinates while retaining the same
@@ -1403,8 +1437,8 @@ export function exportDoorTscn(building, opening, options={}) {
   if(frameRes) resources.push(frameRes.text);
 
   const nodes=[];
-  const styleName=data.style==='exterior'?'Exterior':data.style==='closet'?'Closet':'Room';
-  const isDouble=data.style==='closet';
+  const isDouble=!data.custom&&doorLeafCount(opening)===2;
+  const styleName=(data.style==='exterior'?'Exterior':data.style==='closet'?'Closet':'Room')+(isDouble&&data.style!=='closet'?' double':'');
   const hingeHint=data.custom?' Custom outline: Panel is the movable pivot. Add sliding or other movement in Godot; no movement script is included.':exportProfile(building,options).windowGroup==='scare_sight_transparent'
     ? (isDouble?' Set double_hinge = true; expected hinge paths: $Hinge and $Hinge2.':' Default single hinge; expected hinge path: $Hinge.')
     : (isDouble?' Two independent hinge pivots: Hinge and Hinge2.':' Single hinge pivot: Hinge.');
@@ -1437,7 +1471,7 @@ export function exportDoorTscn(building, opening, options={}) {
       nodes.push(`[node name="CollisionShape3D" type="CollisionShape3D" parent="FrameBody"]\nshape = SubResource("FrameShape")`);
     }
   }else if(isDouble){
-    const pair=buildClosetDoorLeafMeshData(building,opening);
+    const pair=buildDoubleDoorLeafMeshData(building,opening);
     const leftRes=multiSurfaceArrayMeshResource([
       {mesh:pair.left.panel,materialId:matDoor,surfaceName:'Door'},
       {mesh:pair.left.hardware,materialId:matHardware,surfaceName:'Hardware'}
@@ -2086,7 +2120,9 @@ export function exportGodotFiles(building, options={collision:true,markers:true}
     });
     doors=[...[...shared.values()].map(q=>({filename:q.filename,tscn:q.text,openings:q.users,shared:q.users.length})),...doors.filter(d=>d.tscn==null)];
   }
-  return {base,tscnName,tscn:exportGodotTscn(building,options,doorScenes),doors,warnings:validation.warnings};
+  const files={base,tscnName,tscn:exportGodotTscn(building,options,doorScenes),doors,warnings:validation.warnings};
+  // Optional game layer (materials, render layers, scripts, door children).
+  return options.gameLayer?applyGameLayer(files,options.gameLayer):files;
 }
 
 

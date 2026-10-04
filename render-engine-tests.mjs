@@ -28,6 +28,10 @@ try{
   assert.equal(JSON.parse(fs.readFileSync(path.join(temp,'colored/renders.json'),'utf8')).colorMode,'surfaces');
   assert.notDeepEqual(fs.readFileSync(path.join(temp,'colored/gate.png')),fs.readFileSync(path.join(temp,'custom/gate.png')),'surface colours change the pixels');
   assert.deepEqual(custom.render.files,['gate.png']);
+  // Feedback: preview without @napi-rs/canvas falls back to a Godot aerial render.
+  const fallback=spawnSync(process.execPath,[cli,'preview',path.join(root,'examples/courtyard_regions.building.json'),'--out','fallback.png','--json'],{cwd:temp,env:{...process.env,CANVAS_MODULE:path.join(temp,'no-canvas')},encoding:'utf8',timeout:600000,maxBuffer:32e6});
+  assert.equal(fallback.status,0,fallback.stdout+fallback.stderr);assert.equal(JSON.parse(fallback.stdout).preview.renderer,'godot');
+  assert.deepEqual(png(path.join(temp,'fallback.png')),{width:1280,height:800});
   // Halcyon: a manual roof that meets nothing exports as an unnamed BoxMesh;
   // the surface-colour mode still paints it as a roof instead of leaving the
   // default grey (which reads as wall siding).

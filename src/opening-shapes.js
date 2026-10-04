@@ -46,6 +46,22 @@ export function shapedDoorLayout(building,opening){
   const frameCells=subtractPolygonAreas(outlineCells(outline),outlineCells(inner)),panelCells=outlineCells(panel);
   return {outline,inner,panel,frameCells,panelCells,frameWidth,frameDepth,panelThickness};
 }
+// Door leaves: exterior and room doors take one (default) or two hinged
+// leaves; closet doors always have two; custom outlines use one panel.
+export const DOOR_LEAF_STYLES=['exterior','room'];
+export function doorLeafCount(opening){
+  if(opening?.type!=='door')return 0;
+  if(opening.doorStyle==='closet')return 2;
+  return opening.leaves===2&&DOOR_LEAF_STYLES.includes(opening.doorStyle||'room')&&!opening.shapeId?2:1;
+}
+export function doorLeavesProblem(opening){
+  if(opening?.leaves===undefined)return null;
+  if(opening.type!=='door')return 'Only doors have leaves.';
+  if(opening.leaves!==1&&opening.leaves!==2)return 'Door leaves must be 1 or 2.';
+  if(opening.doorStyle==='closet'&&opening.leaves===1)return 'Closet doors always have two leaves; choose Room or Exterior for a single leaf.';
+  if(opening.leaves===2&&opening.shapeId)return 'Custom doorway outlines use a single panel; use one leaf or a Rectangle doorway.';
+  return null;
+}
 export function shapedOpeningProblem(building,opening){
   if(!opening.shapeId)return null;
   if(opening.type!=='door')return 'Custom doorway outlines are supported on doors and empty passages only.';

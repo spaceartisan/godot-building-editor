@@ -4,7 +4,7 @@ import { boundsOfBuilding, boundsOfStructuralFloor, constrainedOpening, floorEle
 
 import { stairOpeningFootprint } from './model.js';
 import { buildExteriorMeshData, buildProfileMeshData, hasProfileWalls, openingAnchor, floorRectanglesForView, buildDoorMeshData, storyCeilingRectangles } from './exporter.js';
-import {openingShapeFor} from './opening-shapes.js';
+import {openingShapeFor,doorLeafCount} from './opening-shapes.js';
 // Every edit rebuilds the whole preview; shaped-wall meshes are the slowest
 // part, so reuse them while a floor's content (ignoring labels) is unchanged.
 const profileMeshCache=new Map();
@@ -260,12 +260,14 @@ export class Preview3D{
         const frameColor=o.doorStyle==='exterior'?'#574033':'#6f6250';
         const panelColor=o.doorStyle==='closet'?'#b0a690':o.doorStyle==='exterior'?'#74442b':'#937a58';
         const at=(lx,ly,oz=0)=>({x:p.x+dx*lx+nx*oz, y:elevation+ly, z:p.z+dz*lx+nz*oz});
-        addObj(objs,{x:inner,y:o.height-fw,z:t},at(0,(o.height-fw)/2),{x:0,y:ry,z:0},panelColor,{strokeAlpha:.4});
+        const pair=o.doorStyle!=='closet'&&doorLeafCount(o)===2,gap=Math.min(.025,inner*.04),leaf=(inner-gap)/2;
+        if(pair)for(const sx of [-1,1])addObj(objs,{x:leaf,y:o.height-fw,z:t},at(sx*(leaf+gap)/2,(o.height-fw)/2),{x:0,y:ry,z:0},panelColor,{strokeAlpha:.4});
+        else addObj(objs,{x:inner,y:o.height-fw,z:t},at(0,(o.height-fw)/2),{x:0,y:ry,z:0},panelColor,{strokeAlpha:.4});
         addObj(objs,{x:fw,y:o.height,z:t*.95},at(-(o.width-fw)/2,o.height/2),{x:0,y:ry,z:0},frameColor,{strokeAlpha:.35});
         addObj(objs,{x:fw,y:o.height,z:t*.95},at((o.width-fw)/2,o.height/2),{x:0,y:ry,z:0},frameColor,{strokeAlpha:.35});
         addObj(objs,{x:o.width,y:fw,z:t*.95},at(0,o.height-fw/2),{x:0,y:ry,z:0},frameColor,{strokeAlpha:.35});
         const knobSide=o.doorStyle==='closet'?0.2:0.36;
-        addObj(objs,{x:.045,y:.045,z:.025},at(inner*knobSide, o.height*0.48, t/2+.012),{x:0,y:ry,z:0},'#d2b57b',{strokeAlpha:.15,castShadow:false});
+        for(const kx of pair?[-.1,.1]:[inner*knobSide])addObj(objs,{x:.045,y:.045,z:.025},at(kx, o.height*0.48, t/2+.012),{x:0,y:ry,z:0},'#d2b57b',{strokeAlpha:.15,castShadow:false});
       }
     }
 

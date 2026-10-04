@@ -38,16 +38,26 @@ try{
   const authoredChecks=check(authoredAssets,0,['--require-collision']);
   assert.equal(authoredChecks.checks.scenes,3);assert.equal(authoredChecks.checks.trimmedMeshComparisons,3);assert.equal(authoredChecks.checks.materialSurfaces,0);
   assert.ok(authoredChecks.checks.collisionShapes>0);
-  // Polygon (flat, hip, concave flat) and rectangular hip manual roofs export with collision.
+  // Polygon (flat, hip, concave flat), rectangular hip and mansard manual roofs export with collision.
   const roofOps=path.join(temp,'roofs.edit.json'),roofBase=path.join(temp,'roof-base.json'),roofed=path.join(temp,'roofed.json');
   run(['new','--out',roofBase,'--name','Roof shapes']);
   fs.writeFileSync(roofOps,JSON.stringify({version:1,operations:[{op:'building.update',value:{roof:{type:'none'}}},
     {op:'roof.add',id:'bay',value:{type:'flat',polygon:[{x:-10,z:20},{x:10,z:20},{x:4,z:26},{x:-4,z:26}],baseY:3,overhang:.2}},
     {op:'roof.add',id:'hex',value:{type:'hip',polygon:[{x:40,z:0},{x:44,z:-2},{x:48,z:0},{x:48,z:4},{x:44,z:6},{x:40,z:4}],baseY:3,pitch:30}},
     {op:'roof.add',id:'hip',value:{type:'hip',minX:20,maxX:26,minZ:0,maxZ:4,baseY:3}},
-    {op:'roof.add',id:'ell',value:{type:'flat',polygon:[{x:60,z:0},{x:70,z:0},{x:70,z:4},{x:64,z:4},{x:64,z:10},{x:60,z:10}],baseY:3,overhang:.5}}]}));
+    {op:'roof.add',id:'ell',value:{type:'flat',polygon:[{x:60,z:0},{x:70,z:0},{x:70,z:4},{x:64,z:4},{x:64,z:10},{x:60,z:10}],baseY:3,overhang:.5}},
+    {op:'roof.add',id:'mansard',value:{type:'hip',minX:80,maxX:92,minZ:0,maxZ:8,baseY:3,pitch:60,flatTopHeight:1.2}}]}));
   run(['edit',roofBase,'--ops',roofOps,'--out',roofed]);const roofAssets=path.join(temp,'roof-assets');run(['export',roofed,'--out',roofAssets]);
-  const roofChecks=check(roofAssets,0,['--require-collision']);assert.ok(roofChecks.checks.collisionShapes>=12,'one collision shape per roof part');
+  const roofChecks=check(roofAssets,0,['--require-collision']);assert.ok(roofChecks.checks.collisionShapes>=17,'one collision shape per roof part');
+  // Double-leaf exterior and room doors (leaves: 2) load with both hinges' collision.
+  const doubleOps=path.join(temp,'double.edit.json'),doubled=path.join(temp,'double.json'),doubleAssets=path.join(temp,'double-assets');
+  const corners=[[-4,-3],[4,-3],[4,3],[-4,3]];
+  fs.writeFileSync(doubleOps,JSON.stringify({version:1,operations:[...corners.map((c,i)=>({op:'wall.add',floorId:'floor_1',id:`w${i}`,value:{a:{x:c[0],z:c[1]},b:{x:corners[(i+1)%4][0],z:corners[(i+1)%4][1]},role:'exterior'}})),
+    {op:'opening.add',floorId:'floor_1',id:'front',value:{type:'door',wallId:'w0',t:.5,width:1.8,height:2.2,doorStyle:'exterior',leaves:2}},
+    {op:'opening.add',floorId:'floor_1',id:'back',value:{type:'door',wallId:'w2',t:.5,width:1.6,height:2.1,doorStyle:'room',leaves:2}}]}));
+  run(['edit',roofBase,'--ops',doubleOps,'--out',doubled]);run(['export',doubled,'--out',doubleAssets]);
+  const doubleChecks=check(doubleAssets,0,['--require-collision']);assert.equal(doubleChecks.checks.scenes,3);
+  for(const name of fs.readdirSync(path.join(doubleAssets,'doors')))assert.match(fs.readFileSync(path.join(doubleAssets,'doors',name),'utf8'),/parent="Hinge2\/AnimatableBody3D"/);
   // Shared door scenes (--share-door-scenes) load and instance in Godot.
   const sharedDir=path.join(temp,'shared-doors');run(['export',path.join(root,'examples/farmhouse.building.json'),'--out',sharedDir,'--share-door-scenes']);
   const sharedFiles=fs.readdirSync(path.join(sharedDir,'doors')),perDoor=path.join(temp,'per-door');run(['export',path.join(root,'examples/farmhouse.building.json'),'--out',perDoor]);

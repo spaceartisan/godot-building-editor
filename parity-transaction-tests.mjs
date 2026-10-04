@@ -227,3 +227,74 @@ const base=ok(room('floor_1','w'));
   inherited.roof.overhang=.2;assert.deepEqual(validateBuilding(inherited).errors,[]);
   console.log('PASS polygon and hip manual roofs: outline-following export, bounds from corners, concave flat roofs in convex pieces, inherited overhang checked, shared rejections, back to a rectangle');
 }
+{
+  // Feedback: wide doors exported as one giant leaf. Exterior and room doors take
+  // leaves: 2 (Hinge + Hinge2, like closet pairs); one leaf stays the default.
+  const {exportGodotFiles}=await import('./src/exporter.js');
+  const box=ok([0,1,2,3].map(i=>{const c=[[-4,-3],[4,-3],[4,3],[-4,3]];return {op:'wall.add',floorId:'floor_1',id:`w${i}`,value:{a:{x:c[i][0],z:c[i][1]},b:{x:c[(i+1)%4][0],z:c[(i+1)%4][1]},role:'exterior'}};}));
+  const doubled=ok([{op:'opening.add',floorId:'floor_1',id:'front',value:{type:'door',wallId:'w0',t:.5,width:1.8,height:2.2,doorStyle:'exterior',leaves:2}},{op:'opening.add',floorId:'floor_1',id:'side',value:{type:'door',wallId:'w1',t:.5,width:.9,height:2.1}}],box);
+  const front=doubled.floors[0].openings.find(o=>o.id==='front');assert.equal(front.leaves,2);
+  const sceneText=JSON.stringify(exportGodotFiles(doubled,{profile:'get_probed'}));
+  assert.match(sceneText,/Exterior double door/);assert.match(sceneText,/Set double_hinge = true; expected hinge paths: \$Hinge and \$Hinge2/);
+  assert.match(sceneText,/parent=\\"Hinge2\/AnimatableBody3D\\"/);
+  assert.match(sceneText,/Room door\. Attach/,'the second door keeps one leaf');
+  const single=ok([{op:'opening.update',floorId:'floor_1',id:'front',value:{leaves:1}}],doubled).floors[0].openings.find(o=>o.id==='front');
+  assert.equal('leaves' in single,false,'leaves: 1 is the default and is not stored');
+  rejects([{op:'opening.update',floorId:'floor_1',id:'front',value:{leaves:3}}],/Expected one of: 1, 2/,doubled);
+  rejects([{op:'opening.add',floorId:'floor_1',id:'win',value:{type:'window',wallId:'w2',t:.5,width:1,height:1,leaves:2}}],/Window edits cannot set door fields/,box);
+  rejects([{op:'opening.update',floorId:'floor_1',id:'front',value:{doorStyle:'closet',leaves:1}}],/Closet doors always have two leaves/,doubled);
+  console.log('PASS double-leaf doors: leaves 2 exports Hinge + Hinge2 with double_hinge guidance, one leaf default, shared rejections');
+}
+{
+  // Feedback: higher-level layout. room.add is the web Room tool (four walls);
+  // named points let a recipe give a coordinate once and reuse it.
+  const shop=ok([{op:'room.add',floorId:'floor_1',id:'shop',value:{minX:-6,maxX:6,minZ:-4,maxZ:4,label:'Shop'}},{op:'room.add',floorId:'floor_1',id:'store',value:{minX:-5,maxX:-2,minZ:-3,maxZ:0,role:'interior',height:2.4}}]);
+  const walls=shop.floors[0].walls;
+  assert.deepEqual(walls.map(w=>w.id),['shop-north','shop-east','shop-south','shop-west','store-north','store-east','store-south','store-west']);
+  assert.deepEqual(walls[0],{id:'shop-north',label:'Shop north',role:'exterior',height:null,a:{x:-6,z:-4},b:{x:6,z:-4}});
+  assert.ok(walls.slice(4).every(w=>w.role==='interior'&&w.height===2.4&&w.label===''));
+  rejects([{op:'room.add',floorId:'floor_1',id:'over',value:{minX:2,maxX:6,minZ:0,maxZ:4}}],/operations\/0.*overlaps an existing wall|overlaps an existing wall/,shop);
+  rejects([{op:'room.add',floorId:'floor_1',id:'thin',value:{minX:0,maxX:.1,minZ:0,maxZ:4}}],/at least 0.2 m/);
+  rejects([{op:'room.add',floorId:'floor_1',id:'x',value:{minX:0,maxX:4,minZ:0}}],/Missing required field: maxZ/);
+  rejects([{op:'room.update',floorId:'floor_1',id:'shop',value:{}}],/Unknown operation: room.update/);
+  // Named points resolve before anything else; the result equals spelled-out coordinates.
+  const named=applyTransaction(blank,{version:1,points:{nw:{x:-6,z:-4},ne:{x:6,z:-4},door:{x:0,z:-4}},operations:[
+    {op:'wall.add',floorId:'floor_1',id:'front',value:{a:'nw',b:'ne',role:'exterior'}},
+    {op:'opening.add',floorId:'floor_1',id:'d',value:{type:'door',wallId:'front',at:'door',width:1.8,height:2.2,doorStyle:'exterior',leaves:2}},
+    {op:'region.add',floorId:'floor_1',id:'r',value:{polygon:['nw','ne',{x:0,z:2}],label:'Tri'}}]});
+  assert.equal(named.ok,true,JSON.stringify(named.errors));
+  const spelled=ok([{op:'wall.add',floorId:'floor_1',id:'front',value:{a:{x:-6,z:-4},b:{x:6,z:-4},role:'exterior'}},
+    {op:'opening.add',floorId:'floor_1',id:'d',value:{type:'door',wallId:'front',at:{x:0,z:-4},width:1.8,height:2.2,doorStyle:'exterior',leaves:2}},
+    {op:'region.add',floorId:'floor_1',id:'r',value:{polygon:[{x:-6,z:-4},{x:6,z:-4},{x:0,z:2}],label:'Tri'}}]);
+  assert.deepEqual(named.building,spelled);
+  const unknown=applyTransaction(blank,{version:1,points:{a:{x:0,z:0}},operations:[{op:'wall.add',floorId:'floor_1',id:'w',value:{a:'a',b:'missing'}}]});
+  assert.equal(unknown.ok,false);assert.match(JSON.stringify(unknown.errors),/Unknown point name: missing.*operations\/0\/value\/b|operations\/0\/value\/b.*Unknown point name: missing/);
+  assert.equal(applyTransaction(blank,{version:1,points:{'1bad':{x:0,z:0}},operations:[]}).ok,false);
+  assert.equal(applyTransaction(blank,{version:1,points:{p:{x:0}},operations:[]}).ok,false);
+  console.log('PASS room.add (four walls like the web Room tool) and named points in recipes');
+}
+{
+  // Feedback: mansard roofs. A hip roof's flatTopHeight stops the slopes that
+  // far above the eaves and caps the rest flat (manual roofs and the automatic roof).
+  const {roofBoxParts}=await import('./src/roof-geometry.js');
+  const {exportGodotFiles}=await import('./src/exporter.js');
+  const mansard=ok([{op:'room.add',floorId:'floor_1',id:'box',value:{minX:-6,maxX:6,minZ:-4,maxZ:4}},{op:'building.update',value:{roof:{type:'none'}}},
+    {op:'roof.add',id:'m',value:{type:'hip',minX:-6,maxX:6,minZ:-4,maxZ:4,baseY:3,pitch:60,overhang:0,flatTopHeight:1.2}}]);
+  const roof=mansard.roofSections[0],parts=roofBoxParts(roof,mansard.roof,3,0,true);
+  assert.deepEqual(parts.map(p=>p.name),['ManualRoof_001_Hip_01','ManualRoof_001_Hip_02','ManualRoof_001_Hip_03','ManualRoof_001_Hip_04','ManualRoof_001_Top']);
+  const ys=parts.flatMap(p=>p.solid.faces.flatMap(f=>f.points.map(q=>q.y)));
+  assert.ok(Math.abs(Math.max(...ys)-(3+1.2+.12))<1e-6,'nothing rises above the flat top');
+  const top=parts.at(-1).solid.faces.flatMap(f=>f.points),inset=1.2/Math.tan(60*Math.PI/180);
+  assert.ok(Math.abs(Math.max(...top.map(q=>q.x))-(6-inset))<1e-6&&Math.abs(Math.max(...top.map(q=>q.z))-(4-inset))<1e-6,'the top is the outline inset by height / tan(pitch)');
+  assert.match(exportGodotFiles(mansard).tscn,/\[node name="ManualRoof_001_Top_Collision"/);
+  const high=ok([{op:'roof.update',id:'m',value:{flatTopHeight:50}}],mansard);
+  assert.equal(roofBoxParts(high.roofSections[0],high.roof,3,0,true).some(p=>/_Top$/.test(p.name)),false,'a flat top above the ridge leaves a plain hip');
+  assert.equal('flatTopHeight' in ok([{op:'roof.update',id:'m',value:{flatTopHeight:null}}],mansard).roofSections[0],false);
+  rejects([{op:'roof.update',id:'m',value:{type:'gable'}}],/flat top \(mansard\) applies to hip roofs only/,mansard);
+  rejects([{op:'roof.update',id:'m',value:{flatTopHeight:-1}}],/flatTopHeight/,mansard);
+  // The automatic hip roof takes the same field through building.update.
+  const auto=ok([{op:'building.update',value:{roof:{type:'hip',pitch:60,flatTopHeight:1}}},{op:'roof.remove',id:'m'}],mansard);
+  assert.equal(auto.roof.flatTopHeight,1);assert.match(exportGodotFiles(auto).tscn,/_Top" type="MeshInstance3D"/);
+  assert.equal('flatTopHeight' in ok([{op:'building.update',value:{roof:{flatTopHeight:0}}}],auto).roof,false,'0 removes the flat top');
+  console.log('PASS mansard roofs: flatTopHeight clips hip slopes and caps them flat (manual and automatic), above-ridge falls back to hip, shared rejections');
+}

@@ -33,3 +33,23 @@ try{
   assert.equal(fs.existsSync(path.join(temp,'new')),false);
   console.log('PASS render views/usage: view validation, required --assets/--out, protected destination');
 }finally{fs.rmSync(temp,{recursive:true,force:true});}
+{
+  // Display route (feedback: Windows was refused without DISPLAY). Shared by the
+  // CLI and the web editor's Render in Godot server route.
+  const { displayRoute } = await import('./godot-render.mjs');
+  const none=()=>false,xvfb=()=>true;
+  assert.equal(displayRoute({platform:'win32',env:{},hasXvfb:none}),'direct');
+  assert.equal(displayRoute({platform:'darwin',env:{},hasXvfb:none}),'direct');
+  assert.equal(displayRoute({platform:'linux',env:{DISPLAY:':0'},hasXvfb:none}),'direct');
+  assert.equal(displayRoute({platform:'linux',env:{WAYLAND_DISPLAY:'wayland-0'},hasXvfb:none}),'direct');
+  assert.equal(displayRoute({platform:'linux',env:{},hasXvfb:xvfb}),'xvfb');
+  assert.equal(displayRoute({platform:'linux',env:{},hasXvfb:none}),null);
+  console.log('PASS render display route: Windows/macOS direct; Linux DISPLAY, WAYLAND_DISPLAY, xvfb-run or none');
+}
+{
+  // Without the canvas backend or a Godot executable, preview explains both options.
+  const env={...process.env,CANVAS_MODULE:path.join(os.tmpdir(),'no-such-canvas')};delete env.GODOT_BIN;
+  const r=spawnSync(process.execPath,[path.join(path.dirname(fileURLToPath(import.meta.url)),'cli.mjs'),'preview',path.join(path.dirname(fileURLToPath(import.meta.url)),'examples/farmhouse.building.json'),'--out',path.join(os.tmpdir(),`never-${process.pid}.png`)],{env,encoding:'utf8'});
+  assert.equal(r.status,3);assert.match(r.stdout+r.stderr,/Preview needs @napi-rs\/canvas, or a Godot executable \(--godot PATH or GODOT_BIN\)/);
+  console.log('PASS preview without canvas: names the canvas install and the Godot fallback');
+}

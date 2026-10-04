@@ -81,6 +81,12 @@ try{
   assert.equal(edit(recipe.operations,independent,{warningsAsErrors:true}).ok,false);
   assert.equal(edit([op(lower,{label:'Rename only'})],independent).structuralChanges.independentSurfaces.length,0);
   assert.equal(edit([op(lower,{wallHeight:5}),op(lower,{wallHeight:null})],independent).structuralChanges.independentSurfaces.length,0);
+  // Feedback: a recipe that changes the story height and adds (or moves) a manual
+  // ceiling in the same transaction authored it against the new stack; no warning.
+  const fresh=edit([op(lower,{wallHeight:4.4}),{op:'manualCeiling.add',id:'mc',value:{minX:0,maxX:4,minZ:0,maxZ:4,topY:3.42,thickness:.12}}],source,{warningsAsErrors:true});
+  assert.equal(fresh.ok,true,JSON.stringify(fresh.errors));assert.equal(fresh.structuralChanges.independentSurfaces.length,0);
+  const moved=edit([op(lower,{wallHeight:4.4}),{op:'manualFloor.update',id:'manual',value:{topY:.2}}],independent);
+  assert.equal(moved.structuralChanges.independentSurfaces.length,0,'a surface moved in the same transaction is not flagged');
   const roofs=prepareDocument(JSON.parse(fs.readFileSync(path.join(root,'examples/roof_attachment.building.json')))).building;
   const roofsKept=edit([op(roofs.floors[0].id,{wallHeight:3.6})],roofs);assert.equal(roofsKept.ok,true);
   assert.deepEqual(roofsKept.building.roofSections,roofs.roofSections);assert.ok(roofsKept.warnings.some(w=>/absolute heights/.test(w.message)));

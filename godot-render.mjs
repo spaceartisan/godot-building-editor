@@ -5,7 +5,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 // Renders prepared (checked) asset scenes with Godot's Compatibility renderer.
-// Needs a display: DISPLAY, or xvfb-run for a virtual one. Returns in-memory
+// Needs a display (see displayRoute). Returns in-memory
 // PNG entries so the caller can publish them atomically to a new directory.
 const source=path.dirname(fileURLToPath(import.meta.url));
 export class RenderError extends Error{constructor(message,code=3){super(message);this.code=code;}}
@@ -28,11 +28,19 @@ export function parseViews(text){
   });
 }
 
+// How Godot gets a window: Windows and macOS always have a display; on Linux
+// and other Unix systems use DISPLAY/WAYLAND_DISPLAY, else a virtual xvfb-run
+// display. Returns 'direct', 'xvfb' or null (no route).
+export function displayRoute({platform=process.platform,env=process.env,hasXvfb=()=>!spawnSync('xvfb-run',['--help']).error}={}){
+  if(platform==='win32'||platform==='darwin')return 'direct';
+  if(env.DISPLAY||env.WAYLAND_DISPLAY)return 'direct';
+  return hasXvfb()?'xvfb':null;
+}
+const NO_DISPLAY='Rendering needs a display: set DISPLAY (or WAYLAND_DISPLAY) or install xvfb-run';
 function displayCommand(executable,args){
-  if(process.env.DISPLAY)return [executable,args];
-  const probe=spawnSync('xvfb-run',['--help'],{encoding:'utf8'});
-  if(probe.error)throw new RenderError('Rendering needs a display: set DISPLAY or install xvfb-run (Godot --headless cannot render).');
-  return ['xvfb-run',['-a','-s','-screen 0 1280x800x24',executable,...args]];
+  const route=displayRoute();
+  if(!route)throw new RenderError(`${NO_DISPLAY} (Godot --headless cannot render).`);
+  return route==='direct'?[executable,args]:['xvfb-run',['-a','-s','-screen 0 1280x800x24',executable,...args]];
 }
 
 export const RENDER_COLOR_MODES=['materials','surfaces'];
@@ -85,7 +93,6 @@ export function godotRenderAvailability(executable){
   const probe=spawnSync(executable,['--headless','--version'],{encoding:'utf8',timeout:15000});
   const engineVersion=(probe.stdout||'').trim();
   if(probe.error||probe.status!==0||!/^4\./.test(engineVersion))return {available:false,reason:`GODOT_BIN is not a runnable Godot 4 executable (${probe.error?.message||engineVersion||probe.status}).`};
-  const display=!!process.env.DISPLAY||!spawnSync('xvfb-run',['--help']).error;
-  if(!display)return {available:false,engineVersion,reason:'Rendering needs a display: set DISPLAY or install xvfb-run on the server machine.'};
+  if(!displayRoute())return {available:false,engineVersion,reason:`${NO_DISPLAY} on the server machine.`};
   return {available:true,engineVersion};
 }

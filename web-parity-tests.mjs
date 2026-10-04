@@ -305,3 +305,73 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   assert.deepEqual(w.errors,[]);
   console.log('PASS web parity A9: marker, Floor Footprint, manual floor, mesh settings, Move by distance and floor stack equal the CLI operations');
 }
+{
+  // Feedback: double-leaf doors. The door panel's Leaves select equals opening.update leaves.
+  const box=tx([0,1,2,3].map(i=>{const c=[[-4,-3],[4,-3],[4,3],[-4,3]];return {op:'wall.add',floorId:'floor_1',id:`w${i}`,value:{a:{x:c[i][0],z:c[i][1]},b:{x:c[(i+1)%4][0],z:c[(i+1)%4][1]},role:'exterior'}};}).concat([{op:'opening.add',floorId:'floor_1',id:'front',value:{type:'door',wallId:'w0',t:.5,width:1.8,height:2.2,doorStyle:'exterior'}}]));
+  await e.loadBuildingData(structuredClone(box));e.chooseSelection({type:'opening',id:'front'});
+  const leaves=$('#door-leaves');assert.equal(leaves.value,'1');leaves.value='2';await leaves.dispatch('change');
+  const doubled=tx([{op:'opening.update',floorId:'floor_1',id:'front',value:{leaves:2}}],box);
+  assert.deepEqual(e.snapshot().floors,doubled.floors,'web Leaves equals opening.update leaves: 2');
+  assert.match($('#status-text').textContent,/two leaves/);
+  e.chooseSelection({type:'opening',id:'front'});const back=$('#door-leaves');back.value='1';await back.dispatch('change');
+  assert.deepEqual(e.snapshot().floors,box.floors,'one leaf removes the field, as opening.update leaves: 1');
+  e.chooseSelection({type:'opening',id:'front'});await change(property('Door type'),'closet');
+  e.chooseSelection({type:'opening',id:'front'});assert.equal($('#door-leaves'),null,'closet doors always have two leaves; no Leaves select');
+  assert.deepEqual(e.errors,[]);
+  console.log('PASS web double-leaf doors: Leaves select equals opening.update, hidden for closet doors');
+}
+{
+  // room.add (CLI) is the web Room tool: same four walls in the same order; only IDs differ.
+  await e.loadBuildingData(structuredClone(blank));
+  await $('[data-tool="room"]').click();const plan=$('#plan-canvas'),a=e.coordinates({x:-6,z:-4}),c=e.coordinates({x:6,z:4});
+  await plan.dispatch('pointerdown',{clientX:a.x,clientY:a.y});await plan.dispatch('pointerup',{clientX:c.x,clientY:c.y});
+  const strip=walls=>walls.map(({id,...w})=>w);
+  assert.deepEqual(strip(e.snapshot().floors[0].walls),strip(tx([{op:'room.add',floorId:'floor_1',id:'shop',value:{minX:-6,maxX:6,minZ:-4,maxZ:4}}]).floors[0].walls));
+  assert.deepEqual(e.errors,[]);
+  console.log('PASS web Room tool equals room.add (walls, order, role, height)');
+}
+{
+  // Mansard: the roof panel's Flat top height equals roof.update flatTopHeight;
+  // the automatic roof's setting equals building.update roof.flatTopHeight.
+  const base=tx([{op:'room.add',floorId:'floor_1',id:'box',value:{minX:-6,maxX:6,minZ:-4,maxZ:4}},{op:'roof.add',id:'m',value:{type:'hip',minX:-6,maxX:6,minZ:-4,maxZ:4,baseY:3,pitch:60}}]);
+  await e.loadBuildingData(structuredClone(base));e.chooseSelection({type:'roofSection',id:'m'});
+  await change(property('Flat top height'),1.2);
+  assert.deepEqual(e.snapshot().roofSections,tx([{op:'roof.update',id:'m',value:{flatTopHeight:1.2}}],base).roofSections,'web flat top equals roof.update');
+  assert.match($('#status-text').textContent,/mansard/);
+  e.chooseSelection({type:'roofSection',id:'m'});await change(property('Type'),'gable');
+  const gable=e.snapshot().roofSections[0];assert.equal(gable.type,'gable');assert.equal('flatTopHeight' in gable,false);
+  assert.match($('#status-text').textContent,/flat top applies to hip roofs only, so it was cleared/);
+  assert.deepEqual(e.snapshot().roofSections,tx([{op:'roof.update',id:'m',value:{type:'gable',flatTopHeight:null}}],tx([{op:'roof.update',id:'m',value:{flatTopHeight:1.2}}],base)).roofSections);
+  await e.loadBuildingData(structuredClone(base));
+  const flatTop=$('#roof-flat-top');flatTop.value='0.8';await flatTop.dispatch('change');
+  assert.deepEqual(e.snapshot().roof,tx([{op:'building.update',value:{roof:{flatTopHeight:.8}}}],base).roof,'automatic setting equals building.update');
+  flatTop.value='0';await flatTop.dispatch('change');assert.equal('flatTopHeight' in e.snapshot().roof,false);
+  assert.deepEqual(e.errors,[]);
+  console.log('PASS web mansard roofs: Flat top height (manual and automatic) equals the CLI, cleared when leaving hip');
+}
+{
+  // Game layer: the Godot Export panel's Game layer file equals the CLI --game-layer;
+  // Render in Godot keeps posting the plain export.
+  const {parseGameLayer}=await import('./src/game-layer.js'),{exportGodotFiles}=await import('./src/exporter.js');
+  const spec={version:1,materials:{OutsideFaces:'res://m/siding.tres',Door:'res://m/door.tres'},layers:[{match:'*',layers:4}],scripts:{door:'res://s/door.gd'},doorChildren:[{name:'UVResidue',scene:'res://uv.tscn'}]};
+  const plan=tx([0,1,2,3].map(i=>{const c=[[-4,-3],[4,-3],[4,3],[-4,3]];return {op:'wall.add',floorId:'floor_1',id:`w${i}`,value:{a:{x:c[i][0],z:c[i][1]},b:{x:c[(i+1)%4][0],z:c[(i+1)%4][1]},role:'exterior'}};}).concat([{op:'opening.add',floorId:'floor_1',id:'d',value:{type:'door',wallId:'w0',t:.5,width:1,height:2.1}}]));
+  const calls=[];const g=await createEditorHarness({fetch:async(url,init)=>{calls.push(init);return {ok:true,status:200,json:async()=>({ok:true,engineVersion:'4.5.1.test',renderer:'test',views:[],images:[]})};}}),$g=g.$;
+  await g.loadBuildingData(structuredClone(plan));
+  const input=$g('#game-layer-input');input.files=[{name:'getprobed.layer.json',text:async()=>JSON.stringify(spec)}];await input.dispatch('change');
+  assert.match($g('#game-layer-status').textContent,/Game layer getprobed.layer.json: 2 surface materials, 1 layer rules, 1 scripts, 1 door children/);
+  const previousDocument=globalThis.document,previousCreate=URL.createObjectURL,blobs=[];
+  globalThis.document={createElement:()=>({click(){}})};URL.createObjectURL=blob=>{blobs.push(blob);return previousCreate(blob);};
+  try{await $g('#export-btn').click();}finally{globalThis.document=previousDocument;URL.createObjectURL=previousCreate;}
+  const expected=exportGodotFiles(g.snapshot(),{collision:true,markers:false,placeholderMaterials:false,shareDoorScenes:false,gameLayer:parseGameLayer(spec)});
+  const zip=Buffer.from(await blobs[0].arrayBuffer());
+  assert.ok(zip.includes(Buffer.from(expected.tscn))&&expected.doors.every(d=>zip.includes(Buffer.from(d.tscn))),'the web package carries the same layered scenes as --game-layer');
+  await $g('#godot-render-btn').click();
+  const plain=exportGodotFiles(g.snapshot(),{collision:true,markers:false,placeholderMaterials:false,shareDoorScenes:false});
+  assert.deepEqual(JSON.parse(calls[0].body).files,[{name:plain.tscnName,text:plain.tscn},...plain.doors.map(d=>({name:d.filename,text:d.tscn}))],'Render in Godot posts the plain export');
+  const bad=$g('#game-layer-input');bad.files=[{name:'bad.json',text:async()=>'{"version":3}'}];await bad.dispatch('change');
+  assert.match($g('#status-text').textContent,/Game layer not loaded: game layer: version must be 1/);
+  assert.match($g('#game-layer-status').textContent,/not loaded/);
+  await $g('#game-layer-clear-btn').click();assert.match($g('#game-layer-status').textContent,/No game layer/);
+  assert.deepEqual(g.errors,[]);
+  console.log('PASS web game layer: panel file equals --game-layer in the exported package, render stays plain, invalid file refused, clear');
+}

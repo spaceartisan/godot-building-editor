@@ -349,3 +349,29 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   assert.deepEqual(e.errors,[]);
   console.log('PASS web mansard roofs: Flat top height (manual and automatic) equals the CLI, cleared when leaving hip');
 }
+{
+  // Game layer: the Godot Export panel's Game layer file equals the CLI --game-layer;
+  // Render in Godot keeps posting the plain export.
+  const {parseGameLayer}=await import('./src/game-layer.js'),{exportGodotFiles}=await import('./src/exporter.js');
+  const spec={version:1,materials:{OutsideFaces:'res://m/siding.tres',Door:'res://m/door.tres'},layers:[{match:'*',layers:4}],scripts:{door:'res://s/door.gd'},doorChildren:[{name:'UVResidue',scene:'res://uv.tscn'}]};
+  const plan=tx([0,1,2,3].map(i=>{const c=[[-4,-3],[4,-3],[4,3],[-4,3]];return {op:'wall.add',floorId:'floor_1',id:`w${i}`,value:{a:{x:c[i][0],z:c[i][1]},b:{x:c[(i+1)%4][0],z:c[(i+1)%4][1]},role:'exterior'}};}).concat([{op:'opening.add',floorId:'floor_1',id:'d',value:{type:'door',wallId:'w0',t:.5,width:1,height:2.1}}]));
+  const calls=[];const g=await createEditorHarness({fetch:async(url,init)=>{calls.push(init);return {ok:true,status:200,json:async()=>({ok:true,engineVersion:'4.5.1.test',renderer:'test',views:[],images:[]})};}}),$g=g.$;
+  await g.loadBuildingData(structuredClone(plan));
+  const input=$g('#game-layer-input');input.files=[{name:'getprobed.layer.json',text:async()=>JSON.stringify(spec)}];await input.dispatch('change');
+  assert.match($g('#game-layer-status').textContent,/Game layer getprobed.layer.json: 2 surface materials, 1 layer rules, 1 scripts, 1 door children/);
+  const previousDocument=globalThis.document,previousCreate=URL.createObjectURL,blobs=[];
+  globalThis.document={createElement:()=>({click(){}})};URL.createObjectURL=blob=>{blobs.push(blob);return previousCreate(blob);};
+  try{await $g('#export-btn').click();}finally{globalThis.document=previousDocument;URL.createObjectURL=previousCreate;}
+  const expected=exportGodotFiles(g.snapshot(),{collision:true,markers:false,placeholderMaterials:false,shareDoorScenes:false,gameLayer:parseGameLayer(spec)});
+  const zip=Buffer.from(await blobs[0].arrayBuffer());
+  assert.ok(zip.includes(Buffer.from(expected.tscn))&&expected.doors.every(d=>zip.includes(Buffer.from(d.tscn))),'the web package carries the same layered scenes as --game-layer');
+  await $g('#godot-render-btn').click();
+  const plain=exportGodotFiles(g.snapshot(),{collision:true,markers:false,placeholderMaterials:false,shareDoorScenes:false});
+  assert.deepEqual(JSON.parse(calls[0].body).files,[{name:plain.tscnName,text:plain.tscn},...plain.doors.map(d=>({name:d.filename,text:d.tscn}))],'Render in Godot posts the plain export');
+  const bad=$g('#game-layer-input');bad.files=[{name:'bad.json',text:async()=>'{"version":3}'}];await bad.dispatch('change');
+  assert.match($g('#status-text').textContent,/Game layer not loaded: game layer: version must be 1/);
+  assert.match($g('#game-layer-status').textContent,/not loaded/);
+  await $g('#game-layer-clear-btn').click();assert.match($g('#game-layer-status').textContent,/No game layer/);
+  assert.deepEqual(g.errors,[]);
+  console.log('PASS web game layer: panel file equals --game-layer in the exported package, render stays plain, invalid file refused, clear');
+}

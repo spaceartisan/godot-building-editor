@@ -3,6 +3,7 @@ import { openingShapeFor, shapedDoorLayout, doorLeafCount } from './opening-shap
 import { profileWallState, profileWallSolids } from './wall-profile-geometry.js';
 import { polygonSlabFaces } from './polygon-geometry.js';
 import { roofFootprintAreas, manualRoofOverhang } from './roof-outline.js';
+import { applyGameLayer } from './game-layer.js';
 import { areaPoints, unionPolygonAreas, subtractPolygonAreas } from './polygon-areas.js';
 import { roofBoxParts, roofInteriorBlockers, roofAttachmentBlockers, trimRoofBox, trimmedGableEnds } from './roof-geometry.js';
 import { higherFloorBlockerRectangles, exteriorFootprintRectangles, unionRectAreas, automaticRoofRectangles, automaticRoofSections, boundsOfAutomaticRoof, boundsOfBuilding, boundsOfStructuralFloor, constrainedOpening, floorElevation, floorView, findWall, manualCeilingRectanglesAtLevel, manualFloorRectanglesAtLevel, pointOnWall, rectValid, roofSectionsForFloor, stairFootprint, storyHeight, structuralFloorRectangles, subtractRectAreas, splitWallIntoSolidSegments, validateOpeningLayout, wallLength } from './model.js';
@@ -2119,7 +2120,9 @@ export function exportGodotFiles(building, options={collision:true,markers:true}
     });
     doors=[...[...shared.values()].map(q=>({filename:q.filename,tscn:q.text,openings:q.users,shared:q.users.length})),...doors.filter(d=>d.tscn==null)];
   }
-  return {base,tscnName,tscn:exportGodotTscn(building,options,doorScenes),doors,warnings:validation.warnings};
+  const files={base,tscnName,tscn:exportGodotTscn(building,options,doorScenes),doors,warnings:validation.warnings};
+  // Optional game layer (materials, render layers, scripts, door children).
+  return options.gameLayer?applyGameLayer(files,options.gameLayer):files;
 }
 
 

@@ -16,6 +16,7 @@ import { renderPreparedScenes, parseViews, RenderError } from './godot-render.mj
 import { EXAMPLE_CATALOG } from './src/examples.js';
 import { checkExampleExpectation } from './src/example-check.js';
 import { applyTransaction } from './src/transactions.js';
+import { parseGameLayer } from './src/game-layer.js';
 import { makeEmptyBuilding, floorView, floorElevation, boundsOfBuilding } from './src/model.js';
 import { reachabilityWarnings, parseRouteStarts } from './src/reachability.js';
 import { attachmentSummary } from './src/roof-diagnostics.js';
@@ -30,8 +31,8 @@ function profileInward(building,floor){
   const i=building.floors.indexOf(floor),view=floorView(building,i);
   return (view.walls||[]).filter(w=>w.wallTypeId).map(w=>{const n=profileWallState(view,w,exteriorWallOutsideSign,isExteriorWall).n;return {wallId:w.id,inwardSide:w.inwardSide||'auto',inward:{x:Math.round(n.x*1e6)/1e6+0,z:Math.round(n.z*1e6)/1e6+0}};});
 }
-const specs={new:['out','name'],edit:['ops','out','dry-run','warnings-as-errors'],validate:['warnings-as-errors','out','reachability','from'],inspect:['warnings-as-errors','entities','reachability','from'],export:['out','profile','no-collision','no-markers','placeholders','share-door-scenes','warnings-as-errors'],package:['out','profile','no-collision','no-markers','placeholders','share-door-scenes','warnings-as-errors','include-json'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision','render','views','out','surface-colors'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof','godot']};
-const values=new Set(['from','name','views','ops','out','profile','suite','godot','assets','yaw','pitch','distance','floor','view','compare','overlay','roof','canvas','engine','timeout']);
+const specs={new:['out','name'],edit:['ops','out','dry-run','warnings-as-errors'],validate:['warnings-as-errors','out','reachability','from'],inspect:['warnings-as-errors','entities','reachability','from'],export:['out','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors'],package:['out','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors','include-json'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision','render','views','out','surface-colors'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof','godot']};
+const values=new Set(['from','name','views','ops','out','profile','suite','godot','game-layer','assets','yaw','pitch','distance','floor','view','compare','overlay','roof','canvas','engine','timeout']);
 class CliError extends Error{constructor(message,code=2){super(message);this.code=code;}}
 const help=`Building Studio ${version}
 Usage: node cli.mjs COMMAND [FILES...] [OPTIONS]
@@ -69,6 +70,7 @@ Usage: node cli.mjs COMMAND [FILES...] [OPTIONS]
 Global: --json (one result on stdout), --quiet, --verbose, --help, --version
 Validate/inspect/export/package/edit: --warnings-as-errors
 Export/package: --profile generic|get_probed --no-collision --no-markers --placeholders --share-door-scenes
+         --game-layer FILE (materials, render layers, scripts, door children; see GAME_LAYER.md)
 Package: --include-json (original input; never normalized silently)
 Preview: --view building|floor|roofs --compare AFTER.json
          --overlay none|footprint|attachments [--roof MANUAL_ROOF_ID]
@@ -107,6 +109,10 @@ function parse(args){
   if(!needsFiles&&files.length)throw new CliError(`${command} does not accept input files`);
   if(['new','export','package','preview'].includes(command)&&!options.out)throw new CliError(`${command} requires --out`);
   if(command==='preview'&&files.length!==1)throw new CliError('preview accepts exactly one input');
+  if(options['game-layer']){
+    let text;try{text=fs.readFileSync(path.resolve(options['game-layer']),'utf8');}catch(e){throw new CliError(`--game-layer: ${e.message}`,2);}
+    try{options.gameLayer=parseGameLayer(text);}catch(e){throw new CliError(`--game-layer: ${e.message}`,2);}
+  }
   if(options.view&&!['building','floor','roofs'].includes(options.view))throw new CliError('Unknown preview view; use building, floor or roofs');
   if(options.overlay&&!['none','footprint','attachments'].includes(options.overlay))throw new CliError('Unknown preview overlay; use none, footprint or attachments');
   if(options.roof&&options.overlay!=='attachments')throw new CliError('--roof requires --overlay attachments');
@@ -149,7 +155,7 @@ function documents(files,strict){
   return {loaded,exitCode};
 }
 const publicDocument=d=>({file:d.file,ok:d.ok,normalized:d.normalized??false,errors:d.errors,warnings:d.warnings});
-const exportOptions=o=>({profile:o.profile,collision:!o['no-collision'],markers:!o['no-markers'],placeholderMaterials:!!o.placeholders,shareDoorScenes:!!o['share-door-scenes']});
+const exportOptions=o=>({profile:o.profile,collision:!o['no-collision'],markers:!o['no-markers'],placeholderMaterials:!!o.placeholders,shareDoorScenes:!!o['share-door-scenes'],gameLayer:o.gameLayer});
 
 // Preflight every artifact and input before making any output visible. Batch
 // directories use input names, not authored building names, to prevent collisions.

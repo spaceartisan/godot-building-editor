@@ -24,6 +24,7 @@ import { endpointMoveTargets, proposeEndpointMove, proposeWallSplit } from './wa
 import { stairGuardRailings } from './stair-guards.js';
 import { roofPolygonBounds, convexOutline } from './roof-outline.js';
 import { DOOR_LEAF_STYLES, doorLeafCount } from './opening-shapes.js';
+import { parseGameLayer } from './game-layer.js';
 import { WebPreview3D as Preview3D, webReviewDescription } from './preview-web.js';
 import { createHistory } from './history.js';
 import { assertValidBuilding, validateBuilding } from './validation.js';
@@ -971,14 +972,32 @@ $('#download-check-report-btn').addEventListener('click',()=>{
   }catch(err){setStatus(`Check report download failed: ${err.message}`);}
 });
 // Export options from the Godot Export panel (CLI: --no-collision, --no-markers, --placeholders, --share-door-scenes).
-function exportOptionsFromUi(){return {collision:$('#collision-toggle').checked,markers:$('#markers-toggle').checked,placeholderMaterials:$('#placeholder-materials-toggle').checked,shareDoorScenes:$('#share-doors-toggle').checked};}
+function exportOptionsFromUi(){return {collision:$('#collision-toggle').checked,markers:$('#markers-toggle').checked,placeholderMaterials:$('#placeholder-materials-toggle').checked,shareDoorScenes:$('#share-doors-toggle').checked,...(gameLayer?{gameLayer}:{})};}
+// Optional game layer (CLI --game-layer): kept for this browser only, applied to
+// exported packages. Render in Godot keeps the plain export (godot-check rules).
+let gameLayer=null,gameLayerName='';
+const GAME_LAYER_KEY='building-studio-game-layer';
+function setGameLayer(text,name,{remember=true}={}){
+  if(text==null){gameLayer=null;gameLayerName='';try{localStorage.removeItem(GAME_LAYER_KEY);}catch{}}
+  else{gameLayer=parseGameLayer(text);gameLayerName=name;if(remember)try{localStorage.setItem(GAME_LAYER_KEY,JSON.stringify({name,text}));}catch{}}
+  const status=$('#game-layer-status');
+  status.textContent=gameLayer?`Game layer ${gameLayerName}: ${Object.keys(gameLayer.materials).length} surface materials, ${gameLayer.layers.length} layer rules, ${Object.keys(gameLayer.scripts).length} scripts, ${gameLayer.doorChildren.length} door children. Applied to exported packages.`:'No game layer: material slots stay empty. See GAME_LAYER.md.';
+  $('#game-layer-clear-btn').hidden=!gameLayer;
+}
+$('#game-layer-input').addEventListener('change',async e=>{
+  const file=e.target.files?.[0];if(!file)return;e.target.value='';
+  try{setGameLayer(await file.text(),file.name);setStatus(`Game layer loaded: ${file.name}`);}
+  catch(err){setStatus(`Game layer not loaded: ${err.message}`);$('#game-layer-status').textContent=`Game layer not loaded: ${err.message}`;}
+});
+$('#game-layer-clear-btn').addEventListener('click',()=>{setGameLayer(null);setStatus('Game layer cleared; material slots stay empty');});
+try{const saved=JSON.parse(localStorage.getItem(GAME_LAYER_KEY)||'null');if(saved)setGameLayer(saved.text,saved.name,{remember:false});}catch{}
 // Godot renders go through the local server (server.mjs with GODOT_BIN), which
 // applies the CLI's asset checks and godot-check --render views to this export.
 async function renderInGodot(){
   const button=$('#godot-render-btn'),status=$('#godot-render-status'),report=text=>{status.textContent=text;setStatus(text);};
   const result=showValidation();
   if(result.errors.length){revealValidation();report(`Render blocked: ${result.errors[0].message}`);return;}
-  const f=exportGodotFiles(building,exportOptionsFromUi());
+  const {gameLayer:_,...renderOptions}=exportOptionsFromUi(),f=exportGodotFiles(building,renderOptions);
   const files=[{name:f.tscnName,text:f.tscn},...f.doors.map(d=>({name:d.filename,text:d.tscn}))];
   // The preview's projection uses focal = 0.78 × min(width, height): about a
   // 65° vertical field of view, which is also Godot's Camera3D convention.

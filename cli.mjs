@@ -57,7 +57,7 @@ Usage: node cli.mjs COMMAND [FILES...] [OPTIONS]
     --assets DIR        Check new exported scenes (resource checks, not walking probes)
     --allow-materials --require-collision   Optional asset-set expectations
     --render --out NEW_DIR [--views FILE]  Also render the checked scenes in
-                        Godot (needs DISPLAY or xvfb-run): exterior, aerial and
+                        Godot (Linux: DISPLAY or xvfb-run): exterior, aerial and
                         eye-level region views unless FILE lists views
     --surface-colors    With --render: colour surfaces by type (OutsideFaces
                         grey, InsideFaces pink, exterior EdgeFaces teal,

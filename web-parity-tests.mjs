@@ -305,3 +305,18 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   assert.deepEqual(w.errors,[]);
   console.log('PASS web parity A9: marker, Floor Footprint, manual floor, mesh settings, Move by distance and floor stack equal the CLI operations');
 }
+{
+  // Feedback: double-leaf doors. The door panel's Leaves select equals opening.update leaves.
+  const box=tx([0,1,2,3].map(i=>{const c=[[-4,-3],[4,-3],[4,3],[-4,3]];return {op:'wall.add',floorId:'floor_1',id:`w${i}`,value:{a:{x:c[i][0],z:c[i][1]},b:{x:c[(i+1)%4][0],z:c[(i+1)%4][1]},role:'exterior'}};}).concat([{op:'opening.add',floorId:'floor_1',id:'front',value:{type:'door',wallId:'w0',t:.5,width:1.8,height:2.2,doorStyle:'exterior'}}]));
+  await e.loadBuildingData(structuredClone(box));e.chooseSelection({type:'opening',id:'front'});
+  const leaves=$('#door-leaves');assert.equal(leaves.value,'1');leaves.value='2';await leaves.dispatch('change');
+  const doubled=tx([{op:'opening.update',floorId:'floor_1',id:'front',value:{leaves:2}}],box);
+  assert.deepEqual(e.snapshot().floors,doubled.floors,'web Leaves equals opening.update leaves: 2');
+  assert.match($('#status-text').textContent,/two leaves/);
+  e.chooseSelection({type:'opening',id:'front'});const back=$('#door-leaves');back.value='1';await back.dispatch('change');
+  assert.deepEqual(e.snapshot().floors,box.floors,'one leaf removes the field, as opening.update leaves: 1');
+  e.chooseSelection({type:'opening',id:'front'});await change(property('Door type'),'closet');
+  e.chooseSelection({type:'opening',id:'front'});assert.equal($('#door-leaves'),null,'closet doors always have two leaves; no Leaves select');
+  assert.deepEqual(e.errors,[]);
+  console.log('PASS web double-leaf doors: Leaves select equals opening.update, hidden for closet doors');
+}

@@ -9,7 +9,7 @@ import {proposeFloorStackEdit} from './floor-stack.js';
 import {markerProblem} from './markers.js';
 import {proposeGroupMove} from './group-edit.js';
 import {wallTypeProblem,followWallThickness} from './wall-types.js';
-import {openingShapeProblem} from './opening-shapes.js';
+import {openingShapeProblem,doorLeavesProblem} from './opening-shapes.js';
 import {MANUAL_ROOF_TYPES,manualRoofOutlineProblem} from './roof-outline.js';
 
 // Versioned authoring commands, not arbitrary JSON patches. All work is done on
@@ -48,7 +48,7 @@ const fields={
   // Independent building-level slabs with absolute top heights (web Manual Floor/Ceiling).
   manualFloor:['label',...rectKeys,'topY','thickness'],
   manualCeiling:['label',...rectKeys,'topY','thickness'],
-  opening:['label','type','wallId','t','at','width','height','sill','doorStyle','windowStyle','shapeId'],
+  opening:['label','type','wallId','t','at','width','height','sill','doorStyle','windowStyle','shapeId','leaves'],
   roof:['label',...rectKeys,'polygon','type','direction','baseY','pitch','overhang','gableEnds','hostRoofId','edgeModes'],
   region:['label',...rectKeys,'kind','effect','polygon'],
   // Not an operation family: wall.crenellate value fields.
@@ -128,6 +128,7 @@ function checkValue(kind,value,action,where){
     else if(key==='kind')choice(v,REGION_KINDS,p);
     else if(key==='effect')choice(v,REGION_EFFECTS,p);
     else if(key==='doorStyle')choice(v,['exterior','room','closet','empty'],p);
+    else if(key==='leaves')choice(v,[1,2],p);
     else if(key==='windowStyle')choice(v,['plain','double_hung','four_pane','empty'],p);
     else if(key==='wallId')text(v,p);
     else if(key==='hostRoofId'||key==='shapeId'){if(v!==null)text(v,p);}
@@ -419,7 +420,9 @@ function applyOperation(building,op,index){
   if(kind==='opening'){
     if(updated.shapeId===null)delete updated.shapeId;
     if(updated.type==='door'&&('sill' in value||'windowStyle' in value))fail('Door edits cannot set window fields',p);
-    if(updated.type==='window'&&'doorStyle' in value)fail('Window edits cannot set doorStyle',p);
+    if(updated.type==='window'&&('doorStyle' in value||'leaves' in value))fail('Window edits cannot set door fields',p);
+    {const problem=doorLeavesProblem(updated);if(problem)fail(problem,p);}
+    if(updated.leaves===1)delete updated.leaves;
   }
 }
 

@@ -48,6 +48,15 @@ try{
     {op:'roof.add',id:'ell',value:{type:'flat',polygon:[{x:60,z:0},{x:70,z:0},{x:70,z:4},{x:64,z:4},{x:64,z:10},{x:60,z:10}],baseY:3,overhang:.5}}]}));
   run(['edit',roofBase,'--ops',roofOps,'--out',roofed]);const roofAssets=path.join(temp,'roof-assets');run(['export',roofed,'--out',roofAssets]);
   const roofChecks=check(roofAssets,0,['--require-collision']);assert.ok(roofChecks.checks.collisionShapes>=12,'one collision shape per roof part');
+  // Double-leaf exterior and room doors (leaves: 2) load with both hinges' collision.
+  const doubleOps=path.join(temp,'double.edit.json'),doubled=path.join(temp,'double.json'),doubleAssets=path.join(temp,'double-assets');
+  const corners=[[-4,-3],[4,-3],[4,3],[-4,3]];
+  fs.writeFileSync(doubleOps,JSON.stringify({version:1,operations:[...corners.map((c,i)=>({op:'wall.add',floorId:'floor_1',id:`w${i}`,value:{a:{x:c[0],z:c[1]},b:{x:corners[(i+1)%4][0],z:corners[(i+1)%4][1]},role:'exterior'}})),
+    {op:'opening.add',floorId:'floor_1',id:'front',value:{type:'door',wallId:'w0',t:.5,width:1.8,height:2.2,doorStyle:'exterior',leaves:2}},
+    {op:'opening.add',floorId:'floor_1',id:'back',value:{type:'door',wallId:'w2',t:.5,width:1.6,height:2.1,doorStyle:'room',leaves:2}}]}));
+  run(['edit',roofBase,'--ops',doubleOps,'--out',doubled]);run(['export',doubled,'--out',doubleAssets]);
+  const doubleChecks=check(doubleAssets,0,['--require-collision']);assert.equal(doubleChecks.checks.scenes,3);
+  for(const name of fs.readdirSync(path.join(doubleAssets,'doors')))assert.match(fs.readFileSync(path.join(doubleAssets,'doors',name),'utf8'),/parent="Hinge2\/AnimatableBody3D"/);
   // Shared door scenes (--share-door-scenes) load and instance in Godot.
   const sharedDir=path.join(temp,'shared-doors');run(['export',path.join(root,'examples/farmhouse.building.json'),'--out',sharedDir,'--share-door-scenes']);
   const sharedFiles=fs.readdirSync(path.join(sharedDir,'doors')),perDoor=path.join(temp,'per-door');run(['export',path.join(root,'examples/farmhouse.building.json'),'--out',perDoor]);

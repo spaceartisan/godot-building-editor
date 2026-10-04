@@ -9,7 +9,7 @@ import { manualRoofOutlineProblem, roofPolygonBounds } from './roof-outline.js';
 import { REGION_KINDS, REGION_EFFECTS, floorElevation, floorWallHeight, floorSlabThickness, floorView, structuralFloorRectangles, exteriorFootprintIssue, stairFootprint, stairOpeningFootprint, wallLength, wallHeightFor, projectToWall, validateOpeningLayout, rectValid } from './model.js';
 import { roofAttachmentDiagnostics, attachmentWarnings } from './roof-diagnostics.js';
 import {markerProblem} from './markers.js';
-import {openingShapeProblem,shapedOpeningProblem} from './opening-shapes.js';
+import {openingShapeProblem,shapedOpeningProblem,doorLeavesProblem} from './opening-shapes.js';
 
 // Non-mutating validation shared by JSON import, the editor and direct export.
 // Warnings leave incomplete/custom architecture editable; errors protect output.
@@ -153,7 +153,7 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
     collections(f,['walls','openings','stairs','lights','markers','slabs','regions','platforms','railings','roofSections'],`Floor ${i+1}`);
   });
   if(errors.length)return {errors,warnings};
-  for(const f of floors)for(const o of f.openings||[]){const problem=shapedOpeningProblem(building,o);if(problem)error(o.id||'opening',problem,[{type:'opening',id:o.id,floorId:f.id}]);}
+  for(const f of floors)for(const o of f.openings||[]){const problem=doorLeavesProblem(o)||shapedOpeningProblem(building,o);if(problem)error(o.id||'opening',problem,[{type:'opening',id:o.id,floorId:f.id}]);}
   if(errors.length)return {errors,warnings};
   floors.forEach((f,i)=>{
     const p=`Floor ${i+1}`;

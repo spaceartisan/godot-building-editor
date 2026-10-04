@@ -33,3 +33,16 @@ try{
   assert.equal(fs.existsSync(path.join(temp,'new')),false);
   console.log('PASS render views/usage: view validation, required --assets/--out, protected destination');
 }finally{fs.rmSync(temp,{recursive:true,force:true});}
+{
+  // Display route (feedback: Windows was refused without DISPLAY). Shared by the
+  // CLI and the web editor's Render in Godot server route.
+  const { displayRoute } = await import('./godot-render.mjs');
+  const none=()=>false,xvfb=()=>true;
+  assert.equal(displayRoute({platform:'win32',env:{},hasXvfb:none}),'direct');
+  assert.equal(displayRoute({platform:'darwin',env:{},hasXvfb:none}),'direct');
+  assert.equal(displayRoute({platform:'linux',env:{DISPLAY:':0'},hasXvfb:none}),'direct');
+  assert.equal(displayRoute({platform:'linux',env:{WAYLAND_DISPLAY:'wayland-0'},hasXvfb:none}),'direct');
+  assert.equal(displayRoute({platform:'linux',env:{},hasXvfb:xvfb}),'xvfb');
+  assert.equal(displayRoute({platform:'linux',env:{},hasXvfb:none}),null);
+  console.log('PASS render display route: Windows/macOS direct; Linux DISPLAY, WAYLAND_DISPLAY, xvfb-run or none');
+}

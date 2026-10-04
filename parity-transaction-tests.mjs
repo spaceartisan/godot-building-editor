@@ -227,3 +227,21 @@ const base=ok(room('floor_1','w'));
   inherited.roof.overhang=.2;assert.deepEqual(validateBuilding(inherited).errors,[]);
   console.log('PASS polygon and hip manual roofs: outline-following export, bounds from corners, concave flat roofs in convex pieces, inherited overhang checked, shared rejections, back to a rectangle');
 }
+{
+  // Feedback: wide doors exported as one giant leaf. Exterior and room doors take
+  // leaves: 2 (Hinge + Hinge2, like closet pairs); one leaf stays the default.
+  const {exportGodotFiles}=await import('./src/exporter.js');
+  const box=ok([0,1,2,3].map(i=>{const c=[[-4,-3],[4,-3],[4,3],[-4,3]];return {op:'wall.add',floorId:'floor_1',id:`w${i}`,value:{a:{x:c[i][0],z:c[i][1]},b:{x:c[(i+1)%4][0],z:c[(i+1)%4][1]},role:'exterior'}};}));
+  const doubled=ok([{op:'opening.add',floorId:'floor_1',id:'front',value:{type:'door',wallId:'w0',t:.5,width:1.8,height:2.2,doorStyle:'exterior',leaves:2}},{op:'opening.add',floorId:'floor_1',id:'side',value:{type:'door',wallId:'w1',t:.5,width:.9,height:2.1}}],box);
+  const front=doubled.floors[0].openings.find(o=>o.id==='front');assert.equal(front.leaves,2);
+  const sceneText=JSON.stringify(exportGodotFiles(doubled,{profile:'get_probed'}));
+  assert.match(sceneText,/Exterior double door/);assert.match(sceneText,/Set double_hinge = true; expected hinge paths: \$Hinge and \$Hinge2/);
+  assert.match(sceneText,/parent=\\"Hinge2\/AnimatableBody3D\\"/);
+  assert.match(sceneText,/Room door\. Attach/,'the second door keeps one leaf');
+  const single=ok([{op:'opening.update',floorId:'floor_1',id:'front',value:{leaves:1}}],doubled).floors[0].openings.find(o=>o.id==='front');
+  assert.equal('leaves' in single,false,'leaves: 1 is the default and is not stored');
+  rejects([{op:'opening.update',floorId:'floor_1',id:'front',value:{leaves:3}}],/Expected one of: 1, 2/,doubled);
+  rejects([{op:'opening.add',floorId:'floor_1',id:'win',value:{type:'window',wallId:'w2',t:.5,width:1,height:1,leaves:2}}],/Window edits cannot set door fields/,box);
+  rejects([{op:'opening.update',floorId:'floor_1',id:'front',value:{doorStyle:'closet',leaves:1}}],/Closet doors always have two leaves/,doubled);
+  console.log('PASS double-leaf doors: leaves 2 exports Hinge + Hinge2 with double_hinge guidance, one leaf default, shared rejections');
+}

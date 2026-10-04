@@ -86,8 +86,8 @@ try{
   json(['godot-check'],3,{GODOT_BIN:''});json(['godot-check','--godot',path.join(temp,'missing-godot')],3);
   json(['preview',example('farmhouse'),'--out',path.join(temp,'bad.png'),'--distance','nope'],2);
   for(const yaw of ['', ' ', '\t'])json(['preview',example('farmhouse'),'--out',path.join(temp,'bad.png'),'--yaw',yaw],2,{CANVAS_MODULE:path.join(temp,'missing-canvas')});
-  json(['preview',example('farmhouse'),'--out',path.join(temp,'bad.png'),'--yaw','0'],3,{CANVAS_MODULE:path.join(temp,'missing-canvas')});
-  json(['preview',example('farmhouse'),'--out',path.join(temp,'bad.png')],3,{CANVAS_MODULE:path.join(temp,'missing-canvas')});assert.ok(!fs.existsSync(path.join(temp,'bad.png')));
+  json(['preview',example('farmhouse'),'--out',path.join(temp,'bad.png'),'--yaw','0'],3,{CANVAS_MODULE:path.join(temp,'missing-canvas'),GODOT_BIN:''});
+  json(['preview',example('farmhouse'),'--out',path.join(temp,'bad.png')],3,{CANVAS_MODULE:path.join(temp,'missing-canvas'),GODOT_BIN:''});assert.ok(!fs.existsSync(path.join(temp,'bad.png')));
   json(['preview',example('farmhouse'),'--out',path.join(temp,'bad.png'),'--floor','1.5'],2);
   console.log('PASS installation-relative examples, missing optional dependencies, preview argument checks');
   console.log(`PASS ${commands} CLI subprocess checks`);

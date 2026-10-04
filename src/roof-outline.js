@@ -24,6 +24,7 @@ export function manualRoofOverhang(roof,buildingRoof){
 export function manualRoofOutlineProblem(roof,roofs=[],buildingRoof=null){
   // Host attachment trims rectangular gable/shed/flat slabs only.
   const hosted=roofs.some(r=>r!==roof&&r?.hostRoofId!=null&&r.hostRoofId===roof?.id);
+  if(Number(roof?.flatTopHeight)>0&&roof.type!=='hip')return 'A flat top (mansard) applies to hip roofs only.';
   if(roof?.type==='hip'&&roof.polygon==null){
     if(roof.hostRoofId)return 'A hip roof cannot attach to a host roof.';
     if(hosted)return 'Other roofs cannot attach to a hip roof.';

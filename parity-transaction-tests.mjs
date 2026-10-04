@@ -273,3 +273,28 @@ const base=ok(room('floor_1','w'));
   assert.equal(applyTransaction(blank,{version:1,points:{p:{x:0}},operations:[]}).ok,false);
   console.log('PASS room.add (four walls like the web Room tool) and named points in recipes');
 }
+{
+  // Feedback: mansard roofs. A hip roof's flatTopHeight stops the slopes that
+  // far above the eaves and caps the rest flat (manual roofs and the automatic roof).
+  const {roofBoxParts}=await import('./src/roof-geometry.js');
+  const {exportGodotFiles}=await import('./src/exporter.js');
+  const mansard=ok([{op:'room.add',floorId:'floor_1',id:'box',value:{minX:-6,maxX:6,minZ:-4,maxZ:4}},{op:'building.update',value:{roof:{type:'none'}}},
+    {op:'roof.add',id:'m',value:{type:'hip',minX:-6,maxX:6,minZ:-4,maxZ:4,baseY:3,pitch:60,overhang:0,flatTopHeight:1.2}}]);
+  const roof=mansard.roofSections[0],parts=roofBoxParts(roof,mansard.roof,3,0,true);
+  assert.deepEqual(parts.map(p=>p.name),['ManualRoof_001_Hip_01','ManualRoof_001_Hip_02','ManualRoof_001_Hip_03','ManualRoof_001_Hip_04','ManualRoof_001_Top']);
+  const ys=parts.flatMap(p=>p.solid.faces.flatMap(f=>f.points.map(q=>q.y)));
+  assert.ok(Math.abs(Math.max(...ys)-(3+1.2+.12))<1e-6,'nothing rises above the flat top');
+  const top=parts.at(-1).solid.faces.flatMap(f=>f.points),inset=1.2/Math.tan(60*Math.PI/180);
+  assert.ok(Math.abs(Math.max(...top.map(q=>q.x))-(6-inset))<1e-6&&Math.abs(Math.max(...top.map(q=>q.z))-(4-inset))<1e-6,'the top is the outline inset by height / tan(pitch)');
+  assert.match(exportGodotFiles(mansard).tscn,/\[node name="ManualRoof_001_Top_Collision"/);
+  const high=ok([{op:'roof.update',id:'m',value:{flatTopHeight:50}}],mansard);
+  assert.equal(roofBoxParts(high.roofSections[0],high.roof,3,0,true).some(p=>/_Top$/.test(p.name)),false,'a flat top above the ridge leaves a plain hip');
+  assert.equal('flatTopHeight' in ok([{op:'roof.update',id:'m',value:{flatTopHeight:null}}],mansard).roofSections[0],false);
+  rejects([{op:'roof.update',id:'m',value:{type:'gable'}}],/flat top \(mansard\) applies to hip roofs only/,mansard);
+  rejects([{op:'roof.update',id:'m',value:{flatTopHeight:-1}}],/flatTopHeight/,mansard);
+  // The automatic hip roof takes the same field through building.update.
+  const auto=ok([{op:'building.update',value:{roof:{type:'hip',pitch:60,flatTopHeight:1}}},{op:'roof.remove',id:'m'}],mansard);
+  assert.equal(auto.roof.flatTopHeight,1);assert.match(exportGodotFiles(auto).tscn,/_Top" type="MeshInstance3D"/);
+  assert.equal('flatTopHeight' in ok([{op:'building.update',value:{roof:{flatTopHeight:0}}}],auto).roof,false,'0 removes the flat top');
+  console.log('PASS mansard roofs: flatTopHeight clips hip slopes and caps them flat (manual and automatic), above-ridge falls back to hip, shared rejections');
+}

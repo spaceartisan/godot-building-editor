@@ -330,3 +330,22 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   assert.deepEqual(e.errors,[]);
   console.log('PASS web Room tool equals room.add (walls, order, role, height)');
 }
+{
+  // Mansard: the roof panel's Flat top height equals roof.update flatTopHeight;
+  // the automatic roof's setting equals building.update roof.flatTopHeight.
+  const base=tx([{op:'room.add',floorId:'floor_1',id:'box',value:{minX:-6,maxX:6,minZ:-4,maxZ:4}},{op:'roof.add',id:'m',value:{type:'hip',minX:-6,maxX:6,minZ:-4,maxZ:4,baseY:3,pitch:60}}]);
+  await e.loadBuildingData(structuredClone(base));e.chooseSelection({type:'roofSection',id:'m'});
+  await change(property('Flat top height'),1.2);
+  assert.deepEqual(e.snapshot().roofSections,tx([{op:'roof.update',id:'m',value:{flatTopHeight:1.2}}],base).roofSections,'web flat top equals roof.update');
+  assert.match($('#status-text').textContent,/mansard/);
+  e.chooseSelection({type:'roofSection',id:'m'});await change(property('Type'),'gable');
+  const gable=e.snapshot().roofSections[0];assert.equal(gable.type,'gable');assert.equal('flatTopHeight' in gable,false);
+  assert.match($('#status-text').textContent,/flat top applies to hip roofs only, so it was cleared/);
+  assert.deepEqual(e.snapshot().roofSections,tx([{op:'roof.update',id:'m',value:{type:'gable',flatTopHeight:null}}],tx([{op:'roof.update',id:'m',value:{flatTopHeight:1.2}}],base)).roofSections);
+  await e.loadBuildingData(structuredClone(base));
+  const flatTop=$('#roof-flat-top');flatTop.value='0.8';await flatTop.dispatch('change');
+  assert.deepEqual(e.snapshot().roof,tx([{op:'building.update',value:{roof:{flatTopHeight:.8}}}],base).roof,'automatic setting equals building.update');
+  flatTop.value='0';await flatTop.dispatch('change');assert.equal('flatTopHeight' in e.snapshot().roof,false);
+  assert.deepEqual(e.errors,[]);
+  console.log('PASS web mansard roofs: Flat top height (manual and automatic) equals the CLI, cleared when leaving hip');
+}

@@ -37,12 +37,20 @@ export function polygonRoofParts(section,roof,baseY,index=0,name=`Roof_${String(
   const overhang=Math.max(0,Number(roof.overhang)||0),expanded=offsetConvexArea(section,overhang);if(!expanded)return [];
   if((section.type||roof.type)==='flat')return [{name:name+'_Flat',solid:polygonPrism(expanded,baseY+.12,baseY)}];
   const planes=edgePlanes(areaPoints(section)),pitch=Math.tan(Math.max(5,Math.min(70,Number(section.pitch)||Number(roof.pitch)||35))*Math.PI/180),out=[];
+  // Mansard (flatTopHeight > 0): slopes stop that far above the eaves, where
+  // the outline inset by height/tan(pitch) is capped with a flat top.
+  const flatTop=Math.max(0,Number(section.flatTopHeight??roof.flatTopHeight)||0),inset=flatTop/pitch;
+  let cap=flatTop>0?areaPoints(section):[];
+  for(const plane of planes){if(!cap.length)break;cap=clipPolygon(cap,plane.n,plane.d-inset);}
+  const capArea=cap.length?polygonArea(cap):null;
   planes.forEach((edge,i)=>{
     let points=areaPoints(expanded);
     for(const other of planes){points=clipPolygon(points,{x:other.n.x-edge.n.x,z:other.n.z-edge.n.z},other.d-edge.d);if(!points.length)break;}
+    if(capArea&&points.length)points=clipPolygon(points,{x:-edge.n.x,z:-edge.n.z},inset-edge.d);
     const area=polygonArea(points);if(!area)return;
     const slope={x:-edge.n.x*pitch,z:-edge.n.z*pitch};
     out.push({name:name+`_Hip_${String(i+1).padStart(2,'0')}`,solid:polygonPrism(area,baseY+edge.d*pitch+.12,baseY+edge.d*pitch,slope)});
   });
+  if(capArea)out.push({name:name+'_Top',solid:polygonPrism(capArea,baseY+flatTop+.12,baseY+flatTop)});
   return out;
 }

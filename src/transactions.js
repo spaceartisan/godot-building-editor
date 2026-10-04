@@ -49,7 +49,7 @@ const fields={
   manualFloor:['label',...rectKeys,'topY','thickness'],
   manualCeiling:['label',...rectKeys,'topY','thickness'],
   opening:['label','type','wallId','t','at','width','height','sill','doorStyle','windowStyle','shapeId','leaves'],
-  roof:['label',...rectKeys,'polygon','type','direction','baseY','pitch','overhang','gableEnds','hostRoofId','edgeModes'],
+  roof:['label',...rectKeys,'polygon','type','direction','baseY','pitch','overhang','gableEnds','hostRoofId','edgeModes','flatTopHeight'],
   region:['label',...rectKeys,'kind','effect','polygon'],
   // Not an operation family: wall.crenellate value fields.
   crenellation:['crenelWidth','merlonWidth','depth','idPrefix']
@@ -79,7 +79,8 @@ function checkValue(kind,value,action,where){
       if(key==='name')text(v,p);
       else if(key==='exportProfile')choice(v,['generic','get_probed'],p);
       else if(key==='roof'){
-        keys(v,['type','pitch','overhang'],p);if(!Object.keys(v).length)fail('Provide at least one roof field',p);
+        keys(v,['type','pitch','overhang','flatTopHeight'],p);if(!Object.keys(v).length)fail('Provide at least one roof field',p);
+        if(v.flatTopHeight!==undefined&&v.flatTopHeight!==null)number(v.flatTopHeight,`${p}/flatTopHeight`,0,100);
         if(v.type!==undefined)choice(v.type,['gable','hip','flat','none'],`${p}/type`);
         if(v.pitch!==undefined)number(v.pitch,`${p}/pitch`,5,70);
         if(v.overhang!==undefined)number(v.overhang,`${p}/overhang`,0,100);
@@ -139,6 +140,7 @@ function checkValue(kind,value,action,where){
     else if(key==='sill')number(v,p,0);
     else if(key==='t')number(v,p,0,1);
     else if(key==='pitch')number(v,p,5,70);
+    else if(key==='flatTopHeight'){if(v!==null)number(v,p,0,100);}
     else if(key==='overhang')number(v,p,0,100);
     else number(v,p);
   }
@@ -296,7 +298,7 @@ function applyOperation(building,op,index){
     // Nested settings merge field by field; numeric changes are checked by
     // final validation (opening fit, stair rise, junction clearance).
     for(const [key,value] of Object.entries(op.value)){
-      if(['roof','ceiling','doorMesh','windowMesh'].includes(key))building[key]={...(building[key]||{}),...value};
+      if(['roof','ceiling','doorMesh','windowMesh'].includes(key)){building[key]={...(building[key]||{}),...value};if(key==='roof'&&!building.roof.flatTopHeight)delete building.roof.flatTopHeight;}
       else{
         // Profile stations at the old wall thickness follow the new one (shared with the web setting).
         if(key==='wallThickness')followWallThickness(building,building.wallThickness,value);
@@ -440,6 +442,7 @@ function applyOperation(building,op,index){
   if(kind==='roof'&&updated.polygon===null)delete updated.polygon;
   if(kind==='roof'){const problem=manualRoofOutlineProblem(updated,building.roofSections,building.roof);if(problem)fail(problem,p);}
   if(kind==='roof'&&updated.hostRoofId===null)delete updated.hostRoofId;
+  if(kind==='roof'&&!updated.flatTopHeight)delete updated.flatTopHeight;
   if(kind==='roof'||kind==='region')if(!rectValid(updated))fail('Rectangle must have positive width and depth of at least 0.1 m each',p);
   if(kind==='slab'&&(!rectValid(updated)||updated.minX>updated.maxX||updated.minZ>updated.maxZ))fail('Rectangle needs minX < maxX and minZ < maxZ, at least 0.1 m each',p);
   if(kind==='marker'){if(updated.details===null)updated.details='';const problem=markerProblem(updated);if(problem)fail(problem,p);}

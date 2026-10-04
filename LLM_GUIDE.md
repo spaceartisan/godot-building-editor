@@ -1,6 +1,6 @@
 # Using Building Studio effectively as an LLM
 
-Applies to executable version **1.4.0**, building schemas through **10**, transaction format **1**, and check-report format **1**. Start with `node cli.mjs --version` and `node cli.mjs --help` in the installed package; use its implementation and current guides over remembered behavior from older releases.
+Applies to executable version **1.5.0**, building schemas through **10**, transaction format **1**, and check-report format **1**. Start with `node cli.mjs --version` and `node cli.mjs --help` in the installed package; use its implementation and current guides over remembered behavior from older releases.
 
 ## 1. Establish the task and source
 

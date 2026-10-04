@@ -1,4 +1,4 @@
-# Building Studio — Building Editor 1.4.0
+# Building Studio — Building Editor 1.5.0
 
 For LLMs and coding agents, start with [AGENTS.md](AGENTS.md) and [LLM_GUIDE.md](LLM_GUIDE.md): supported capabilities, an executable workflow, geometry conventions, source map and verification limits. Current development is focused on web/CLI cleanup; architectural expansion is deferred.
 
@@ -7,6 +7,22 @@ A lightweight web editor for quickly authoring reusable Godot 4 building scenes:
 The deliverable is a building `.tscn` with its door `.tscn` dependencies. No game project or runtime generator is exported. Separate outward/inward shell meshes, interior wall side meshes, and per-story mesh organization are intentional for material and per-mesh lighting control; updates preserve these boundaries.
 
 Start with [QUICKSTART.md](QUICKSTART.md) for the web workflow, Godot import steps and all 11 CLI recipes. Detailed operation fields live in [TRANSACTIONS.md](TRANSACTIONS.md).
+
+## Added in 1.5.0: feedback from a real game build
+
+An AI rebuilt a fast-food restaurant for GET PROBED with the tool and reported what got in the way. Each item is either fixed, added, or turned out to be possible already and is now documented. Every new capability works in both the CLI and the web editor, through the same shared code.
+
+| Feedback | Outcome | CLI | Web editor |
+| --- | --- | --- | --- |
+| `godot-check --render` refused to run on Windows without `DISPLAY` | **Fixed.** Windows and macOS render directly; Linux uses `DISPLAY`/`WAYLAND_DISPLAY`, else `xvfb-run` | `godot-check --render` | **Render in Godot** (server) |
+| Wide doors exported as one giant leaf | **Added** double-leaf exterior and room doors: two hinges (`Hinge`, `Hinge2`) for `double_hinge` door scripts | opening `leaves: 2` | Door panel **Leaves** |
+| No parapet or ceiling below the wall top | **Already possible**: a short top story whose slab is the flat roof and whose walls are the parapet (recipe in LLM_GUIDE) | `floor.add-top` | **Add above** |
+| No mansard roof | **Added** `flatTopHeight` on hip roofs (manual and automatic): steep slopes around a flat top | `roof.add`/`roof.update`, `building.update` | Roof panel and automatic roof **Flat top height** |
+| No higher-level layout | **Added** `room.add` (a rectangle of four walls) and named `points` in recipes. Placing an opening by world point (`at: {x, z}`) already existed. | `room.add`, recipe `points` | **Room** tool (already existed) |
+| Game setup redone after every export | **Added** an optional game layer: materials by surface name, render layers, building/door scripts and door child scenes ([GAME_LAYER.md](GAME_LAYER.md)) | `export`/`package --game-layer FILE` | Godot Export **Game layer…** |
+| `preview` needs `@napi-rs/canvas` with no fallback | **Added** a Godot aerial-render fallback when `--godot`/`GODOT_BIN` is set; Windows install steps in PREVIEWS.md | `preview` | Not needed (the browser draws the preview) |
+| Manual ceiling always triggered a warning | **Fixed.** The height-review warning lists only surfaces that existed before the transaction and kept their height | `edit` | Not affected (each web edit is a single change) |
+| Slab at y = 0 z-fights with terrain | **Already possible**: set the ground floor's elevation (for example 0.04 m); the floors above follow (tip in LLM_GUIDE) | `floor.update elevation` | Floor panel **Elevation** |
 
 ## Added in 1.4.0: Kestrel starship stress test and code audit
 

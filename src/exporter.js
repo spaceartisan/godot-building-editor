@@ -4,11 +4,12 @@ import { profileWallState, profileWallSolids } from './wall-profile-geometry.js'
 import { polygonSlabFaces } from './polygon-geometry.js';
 import { roofFootprintAreas, manualRoofOverhang } from './roof-outline.js';
 import { applyGameLayer } from './game-layer.js';
-import { areaPoints, unionPolygonAreas, subtractPolygonAreas } from './polygon-areas.js';
+import { areaPoints, areaSize, polygonArea, unionPolygonAreas, subtractPolygonAreas, intersectPolygonAreas } from './polygon-areas.js';
+import { regionAreaCells } from './regions.js';
 import { roofBoxParts, roofInteriorBlockers, roofAttachmentBlockers, trimRoofBox, trimmedGableEnds } from './roof-geometry.js';
 import { higherFloorBlockerRectangles, exteriorFootprintRectangles, unionRectAreas, automaticRoofRectangles, automaticRoofSections, boundsOfAutomaticRoof, boundsOfBuilding, boundsOfStructuralFloor, constrainedOpening, floorElevation, floorView, findWall, manualCeilingRectanglesAtLevel, manualFloorRectanglesAtLevel, pointOnWall, rectValid, roofSectionsForFloor, stairFootprint, storyHeight, structuralFloorRectangles, subtractRectAreas, splitWallIntoSolidSegments, validateOpeningLayout, wallLength } from './model.js';
 import { wallSolidPlanes, unionFaceWriter, junctionMiters } from './wall-union.js';
-import { stairOpeningFootprint } from './model.js';
+import { stairOpeningFootprint, platformStepBoxes } from './model.js';
 import { assertValidBuilding } from './validation.js';
 import { exportProfile, lightGroupFor } from './profiles.js';
 
@@ -408,6 +409,7 @@ export function buildDoorMeshData(building, opening) {
     const xs=layout.inner.map(p=>p.x),ys=layout.inner.map(p=>p.z);
     return {...layout,custom:true,frame:extrude(layout.frameCells,layout.frameDepth),panel:extrude(layout.panelCells,layout.panelThickness),hardware:meshWriter(),width:safe.width,height:safe.height,style:safe.doorStyle||'room',innerWidth:Math.max(...xs)-Math.min(...xs),innerHeight:Math.max(...ys)-Math.min(...ys),panelCenterY:0};
   }
+  if(safe.doorStyle==='rollup')return buildRollupDoorMeshData(building,safe);
   const cfg=building.doorMesh || {};
   const width=Math.max(.02,Number(safe.width)||.9);
   const height=Math.max(.02,Number(safe.height)||2.1);
@@ -485,6 +487,26 @@ export function buildDoorMeshData(building, opening) {
   return { frame, panel, hardware, width, height, style, frameWidth, frameDepth, panelThickness, detailDepth, innerWidth, innerHeight, panelCenterY };
 }
 
+
+// Roll-up (overhead) door: side guides as the frame, a ribbed curtain pivoted
+// at the opening top that hangs down by the closed height ((1 - openFraction)
+// x height), and a drum housing on the inside wall face above the opening.
+export function buildRollupDoorMeshData(building,safe){
+  const width=Math.max(.5,Number(safe.width)||3),height=Math.max(.5,Number(safe.height)||3),guide=.08,depth=.12;
+  const open=Math.max(0,Math.min(1,Number(safe.openFraction)||0)),closed=height*(1-open),innerWidth=width-2*guide,curtainThickness=.04;
+  const frame=meshWriter();
+  for(const sx of [-1,1])addLocalBoxToMesh(frame,{x:guide,y:height,z:depth},{x:sx*(width-guide)/2,y:0,z:0});
+  const curtain=meshWriter();
+  if(closed>.01){
+    addLocalBoxToMesh(curtain,{x:innerWidth,y:closed,z:curtainThickness},{x:0,y:-closed/2,z:0});
+    for(let y=.1;y<closed-.02;y+=.1)for(const z of [1,-1])addLocalBoxToMesh(curtain,{x:innerWidth,y:.012,z:.008},{x:0,y:-y,z:z*(curtainThickness/2+.004)});
+    for(const z of [1,-1])addLocalBoxToMesh(curtain,{x:innerWidth,y:.05,z:.012},{x:0,y:-closed+.025,z:z*(curtainThickness/2+.006)});
+  }
+  const wall=findWall(building,safe.wallId),outside=wall&&isExteriorWall(building,wall)?exteriorWallOutsideSign(building,wall):-1;
+  const insideSign=outside>0?-1:1,thickness=Number(building.wallThickness)||.18,housing={x:width+.1,y:.42,z:.42};
+  return {custom:false,style:'rollup',frame,curtain,width,height,openFraction:open,closed,innerWidth,innerHeight:height,curtainThickness,
+    housing,housingPos:{x:0,y:height+housing.y/2,z:insideSign*(thickness/2+housing.z/2)},insideSign,frameDepth:depth,panelThickness:curtainThickness,panelCenterY:0};
+}
 
 // One leaf of a double exterior or room door, centred at ox: the style's raised
 // panels on both faces and a knob near the meeting edge (+X on the left leaf).
@@ -1438,8 +1460,8 @@ export function exportDoorTscn(building, opening, options={}) {
 
   const nodes=[];
   const isDouble=!data.custom&&doorLeafCount(opening)===2;
-  const styleName=(data.style==='exterior'?'Exterior':data.style==='closet'?'Closet':'Room')+(isDouble&&data.style!=='closet'?' double':'');
-  const hingeHint=data.custom?' Custom outline: Panel is the movable pivot. Add sliding or other movement in Godot; no movement script is included.':exportProfile(building,options).windowGroup==='scare_sight_transparent'
+  const styleName=data.style==='rollup'?'Roll-up':(data.style==='exterior'?'Exterior':data.style==='closet'?'Closet':'Room')+(isDouble&&data.style!=='closet'?' double':'');
+  const hingeHint=data.style==='rollup'?` Curtain is pivoted at the opening top and hangs ${data.closed.toFixed(2)} m (open fraction ${data.openFraction}); to animate, scale Curtain on Y and resize Curtain/AnimatableBody3D/CollisionShape3D. Housing is fixed.`:data.custom?' Custom outline: Panel is the movable pivot. Add sliding or other movement in Godot; no movement script is included.':exportProfile(building,options).windowGroup==='scare_sight_transparent'
     ? (isDouble?' Set double_hinge = true; expected hinge paths: $Hinge and $Hinge2.':' Default single hinge; expected hinge path: $Hinge.')
     : (isDouble?' Two independent hinge pivots: Hinge and Hinge2.':' Single hinge pivot: Hinge.');
   // Get Probed doors use a stationary Area3D at the doorway root so the
@@ -1455,7 +1477,22 @@ export function exportDoorTscn(building, opening, options={}) {
   nodes.push(`[node name="Door" type="Node3D"]\neditor_description = "${styleName} door. Attach your door script manually to this root.${hingeHint}"`);
   if(frameRes) nodes.push(`[node name="Frame" type="MeshInstance3D" parent="."]\nposition = ${v3(0,data.height/2,0)}\nmesh = SubResource("DoorFrameMesh")`);
 
-  if(data.custom){
+  if(data.style==='rollup'){
+    const curtainRes=arrayMeshResource(data.curtain,matDoor,'DoorCurtainMesh','Door');if(curtainRes)resources.push(curtainRes.text);
+    nodes.push(`[node name="Curtain" type="Node3D" parent="."]\nposition = ${v3(0,data.height,0)}`);
+    if(curtainRes)nodes.push(`[node name="CurtainMesh" type="MeshInstance3D" parent="Curtain"]\nmesh = SubResource("DoorCurtainMesh")`);
+    if(data.closed>.01){
+      addRes('BoxShape3D','CurtainShape',[`size = ${v3(data.innerWidth,data.closed,data.curtainThickness)}`]);
+      nodes.push(`[node name="AnimatableBody3D" type="AnimatableBody3D" parent="Curtain"]\nsync_to_physics = false\ncollision_layer = ${profile.doorLayer}\ncollision_mask = ${profile.bodyMask}`);
+      nodes.push(`[node name="CollisionShape3D" type="CollisionShape3D" parent="Curtain/AnimatableBody3D"]\nposition = ${v3(0,-data.closed/2,0)}\nshape = SubResource("CurtainShape")`);
+    }
+    const housingMesh=meshWriter();addLocalBoxToMesh(housingMesh,data.housing,{x:0,y:0,z:0});
+    const housingRes=arrayMeshResource(housingMesh,matFrame,'DoorHousingMesh','Frame');if(housingRes)resources.push(housingRes.text);
+    if(housingRes)nodes.push(`[node name="Housing" type="MeshInstance3D" parent="."]\nposition = ${v3(data.housingPos.x,data.housingPos.y,data.housingPos.z)}\nmesh = SubResource("DoorHousingMesh")`);
+    addRes('BoxShape3D','HousingShape',[`size = ${v3(data.housing.x,data.housing.y,data.housing.z)}`]);
+    nodes.push(`[node name="FrameBody" type="StaticBody3D" parent="."]\ncollision_layer = ${profile.doorLayer}\ncollision_mask = ${profile.bodyMask}`);
+    nodes.push(`[node name="CollisionShape3D" type="CollisionShape3D" parent="FrameBody"]\nposition = ${v3(data.housingPos.x,data.housingPos.y,data.housingPos.z)}\nshape = SubResource("HousingShape")`);
+  }else if(data.custom){
     const leafRes=arrayMeshResource(data.panel,matDoor,'DoorLeafMesh','Door');if(leafRes)resources.push(leafRes.text);
     nodes.push(`[node name="Panel" type="Node3D" parent="."]`);
     if(leafRes)nodes.push(`[node name="DoorMesh" type="MeshInstance3D" parent="Panel"]\nposition = ${v3(0,data.height/2,0)}\nmesh = SubResource("DoorLeafMesh")`);
@@ -1534,6 +1571,24 @@ export function exportDoorTscn(building, opening, options={}) {
   const sceneResources=options.collision===false?resources.filter(r=>!/^\[sub_resource type="(?:BoxShape3D|ConvexPolygonShape3D|ConcavePolygonShape3D)"/.test(r)):resources;
   const loadSteps=sceneResources.length+1;
   return finalizeScene(`[gd_scene load_steps=${loadSteps} format=3]\n\n${sceneResources.join('\n\n')}\n\n${sceneNodes.join('\n\n')}\n`,options);
+}
+
+// building.slabsByRoom: split a story's automatic floor/ceiling areas by its
+// labelled solid or label regions (first region wins an overlap). Pieces are
+// named after the region; the rest keeps the plain name. Off: one piece.
+export function slabPiecesByRoom(building,view,areas){
+  if(building.slabsByRoom!==true)return [{suffix:'',room:null,areas}];
+  const rooms=(view.regions||[]).filter(r=>r.effect!=='void'&&typeof r.label==='string'&&r.label.trim()&&rectValid(r));
+  if(!rooms.length)return [{suffix:'',room:null,areas}];
+  const out=[],used=new Set();let rest=areas.map(a=>a.polygon?a:polygonArea(areaPoints(a))).filter(Boolean);
+  for(const region of rooms){
+    const cells=regionAreaCells(region),inside=intersectPolygonAreas(rest,cells).filter(a=>areaSize(a)>1e-6);
+    if(!inside.length)continue;
+    rest=subtractPolygonAreas(rest,cells);
+    let suffix='_'+nodeClean(region.label),n=2;while(used.has(suffix.toLowerCase()))suffix=`_${nodeClean(region.label)}_${n++}`;used.add(suffix.toLowerCase());
+    out.push({suffix,room:region.label.replace(/["\\]/g,''),areas:inside});
+  }
+  return rest.some(a=>areaSize(a)>1e-6)?[...out,{suffix:'',room:null,areas:rest.filter(a=>areaSize(a)>1e-6)}]:out;
 }
 
 export function exportGodotTscn(building, options={collision:true, markers:true}, suppliedDoorScenes=null) {
@@ -1798,17 +1853,21 @@ editor_description = "Interior wall tops, bottoms, jambs, and exposed ends."`);
       if(view.autoFloor!==false){
         const manualFloorOverrides=manualFloorRectanglesAtLevel(building,elevation,surfaceTol);
         const floorRects=subtractRectAreas(floorRectanglesForView(view,belowStairs),manualFloorOverrides);
-        const floorFaces=buildSlabFaceMeshData(floorRects,view.floorThickness,0);
-        const floorMeshId=`${prefix}FloorMesh`;
-        const floorRes=multiSurfaceArrayMeshResource([
-          {mesh:floorFaces.top,materialId:matFloorTop,surfaceName:'TopFaces'},
-          {mesh:floorFaces.bottom,materialId:matFloorBottom,surfaceName:'BottomFaces'},
-          {mesh:floorFaces.edges,materialId:matFloorEdge,surfaceName:'EdgeFaces'}
-        ],floorMeshId);
-        if(floorRes)resources.push(floorRes.text);
-        if(floorRes)nodes.push(`[node name="FloorSlab" type="MeshInstance3D" parent="${floorName}/Geometry"]
+        // slabsByRoom: one mesh per labelled room region (materials per room,
+        // fewer lights per mesh); collision below stays whole.
+        for(const piece of slabPiecesByRoom(building,view,floorRects)){
+          const floorFaces=buildSlabFaceMeshData(piece.areas,view.floorThickness,0);
+          const floorMeshId=`${prefix}FloorMesh${piece.suffix}`;
+          const floorRes=multiSurfaceArrayMeshResource([
+            {mesh:floorFaces.top,materialId:matFloorTop,surfaceName:'TopFaces'},
+            {mesh:floorFaces.bottom,materialId:matFloorBottom,surfaceName:'BottomFaces'},
+            {mesh:floorFaces.edges,materialId:matFloorEdge,surfaceName:'EdgeFaces'}
+          ],floorMeshId);
+          if(floorRes)resources.push(floorRes.text);
+          if(floorRes)nodes.push(`[node name="FloorSlab${piece.suffix}" type="MeshInstance3D" parent="${floorName}/Geometry"]
 mesh = SubResource("${floorMeshId}")
-editor_description = "Automatic floor mesh after independent manual-floor overrides. Surfaces: TopFaces, BottomFaces, EdgeFaces."`);
+editor_description = "${piece.room?`Automatic floor of ${piece.room}. `:'Automatic floor mesh after independent manual-floor overrides. '}Surfaces: TopFaces, BottomFaces, EdgeFaces."`);
+        }
         if(options.collision){
           for(let pi=0;pi<floorRects.length;pi++){
             if(floorRects[pi].polygon){
@@ -1835,19 +1894,22 @@ shape = SubResource("${shapeId}")`);
         // With roof none the ceiling's top is open to view, and it lies in the
         // plane of the wall-top caps where it runs under the walls; clip it out
         // there so the two do not z-fight.
-        const ceilingTop=meshWriter(),openTop=building.roof?.type==='none'&&view.walls.length;
-        const topWriter=openTop?unionFaceWriter(ceilingTop,Infinity,hasProfileWalls(view)?profileWallSolids(view,exteriorWallOutsideSign,isExteriorWall):wallUnionSolids(view)):ceilingTop;
-        const ceilingFaces={...buildSlabFaceMeshData(ceilingRects,t,view.wallHeight,{top:topWriter}),top:ceilingTop};
-        const ceilingMeshId=`${prefix}CeilingMesh`;
-        const ceilingRes=multiSurfaceArrayMeshResource([
-          {mesh:ceilingFaces.bottom,materialId:matCeilingBottom,surfaceName:'RoomFaces'},
-          {mesh:ceilingFaces.top,materialId:matCeilingTop,surfaceName:'RoofSideFaces'},
-          {mesh:ceilingFaces.edges,materialId:matCeilingEdge,surfaceName:'EdgeFaces'}
-        ],ceilingMeshId);
-        if(ceilingRes)resources.push(ceilingRes.text);
-        if(ceilingRes)nodes.push(`[node name="Ceiling" type="MeshInstance3D" parent="${floorName}/Geometry"]
+        const openTop=building.roof?.type==='none'&&view.walls.length;
+        const wallSolids=openTop?(hasProfileWalls(view)?profileWallSolids(view,exteriorWallOutsideSign,isExteriorWall):wallUnionSolids(view)):null;
+        for(const piece of slabPiecesByRoom(building,view,ceilingRects)){
+          const ceilingTop=meshWriter(),topWriter=openTop?unionFaceWriter(ceilingTop,Infinity,wallSolids):ceilingTop;
+          const ceilingFaces={...buildSlabFaceMeshData(piece.areas,t,view.wallHeight,{top:topWriter}),top:ceilingTop};
+          const ceilingMeshId=`${prefix}CeilingMesh${piece.suffix}`;
+          const ceilingRes=multiSurfaceArrayMeshResource([
+            {mesh:ceilingFaces.bottom,materialId:matCeilingBottom,surfaceName:'RoomFaces'},
+            {mesh:ceilingFaces.top,materialId:matCeilingTop,surfaceName:'RoofSideFaces'},
+            {mesh:ceilingFaces.edges,materialId:matCeilingEdge,surfaceName:'EdgeFaces'}
+          ],ceilingMeshId);
+          if(ceilingRes)resources.push(ceilingRes.text);
+          if(ceilingRes)nodes.push(`[node name="Ceiling${piece.suffix}" type="MeshInstance3D" parent="${floorName}/Geometry"]
 mesh = SubResource("${ceilingMeshId}")
-editor_description = "Automatic ceiling mesh after independent manual-ceiling overrides. Surfaces: RoomFaces, RoofSideFaces, EdgeFaces."`);
+editor_description = "${piece.room?`Automatic ceiling of ${piece.room}. `:'Automatic ceiling mesh after independent manual-ceiling overrides. '}Surfaces: RoomFaces, RoofSideFaces, EdgeFaces."`);
+        }
         if(options.collision){
           for(let pi=0;pi<ceilingRects.length;pi++){
             if(ceilingRects[pi].polygon){
@@ -1907,6 +1969,8 @@ shape = SubResource("${shapeId}")`);
           }
         }
       }
+      // Optional steps from the floor up to the deck (platform.steps).
+      platformStepBoxes(plat).forEach((step,si)=>addBoxNode(`${floorName}/Geometry/Platforms`,`${name}_Step_${String(si+1).padStart(2,'0')}`,step.size,step.pos,{x:0,y:0,z:0},matPlatform,options.collision?`${floorName}/Collision`:null));
     }
 
     const railings=Array.isArray(floor.railings)?floor.railings:[];
@@ -1917,17 +1981,17 @@ shape = SubResource("${shapeId}")`);
       const mesh=railingData.mesh;
       const meshId=`${prefix}RailingMesh_${String(ri+1).padStart(3,'0')}`;
       const res=arrayMeshResource(mesh,matRailing,meshId,'Railing'); if(res) resources.push(res.text);
-      const cx=(rail.a.x+rail.b.x)/2, cz=(rail.a.z+rail.b.z)/2, yaw=-Math.atan2(rail.b.z-rail.a.z, rail.b.x-rail.a.x);
+      const cx=(rail.a.x+rail.b.x)/2, cz=(rail.a.z+rail.b.z)/2, yaw=-Math.atan2(rail.b.z-rail.a.z, rail.b.x-rail.a.x), railElevation=Number(rail.elevation)||0;
       const name=`Railing_${String(ri+1).padStart(3,'0')}${rail.label?'_'+nodeClean(rail.label):''}`;
       if(res) nodes.push(`[node name="${name}" type="MeshInstance3D" parent="${floorName}/Geometry/Railings"]
-position = ${v3(cx,0,cz)}
+position = ${v3(cx,railElevation,cz)}
 rotation = ${v3(0,yaw,0)}
 mesh = SubResource("${meshId}")`);
       if(options.collision){
         const shapeId=resId('RailingShape');
         addRes('BoxShape3D',shapeId,[`size = ${v3(len, Math.max(0.4, Number(rail.height)||1), 0.12)}`]);
         nodes.push(`[node name="${name}_Collision" type="CollisionShape3D" parent="${floorName}/Collision"]
-position = ${v3(cx,Math.max(0.4, Number(rail.height)||1)/2,cz)}
+position = ${v3(cx,railElevation+Math.max(0.4, Number(rail.height)||1)/2,cz)}
 rotation = ${v3(0,yaw,0)}
 shape = SubResource("${shapeId}")`);
       }

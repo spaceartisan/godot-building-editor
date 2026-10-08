@@ -233,6 +233,35 @@ export function makePlatform(a, b, kind = 'porch', height = 0, label = '') {
   return { ...r, kind: normalizedKind, height: Number(height) || 0, covered: normalizedKind === 'porch' };
 }
 
+// Porch/deck steps (feedback: Pine Hollow porch): platform.steps = {edge, at,
+// width} runs steps from the floor up to the deck top, leaving the deck on one
+// edge. Each step is a solid block from the floor (geometry and collision).
+export const PLATFORM_STEP_EDGES=['minX','maxX','minZ','maxZ'];
+export function platformStepsProblem(plat){
+  const s=plat?.steps;if(s==null)return null;
+  if(typeof s!=='object'||Array.isArray(s))return 'Platform steps must be an object {edge, at, width}.';
+  for(const key of Object.keys(s))if(!['edge','at','width'].includes(key))return `Unknown platform steps field: ${key}.`;
+  if(!PLATFORM_STEP_EDGES.includes(s.edge))return 'Platform steps edge must be minX, maxX, minZ or maxZ.';
+  const h=Number(plat.height)||0;if(h<.15)return 'Platform steps need a platform at least 0.15 m above the floor.';
+  const along=s.edge.endsWith('X')?['minZ','maxZ']:['minX','maxX'],lo=plat[along[0]],hi=plat[along[1]];
+  const width=s.width===undefined?Math.min(1.2,hi-lo):Number(s.width),at=s.at===undefined?(lo+hi)/2:Number(s.at);
+  if(!Number.isFinite(width)||width<.5)return 'Platform steps need a width of at least 0.5 m.';
+  if(!Number.isFinite(at)||at-width/2<lo-1e-6||at+width/2>hi+1e-6)return 'Platform steps must fit along their edge (at ± width/2 inside the platform side).';
+  return null;
+}
+export function platformStepBoxes(plat){
+  if(!plat?.steps||platformStepsProblem(plat))return [];
+  const s=plat.steps,h=Number(plat.height)||0,risers=Math.max(2,Math.round(h/.18)),rise=h/risers,tread=.28;
+  const alongX=!s.edge.endsWith('X'),lo=alongX?plat.minX:plat.minZ,hi=alongX?plat.maxX:plat.maxZ;
+  const width=s.width===undefined?Math.min(1.2,hi-lo):Number(s.width),at=s.at===undefined?(lo+hi)/2:Number(s.at);
+  const outward=s.edge.startsWith('min')?-1:1,edge=plat[s.edge],out=[];
+  for(let j=1;j<risers;j++){
+    const top=j*rise,offset=edge+outward*(risers-j-.5)*tread;
+    out.push(alongX?{size:{x:width,y:top,z:tread},pos:{x:at,y:top/2,z:offset}}:{size:{x:tread,y:top,z:width},pos:{x:offset,y:top/2,z:at}});
+  }
+  return out;
+}
+
 export function makeRailing(a, b, label = 'Railing', height = 1.0, style = 'two_rail') {
   return {
     id: uid('rail'),

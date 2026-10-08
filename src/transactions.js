@@ -9,7 +9,7 @@ import {proposeFloorStackEdit} from './floor-stack.js';
 import {markerProblem} from './markers.js';
 import {proposeGroupMove} from './group-edit.js';
 import {wallTypeProblem,followWallThickness} from './wall-types.js';
-import {openingShapeProblem,doorLeavesProblem} from './opening-shapes.js';
+import {openingShapeProblem,doorLeavesProblem,rollupDoorProblem} from './opening-shapes.js';
 import {MANUAL_ROOF_TYPES,manualRoofOutlineProblem} from './roof-outline.js';
 
 // Versioned authoring commands, not arbitrary JSON patches. All work is done on
@@ -30,15 +30,15 @@ function point(value,where){keys(value,['x','z'],where);number(value.x,`${where}
 const rectKeys=['minX','maxX','minZ','maxZ'];
 const GROUP_TYPES=['wall','opening','light','marker','stair','railing','region','slab','platform','manualFloor','manualCeiling','roofSection'];
 const fields={
-  building:['name','exportProfile','wallHeight','wallThickness','floorThickness','gridSize','roof','ceiling','doorMesh','windowMesh'],
+  building:['name','exportProfile','wallHeight','wallThickness','floorThickness','gridSize','roof','ceiling','doorMesh','windowMesh','slabsByRoom'],
   floor:['label','elevation','wallHeight','floorThickness','autoFloor','autoCeiling','boundaryMode'],
-  platform:['label',...rectKeys,'kind','height','covered'],
+  platform:['label',...rectKeys,'kind','height','covered','steps'],
   stair:['label','x','z','width','run','direction','style','steps','blockBelow'],
   wall:['label','role','height','a','b','wallTypeId','inwardSide','inwardToward'],
   // Building-level shared definitions (no floorId), as in the web dialogs.
   wallType:['label','stations'],
   openingShape:['label','points'],
-  railing:['label','a','b','height','style'],
+  railing:['label','a','b','height','style','elevation'],
   // Omni lights, as placed by the web Light tool; position.y is the height above the floor.
   light:['label','position','color','energy','range','shadows'],
   // Named reference points (web Marker tool); position.y is height above the floor.
@@ -48,7 +48,7 @@ const fields={
   // Independent building-level slabs with absolute top heights (web Manual Floor/Ceiling).
   manualFloor:['label',...rectKeys,'topY','thickness'],
   manualCeiling:['label',...rectKeys,'topY','thickness'],
-  opening:['label','type','wallId','t','at','width','height','sill','doorStyle','windowStyle','shapeId','leaves'],
+  opening:['label','type','wallId','t','at','width','height','sill','doorStyle','windowStyle','shapeId','leaves','openFraction'],
   roof:['label',...rectKeys,'polygon','type','direction','baseY','pitch','overhang','gableEnds','hostRoofId','edgeModes','flatTopHeight'],
   region:['label',...rectKeys,'kind','effect','polygon'],
   // Not an operation family: wall.crenellate value fields.
@@ -65,6 +65,7 @@ function checkValue(kind,value,action,where){
     else if(kind==='platform'){
       if(key==='kind')choice(v,['porch','deck'],p);
       else if(key==='covered'){if(typeof v!=='boolean')fail('Expected a boolean',p);}
+      else if(key==='steps'){if(v!==null){keys(v,['edge','at','width'],p);if(v.edge===undefined)fail('Missing required field: edge',p);choice(v.edge,['minX','maxX','minZ','maxZ'],`${p}/edge`);for(const k of ['at','width'])if(v[k]!==undefined)number(v[k],`${p}/${k}`);}}
       else number(v,p,key==='height'?-10000:-1e6,key==='height'?10000:1e6);
     }
     else if(kind==='stair'){
@@ -78,6 +79,7 @@ function checkValue(kind,value,action,where){
       // Ranges match the web building settings and the shared validator.
       if(key==='name')text(v,p);
       else if(key==='exportProfile')choice(v,['generic','get_probed'],p);
+      else if(key==='slabsByRoom'){if(typeof v!=='boolean')fail('Expected a boolean',p);}
       else if(key==='roof'){
         keys(v,['type','pitch','overhang','flatTopHeight'],p);if(!Object.keys(v).length)fail('Provide at least one roof field',p);
         if(v.flatTopHeight!==undefined&&v.flatTopHeight!==null)number(v.flatTopHeight,`${p}/flatTopHeight`,0,100);
@@ -115,6 +117,7 @@ function checkValue(kind,value,action,where){
       else number(v,p,key==='range'?.1:0,1e6);
     }
     else if(kind==='railing'&&key==='height')number(v,p,.4,100);
+    else if(kind==='railing'&&key==='elevation')number(v,p,-100,100);
     else if(kind==='railing'&&key==='style')choice(v,['two_rail','picket','cross_brace'],p);
     else if(kind==='crenellation'){
       if(key==='idPrefix'){text(v,p);if(!/^[A-Za-z0-9_-]{1,48}$/.test(v))fail('idPrefix must be 1–48 letters, digits, - or _',p);}
@@ -128,7 +131,8 @@ function checkValue(kind,value,action,where){
     else if(key==='gableEnds')choice(v,['both','min','max','none'],p);
     else if(key==='kind')choice(v,REGION_KINDS,p);
     else if(key==='effect')choice(v,REGION_EFFECTS,p);
-    else if(key==='doorStyle')choice(v,['exterior','room','closet','empty'],p);
+    else if(key==='doorStyle')choice(v,['exterior','room','closet','rollup','empty'],p);
+    else if(key==='openFraction'){if(v!==null)number(v,p,0,1);}
     else if(key==='leaves')choice(v,[1,2],p);
     else if(key==='windowStyle')choice(v,['plain','double_hung','four_pane','empty'],p);
     else if(key==='wallId')text(v,p);
@@ -302,7 +306,7 @@ function applyOperation(building,op,index){
       else{
         // Profile stations at the old wall thickness follow the new one (shared with the web setting).
         if(key==='wallThickness')followWallThickness(building,building.wallThickness,value);
-        building[key]=value;
+        building[key]=value;if(key==='slabsByRoom'&&value===false)delete building.slabsByRoom;
       }
     }
     return;
@@ -375,7 +379,7 @@ function applyOperation(building,op,index){
     const initial=action==='add'?{...makePlatform({x:value.minX,z:value.minZ},{x:value.maxX,z:value.maxZ},value.kind||'porch',value.height??0,value.label||''),id:op.id}:item;
     const result=proposePlatformUpdate(initial,value);
     if(!result.ok)fail(result.reason,p);
-    if(action==='add')list.push(result.platform);else Object.assign(item,result.platform);
+    if(action==='add')list.push(result.platform);else{for(const key of Object.keys(item))if(!(key in result.platform))delete item[key];Object.assign(item,result.platform);}
     return;
   }
   if(kind==='stair'&&action!=='remove'&&!building.floors[fi+1])fail('Stair add/update requires an adjacent upper floor',p);
@@ -443,6 +447,7 @@ function applyOperation(building,op,index){
   if(kind==='roof'){const problem=manualRoofOutlineProblem(updated,building.roofSections,building.roof);if(problem)fail(problem,p);}
   if(kind==='roof'&&updated.hostRoofId===null)delete updated.hostRoofId;
   if(kind==='roof'&&!updated.flatTopHeight)delete updated.flatTopHeight;
+  if(kind==='railing'&&!updated.elevation)delete updated.elevation;
   if(kind==='roof'||kind==='region')if(!rectValid(updated))fail('Rectangle must have positive width and depth of at least 0.1 m each',p);
   if(kind==='slab'&&(!rectValid(updated)||updated.minX>updated.maxX||updated.minZ>updated.maxZ))fail('Rectangle needs minX < maxX and minZ < maxZ, at least 0.1 m each',p);
   if(kind==='marker'){if(updated.details===null)updated.details='';const problem=markerProblem(updated);if(problem)fail(problem,p);}
@@ -462,8 +467,9 @@ function applyOperation(building,op,index){
   if(kind==='opening'){
     if(updated.shapeId===null)delete updated.shapeId;
     if(updated.type==='door'&&('sill' in value||'windowStyle' in value))fail('Door edits cannot set window fields',p);
-    if(updated.type==='window'&&('doorStyle' in value||'leaves' in value))fail('Window edits cannot set door fields',p);
-    {const problem=doorLeavesProblem(updated);if(problem)fail(problem,p);}
+    if(updated.type==='window'&&('doorStyle' in value||'leaves' in value||'openFraction' in value))fail('Window edits cannot set door fields',p);
+    if(!updated.openFraction)delete updated.openFraction;
+    {const problem=doorLeavesProblem(updated)||rollupDoorProblem(updated);if(problem)fail(problem,p);}
     if(updated.leaves===1)delete updated.leaves;
   }
 }

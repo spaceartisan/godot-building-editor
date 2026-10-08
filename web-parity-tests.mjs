@@ -375,3 +375,47 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   assert.deepEqual(g.errors,[]);
   console.log('PASS web game layer: panel file equals --game-layer in the exported package, render stays plain, invalid file refused, clear');
 }
+{
+  // Porch steps and raised railings: the platform panel's Steps and the railing
+  // panel's Elevation equal platform.update steps and railing.update elevation.
+  const base=tx([{op:'room.add',floorId:'floor_1',id:'cabin',value:{minX:-4,maxX:4,minZ:-3,maxZ:3}},
+    {op:'platform.add',floorId:'floor_1',id:'porch',value:{minX:-4,maxX:4,minZ:-5.5,maxZ:-3,kind:'porch',height:.6}},
+    {op:'railing.add',floorId:'floor_1',id:'rl',value:{a:{x:-4,z:-5.5},b:{x:-.8,z:-5.5}}}]);
+  await e.loadBuildingData(structuredClone(base));e.chooseSelection({type:'platform',id:'porch'});
+  await change(property('Steps'),'minZ');
+  e.chooseSelection({type:'platform',id:'porch'});await change(property('Steps width'),1.4);
+  e.chooseSelection({type:'platform',id:'porch'});await change(property('Steps centre'),.5);
+  const withSteps=tx([{op:'platform.update',floorId:'floor_1',id:'porch',value:{steps:{edge:'minZ',at:.5,width:1.4}}}],base);
+  assert.deepEqual(e.snapshot().floors[0].platforms,withSteps.floors[0].platforms,'web Steps equals platform.update steps');
+  e.chooseSelection({type:'platform',id:'porch'});await change(property('Steps width'),20);
+  assert.equal(e.snapshot().floors[0].platforms[0].steps.width,1.4,'too-wide steps are refused');assert.match($('#status-text').textContent,/must fit along their edge/);
+  e.chooseSelection({type:'railing',id:'rl'});await change(property('Elevation above floor'),.6);
+  assert.deepEqual(e.snapshot().floors[0].railings,tx([{op:'railing.update',floorId:'floor_1',id:'rl',value:{elevation:.6}}],withSteps).floors[0].railings,'web Elevation equals railing.update elevation');
+  e.chooseSelection({type:'platform',id:'porch'});await change(property('Steps'),'');
+  assert.equal('steps' in e.snapshot().floors[0].platforms[0],false);assert.match($('#status-text').textContent,/Platform steps removed/);
+  assert.deepEqual(e.errors,[]);
+  console.log('PASS web porch steps and raised railings equal platform.update steps and railing.update elevation');
+}
+{
+  // Roll-up doors: Door type Roll-up and Open fraction equal opening.update; leaving roll-up clears the fraction.
+  const base=tx([{op:'building.update',value:{wallHeight:4.5}},{op:'room.add',floorId:'floor_1',id:'bay',value:{minX:-5,maxX:5,minZ:-4,maxZ:4}},
+    {op:'opening.add',floorId:'floor_1',id:'d',value:{type:'door',wallId:'bay-north',at:{x:0,z:-4},width:3.8,height:3.6,doorStyle:'exterior'}}]);
+  await e.loadBuildingData(structuredClone(base));e.chooseSelection({type:'opening',id:'d'});
+  await change(property('Door type'),'rollup');
+  e.chooseSelection({type:'opening',id:'d'});await change(property('Open fraction'),.25);
+  const rolled=tx([{op:'opening.update',floorId:'floor_1',id:'d',value:{doorStyle:'rollup',openFraction:.25}}],base);
+  assert.deepEqual(e.snapshot().floors,rolled.floors,'web roll-up door equals opening.update');
+  e.chooseSelection({type:'opening',id:'d'});await change(property('Door type'),'room');
+  assert.deepEqual(e.snapshot().floors,tx([{op:'opening.update',floorId:'floor_1',id:'d',value:{doorStyle:'room',openFraction:null}}],rolled).floors,'leaving roll-up clears the open fraction');
+  assert.ok(e.preview.scene.objects.length>0);assert.deepEqual(e.errors,[]);
+  console.log('PASS web roll-up doors: Door type and Open fraction equal opening.update; leaving roll-up clears it');
+}
+{
+  // slabsByRoom: the building settings checkbox equals building.update slabsByRoom.
+  await e.loadBuildingData(structuredClone(blank));
+  const toggle=$('#slabs-by-room-toggle');assert.equal(toggle.checked,false);toggle.checked=true;await toggle.dispatch('change');
+  assert.equal(e.snapshot().slabsByRoom,true);assert.deepEqual(e.snapshot(),tx([{op:'building.update',value:{slabsByRoom:true}}]));
+  toggle.checked=false;await toggle.dispatch('change');assert.equal('slabsByRoom' in e.snapshot(),false);
+  assert.deepEqual(e.errors,[]);
+  console.log('PASS web Split floors and ceilings by room equals building.update slabsByRoom');
+}

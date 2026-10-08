@@ -86,9 +86,29 @@ try{
   json(['godot-check'],3,{GODOT_BIN:''});json(['godot-check','--godot',path.join(temp,'missing-godot')],3);
   json(['preview',example('farmhouse'),'--out',path.join(temp,'bad.png'),'--distance','nope'],2);
   for(const yaw of ['', ' ', '\t'])json(['preview',example('farmhouse'),'--out',path.join(temp,'bad.png'),'--yaw',yaw],2,{CANVAS_MODULE:path.join(temp,'missing-canvas')});
-  json(['preview',example('farmhouse'),'--out',path.join(temp,'bad.png'),'--yaw','0'],3,{CANVAS_MODULE:path.join(temp,'missing-canvas')});
-  json(['preview',example('farmhouse'),'--out',path.join(temp,'bad.png')],3,{CANVAS_MODULE:path.join(temp,'missing-canvas')});assert.ok(!fs.existsSync(path.join(temp,'bad.png')));
+  json(['preview',example('farmhouse'),'--out',path.join(temp,'bad.png'),'--yaw','0'],3,{CANVAS_MODULE:path.join(temp,'missing-canvas'),GODOT_BIN:''});
+  json(['preview',example('farmhouse'),'--out',path.join(temp,'bad.png')],3,{CANVAS_MODULE:path.join(temp,'missing-canvas'),GODOT_BIN:''});assert.ok(!fs.existsSync(path.join(temp,'bad.png')));
   json(['preview',example('farmhouse'),'--out',path.join(temp,'bad.png'),'--floor','1.5'],2);
   console.log('PASS installation-relative examples, missing optional dependencies, preview argument checks');
+  {
+    // Feedback: a recipe is self-contained (new --ops) and can be re-run (--replace).
+    const recipe=write('recipe/shop.edit.json',{version:1,operations:[{op:'room.add',floorId:'floor_1',id:'shop',value:{minX:-4,maxX:4,minZ:-3,maxZ:3}}]});
+    const one=json(['new','--ops',recipe,'--out',path.join(temp,'recipe/shop.json')]);assert.equal(one.ok,true);
+    json(['new','--out',path.join(temp,'recipe/blank.json')]);json(['edit',path.join(temp,'recipe/blank.json'),'--ops',recipe,'--out',path.join(temp,'recipe/two-step.json')]);
+    assert.deepEqual(fs.readFileSync(path.join(temp,'recipe/shop.json')),fs.readFileSync(path.join(temp,'recipe/two-step.json')),'new --ops equals new + edit');
+    assert.equal(json(['new','--ops',recipe,'--dry-run']).dryRun,true);
+    json(['new','--ops',recipe,'--out',path.join(temp,'recipe/shop.json')],3);
+    const changed=write('recipe/shop2.edit.json',{version:1,operations:[{op:'room.add',floorId:'floor_1',id:'shop',value:{minX:-5,maxX:5,minZ:-3,maxZ:3}}]});
+    assert.equal(json(['new','--ops',changed,'--out',path.join(temp,'recipe/shop.json'),'--replace']).ok,true);
+    assert.equal(JSON.parse(fs.readFileSync(path.join(temp,'recipe/shop.json'),'utf8')).floors[0].walls[0].a.x,-5,'re-run replaced the output');
+    json(['new','--ops',changed,'--out',recipe,'--replace'],3);assert.equal(JSON.parse(fs.readFileSync(recipe,'utf8')).version,1,'a recipe is never replaced');
+    const noop=write('recipe/noop.edit.json',{version:1,operations:[]});
+    json(['edit',path.join(temp,'recipe/shop.json'),'--ops',noop,'--out',path.join(temp,'recipe/shop.json'),'--replace'],3);
+    fs.mkdirSync(path.join(temp,'recipe/dir.json'));json(['new','--ops',recipe,'--out',path.join(temp,'recipe/dir.json'),'--replace'],3);
+    json(['new','--ops',recipe,'--dry-run','--replace'],2);json(['new','--dry-run'],2);
+    const bad=write('recipe/bad.edit.json',{version:1,operations:[{op:'wall.add',floorId:'nope',id:'w',value:{a:{x:0,z:0},b:{x:1,z:0}}}]});
+    assert.equal(json(['new','--ops',bad,'--out',path.join(temp,'recipe/bad.json')],1).ok,false);assert.equal(fs.existsSync(path.join(temp,'recipe/bad.json')),false);
+    console.log('PASS new --ops (one-step recipe equals new + edit), dry run, --replace re-runs only onto building JSON outputs');
+  }
   console.log(`PASS ${commands} CLI subprocess checks`);
 }finally{fs.rmSync(temp,{recursive:true,force:true});}

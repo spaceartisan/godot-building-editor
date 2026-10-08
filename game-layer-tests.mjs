@@ -47,6 +47,14 @@ const layerSpec={version:1,materials:{OutsideFaces:'res://m/siding.tres',Glass:'
   for(const [spec,pattern] of bad)assert.throws(()=>parseGameLayer(spec),pattern);
   assert.throws(()=>parseGameLayer('{not json'),/invalid JSON/);
   assert.throws(()=>exportGodotFiles(farmhouse,{gameLayer:parseGameLayer({version:1,doorChildren:[{name:'Hinge',scene:'res://a.tscn'}]})}),/collides with an exported door node/);
+  {
+    // nodeMaterials: per-node surface overrides (rooms split with slabsByRoom).
+    const layer=parseGameLayer({version:1,nodeMaterials:[{match:'*FloorSlab',surface:'TopFaces',material:'res://m/checker.tres'},{match:'*',surface:'NoSuchSurface',material:'res://m/x.tres'}]});
+    const t=exportGodotFiles(farmhouse,{gameLayer:layer}).tscn;
+    assert.match(t,/\[node name="FloorSlab" type="MeshInstance3D"[^\]]*\]\nmesh = SubResource\("[^"]+"\)\n[^\n]*\nsurface_material_override\/0 = ExtResource\("GL_Material_\d+"\)/);
+    assert.doesNotMatch(t,/res:\/\/m\/x.tres/,'a surface the node does not have adds nothing');
+    assert.throws(()=>parseGameLayer({version:1,nodeMaterials:[{match:'*',surface:'Top Faces',material:'res://a.tres'}]}),/surface must be a surface name/);
+  }
   console.log('PASS game layer validation: version, fields, names, paths, layer masks, script targets, door child names');
 }
 {

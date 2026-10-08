@@ -20,12 +20,24 @@ function glob(pattern){return new RegExp('^'+pattern.replace(/[.+?^${}()|[\]\\]/
 export function parseGameLayer(value){
   const data=typeof value==='string'?(()=>{try{return JSON.parse(value);}catch(e){fail(`invalid JSON: ${e.message}`,'game layer');}})():value;
   if(!isObject(data))fail('expected an object','game layer');
-  for(const key of Object.keys(data))if(!['version','materials','layers','scripts','doorChildren'].includes(key))fail(`unknown field ${key}`,'game layer');
+  for(const key of Object.keys(data))if(!['version','materials','nodeMaterials','layers','scripts','doorChildren'].includes(key))fail(`unknown field ${key}`,'game layer');
   if(data.version!==GAME_LAYER_VERSION)fail(`version must be ${GAME_LAYER_VERSION}`,'game layer');
   const materials={};
   if(data.materials!==undefined){
     if(!isObject(data.materials))fail('expected {surface name: path}','materials');
     for(const [surface,path] of Object.entries(data.materials)){if(!NAME.test(surface))fail('surface names are letters, digits and _',`materials/${surface}`);materials[surface]=resourcePath(path,`materials/${surface}`);}
+  }
+  const nodeMaterials=[];
+  if(data.nodeMaterials!==undefined){
+    if(!Array.isArray(data.nodeMaterials)||data.nodeMaterials.length>256)fail('expected up to 256 {match, surface, material, in} rules','nodeMaterials');
+    data.nodeMaterials.forEach((rule,i)=>{
+      const where=`nodeMaterials/${i}`;if(!isObject(rule))fail('expected an object',where);
+      for(const key of Object.keys(rule))if(!['match','surface','material','in'].includes(key))fail(`unknown field ${key}`,where);
+      if(typeof rule.match!=='string'||!rule.match||rule.match.length>256||/["\n]/.test(rule.match))fail('match must be a node path pattern (* matches anything)',`${where}/match`);
+      if(typeof rule.surface!=='string'||!NAME.test(rule.surface))fail('surface must be a surface name such as TopFaces',`${where}/surface`);
+      if(rule.in!==undefined&&!['building','doors'].includes(rule.in))fail('in must be building or doors',`${where}/in`);
+      nodeMaterials.push({match:rule.match,pattern:glob(rule.match),surface:rule.surface,material:resourcePath(rule.material,`${where}/material`),in:rule.in||null});
+    });
   }
   const layers=[];
   if(data.layers!==undefined){
@@ -55,12 +67,14 @@ export function parseGameLayer(value){
       names.add(child.name);doorChildren.push({name:child.name,scene:resourcePath(child.scene,`${where}/scene`)});
     });
   }
-  return {version:GAME_LAYER_VERSION,materials,layers,scripts,doorChildren};
+  return {version:GAME_LAYER_VERSION,materials,nodeMaterials,layers,scripts,doorChildren};
 }
 
 // Applies a parsed game layer to one exported scene's text.
 function applyToScene(text,layer,kind){
   const blocks=text.replace(/\n$/,'').split('\n\n'),ext=[];let n=0;
+  // Surface names of each ArrayMesh, in order (for per-node material overrides).
+  const surfaces=new Map(blocks.filter(b=>b.startsWith('[sub_resource type="ArrayMesh"')).map(b=>[/id="([^"]+)"/.exec(b)[1],[...b.matchAll(/^"name": "([^"]+)",$/gm)].map(m=>m[1])]));
   const resource=(type,path)=>{const found=ext.find(e=>e.type===type&&e.path===path);if(found)return found.id;const id=`GL_${type}_${++n}`;ext.push({type,path,id});return id;};
   const out=blocks.map(block=>{
     if(block.startsWith('[sub_resource type="ArrayMesh"'))
@@ -73,9 +87,16 @@ function applyToScene(text,layer,kind){
       return script?`${block}\nscript = ExtResource("${resource('Script',script)}")`:block;
     }
     if(type==='MeshInstance3D'){
-      const path=parent==='.'?name:`${parent}/${name}`;
-      const rule=layer.layers.find(r=>(!r.in||r.in===(kind==='door'?'doors':'building'))&&r.pattern.test(path));
-      if(rule)return `${block}\nlayers = ${rule.layers}`;
+      const path=parent==='.'?name:`${parent}/${name}`,scope=r=>!r.in||r.in===(kind==='door'?'doors':'building');
+      let result=block;
+      const names=surfaces.get(/^mesh = SubResource\("([^"]+)"\)$/m.exec(block)?.[1])||[],done=new Set();
+      for(const rule of (layer.nodeMaterials||[]).filter(r=>scope(r)&&r.pattern.test(path))){
+        const index=names.indexOf(rule.surface);if(index<0||done.has(index))continue;done.add(index);
+        result+=`\nsurface_material_override/${index} = ExtResource("${resource('Material',rule.material)}")`;
+      }
+      const rule=layer.layers.find(r=>scope(r)&&r.pattern.test(path));
+      if(rule)result+=`\nlayers = ${rule.layers}`;
+      return result;
     }
     return block;
   });

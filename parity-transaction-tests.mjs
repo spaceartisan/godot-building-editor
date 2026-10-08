@@ -298,3 +298,68 @@ const base=ok(room('floor_1','w'));
   assert.equal('flatTopHeight' in ok([{op:'building.update',value:{roof:{flatTopHeight:0}}}],auto).roof,false,'0 removes the flat top');
   console.log('PASS mansard roofs: flatTopHeight clips hip slopes and caps them flat (manual and automatic), above-ridge falls back to hip, shared rejections');
 }
+{
+  // Feedback (Pine Hollow porch): platform steps and railings lifted onto a raised deck.
+  const {exportGodotFiles}=await import('./src/exporter.js');
+  const {platformStepBoxes}=await import('./src/model.js'),{validateBuilding}=await import('./src/validation.js');
+  const cabin=ok([{op:'room.add',floorId:'floor_1',id:'cabin',value:{minX:-4,maxX:4,minZ:-3,maxZ:3}},
+    {op:'platform.add',floorId:'floor_1',id:'porch',value:{minX:-4,maxX:4,minZ:-5.5,maxZ:-3,kind:'porch',height:.6,steps:{edge:'minZ',at:0,width:1.4}}},
+    {op:'railing.add',floorId:'floor_1',id:'rl',value:{a:{x:-4,z:-5.5},b:{x:-.8,z:-5.5},elevation:.6}}]);
+  const porch=cabin.floors[0].platforms[0];assert.deepEqual(porch.steps,{edge:'minZ',at:0,width:1.4});
+  const steps=platformStepBoxes(porch);assert.equal(steps.length,2,'0.6 m at about 0.18 m per riser: 3 risers, 2 steps below the deck');
+  assert.ok(steps.every(s=>Math.abs(s.size.x-1.4)<1e-9&&s.pos.z<-5.5),'steps run outward from the min Z edge');
+  assert.ok(Math.abs(steps[1].size.y-.4)<1e-9&&Math.abs(steps[1].pos.z-(-5.5-.14))<1e-9,'the top step sits against the deck');
+  const scene=exportGodotFiles(cabin).tscn;
+  assert.match(scene,/\[node name="Porch_001_Porch_Step_01"/);assert.match(scene,/\[node name="Porch_001_Porch_Step_02_Collision" type="CollisionShape3D"/);
+  assert.match(scene,/\[node name="Railing_001_Railing" type="MeshInstance3D"[^\]]*\]\nposition = Vector3\(-2\.4, 0\.6, -5\.5\)/,'the railing stands on the deck');
+  assert.deepEqual(validateBuilding(cabin).warnings.filter(w=>/railing/.test(w.message)),[]);
+  const grounded=ok([{op:'railing.update',floorId:'floor_1',id:'rl',value:{elevation:0}}],cabin);
+  assert.equal('elevation' in grounded.floors[0].railings[0],false,'elevation 0 is the default');
+  assert.match(JSON.stringify(validateBuilding(grounded).warnings),/lies on raised platform Porch but stands on the floor; set its elevation to 0.6 m/);
+  for(const [value,pattern] of [[{steps:{edge:'top'}},/Expected one of/],[{steps:{edge:'minZ',width:9}},/must fit along their edge/],[{steps:{edge:'minZ',width:.3}},/at least 0.5 m/],[{height:.1},/at least 0.15 m above the floor/],[{steps:{edge:'minZ',depth:1}},/depth/]])
+    rejects([{op:'platform.update',floorId:'floor_1',id:'porch',value}],pattern,cabin);
+  assert.equal('steps' in ok([{op:'platform.update',floorId:'floor_1',id:'porch',value:{steps:null}}],cabin).floors[0].platforms[0],false);
+  console.log('PASS porch steps and raised railings: steps geometry/collision, railing elevation, warning on a grounded railing, shared rejections');
+}
+{
+  // Feedback (Cascade Pass garage): roll-up doors, exported closed or partly open.
+  const {exportDoorTscn,buildDoorMeshData}=await import('./src/exporter.js');
+  const garage=ok([{op:'building.update',value:{wallHeight:4.5}},{op:'room.add',floorId:'floor_1',id:'bay',value:{minX:-5,maxX:5,minZ:-4,maxZ:4}},
+    {op:'opening.add',floorId:'floor_1',id:'d',value:{type:'door',wallId:'bay-north',at:{x:0,z:-4},width:3.8,height:3.6,doorStyle:'rollup',openFraction:.25}}]);
+  const door=garage.floors[0].openings[0],{floorView}=await import('./src/model.js'),view=floorView(garage,0);
+  const data=buildDoorMeshData(view,door);
+  assert.ok(Math.abs(data.closed-2.7)<1e-9,'a quarter open leaves 2.7 m of curtain');
+  assert.equal(data.insideSign,1,'the north wall\'s inside is +Z (toward the room)');
+  const scene=exportDoorTscn(view,door);
+  assert.match(scene,/Roll-up door\..*hangs 2\.70 m \(open fraction 0\.25\)/);
+  assert.match(scene,/\[node name="Curtain" type="Node3D" parent="\."\]\nposition = Vector3\(0, 3\.6, 0\)/);
+  assert.match(scene,/\[node name="CollisionShape3D" type="CollisionShape3D" parent="Curtain\/AnimatableBody3D"\]\nposition = Vector3\(0, -1\.35, 0\)/);
+  assert.match(scene,/\[node name="Housing" type="MeshInstance3D" parent="\."\]\nposition = Vector3\(0, 3\.81, 0\.3\)/);
+  const open=ok([{op:'opening.update',floorId:'floor_1',id:'d',value:{openFraction:1}}],garage);
+  assert.doesNotMatch(exportDoorTscn(floorView(open,0),open.floors[0].openings[0]),/parent="Curtain\/AnimatableBody3D"/,'a fully open door has no curtain collision');
+  assert.equal('openFraction' in ok([{op:'opening.update',floorId:'floor_1',id:'d',value:{openFraction:0}}],garage).floors[0].openings[0],false,'0 (closed) is the default');
+  rejects([{op:'opening.update',floorId:'floor_1',id:'d',value:{openFraction:1.5}}],/openFraction/,garage);
+  rejects([{op:'opening.update',floorId:'floor_1',id:'d',value:{doorStyle:'exterior'}}],/openFraction applies to roll-up doors only/,garage);
+  assert.equal(ok([{op:'opening.update',floorId:'floor_1',id:'d',value:{doorStyle:'exterior',openFraction:null}}],garage).floors[0].openings[0].doorStyle,'exterior');
+  rejects([{op:'opening.update',floorId:'floor_1',id:'d',value:{leaves:2}}],/Roll-up doors have one curtain/,garage);
+  console.log('PASS roll-up doors: curtain pivoted at the top hangs by the closed height, housing inside, open fraction rules');
+}
+{
+  // Feedback (Cascade Pass diner): floors and ceilings split by room (slabsByRoom).
+  const {exportGodotFiles,slabPiecesByRoom,floorRectanglesForView}=await import('./src/exporter.js');
+  const {floorView}=await import('./src/model.js'),{areaSize}=await import('./src/polygon-areas.js');
+  const ops=[{op:'room.add',floorId:'floor_1',id:'d',value:{minX:-12,maxX:12,minZ:-8,maxZ:8}},{op:'wall.add',floorId:'floor_1',id:'k',value:{a:{x:4,z:-8},b:{x:4,z:8}}},
+    {op:'region.add',floorId:'floor_1',id:'kitchen',value:{minX:4,maxX:12,minZ:-8,maxZ:2,label:'Kitchen'}},{op:'region.add',floorId:'floor_1',id:'rest',value:{minX:4,maxX:12,minZ:2,maxZ:8,label:'Restrooms'}}];
+  const whole=ok(ops),split=ok([{op:'building.update',value:{slabsByRoom:true}}],whole);
+  assert.equal(split.slabsByRoom,true);
+  const a=exportGodotFiles(whole).tscn,b=exportGodotFiles(split).tscn;
+  assert.deepEqual([...b.matchAll(/node name="(FloorSlab[^"]*|Ceiling[^"_]*(?:_[A-Z][^"]*)?)" type="MeshInstance3D"/g)].map(m=>m[1]),['FloorSlab_Kitchen','FloorSlab_Restrooms','FloorSlab','Ceiling_Kitchen','Ceiling_Restrooms','Ceiling']);
+  const collisions=t=>[...t.matchAll(/\[node name="(?:Floor|Ceiling)Collision_[^\]]*\]\n[^[]*/g)].map(m=>m[0]);
+  assert.deepEqual(collisions(b),collisions(a),'collision is unchanged');
+  const view=floorView(split,0),rects=floorRectanglesForView(view,[]),pieces=slabPiecesByRoom(split,view,rects);
+  const total=list=>list.reduce((s,r)=>s+areaSize(r),0);
+  assert.ok(Math.abs(pieces.reduce((s,p)=>s+total(p.areas),0)-total(rects))<1e-6,'the pieces cover the floor exactly once');
+  assert.equal('slabsByRoom' in ok([{op:'building.update',value:{slabsByRoom:false}}],split),false);
+  rejects([{op:'building.update',value:{slabsByRoom:'yes'}}],/Expected a boolean/);
+  console.log('PASS slabsByRoom: floor and ceiling meshes per labelled room plus the rest, same collision, exact coverage');
+}

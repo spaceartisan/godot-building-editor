@@ -6,10 +6,10 @@ import {wallTypeProblem,wallTypeFor,wallTypeOpeningProblem,sampleWallType} from 
 import { regionPolygonProblem, regionBounds } from './regions.js';
 import { containsArea } from './polygon-areas.js';
 import { manualRoofOutlineProblem, roofPolygonBounds } from './roof-outline.js';
-import { REGION_KINDS, REGION_EFFECTS, floorElevation, floorWallHeight, floorSlabThickness, floorView, structuralFloorRectangles, exteriorFootprintIssue, stairFootprint, stairOpeningFootprint, wallLength, wallHeightFor, projectToWall, validateOpeningLayout, rectValid } from './model.js';
+import { REGION_KINDS, REGION_EFFECTS, platformStepsProblem, floorElevation, floorWallHeight, floorSlabThickness, floorView, structuralFloorRectangles, exteriorFootprintIssue, stairFootprint, stairOpeningFootprint, wallLength, wallHeightFor, projectToWall, validateOpeningLayout, rectValid } from './model.js';
 import { roofAttachmentDiagnostics, attachmentWarnings } from './roof-diagnostics.js';
 import {markerProblem} from './markers.js';
-import {openingShapeProblem,shapedOpeningProblem,doorLeavesProblem} from './opening-shapes.js';
+import {openingShapeProblem,shapedOpeningProblem,doorLeavesProblem,rollupDoorProblem} from './opening-shapes.js';
 
 // Non-mutating validation shared by JSON import, the editor and direct export.
 // Warnings leave incomplete/custom architecture editable; errors protect output.
@@ -32,6 +32,7 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
   for(const [k,min,max] of [['wallHeight',.2,1000],['wallThickness',.001,100],['floorThickness',.001,100],['gridSize',.001,1000]])number(building[k],k,min,max);
   if(building.name!=null&&typeof building.name!=='string')error('name','must be text');
   if(building.exportProfile!=null&&!['generic','get_probed'].includes(building.exportProfile))error('exportProfile','unknown profile');
+  if(building.slabsByRoom!==undefined&&typeof building.slabsByRoom!=='boolean')error('slabsByRoom','slabsByRoom must be true or false');
   for(const k of ['roof','ceiling','windowMesh','doorMesh']){
     const cfg=building[k];if(cfg==null)continue;
     if(typeof cfg!=='object'||Array.isArray(cfg)){error(k,'must be an object');continue;}
@@ -66,6 +67,7 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
         if(['walls','railings'].includes(name)){
           for(const end of ['a','b'])for(const axis of ['x','z'])number(obj[end]?.[axis],`${p}.${end}.${axis}`,-1e6,1e6,true);
           if(obj.a&&obj.b&&wallLength(obj)<.001)error(p,'zero-length segment');
+          if(name==='railings'&&obj.elevation!==undefined)number(obj.elevation,`${p}.elevation`,-100,100);
         }
         if(['slabs','regions','platforms','roofSections','manualFloors','manualCeilings'].includes(name)){
           if(name==='regions'&&obj.polygon!==undefined){
@@ -80,6 +82,7 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
         number(obj.height,`${p}.height`,name==='platforms'?-10000:.001,10000);
         number(obj.pitch,`${p}.pitch`,0,80);number(obj.overhang,`${p}.overhang`,0,100);
         if(name==='platforms'){
+          {const problem=platformStepsProblem(obj);if(problem)error(p,problem);}
           if(obj.kind!=null&&!['porch','deck'].includes(obj.kind))error(p,'unknown platform kind');
           if(obj.covered!=null&&typeof obj.covered!=='boolean')error(p,'platform roof coverage must be boolean');
         }
@@ -153,7 +156,7 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
     collections(f,['walls','openings','stairs','lights','markers','slabs','regions','platforms','railings','roofSections'],`Floor ${i+1}`);
   });
   if(errors.length)return {errors,warnings};
-  for(const f of floors)for(const o of f.openings||[]){const problem=doorLeavesProblem(o)||shapedOpeningProblem(building,o);if(problem)error(o.id||'opening',problem,[{type:'opening',id:o.id,floorId:f.id}]);}
+  for(const f of floors)for(const o of f.openings||[]){const problem=doorLeavesProblem(o)||rollupDoorProblem(o)||shapedOpeningProblem(building,o);if(problem)error(o.id||'opening',problem,[{type:'opening',id:o.id,floorId:f.id}]);}
   if(errors.length)return {errors,warnings};
   floors.forEach((f,i)=>{
     const p=`Floor ${i+1}`;
@@ -230,6 +233,12 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
       const first=platforms[a],second=platforms[b];
       if(Math.abs((first.height||0)-(second.height||0))<.001&&Math.min(first.maxX,second.maxX)-Math.max(first.minX,second.minX)>.001&&Math.min(first.maxZ,second.maxZ)-Math.max(first.minZ,second.minZ)>.001)
         warn(p,`platforms ${first.id} / ${second.id} overlap at the same height; review duplicate slabs`,[first,second].map(q=>({type:'platform',id:q.id,floorId:f.id})));
+    }
+    // A railing drawn on a raised deck still stands on the floor unless lifted.
+    const onPlatform=(q,pt)=>pt.x>=q.minX-1e-6&&pt.x<=q.maxX+1e-6&&pt.z>=q.minZ-1e-6&&pt.z<=q.maxZ+1e-6;
+    for(const rail of f.railings||[]){
+      const deck=platforms.find(q=>rectValid(q)&&(Number(q.height)||0)>=.15&&rail.a&&rail.b&&onPlatform(q,rail.a)&&onPlatform(q,rail.b));
+      if(deck&&(Number(rail.elevation)||0)<(Number(deck.height)||0)-.05)warn(p,`railing ${rail.label||rail.id} lies on raised platform ${deck.label||deck.id} but stands on the floor; set its elevation to ${Number(deck.height)} m`,[{type:'railing',id:rail.id,floorId:f.id}]);
     }
     for(const issue of validateOpeningLayout(view))if(['overlap','missing_wall'].includes(issue.type))error(p,issue.message,[issue.opening,issue.other].filter(Boolean).map(q=>({type:'opening',id:q.id,floorId:f.id})));
     const walls=f.walls||[];

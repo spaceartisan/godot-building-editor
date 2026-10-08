@@ -132,7 +132,7 @@ export function normalizeBuilding(data,{idFactory=uid}={}){
     for(const w of f.walls)if(!w.role)w.role=isExteriorWall(fv,w)?'exterior':'interior';
     for(const o of f.openings){
       o.id ||= idFactory('opening');
-      if(o.type==='door'&&!['exterior','room','closet','empty'].includes(o.doorStyle)){const w=wallMap.get(o.wallId);o.doorStyle=(w?.role==='exterior'||/\bexterior\b/i.test(w?.label||''))?'exterior':'room';}
+      if(o.type==='door'&&!['exterior','room','closet','rollup','empty'].includes(o.doorStyle)){const w=wallMap.get(o.wallId);o.doorStyle=(w?.role==='exterior'||/\bexterior\b/i.test(w?.label||''))?'exterior':'room';}
       if(o.type==='window'&&!['plain','double_hung','four_pane','empty'].includes(o.windowStyle))o.windowStyle='plain';
       applyOpeningConstraints(fv,o);
     }

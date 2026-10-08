@@ -60,6 +60,14 @@ export function doorLeavesProblem(opening){
   if(opening.leaves!==1&&opening.leaves!==2)return 'Door leaves must be 1 or 2.';
   if(opening.doorStyle==='closet'&&opening.leaves===1)return 'Closet doors always have two leaves; choose Room or Exterior for a single leaf.';
   if(opening.leaves===2&&opening.shapeId)return 'Custom doorway outlines use a single panel; use one leaf or a Rectangle doorway.';
+  if(opening.leaves===2&&opening.doorStyle==='rollup')return 'Roll-up doors have one curtain; leaves apply to exterior and room doors.';
+  return null;
+}
+// Roll-up doors: openFraction 0 (closed) to 1 (open), rollup style only.
+export function rollupDoorProblem(opening){
+  if(opening?.openFraction!==undefined&&(opening.type!=='door'||opening.doorStyle!=='rollup'))return 'openFraction applies to roll-up doors only.';
+  if(opening?.openFraction!==undefined&&!(Number(opening.openFraction)>=0&&Number(opening.openFraction)<=1))return 'openFraction must be from 0 (closed) to 1 (open).';
+  if(opening?.doorStyle==='rollup'&&opening.shapeId)return 'Roll-up doors use a rectangular opening; choose Rectangle.';
   return null;
 }
 export function shapedOpeningProblem(building,opening){

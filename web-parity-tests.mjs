@@ -396,3 +396,17 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   assert.deepEqual(e.errors,[]);
   console.log('PASS web porch steps and raised railings equal platform.update steps and railing.update elevation');
 }
+{
+  // Roll-up doors: Door type Roll-up and Open fraction equal opening.update; leaving roll-up clears the fraction.
+  const base=tx([{op:'building.update',value:{wallHeight:4.5}},{op:'room.add',floorId:'floor_1',id:'bay',value:{minX:-5,maxX:5,minZ:-4,maxZ:4}},
+    {op:'opening.add',floorId:'floor_1',id:'d',value:{type:'door',wallId:'bay-north',at:{x:0,z:-4},width:3.8,height:3.6,doorStyle:'exterior'}}]);
+  await e.loadBuildingData(structuredClone(base));e.chooseSelection({type:'opening',id:'d'});
+  await change(property('Door type'),'rollup');
+  e.chooseSelection({type:'opening',id:'d'});await change(property('Open fraction'),.25);
+  const rolled=tx([{op:'opening.update',floorId:'floor_1',id:'d',value:{doorStyle:'rollup',openFraction:.25}}],base);
+  assert.deepEqual(e.snapshot().floors,rolled.floors,'web roll-up door equals opening.update');
+  e.chooseSelection({type:'opening',id:'d'});await change(property('Door type'),'room');
+  assert.deepEqual(e.snapshot().floors,tx([{op:'opening.update',floorId:'floor_1',id:'d',value:{doorStyle:'room',openFraction:null}}],rolled).floors,'leaving roll-up clears the open fraction');
+  assert.ok(e.preview.scene.objects.length>0);assert.deepEqual(e.errors,[]);
+  console.log('PASS web roll-up doors: Door type and Open fraction equal opening.update; leaving roll-up clears it');
+}

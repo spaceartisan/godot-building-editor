@@ -408,6 +408,7 @@ export function buildDoorMeshData(building, opening) {
     const xs=layout.inner.map(p=>p.x),ys=layout.inner.map(p=>p.z);
     return {...layout,custom:true,frame:extrude(layout.frameCells,layout.frameDepth),panel:extrude(layout.panelCells,layout.panelThickness),hardware:meshWriter(),width:safe.width,height:safe.height,style:safe.doorStyle||'room',innerWidth:Math.max(...xs)-Math.min(...xs),innerHeight:Math.max(...ys)-Math.min(...ys),panelCenterY:0};
   }
+  if(safe.doorStyle==='rollup')return buildRollupDoorMeshData(building,safe);
   const cfg=building.doorMesh || {};
   const width=Math.max(.02,Number(safe.width)||.9);
   const height=Math.max(.02,Number(safe.height)||2.1);
@@ -485,6 +486,26 @@ export function buildDoorMeshData(building, opening) {
   return { frame, panel, hardware, width, height, style, frameWidth, frameDepth, panelThickness, detailDepth, innerWidth, innerHeight, panelCenterY };
 }
 
+
+// Roll-up (overhead) door: side guides as the frame, a ribbed curtain pivoted
+// at the opening top that hangs down by the closed height ((1 - openFraction)
+// x height), and a drum housing on the inside wall face above the opening.
+export function buildRollupDoorMeshData(building,safe){
+  const width=Math.max(.5,Number(safe.width)||3),height=Math.max(.5,Number(safe.height)||3),guide=.08,depth=.12;
+  const open=Math.max(0,Math.min(1,Number(safe.openFraction)||0)),closed=height*(1-open),innerWidth=width-2*guide,curtainThickness=.04;
+  const frame=meshWriter();
+  for(const sx of [-1,1])addLocalBoxToMesh(frame,{x:guide,y:height,z:depth},{x:sx*(width-guide)/2,y:0,z:0});
+  const curtain=meshWriter();
+  if(closed>.01){
+    addLocalBoxToMesh(curtain,{x:innerWidth,y:closed,z:curtainThickness},{x:0,y:-closed/2,z:0});
+    for(let y=.1;y<closed-.02;y+=.1)for(const z of [1,-1])addLocalBoxToMesh(curtain,{x:innerWidth,y:.012,z:.008},{x:0,y:-y,z:z*(curtainThickness/2+.004)});
+    for(const z of [1,-1])addLocalBoxToMesh(curtain,{x:innerWidth,y:.05,z:.012},{x:0,y:-closed+.025,z:z*(curtainThickness/2+.006)});
+  }
+  const wall=findWall(building,safe.wallId),outside=wall&&isExteriorWall(building,wall)?exteriorWallOutsideSign(building,wall):-1;
+  const insideSign=outside>0?-1:1,thickness=Number(building.wallThickness)||.18,housing={x:width+.1,y:.42,z:.42};
+  return {custom:false,style:'rollup',frame,curtain,width,height,openFraction:open,closed,innerWidth,innerHeight:height,curtainThickness,
+    housing,housingPos:{x:0,y:height+housing.y/2,z:insideSign*(thickness/2+housing.z/2)},insideSign,frameDepth:depth,panelThickness:curtainThickness,panelCenterY:0};
+}
 
 // One leaf of a double exterior or room door, centred at ox: the style's raised
 // panels on both faces and a knob near the meeting edge (+X on the left leaf).
@@ -1438,8 +1459,8 @@ export function exportDoorTscn(building, opening, options={}) {
 
   const nodes=[];
   const isDouble=!data.custom&&doorLeafCount(opening)===2;
-  const styleName=(data.style==='exterior'?'Exterior':data.style==='closet'?'Closet':'Room')+(isDouble&&data.style!=='closet'?' double':'');
-  const hingeHint=data.custom?' Custom outline: Panel is the movable pivot. Add sliding or other movement in Godot; no movement script is included.':exportProfile(building,options).windowGroup==='scare_sight_transparent'
+  const styleName=data.style==='rollup'?'Roll-up':(data.style==='exterior'?'Exterior':data.style==='closet'?'Closet':'Room')+(isDouble&&data.style!=='closet'?' double':'');
+  const hingeHint=data.style==='rollup'?` Curtain is pivoted at the opening top and hangs ${data.closed.toFixed(2)} m (open fraction ${data.openFraction}); to animate, scale Curtain on Y and resize Curtain/AnimatableBody3D/CollisionShape3D. Housing is fixed.`:data.custom?' Custom outline: Panel is the movable pivot. Add sliding or other movement in Godot; no movement script is included.':exportProfile(building,options).windowGroup==='scare_sight_transparent'
     ? (isDouble?' Set double_hinge = true; expected hinge paths: $Hinge and $Hinge2.':' Default single hinge; expected hinge path: $Hinge.')
     : (isDouble?' Two independent hinge pivots: Hinge and Hinge2.':' Single hinge pivot: Hinge.');
   // Get Probed doors use a stationary Area3D at the doorway root so the
@@ -1455,7 +1476,22 @@ export function exportDoorTscn(building, opening, options={}) {
   nodes.push(`[node name="Door" type="Node3D"]\neditor_description = "${styleName} door. Attach your door script manually to this root.${hingeHint}"`);
   if(frameRes) nodes.push(`[node name="Frame" type="MeshInstance3D" parent="."]\nposition = ${v3(0,data.height/2,0)}\nmesh = SubResource("DoorFrameMesh")`);
 
-  if(data.custom){
+  if(data.style==='rollup'){
+    const curtainRes=arrayMeshResource(data.curtain,matDoor,'DoorCurtainMesh','Door');if(curtainRes)resources.push(curtainRes.text);
+    nodes.push(`[node name="Curtain" type="Node3D" parent="."]\nposition = ${v3(0,data.height,0)}`);
+    if(curtainRes)nodes.push(`[node name="CurtainMesh" type="MeshInstance3D" parent="Curtain"]\nmesh = SubResource("DoorCurtainMesh")`);
+    if(data.closed>.01){
+      addRes('BoxShape3D','CurtainShape',[`size = ${v3(data.innerWidth,data.closed,data.curtainThickness)}`]);
+      nodes.push(`[node name="AnimatableBody3D" type="AnimatableBody3D" parent="Curtain"]\nsync_to_physics = false\ncollision_layer = ${profile.doorLayer}\ncollision_mask = ${profile.bodyMask}`);
+      nodes.push(`[node name="CollisionShape3D" type="CollisionShape3D" parent="Curtain/AnimatableBody3D"]\nposition = ${v3(0,-data.closed/2,0)}\nshape = SubResource("CurtainShape")`);
+    }
+    const housingMesh=meshWriter();addLocalBoxToMesh(housingMesh,data.housing,{x:0,y:0,z:0});
+    const housingRes=arrayMeshResource(housingMesh,matFrame,'DoorHousingMesh','Frame');if(housingRes)resources.push(housingRes.text);
+    if(housingRes)nodes.push(`[node name="Housing" type="MeshInstance3D" parent="."]\nposition = ${v3(data.housingPos.x,data.housingPos.y,data.housingPos.z)}\nmesh = SubResource("DoorHousingMesh")`);
+    addRes('BoxShape3D','HousingShape',[`size = ${v3(data.housing.x,data.housing.y,data.housing.z)}`]);
+    nodes.push(`[node name="FrameBody" type="StaticBody3D" parent="."]\ncollision_layer = ${profile.doorLayer}\ncollision_mask = ${profile.bodyMask}`);
+    nodes.push(`[node name="CollisionShape3D" type="CollisionShape3D" parent="FrameBody"]\nposition = ${v3(data.housingPos.x,data.housingPos.y,data.housingPos.z)}\nshape = SubResource("HousingShape")`);
+  }else if(data.custom){
     const leafRes=arrayMeshResource(data.panel,matDoor,'DoorLeafMesh','Door');if(leafRes)resources.push(leafRes.text);
     nodes.push(`[node name="Panel" type="Node3D" parent="."]`);
     if(leafRes)nodes.push(`[node name="DoorMesh" type="MeshInstance3D" parent="Panel"]\nposition = ${v3(0,data.height/2,0)}\nmesh = SubResource("DoorLeafMesh")`);

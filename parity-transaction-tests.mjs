@@ -321,3 +321,26 @@ const base=ok(room('floor_1','w'));
   assert.equal('steps' in ok([{op:'platform.update',floorId:'floor_1',id:'porch',value:{steps:null}}],cabin).floors[0].platforms[0],false);
   console.log('PASS porch steps and raised railings: steps geometry/collision, railing elevation, warning on a grounded railing, shared rejections');
 }
+{
+  // Feedback (Cascade Pass garage): roll-up doors, exported closed or partly open.
+  const {exportDoorTscn,buildDoorMeshData}=await import('./src/exporter.js');
+  const garage=ok([{op:'building.update',value:{wallHeight:4.5}},{op:'room.add',floorId:'floor_1',id:'bay',value:{minX:-5,maxX:5,minZ:-4,maxZ:4}},
+    {op:'opening.add',floorId:'floor_1',id:'d',value:{type:'door',wallId:'bay-north',at:{x:0,z:-4},width:3.8,height:3.6,doorStyle:'rollup',openFraction:.25}}]);
+  const door=garage.floors[0].openings[0],{floorView}=await import('./src/model.js'),view=floorView(garage,0);
+  const data=buildDoorMeshData(view,door);
+  assert.ok(Math.abs(data.closed-2.7)<1e-9,'a quarter open leaves 2.7 m of curtain');
+  assert.equal(data.insideSign,1,'the north wall\'s inside is +Z (toward the room)');
+  const scene=exportDoorTscn(view,door);
+  assert.match(scene,/Roll-up door\..*hangs 2\.70 m \(open fraction 0\.25\)/);
+  assert.match(scene,/\[node name="Curtain" type="Node3D" parent="\."\]\nposition = Vector3\(0, 3\.6, 0\)/);
+  assert.match(scene,/\[node name="CollisionShape3D" type="CollisionShape3D" parent="Curtain\/AnimatableBody3D"\]\nposition = Vector3\(0, -1\.35, 0\)/);
+  assert.match(scene,/\[node name="Housing" type="MeshInstance3D" parent="\."\]\nposition = Vector3\(0, 3\.81, 0\.3\)/);
+  const open=ok([{op:'opening.update',floorId:'floor_1',id:'d',value:{openFraction:1}}],garage);
+  assert.doesNotMatch(exportDoorTscn(floorView(open,0),open.floors[0].openings[0]),/parent="Curtain\/AnimatableBody3D"/,'a fully open door has no curtain collision');
+  assert.equal('openFraction' in ok([{op:'opening.update',floorId:'floor_1',id:'d',value:{openFraction:0}}],garage).floors[0].openings[0],false,'0 (closed) is the default');
+  rejects([{op:'opening.update',floorId:'floor_1',id:'d',value:{openFraction:1.5}}],/openFraction/,garage);
+  rejects([{op:'opening.update',floorId:'floor_1',id:'d',value:{doorStyle:'exterior'}}],/openFraction applies to roll-up doors only/,garage);
+  assert.equal(ok([{op:'opening.update',floorId:'floor_1',id:'d',value:{doorStyle:'exterior',openFraction:null}}],garage).floors[0].openings[0].doorStyle,'exterior');
+  rejects([{op:'opening.update',floorId:'floor_1',id:'d',value:{leaves:2}}],/Roll-up doors have one curtain/,garage);
+  console.log('PASS roll-up doors: curtain pivoted at the top hangs by the closed height, housing inside, open fraction rules');
+}

@@ -63,6 +63,13 @@ try{
   const doubleChecks=check(doubleAssets,0,['--require-collision']);assert.equal(doubleChecks.checks.scenes,3);
   for(const name of fs.readdirSync(path.join(doubleAssets,'doors')))assert.match(fs.readFileSync(path.join(doubleAssets,'doors',name),'utf8'),/parent="Hinge2\/AnimatableBody3D"/);
   assert.match(fs.readFileSync(path.join(doubleAssets,fs.readdirSync(doubleAssets).find(n=>n.endsWith('.tscn'))),'utf8'),/Porch_001_Porch_Step_02_Collision/);
+  // Roll-up doors (closed and partly open) load with curtain and housing collision.
+  const garageOps=path.join(temp,'garage.edit.json'),garageAssets=path.join(temp,'garage-assets');
+  fs.writeFileSync(garageOps,JSON.stringify({version:1,operations:[{op:'building.update',value:{wallHeight:4.5}},{op:'room.add',floorId:'floor_1',id:'bay',value:{minX:-5,maxX:5,minZ:-4,maxZ:4}},
+    {op:'opening.add',floorId:'floor_1',id:'d1',value:{type:'door',wallId:'bay-north',at:{x:-2,z:-4},width:3.8,height:3.6,doorStyle:'rollup',openFraction:.3}},
+    {op:'opening.add',floorId:'floor_1',id:'d2',value:{type:'door',wallId:'bay-north',at:{x:2.6,z:-4},width:3,height:3.2,doorStyle:'rollup'}}]}));
+  run(['new','--ops',garageOps,'--out',path.join(temp,'garage.json')]);run(['export',path.join(temp,'garage.json'),'--out',garageAssets]);
+  assert.equal(check(garageAssets,0,['--require-collision']).checks.scenes,3);
   // Shared door scenes (--share-door-scenes) load and instance in Godot.
   const sharedDir=path.join(temp,'shared-doors');run(['export',path.join(root,'examples/farmhouse.building.json'),'--out',sharedDir,'--share-door-scenes']);
   const sharedFiles=fs.readdirSync(path.join(sharedDir,'doors')),perDoor=path.join(temp,'per-door');run(['export',path.join(root,'examples/farmhouse.building.json'),'--out',perDoor]);

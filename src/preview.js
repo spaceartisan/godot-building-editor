@@ -256,6 +256,14 @@ export class Preview3D{
           for(const [key,color] of [['frame','#617681'],['panel','#acbfc5']]){const m=data[key],vertices=m.vertices.map(q=>({x:p.x+dx*q.x+nx*q.z,y:elevation+o.height/2+q.y,z:p.z+dz*q.x+nz*q.z})),faces=[];for(let i=0;i<vertices.length;i+=3)faces.push([i,i+2,i+1]);objs.push({mesh:{vertices,faces},color,strokeAlpha:0,uniformFog:true});}
           continue;
         }
+        if(o.doorStyle==='rollup'){
+          // Same layout as the exported roll-up door: guides, curtain hanging from the top, housing inside.
+          const r=buildDoorMeshData(view,o),put=(size,lx,ly,lz,color)=>addObj(objs,size,{x:p.x+dx*lx+nx*lz,y:elevation+ly,z:p.z+dz*lx+nz*lz},{x:0,y:ry,z:0},color,{strokeAlpha:.35});
+          for(const sx of [-1,1])put({x:.08,y:r.height,z:.12},sx*(r.width-.08)/2,r.height/2,0,'#5c5f63');
+          if(r.closed>.01)put({x:r.innerWidth,y:r.closed,z:r.curtainThickness},0,r.height-r.closed/2,0,'#9aa1a8');
+          put(r.housing,r.housingPos.x,r.housingPos.y,r.housingPos.z,'#5c5f63');
+          continue;
+        }
         const t=Math.max(.025,view.doorMesh?.panelThickness||.045), fw=Math.max(.05,view.doorMesh?.frameWidth||.09), inner=Math.max(.05,o.width-fw*2);
         const frameColor=o.doorStyle==='exterior'?'#574033':'#6f6250';
         const panelColor=o.doorStyle==='closet'?'#b0a690':o.doorStyle==='exterior'?'#74442b':'#937a58';

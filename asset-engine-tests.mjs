@@ -54,10 +54,15 @@ try{
   const corners=[[-4,-3],[4,-3],[4,3],[-4,3]];
   fs.writeFileSync(doubleOps,JSON.stringify({version:1,operations:[...corners.map((c,i)=>({op:'wall.add',floorId:'floor_1',id:`w${i}`,value:{a:{x:c[0],z:c[1]},b:{x:corners[(i+1)%4][0],z:corners[(i+1)%4][1]},role:'exterior'}})),
     {op:'opening.add',floorId:'floor_1',id:'front',value:{type:'door',wallId:'w0',t:.5,width:1.8,height:2.2,doorStyle:'exterior',leaves:2}},
-    {op:'opening.add',floorId:'floor_1',id:'back',value:{type:'door',wallId:'w2',t:.5,width:1.6,height:2.1,doorStyle:'room',leaves:2}}]}));
+    {op:'opening.add',floorId:'floor_1',id:'back',value:{type:'door',wallId:'w2',t:.5,width:1.6,height:2.1,doorStyle:'room',leaves:2}},
+    // A raised porch with steps, a lifted railing and a shed roof on posts.
+    {op:'platform.add',floorId:'floor_1',id:'porch',value:{minX:-4,maxX:4,minZ:-5.5,maxZ:-3,kind:'porch',height:.6,steps:{edge:'minZ',at:0,width:1.4}}},
+    {op:'railing.add',floorId:'floor_1',id:'rail',value:{a:{x:-4,z:-5.5},b:{x:-.8,z:-5.5},elevation:.6}},
+    {op:'roof.add',id:'porch_roof',value:{type:'shed',direction:'z',minX:-4,maxX:4,minZ:-5.5,maxZ:-3,baseY:2.7,pitch:12}}]}));
   run(['edit',roofBase,'--ops',doubleOps,'--out',doubled]);run(['export',doubled,'--out',doubleAssets]);
   const doubleChecks=check(doubleAssets,0,['--require-collision']);assert.equal(doubleChecks.checks.scenes,3);
   for(const name of fs.readdirSync(path.join(doubleAssets,'doors')))assert.match(fs.readFileSync(path.join(doubleAssets,'doors',name),'utf8'),/parent="Hinge2\/AnimatableBody3D"/);
+  assert.match(fs.readFileSync(path.join(doubleAssets,fs.readdirSync(doubleAssets).find(n=>n.endsWith('.tscn'))),'utf8'),/Porch_001_Porch_Step_02_Collision/);
   // Shared door scenes (--share-door-scenes) load and instance in Godot.
   const sharedDir=path.join(temp,'shared-doors');run(['export',path.join(root,'examples/farmhouse.building.json'),'--out',sharedDir,'--share-door-scenes']);
   const sharedFiles=fs.readdirSync(path.join(sharedDir,'doors')),perDoor=path.join(temp,'per-door');run(['export',path.join(root,'examples/farmhouse.building.json'),'--out',perDoor]);

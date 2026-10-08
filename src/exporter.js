@@ -8,7 +8,7 @@ import { areaPoints, unionPolygonAreas, subtractPolygonAreas } from './polygon-a
 import { roofBoxParts, roofInteriorBlockers, roofAttachmentBlockers, trimRoofBox, trimmedGableEnds } from './roof-geometry.js';
 import { higherFloorBlockerRectangles, exteriorFootprintRectangles, unionRectAreas, automaticRoofRectangles, automaticRoofSections, boundsOfAutomaticRoof, boundsOfBuilding, boundsOfStructuralFloor, constrainedOpening, floorElevation, floorView, findWall, manualCeilingRectanglesAtLevel, manualFloorRectanglesAtLevel, pointOnWall, rectValid, roofSectionsForFloor, stairFootprint, storyHeight, structuralFloorRectangles, subtractRectAreas, splitWallIntoSolidSegments, validateOpeningLayout, wallLength } from './model.js';
 import { wallSolidPlanes, unionFaceWriter, junctionMiters } from './wall-union.js';
-import { stairOpeningFootprint } from './model.js';
+import { stairOpeningFootprint, platformStepBoxes } from './model.js';
 import { assertValidBuilding } from './validation.js';
 import { exportProfile, lightGroupFor } from './profiles.js';
 
@@ -1907,6 +1907,8 @@ shape = SubResource("${shapeId}")`);
           }
         }
       }
+      // Optional steps from the floor up to the deck (platform.steps).
+      platformStepBoxes(plat).forEach((step,si)=>addBoxNode(`${floorName}/Geometry/Platforms`,`${name}_Step_${String(si+1).padStart(2,'0')}`,step.size,step.pos,{x:0,y:0,z:0},matPlatform,options.collision?`${floorName}/Collision`:null));
     }
 
     const railings=Array.isArray(floor.railings)?floor.railings:[];
@@ -1917,17 +1919,17 @@ shape = SubResource("${shapeId}")`);
       const mesh=railingData.mesh;
       const meshId=`${prefix}RailingMesh_${String(ri+1).padStart(3,'0')}`;
       const res=arrayMeshResource(mesh,matRailing,meshId,'Railing'); if(res) resources.push(res.text);
-      const cx=(rail.a.x+rail.b.x)/2, cz=(rail.a.z+rail.b.z)/2, yaw=-Math.atan2(rail.b.z-rail.a.z, rail.b.x-rail.a.x);
+      const cx=(rail.a.x+rail.b.x)/2, cz=(rail.a.z+rail.b.z)/2, yaw=-Math.atan2(rail.b.z-rail.a.z, rail.b.x-rail.a.x), railElevation=Number(rail.elevation)||0;
       const name=`Railing_${String(ri+1).padStart(3,'0')}${rail.label?'_'+nodeClean(rail.label):''}`;
       if(res) nodes.push(`[node name="${name}" type="MeshInstance3D" parent="${floorName}/Geometry/Railings"]
-position = ${v3(cx,0,cz)}
+position = ${v3(cx,railElevation,cz)}
 rotation = ${v3(0,yaw,0)}
 mesh = SubResource("${meshId}")`);
       if(options.collision){
         const shapeId=resId('RailingShape');
         addRes('BoxShape3D',shapeId,[`size = ${v3(len, Math.max(0.4, Number(rail.height)||1), 0.12)}`]);
         nodes.push(`[node name="${name}_Collision" type="CollisionShape3D" parent="${floorName}/Collision"]
-position = ${v3(cx,Math.max(0.4, Number(rail.height)||1)/2,cz)}
+position = ${v3(cx,railElevation+Math.max(0.4, Number(rail.height)||1)/2,cz)}
 rotation = ${v3(0,yaw,0)}
 shape = SubResource("${shapeId}")`);
       }

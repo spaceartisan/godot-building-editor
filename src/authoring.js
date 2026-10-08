@@ -1,4 +1,4 @@
-import { rectValid, wallLength } from './model.js';
+import { rectValid, wallLength, platformStepsProblem } from './model.js';
 
 // Shared by explicit platform edits in the web editor and CLI. Never mutate a
 // live entity before validating: normalization discards invalid rectangles.
@@ -13,6 +13,8 @@ export function proposePlatformUpdate(platform,patch){
     if(typeof next[key]!=='number'||!Number.isFinite(next[key])||Math.abs(next[key])>limit)return {ok:false,reason:`Platform ${key} must be a finite number within ±${limit} m`};
   }
   if(!rectValid(next))return {ok:false,reason:'Platform width and depth must each be at least 0.1 m'};
+  if(next.steps==null)delete next.steps;
+  {const problem=platformStepsProblem(next);if(problem)return {ok:false,reason:problem};}
   return {ok:true,platform:next};
 }
 

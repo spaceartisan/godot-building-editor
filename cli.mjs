@@ -435,7 +435,7 @@ function human(result,verbose){
       'Not checked: '+result.notChecked.join('; '));
     if(result.output)lines.push('Report: '+result.output);return lines.join('\n')+'\n';
   }
-  if(result.command==='edit'){
+  if(result.command==='edit'||(result.command==='new'&&result.transaction)){
     for(const e of result.errors||[])lines.push(`ERROR ${e.path||''}: ${e.message}`);
     for(const w of result.warnings||[])lines.push('WARNING '+w.message);
     if(result.sourceSha256)lines.push('Source SHA-256: '+result.sourceSha256);

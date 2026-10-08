@@ -298,3 +298,26 @@ const base=ok(room('floor_1','w'));
   assert.equal('flatTopHeight' in ok([{op:'building.update',value:{roof:{flatTopHeight:0}}}],auto).roof,false,'0 removes the flat top');
   console.log('PASS mansard roofs: flatTopHeight clips hip slopes and caps them flat (manual and automatic), above-ridge falls back to hip, shared rejections');
 }
+{
+  // Feedback (Pine Hollow porch): platform steps and railings lifted onto a raised deck.
+  const {exportGodotFiles}=await import('./src/exporter.js');
+  const {platformStepBoxes}=await import('./src/model.js'),{validateBuilding}=await import('./src/validation.js');
+  const cabin=ok([{op:'room.add',floorId:'floor_1',id:'cabin',value:{minX:-4,maxX:4,minZ:-3,maxZ:3}},
+    {op:'platform.add',floorId:'floor_1',id:'porch',value:{minX:-4,maxX:4,minZ:-5.5,maxZ:-3,kind:'porch',height:.6,steps:{edge:'minZ',at:0,width:1.4}}},
+    {op:'railing.add',floorId:'floor_1',id:'rl',value:{a:{x:-4,z:-5.5},b:{x:-.8,z:-5.5},elevation:.6}}]);
+  const porch=cabin.floors[0].platforms[0];assert.deepEqual(porch.steps,{edge:'minZ',at:0,width:1.4});
+  const steps=platformStepBoxes(porch);assert.equal(steps.length,2,'0.6 m at about 0.18 m per riser: 3 risers, 2 steps below the deck');
+  assert.ok(steps.every(s=>Math.abs(s.size.x-1.4)<1e-9&&s.pos.z<-5.5),'steps run outward from the min Z edge');
+  assert.ok(Math.abs(steps[1].size.y-.4)<1e-9&&Math.abs(steps[1].pos.z-(-5.5-.14))<1e-9,'the top step sits against the deck');
+  const scene=exportGodotFiles(cabin).tscn;
+  assert.match(scene,/\[node name="Porch_001_Porch_Step_01"/);assert.match(scene,/\[node name="Porch_001_Porch_Step_02_Collision" type="CollisionShape3D"/);
+  assert.match(scene,/\[node name="Railing_001_Railing" type="MeshInstance3D"[^\]]*\]\nposition = Vector3\(-2\.4, 0\.6, -5\.5\)/,'the railing stands on the deck');
+  assert.deepEqual(validateBuilding(cabin).warnings.filter(w=>/railing/.test(w.message)),[]);
+  const grounded=ok([{op:'railing.update',floorId:'floor_1',id:'rl',value:{elevation:0}}],cabin);
+  assert.equal('elevation' in grounded.floors[0].railings[0],false,'elevation 0 is the default');
+  assert.match(JSON.stringify(validateBuilding(grounded).warnings),/lies on raised platform Porch but stands on the floor; set its elevation to 0.6 m/);
+  for(const [value,pattern] of [[{steps:{edge:'top'}},/Expected one of/],[{steps:{edge:'minZ',width:9}},/must fit along their edge/],[{steps:{edge:'minZ',width:.3}},/at least 0.5 m/],[{height:.1},/at least 0.15 m above the floor/],[{steps:{edge:'minZ',depth:1}},/depth/]])
+    rejects([{op:'platform.update',floorId:'floor_1',id:'porch',value}],pattern,cabin);
+  assert.equal('steps' in ok([{op:'platform.update',floorId:'floor_1',id:'porch',value:{steps:null}}],cabin).floors[0].platforms[0],false);
+  console.log('PASS porch steps and raised railings: steps geometry/collision, railing elevation, warning on a grounded railing, shared rejections');
+}

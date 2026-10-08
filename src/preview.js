@@ -2,7 +2,7 @@ import { polygonSlabFaces } from './polygon-geometry.js';
 import { roofBoxParts, roofInteriorBlockers, roofAttachmentBlockers, trimRoofBox, trimmedGableEnds } from './roof-geometry.js';
 import { boundsOfBuilding, boundsOfStructuralFloor, constrainedOpening, floorElevation, floorView, findWall, manualCeilingRectanglesAtLevel, manualFloorRectanglesAtLevel, pointOnWall, rectValid, roofSectionsForFloor, stairFootprint, storyHeight, structuralFloorRectangles, subtractRectAreas, splitWallIntoSolidSegments, wallLength } from './model.js';
 
-import { stairOpeningFootprint } from './model.js';
+import { stairOpeningFootprint, platformStepBoxes } from './model.js';
 import { buildExteriorMeshData, buildProfileMeshData, hasProfileWalls, openingAnchor, floorRectanglesForView, buildDoorMeshData, storyCeilingRectangles } from './exporter.js';
 import {openingShapeFor,doorLeafCount} from './opening-shapes.js';
 // Every edit rebuilds the whole preview; shaped-wall meshes are the slowest
@@ -300,6 +300,7 @@ export class Preview3D{
       const body=p.kind==='deck'?deckBody:porchBody, top=p.kind==='deck'?deckTop:porchTop, capT=Math.min(.03,Math.max(.018,view.floorThickness*.18));
       addObj(objs,{x:w,y:view.floorThickness,z:d},{x:(p.minX+p.maxX)/2,y,z:(p.minZ+p.maxZ)/2},{x:0,y:0,z:0},body,{strokeAlpha:.46});
       addObj(objs,{x:Math.max(.08,w-.05),y:capT,z:Math.max(.08,d-.05)},{x:(p.minX+p.maxX)/2,y:topY-capT/2,z:(p.minZ+p.maxZ)/2},{x:0,y:0,z:0},top,{strokeAlpha:.16,castShadow:false});
+      for(const step of platformStepBoxes(p))addObj(objs,step.size,{x:step.pos.x,y:elevation+step.pos.y,z:step.pos.z},{x:0,y:0,z:0},body,{strokeAlpha:.4});
       const support=coveredPlatformSupports(view,p);
       if(support&&support.posts?.length){
         const postTop=elevation+view.wallHeight,postH=Math.max(.2,postTop-topY),beamY=postTop-.08;
@@ -341,7 +342,7 @@ export class Preview3D{
       }
     }
 
-    for(const r of view.railings||[]) pushRailingPreview(objs,r,elevation);
+    for(const r of view.railings||[]) pushRailingPreview(objs,r,elevation+(Number(r.elevation)||0));
     return objs;
   }
   objects(){

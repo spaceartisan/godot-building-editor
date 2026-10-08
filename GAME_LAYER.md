@@ -37,7 +37,7 @@ Without a game layer, exports are byte-for-byte unchanged.
 }
 ```
 
-All sections are optional. `nodeMaterials` is described below with the others.
+All sections are optional.
 
 | Field | What it does |
 | --- | --- |

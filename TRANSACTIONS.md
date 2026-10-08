@@ -4,7 +4,7 @@ Transactions edit an existing building blueprint; `node cli.mjs new --out NEW.js
 
 ## Inspect, review, save
 
-Run these from the extracted editor directory. Every output path must be new:
+Run these from the extracted editor directory. Every output path must be new, unless `--replace` is given for a building JSON output. A recipe can also build from nothing in one step: `node cli.mjs new --ops recipe.edit.json --out building.json` (add `--replace` to re-run it onto the same output).
 
 ```bash
 node cli.mjs inspect examples/roof_attachment.building.json --entities --json

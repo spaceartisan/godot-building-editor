@@ -31,13 +31,14 @@ function profileInward(building,floor){
   const i=building.floors.indexOf(floor),view=floorView(building,i);
   return (view.walls||[]).filter(w=>w.wallTypeId).map(w=>{const n=profileWallState(view,w,exteriorWallOutsideSign,isExteriorWall).n;return {wallId:w.id,inwardSide:w.inwardSide||'auto',inward:{x:Math.round(n.x*1e6)/1e6+0,z:Math.round(n.z*1e6)/1e6+0}};});
 }
-const specs={new:['out','name'],edit:['ops','out','dry-run','warnings-as-errors'],validate:['warnings-as-errors','out','reachability','from'],inspect:['warnings-as-errors','entities','reachability','from'],export:['out','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors'],package:['out','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors','include-json'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision','render','views','out','surface-colors'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof','godot']};
+const specs={new:['out','name','ops','dry-run','warnings-as-errors','replace'],edit:['ops','out','dry-run','warnings-as-errors','replace'],validate:['warnings-as-errors','out','reachability','from'],inspect:['warnings-as-errors','entities','reachability','from'],export:['out','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors'],package:['out','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors','include-json'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision','render','views','out','surface-colors'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof','godot']};
 const values=new Set(['from','name','views','ops','out','profile','suite','godot','game-layer','assets','yaw','pitch','distance','floor','view','compare','overlay','roof','canvas','engine','timeout']);
 class CliError extends Error{constructor(message,code=2){super(message);this.code=code;}}
 const help=`Building Studio ${version}
 Usage: node cli.mjs COMMAND [FILES...] [OPTIONS]
 
   new --out NEW.json [--name TEXT]   Create a blank one-floor building (floor ID floor_1)
+  new --ops RECIPE --out NEW.json    Blank building plus a recipe in one step (or --dry-run)
   validate FILE... [--out NEW.json]   Validate; optionally save a check report
   inspect FILE... [--entities]   Inventory; optionally list authoring IDs/fields
     --reachability      Validate/inspect: warn about floor areas and stairs that
@@ -46,6 +47,7 @@ Usage: node cli.mjs COMMAND [FILES...] [OPTIONS]
                         from these interior points (sealed ships, bunkers)
   edit FILE --ops JSON --dry-run   Validate a transaction and show its diff
   edit FILE --ops JSON --out FILE  Save the validated edit to a NEW building JSON
+    --replace (new/edit) overwrite an existing building JSON output (never an input)
   export FILE... --out DIR   Export TSCNs and doors to a NEW directory
   package FILE... --out ZIP  Package those assets in a NEW ZIP
   preview FILE --out PNG     Software 3D preview (optional canvas dependency;
@@ -107,7 +109,12 @@ function parse(args){
   const needsFiles=['validate','inspect','export','package','preview','edit'].includes(command);
   if(needsFiles&&!files.length)throw new CliError(`${command} requires an input file`);
   if(!needsFiles&&files.length)throw new CliError(`${command} does not accept input files`);
-  if(['new','export','package','preview'].includes(command)&&!options.out)throw new CliError(`${command} requires --out`);
+  if(['export','package','preview'].includes(command)&&!options.out)throw new CliError(`${command} requires --out`);
+  if(command==='new'){
+    if((options['dry-run']||options['warnings-as-errors'])&&!options.ops)throw new CliError('--dry-run and --warnings-as-errors with new need --ops RECIPE');
+    if(!!options.out===!!options['dry-run'])throw new CliError('new requires exactly one of --out or --dry-run (with --ops)');
+  }
+  if(options.replace&&options['dry-run'])throw new CliError('--replace writes a file; it cannot be combined with --dry-run');
   if(command==='preview'&&files.length!==1)throw new CliError('preview accepts exactly one input');
   if(options['game-layer']){
     let text;try{text=fs.readFileSync(path.resolve(options['game-layer']),'utf8');}catch(e){throw new CliError(`--game-layer: ${e.message}`,2);}
@@ -206,6 +213,23 @@ function writeNewFile(out,data){
   fs.mkdirSync(path.dirname(out),{recursive:true});let fd;
   try{fd=fs.openSync(out,'wx');fs.writeFileSync(fd,data);}catch(e){if(fd!==undefined){fs.closeSync(fd);fd=undefined;fs.unlinkSync(out);}throw e;}finally{if(fd!==undefined)fs.closeSync(fd);}
 }
+// --replace (new/edit): overwrite an existing building JSON output, never an
+// input, a directory or a file that is not a building document.
+function replaceableOutput(value,inputs=[]){
+  const out=path.resolve(value);let stat;
+  try{stat=fs.lstatSync(out);}catch(e){if(e.code==='ENOENT')return out;throw e;}
+  if(!stat.isFile())throw new CliError(`--replace only replaces a building JSON file: ${out}`,3);
+  if(inputs.some(i=>{try{return fs.realpathSync(i)===fs.realpathSync(out);}catch{return false;}}))throw new CliError('--replace cannot overwrite an input file; write the result to another path',3);
+  let data;try{data=JSON.parse(fs.readFileSync(out,'utf8').replace(/^\uFEFF/,''));}catch{data=null;}
+  if(!data||!Array.isArray(data.floors)||typeof data.version!=='number')throw new CliError(`--replace only replaces a building JSON file (this one is not): ${out}`,3);
+  return out;
+}
+function replaceEditFile(out,data){
+  const parent=path.dirname(out);fs.mkdirSync(parent,{recursive:true});
+  const stage=fs.mkdtempSync(path.join(parent,'.building-edit-'));
+  try{const file=path.join(stage,'document.json');fs.writeFileSync(file,data,{flag:'wx'});fs.renameSync(file,out);}
+  finally{fs.rmSync(stage,{recursive:true,force:true});}
+}
 function writeEditFile(out,data){
   const parent=path.dirname(out);fs.mkdirSync(parent,{recursive:true});
   const stage=fs.mkdtempSync(path.join(parent,'.building-edit-'));
@@ -283,9 +307,19 @@ async function execute({command,options,files}){
     if(options.name!==undefined){if(!options.name.trim()||options.name.length>1024)throw new CliError('--name must be nonempty text of at most 1024 characters');blank.name=options.name;}
     const prepared=prepareDocument(blank);
     if(prepared.errors.length)throw new CliError(prepared.errors[0].message,1);
-    const output=JSON.stringify(prepared.building,null,2)+'\n',out=destination(options.out);
-    writeEditFile(out,output);
-    return {command,ok:true,output:out,floorId:'floor_1',resultSha256:createHash('sha256').update(output).digest('hex'),warnings:prepared.warnings,exitCode:0};
+    // new --ops: start from the blank document and apply a recipe in one step.
+    let building=prepared.building,report={warnings:prepared.warnings};
+    if(options.ops){
+      const transaction=load(path.resolve(options.ops)),result=applyTransaction(prepared.building,transaction.data,{warningsAsErrors:!!options['warnings-as-errors']});
+      const {building:edited,...rest}=result;report={...rest,transaction:path.resolve(options.ops)};
+      if(!result.ok)return {command,...report,dryRun:!!options['dry-run'],exitCode:1};
+      building=edited;
+    }
+    const output=JSON.stringify(building,null,2)+'\n',resultSha256=createHash('sha256').update(output).digest('hex');
+    if(options['dry-run'])return {command,ok:true,...report,floorId:'floor_1',dryRun:true,resultSha256,exitCode:0};
+    const out=options.replace?replaceableOutput(options.out):destination(options.out);
+    if(options.replace&&fs.existsSync(out))replaceEditFile(out,output);else writeEditFile(out,output);
+    return {command,ok:true,...report,output:out,floorId:'floor_1',resultSha256,exitCode:0};
   }
   if(command==='edit'){
     const input=load(files[0]),transaction=load(path.resolve(options.ops));
@@ -297,9 +331,9 @@ async function execute({command,options,files}){
     const output=JSON.stringify(building,null,2)+'\n';
     response.resultSha256=createHash('sha256').update(output).digest('hex');
     if(!options['dry-run']){
-      const out=destination(options.out);
+      const out=options.replace?replaceableOutput(options.out,[files[0],options.ops]):destination(options.out);
       if(!fs.readFileSync(files[0]).equals(input.bytes))throw new CliError('Source changed during editing; review and retry',1);
-      writeEditFile(out,output);response.output=out;
+      if(options.replace&&fs.existsSync(out))replaceEditFile(out,output);else writeEditFile(out,output);response.output=out;
     }
     return response;
   }

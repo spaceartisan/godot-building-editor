@@ -112,7 +112,8 @@ function parse(args){
   if(['export','package','preview'].includes(command)&&!options.out)throw new CliError(`${command} requires --out`);
   if(command==='new'){
     if((options['dry-run']||options['warnings-as-errors'])&&!options.ops)throw new CliError('--dry-run and --warnings-as-errors with new need --ops RECIPE');
-    if(!!options.out===!!options['dry-run'])throw new CliError('new requires exactly one of --out or --dry-run (with --ops)');
+    if(!options.out&&!options['dry-run'])throw new CliError('new requires --out (or --dry-run with --ops)');
+    if(options.out&&options['dry-run'])throw new CliError('new takes --out or --dry-run, not both');
   }
   if(options.replace&&options['dry-run'])throw new CliError('--replace writes a file; it cannot be combined with --dry-run');
   if(command==='preview'&&files.length!==1)throw new CliError('preview accepts exactly one input');

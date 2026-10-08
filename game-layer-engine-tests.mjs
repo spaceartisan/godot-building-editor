@@ -15,17 +15,27 @@ const write=(name,text)=>{const target=path.join(temp,'project',name);fs.mkdirSy
 try{
   write('project.godot','config_version=5\n[application]\nconfig/name="Game layer check"\n');
   write('materials/siding.tres','[gd_resource type="StandardMaterial3D" format=3]\n\n[resource]\nalbedo_color = Color(0.8, 0.2, 0.2, 1)\n');
+  write('materials/quarry.tres','[gd_resource type="StandardMaterial3D" format=3]\n\n[resource]\nalbedo_color = Color(0.6, 0.3, 0.2, 1)\n');
   write('materials/door.tres','[gd_resource type="StandardMaterial3D" format=3]\n\n[resource]\nalbedo_color = Color(0.2, 0.2, 0.8, 1)\n');
   write('scripts/building.gd','extends Node3D\nconst TAG := "building"\n');
   write('scripts/door.gd','extends Node3D\nconst TAG := "door"\n');
   write('scenes/receiver.tscn','[gd_scene format=3]\n\n[node name="Receiver" type="Node3D"]\n');
   fs.writeFileSync(path.join(temp,'layer.json'),JSON.stringify({version:1,
     materials:{OutsideFaces:'res://materials/siding.tres',Door:'res://materials/door.tres'},
+    nodeMaterials:[{match:'*FloorSlab_Kitchen',surface:'TopFaces',material:'res://materials/quarry.tres'}],
     layers:[{match:'*ExteriorWalls/OutsideFaces',layers:2},{match:'*',layers:4,in:'building'},{match:'*',layers:6,in:'doors'}],
     scripts:{building:'res://scripts/building.gd',door:'res://scripts/door.gd'},
     doorChildren:[{name:'UVResidue',scene:'res://scenes/receiver.tscn'}]}));
   run(['export',path.join(root,'examples/farmhouse.building.json'),'--out',path.join(temp,'project','building'),'--game-layer',path.join(temp,'layer.json')]);
   const scene=fs.readdirSync(path.join(temp,'project','building')).find(n=>n.endsWith('.tscn'));
+  // A diner split by room (slabsByRoom): only the kitchen floor gets quarry tile.
+  fs.writeFileSync(path.join(temp,'diner.edit.json'),JSON.stringify({version:1,operations:[{op:'building.update',value:{slabsByRoom:true}},
+    {op:'room.add',floorId:'floor_1',id:'d',value:{minX:-12,maxX:12,minZ:-8,maxZ:8}},{op:'wall.add',floorId:'floor_1',id:'k',value:{a:{x:4,z:-8},b:{x:4,z:8}}},
+    {op:'opening.add',floorId:'floor_1',id:'kd',value:{type:'door',wallId:'k',at:{x:4,z:0},width:.9,height:2.1}},
+    {op:'region.add',floorId:'floor_1',id:'kitchen',value:{minX:4,maxX:12,minZ:-8,maxZ:8,label:'Kitchen'}},{op:'region.add',floorId:'floor_1',id:'dining',value:{minX:-12,maxX:4,minZ:-8,maxZ:8,label:'Dining'}}]}));
+  run(['new','--ops',path.join(temp,'diner.edit.json'),'--out',path.join(temp,'diner.json')]);
+  run(['export',path.join(temp,'diner.json'),'--out',path.join(temp,'project','diner'),'--game-layer',path.join(temp,'layer.json')]);
+  const dinerScene=fs.readdirSync(path.join(temp,'project','diner')).find(n=>n.endsWith('.tscn'));
   write('check.gd',`extends SceneTree
 func _initialize() -> void:
 	var building: Node3D = (load("res://building/${scene}") as PackedScene).instantiate()
@@ -42,6 +52,12 @@ func _initialize() -> void:
 	report["doors_with_child"] = doors.filter(func(n): return n.has_node("UVResidue")).size()
 	var door_mesh: MeshInstance3D = doors[0].find_children("DoorMesh", "MeshInstance3D", true, false)[0]
 	report["door_layers"] = door_mesh.layers
+	var diner: Node3D = (load("res://diner/${dinerScene}") as PackedScene).instantiate()
+	var kitchen: MeshInstance3D = diner.find_children("FloorSlab_Kitchen", "MeshInstance3D", true, false)[0]
+	var dining: MeshInstance3D = diner.find_children("FloorSlab_Dining", "MeshInstance3D", true, false)[0]
+	report["kitchen_floor"] = kitchen.get_surface_override_material(0).resource_path
+	report["dining_floor_empty"] = dining.get_surface_override_material(0) == null and dining.mesh.surface_get_material(0) == null
+	diner.free()
 	print("GAME_LAYER " + JSON.stringify(report))
 	building.free()
 	quit(0)
@@ -58,5 +74,6 @@ func _initialize() -> void:
   assert.equal(report.side_layers,4);assert.equal(report.side_material_empty,true,'unmapped surfaces keep empty slots');
   assert.ok(report.doors_with_script>0);assert.equal(report.doors_with_child,report.doors_with_script,'every door gets the extra child');
   assert.equal(report.door_layers,6);
+  assert.equal(report.kitchen_floor,'res://materials/quarry.tres','per-room material via nodeMaterials');assert.equal(report.dining_floor_empty,true);
   console.log(`PASS game layer in Godot: materials by surface, render layers, building/door scripts and door children on ${report.doors_with_script} doors`);
 }finally{fs.rmSync(temp,{recursive:true,force:true});}

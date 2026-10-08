@@ -344,3 +344,22 @@ const base=ok(room('floor_1','w'));
   rejects([{op:'opening.update',floorId:'floor_1',id:'d',value:{leaves:2}}],/Roll-up doors have one curtain/,garage);
   console.log('PASS roll-up doors: curtain pivoted at the top hangs by the closed height, housing inside, open fraction rules');
 }
+{
+  // Feedback (Cascade Pass diner): floors and ceilings split by room (slabsByRoom).
+  const {exportGodotFiles,slabPiecesByRoom,floorRectanglesForView}=await import('./src/exporter.js');
+  const {floorView}=await import('./src/model.js'),{areaSize}=await import('./src/polygon-areas.js');
+  const ops=[{op:'room.add',floorId:'floor_1',id:'d',value:{minX:-12,maxX:12,minZ:-8,maxZ:8}},{op:'wall.add',floorId:'floor_1',id:'k',value:{a:{x:4,z:-8},b:{x:4,z:8}}},
+    {op:'region.add',floorId:'floor_1',id:'kitchen',value:{minX:4,maxX:12,minZ:-8,maxZ:2,label:'Kitchen'}},{op:'region.add',floorId:'floor_1',id:'rest',value:{minX:4,maxX:12,minZ:2,maxZ:8,label:'Restrooms'}}];
+  const whole=ok(ops),split=ok([{op:'building.update',value:{slabsByRoom:true}}],whole);
+  assert.equal(split.slabsByRoom,true);
+  const a=exportGodotFiles(whole).tscn,b=exportGodotFiles(split).tscn;
+  assert.deepEqual([...b.matchAll(/node name="(FloorSlab[^"]*|Ceiling[^"_]*(?:_[A-Z][^"]*)?)" type="MeshInstance3D"/g)].map(m=>m[1]),['FloorSlab_Kitchen','FloorSlab_Restrooms','FloorSlab','Ceiling_Kitchen','Ceiling_Restrooms','Ceiling']);
+  const collisions=t=>[...t.matchAll(/\[node name="(?:Floor|Ceiling)Collision_[^\]]*\]\n[^[]*/g)].map(m=>m[0]);
+  assert.deepEqual(collisions(b),collisions(a),'collision is unchanged');
+  const view=floorView(split,0),rects=floorRectanglesForView(view,[]),pieces=slabPiecesByRoom(split,view,rects);
+  const total=list=>list.reduce((s,r)=>s+areaSize(r),0);
+  assert.ok(Math.abs(pieces.reduce((s,p)=>s+total(p.areas),0)-total(rects))<1e-6,'the pieces cover the floor exactly once');
+  assert.equal('slabsByRoom' in ok([{op:'building.update',value:{slabsByRoom:false}}],split),false);
+  rejects([{op:'building.update',value:{slabsByRoom:'yes'}}],/Expected a boolean/);
+  console.log('PASS slabsByRoom: floor and ceiling meshes per labelled room plus the rest, same collision, exact coverage');
+}

@@ -410,3 +410,12 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   assert.ok(e.preview.scene.objects.length>0);assert.deepEqual(e.errors,[]);
   console.log('PASS web roll-up doors: Door type and Open fraction equal opening.update; leaving roll-up clears it');
 }
+{
+  // slabsByRoom: the building settings checkbox equals building.update slabsByRoom.
+  await e.loadBuildingData(structuredClone(blank));
+  const toggle=$('#slabs-by-room-toggle');assert.equal(toggle.checked,false);toggle.checked=true;await toggle.dispatch('change');
+  assert.equal(e.snapshot().slabsByRoom,true);assert.deepEqual(e.snapshot(),tx([{op:'building.update',value:{slabsByRoom:true}}]));
+  toggle.checked=false;await toggle.dispatch('change');assert.equal('slabsByRoom' in e.snapshot(),false);
+  assert.deepEqual(e.errors,[]);
+  console.log('PASS web Split floors and ceilings by room equals building.update slabsByRoom');
+}

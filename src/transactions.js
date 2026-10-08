@@ -30,7 +30,7 @@ function point(value,where){keys(value,['x','z'],where);number(value.x,`${where}
 const rectKeys=['minX','maxX','minZ','maxZ'];
 const GROUP_TYPES=['wall','opening','light','marker','stair','railing','region','slab','platform','manualFloor','manualCeiling','roofSection'];
 const fields={
-  building:['name','exportProfile','wallHeight','wallThickness','floorThickness','gridSize','roof','ceiling','doorMesh','windowMesh'],
+  building:['name','exportProfile','wallHeight','wallThickness','floorThickness','gridSize','roof','ceiling','doorMesh','windowMesh','slabsByRoom'],
   floor:['label','elevation','wallHeight','floorThickness','autoFloor','autoCeiling','boundaryMode'],
   platform:['label',...rectKeys,'kind','height','covered','steps'],
   stair:['label','x','z','width','run','direction','style','steps','blockBelow'],
@@ -79,6 +79,7 @@ function checkValue(kind,value,action,where){
       // Ranges match the web building settings and the shared validator.
       if(key==='name')text(v,p);
       else if(key==='exportProfile')choice(v,['generic','get_probed'],p);
+      else if(key==='slabsByRoom'){if(typeof v!=='boolean')fail('Expected a boolean',p);}
       else if(key==='roof'){
         keys(v,['type','pitch','overhang','flatTopHeight'],p);if(!Object.keys(v).length)fail('Provide at least one roof field',p);
         if(v.flatTopHeight!==undefined&&v.flatTopHeight!==null)number(v.flatTopHeight,`${p}/flatTopHeight`,0,100);
@@ -305,7 +306,7 @@ function applyOperation(building,op,index){
       else{
         // Profile stations at the old wall thickness follow the new one (shared with the web setting).
         if(key==='wallThickness')followWallThickness(building,building.wallThickness,value);
-        building[key]=value;
+        building[key]=value;if(key==='slabsByRoom'&&value===false)delete building.slabsByRoom;
       }
     }
     return;

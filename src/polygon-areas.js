@@ -91,3 +91,13 @@ export function polygonBoundary(areas){
   }
   return out;
 }
+// Areas clipped to convex cells (each cell's edge planes), as polygon areas.
+export function intersectPolygonAreas(areas,cells){
+  const out=[];
+  for(const area of areas)for(const cell of cells){
+    let points=areaPoints(area);
+    for(const {n,d} of edgePlanes(areaPoints(cell))){points=clipPolygon(points,n,d);if(!points.length)break;}
+    const piece=points.length?polygonArea(points):null;if(piece)out.push(piece);
+  }
+  return out;
+}

@@ -10,7 +10,7 @@ Start with [QUICKSTART.md](QUICKSTART.md) for the web workflow, Godot import ste
 
 ## Added in 1.5.0: feedback from a real game build
 
-An AI rebuilt a fast-food restaurant for GET PROBED with the tool and reported what got in the way. Each item is either fixed, added, or turned out to be possible already and is now documented. Every new capability works in both the CLI and the web editor, through the same shared code.
+An AI rebuilt a fast-food restaurant, a log cabin and a diner with a service garage for GET PROBED and reported what got in the way. Each item is either fixed, added, or turned out to be possible already and is now documented. Every new capability works in both the CLI and the web editor, through the same shared code.
 
 | Feedback | Outcome | CLI | Web editor |
 | --- | --- | --- | --- |
@@ -22,6 +22,10 @@ An AI rebuilt a fast-food restaurant for GET PROBED with the tool and reported w
 | Game setup redone after every export | **Added** an optional game layer: materials by surface name, render layers, building/door scripts and door child scenes ([GAME_LAYER.md](GAME_LAYER.md)) | `export`/`package --game-layer FILE` | Godot Export **Game layer…** |
 | `preview` needs `@napi-rs/canvas` with no fallback | **Added** a Godot aerial-render fallback when `--godot`/`GODOT_BIN` is set; Windows install steps in PREVIEWS.md | `preview` | Not needed (the browser draws the preview) |
 | Manual ceiling always triggered a warning | **Fixed.** The height-review warning lists only surfaces that existed before the transaction and kept their height | `edit` | Not affected (each web edit is a single change) |
+| One floor slab per floor, one material | **Added** `slabsByRoom`: floors and ceilings split into one mesh per labelled room region (`FloorSlab_Kitchen`, …), same collision; per-room materials with the game layer's `nodeMaterials` | `building.update slabsByRoom` | Building settings **Split floors and ceilings by room** |
+| No roll-up door | **Added** `rollup` door style: curtain, side guides and a drum housing inside; `openFraction` exports it partly open | opening `doorStyle: "rollup"`, `openFraction` | Door type **Roll-up door**, **Open fraction** |
+| No porch, deck or veranda | **Mostly possible already** (porch platforms with posts and the roof over them). **Added** porch `steps` and railing `elevation` so railings stand on the deck; a shed porch roof is a manual roof (recipe in LLM_GUIDE) | `platform` `steps`, `railing` `elevation` | Platform **Steps**, railing **Elevation above floor** |
+| Two commands per building; outputs never overwritten | **Added** `new --ops RECIPE` (one step) and `--replace` to re-run onto an existing building JSON | `new --ops`, `--replace` | Not applicable (no recipe files) |
 | Slab at y = 0 z-fights with terrain | **Already possible**: set the ground floor's elevation (for example 0.04 m); the floors above follow (tip in LLM_GUIDE) | `floor.update elevation` | Floor panel **Elevation** |
 
 ## Added in 1.4.0: Kestrel starship stress test and code audit

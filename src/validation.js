@@ -32,6 +32,7 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
   for(const [k,min,max] of [['wallHeight',.2,1000],['wallThickness',.001,100],['floorThickness',.001,100],['gridSize',.001,1000]])number(building[k],k,min,max);
   if(building.name!=null&&typeof building.name!=='string')error('name','must be text');
   if(building.exportProfile!=null&&!['generic','get_probed'].includes(building.exportProfile))error('exportProfile','unknown profile');
+  if(building.slabsByRoom!==undefined&&typeof building.slabsByRoom!=='boolean')error('slabsByRoom','slabsByRoom must be true or false');
   for(const k of ['roof','ceiling','windowMesh','doorMesh']){
     const cfg=building[k];if(cfg==null)continue;
     if(typeof cfg!=='object'||Array.isArray(cfg)){error(k,'must be an object');continue;}

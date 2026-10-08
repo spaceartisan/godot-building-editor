@@ -241,6 +241,7 @@
               <label>Default wall height <input id="wall-height" type="number" min="1" step="0.1" value="2.8" title="Full wall height. Automatic upper elevations add the upper slab thickness." /></label>
               <label>Wall thickness <input id="wall-thickness" type="number" min="0.05" step="0.05" value="0.18" /></label>
               <label>Floor / platform thickness <input id="floor-thickness" type="number" min="0.05" step="0.05" value="0.18" title="Used by building floor slabs and porch/deck slabs." /></label>
+              <label class="checkbox" title="Export each labelled room region's automatic floor and ceiling as its own mesh (FloorSlab_Kitchen, Ceiling_Kitchen, …) so rooms can take different materials and fewer lights affect each mesh. Collision is unchanged. Same as building.update slabsByRoom."><input id="slabs-by-room-toggle" type="checkbox" /> Split floors and ceilings by room</label>
               <div class="option-group">
                 <h3>Automatic surface defaults</h3>
                 <label>Ceiling thickness <input id="ceiling-thickness" type="number" min="0.02" step="0.01" value="0.12" title="Default thickness for automatically generated ceilings and newly drawn manual ceilings." /></label>

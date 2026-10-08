@@ -4,7 +4,8 @@ import { profileWallState, profileWallSolids } from './wall-profile-geometry.js'
 import { polygonSlabFaces } from './polygon-geometry.js';
 import { roofFootprintAreas, manualRoofOverhang } from './roof-outline.js';
 import { applyGameLayer } from './game-layer.js';
-import { areaPoints, unionPolygonAreas, subtractPolygonAreas } from './polygon-areas.js';
+import { areaPoints, areaSize, polygonArea, unionPolygonAreas, subtractPolygonAreas, intersectPolygonAreas } from './polygon-areas.js';
+import { regionAreaCells } from './regions.js';
 import { roofBoxParts, roofInteriorBlockers, roofAttachmentBlockers, trimRoofBox, trimmedGableEnds } from './roof-geometry.js';
 import { higherFloorBlockerRectangles, exteriorFootprintRectangles, unionRectAreas, automaticRoofRectangles, automaticRoofSections, boundsOfAutomaticRoof, boundsOfBuilding, boundsOfStructuralFloor, constrainedOpening, floorElevation, floorView, findWall, manualCeilingRectanglesAtLevel, manualFloorRectanglesAtLevel, pointOnWall, rectValid, roofSectionsForFloor, stairFootprint, storyHeight, structuralFloorRectangles, subtractRectAreas, splitWallIntoSolidSegments, validateOpeningLayout, wallLength } from './model.js';
 import { wallSolidPlanes, unionFaceWriter, junctionMiters } from './wall-union.js';
@@ -1572,6 +1573,24 @@ export function exportDoorTscn(building, opening, options={}) {
   return finalizeScene(`[gd_scene load_steps=${loadSteps} format=3]\n\n${sceneResources.join('\n\n')}\n\n${sceneNodes.join('\n\n')}\n`,options);
 }
 
+// building.slabsByRoom: split a story's automatic floor/ceiling areas by its
+// labelled solid or label regions (first region wins an overlap). Pieces are
+// named after the region; the rest keeps the plain name. Off: one piece.
+export function slabPiecesByRoom(building,view,areas){
+  if(building.slabsByRoom!==true)return [{suffix:'',room:null,areas}];
+  const rooms=(view.regions||[]).filter(r=>r.effect!=='void'&&typeof r.label==='string'&&r.label.trim()&&rectValid(r));
+  if(!rooms.length)return [{suffix:'',room:null,areas}];
+  const out=[],used=new Set();let rest=areas.map(a=>a.polygon?a:polygonArea(areaPoints(a))).filter(Boolean);
+  for(const region of rooms){
+    const cells=regionAreaCells(region),inside=intersectPolygonAreas(rest,cells).filter(a=>areaSize(a)>1e-6);
+    if(!inside.length)continue;
+    rest=subtractPolygonAreas(rest,cells);
+    let suffix='_'+nodeClean(region.label),n=2;while(used.has(suffix.toLowerCase()))suffix=`_${nodeClean(region.label)}_${n++}`;used.add(suffix.toLowerCase());
+    out.push({suffix,room:region.label.replace(/["\\]/g,''),areas:inside});
+  }
+  return rest.some(a=>areaSize(a)>1e-6)?[...out,{suffix:'',room:null,areas:rest.filter(a=>areaSize(a)>1e-6)}]:out;
+}
+
 export function exportGodotTscn(building, options={collision:true, markers:true}, suppliedDoorScenes=null) {
   options={collision:true,markers:true,...options};
   assertValidBuilding(building);
@@ -1834,17 +1853,21 @@ editor_description = "Interior wall tops, bottoms, jambs, and exposed ends."`);
       if(view.autoFloor!==false){
         const manualFloorOverrides=manualFloorRectanglesAtLevel(building,elevation,surfaceTol);
         const floorRects=subtractRectAreas(floorRectanglesForView(view,belowStairs),manualFloorOverrides);
-        const floorFaces=buildSlabFaceMeshData(floorRects,view.floorThickness,0);
-        const floorMeshId=`${prefix}FloorMesh`;
-        const floorRes=multiSurfaceArrayMeshResource([
-          {mesh:floorFaces.top,materialId:matFloorTop,surfaceName:'TopFaces'},
-          {mesh:floorFaces.bottom,materialId:matFloorBottom,surfaceName:'BottomFaces'},
-          {mesh:floorFaces.edges,materialId:matFloorEdge,surfaceName:'EdgeFaces'}
-        ],floorMeshId);
-        if(floorRes)resources.push(floorRes.text);
-        if(floorRes)nodes.push(`[node name="FloorSlab" type="MeshInstance3D" parent="${floorName}/Geometry"]
+        // slabsByRoom: one mesh per labelled room region (materials per room,
+        // fewer lights per mesh); collision below stays whole.
+        for(const piece of slabPiecesByRoom(building,view,floorRects)){
+          const floorFaces=buildSlabFaceMeshData(piece.areas,view.floorThickness,0);
+          const floorMeshId=`${prefix}FloorMesh${piece.suffix}`;
+          const floorRes=multiSurfaceArrayMeshResource([
+            {mesh:floorFaces.top,materialId:matFloorTop,surfaceName:'TopFaces'},
+            {mesh:floorFaces.bottom,materialId:matFloorBottom,surfaceName:'BottomFaces'},
+            {mesh:floorFaces.edges,materialId:matFloorEdge,surfaceName:'EdgeFaces'}
+          ],floorMeshId);
+          if(floorRes)resources.push(floorRes.text);
+          if(floorRes)nodes.push(`[node name="FloorSlab${piece.suffix}" type="MeshInstance3D" parent="${floorName}/Geometry"]
 mesh = SubResource("${floorMeshId}")
-editor_description = "Automatic floor mesh after independent manual-floor overrides. Surfaces: TopFaces, BottomFaces, EdgeFaces."`);
+editor_description = "${piece.room?`Automatic floor of ${piece.room}. `:'Automatic floor mesh after independent manual-floor overrides. '}Surfaces: TopFaces, BottomFaces, EdgeFaces."`);
+        }
         if(options.collision){
           for(let pi=0;pi<floorRects.length;pi++){
             if(floorRects[pi].polygon){
@@ -1871,19 +1894,22 @@ shape = SubResource("${shapeId}")`);
         // With roof none the ceiling's top is open to view, and it lies in the
         // plane of the wall-top caps where it runs under the walls; clip it out
         // there so the two do not z-fight.
-        const ceilingTop=meshWriter(),openTop=building.roof?.type==='none'&&view.walls.length;
-        const topWriter=openTop?unionFaceWriter(ceilingTop,Infinity,hasProfileWalls(view)?profileWallSolids(view,exteriorWallOutsideSign,isExteriorWall):wallUnionSolids(view)):ceilingTop;
-        const ceilingFaces={...buildSlabFaceMeshData(ceilingRects,t,view.wallHeight,{top:topWriter}),top:ceilingTop};
-        const ceilingMeshId=`${prefix}CeilingMesh`;
-        const ceilingRes=multiSurfaceArrayMeshResource([
-          {mesh:ceilingFaces.bottom,materialId:matCeilingBottom,surfaceName:'RoomFaces'},
-          {mesh:ceilingFaces.top,materialId:matCeilingTop,surfaceName:'RoofSideFaces'},
-          {mesh:ceilingFaces.edges,materialId:matCeilingEdge,surfaceName:'EdgeFaces'}
-        ],ceilingMeshId);
-        if(ceilingRes)resources.push(ceilingRes.text);
-        if(ceilingRes)nodes.push(`[node name="Ceiling" type="MeshInstance3D" parent="${floorName}/Geometry"]
+        const openTop=building.roof?.type==='none'&&view.walls.length;
+        const wallSolids=openTop?(hasProfileWalls(view)?profileWallSolids(view,exteriorWallOutsideSign,isExteriorWall):wallUnionSolids(view)):null;
+        for(const piece of slabPiecesByRoom(building,view,ceilingRects)){
+          const ceilingTop=meshWriter(),topWriter=openTop?unionFaceWriter(ceilingTop,Infinity,wallSolids):ceilingTop;
+          const ceilingFaces={...buildSlabFaceMeshData(piece.areas,t,view.wallHeight,{top:topWriter}),top:ceilingTop};
+          const ceilingMeshId=`${prefix}CeilingMesh${piece.suffix}`;
+          const ceilingRes=multiSurfaceArrayMeshResource([
+            {mesh:ceilingFaces.bottom,materialId:matCeilingBottom,surfaceName:'RoomFaces'},
+            {mesh:ceilingFaces.top,materialId:matCeilingTop,surfaceName:'RoofSideFaces'},
+            {mesh:ceilingFaces.edges,materialId:matCeilingEdge,surfaceName:'EdgeFaces'}
+          ],ceilingMeshId);
+          if(ceilingRes)resources.push(ceilingRes.text);
+          if(ceilingRes)nodes.push(`[node name="Ceiling${piece.suffix}" type="MeshInstance3D" parent="${floorName}/Geometry"]
 mesh = SubResource("${ceilingMeshId}")
-editor_description = "Automatic ceiling mesh after independent manual-ceiling overrides. Surfaces: RoomFaces, RoofSideFaces, EdgeFaces."`);
+editor_description = "${piece.room?`Automatic ceiling of ${piece.room}. `:'Automatic ceiling mesh after independent manual-ceiling overrides. '}Surfaces: RoomFaces, RoofSideFaces, EdgeFaces."`);
+        }
         if(options.collision){
           for(let pi=0;pi<ceilingRects.length;pi++){
             if(ceilingRects[pi].polygon){

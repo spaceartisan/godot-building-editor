@@ -28,7 +28,7 @@ Know the scope before planning. The tool makes the building shell; materials, na
 | Stairs/platforms | Add, update, remove transactions; `stair.guard` rails a flight's opening on the floor above | Stairs connect adjacent floors; independent pieces do not automatically follow platform edits |
 | Wall/door shapes | Web dialogs; `wallType.add/update/remove`, `openingShape.add/update/remove`, `wall.add/update` `wallTypeId`/`inwardSide`/`inwardToward`, opening `shapeId` | Doorway shapes are door-only and must reach the floor |
 | Parapets and guards | `wall.crenellate` (crenels as empty windows), `railing.add/update/remove` | Wall thickness remains building-wide |
-| Lights | `light.add/update/remove` (omni lights, web light tool defaults) | Exported as `OmniLight3D` per floor |
+| Lights | `light.add/update/remove` (omni lights, web light tool defaults) | Exported as `OmniLight3D` per floor; placeholders for where lights go, to be replaced or tuned in Godot |
 | Markers, Floor Footprints, manual floors/ceilings | `marker.*`, `slab.*` (Floor Footprints), `manualFloor.*`/`manualCeiling.*` (building-level, absolute `topY`) | Manual surfaces keep absolute heights when floors change |
 | Move a selection | `group.move` (`items`, `delta`, `connected`) | Same guards as the web Move selection |
 | Inspect appearance | Web 3D preview; CLI `preview` with floor/roof views, comparisons and overlays | Optional canvas dependency for PNGs; no CLI plan/collision-overlay mode |

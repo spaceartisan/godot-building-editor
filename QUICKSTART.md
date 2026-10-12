@@ -32,7 +32,8 @@ The export is the building shell. These are done in Godot or by the game, not by
 - materials and textures (or a [game layer](GAME_LAYER.md) that assigns them on every export);
 - navigation: bake a navmesh from the exported collision;
 - door scripts and animation (the hinge, `Hinge2` and `Curtain` pivots are ready for them);
-- gameplay nodes, lighting setup (environment, GI, lightmaps), furniture and props, terrain and placement.
+- lighting: exported lights are placeholders marking positions; replace or tune them, and set up environment, GI and lightmaps;
+- gameplay nodes, furniture and props, terrain and placement.
 
 Keep these outside the generated scenes (a parent or inherited scene), since re-exporting replaces the `.tscn` files.
 

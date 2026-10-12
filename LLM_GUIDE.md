@@ -77,6 +77,43 @@ For a custom transaction:
 
 An empty version-1 operations list can save an explicit normalized copy. A failed transaction publishes no candidate. `operations` in a failed report describes attempted steps, not committed edits. Local move constraints must pass at the step where they occur; final reference and geometry validation evaluates the completed transaction. There is no implicit cascade: removing a wall needs explicit handling of its openings, and deleting a roof host needs explicit child detach/remove/rehost operations.
 
+### New buildings: generate the recipe with a script
+
+For anything beyond a few walls, write a short script that generates the recipe, then build it in one step. This is the expected route for real buildings, not a workaround: recipes stay plain, reviewable data, and the script holds the loops and arithmetic. GET PROBED's ~15 buildings were made this way (with Python); any language works. This Node script needs no dependencies:
+
+```js
+// make-recipe.mjs: writes shop.edit.json for `node cli.mjs new --ops`.
+import fs from 'node:fs';
+const ops=[];
+const wall=(id,a,b,role='interior')=>ops.push({op:'wall.add',floorId:'floor_1',id,value:{a:{x:a[0],z:a[1]},b:{x:b[0],z:b[1]},role}});
+const door=(id,wallId,at,width,doorStyle='room',extra={})=>ops.push({op:'opening.add',floorId:'floor_1',id,value:{type:'door',wallId,at:{x:at[0],z:at[1]},width,height:2.1,doorStyle,...extra}});
+const room=(id,label,minX,maxX,minZ,maxZ)=>ops.push({op:'region.add',floorId:'floor_1',id,value:{minX,maxX,minZ,maxZ,label}});
+ops.push({op:'room.add',floorId:'floor_1',id:'shell',value:{minX:-8,maxX:8,minZ:-5,maxZ:5}});
+wall('back',[3,-5],[3,5]);
+door('entry','shell-north',[-3,-5],1.8,'exterior',{leaves:2});
+door('kitchen','back',[3,0],0.9);
+for(let i=0;i<3;i++)ops.push({op:'opening.add',floorId:'floor_1',id:`win${i}`,value:{type:'window',wallId:'shell-south',at:{x:-6+i*4,z:5},width:1.2,height:1.1,sill:1}});
+room('dining','Dining',-8,3,-5,5);room('kitchen_area','Kitchen',3,8,-5,5);
+ops.push({op:'building.update',value:{slabsByRoom:true,roof:{type:'hip',pitch:30}}});
+fs.writeFileSync('shop.edit.json',JSON.stringify({version:1,operations:ops},null,1));
+```
+
+```bash
+node make-recipe.mjs
+node cli.mjs new --ops shop.edit.json --out shop.building.json --warnings-as-errors   # add --replace to re-run
+node cli.mjs validate shop.building.json --reachability
+node cli.mjs export shop.building.json --out shop-scenes
+```
+
+Tips from real builds:
+
+- `room.add` makes a closed rectangle of four walls (`<id>-north/-east/-south/-west`, north is −Z). Interior walls can end anywhere along another wall (a T).
+- An exterior outline closes only at shared endpoints. Where an exterior wall ends partway along another exterior wall, `wall.split` that wall at the meeting point. After a split, the original keeps end A and the new piece (`newId`) takes the rest, so place later openings on the right piece.
+- Place openings with `at: {x, z}` (a world point on the wall) instead of computing `t`.
+- A recipe's top-level `points` names coordinates once (see TRANSACTIONS.md) if you are not using a script.
+- `new --ops` and `edit` never overwrite an existing file unless `--replace` is given (and never an input).
+- Labels become node and file names (`Door_001_Front_entrance`, `FloorSlab_Kitchen`), so meaningful labels give readable scenes.
+
 ## 4. Read machine output correctly
 
 Use subprocess argument arrays rather than shell interpolation when automating filenames. Quote paths in shell examples. Input/output paths are caller-relative, while bundled catalog/test resources are installation-relative. Place flags before `--` when passing filenames beginning with a dash. Shells expand globs; an unmatched literal glob is a missing input.
@@ -92,6 +129,28 @@ Destinations must be new. Unknown/repeated flags are errors. There is no `--forc
 `validate --out` deliberately saves diagnostics for invalid or missing inputs while retaining failure exit codes. Its saved file uses the portable check-report envelope; stdout retains the CLI command-response envelope. See [CHECK_REPORTS.md](CHECK_REPORTS.md). Targets are scoped navigation references and can be missing/ambiguous; they are not automatic repair instructions.
 
 Authored diffs use JSON Pointer paths but are reports, not executable patches. Added/removed objects in ID'd arrays are per-ID `add`/`remove` entries whose `path` names the array (with `id` and `index`); arrays without unique IDs or with reordered IDs still appear as one `replace`. `null` overrides mean automatic/default only for fields documented that way. `before:null`/`after:null` in derived reports mean addition/removal or unavailable state as documented; never interpret them as zero elevation or zero rise. Manual surfaces listed in alignment review are context, not proof of a collision.
+
+### Exported node and file names
+
+Games hook into exported scenes by node name, so these names are a contract. `NNN` is a 1-based counter; `<Label>` is the authored label with spaces and punctuation turned into `_`.
+
+| What | Name |
+| --- | --- |
+| Scene root | `<Building_Name>`; file `<building_name>.tscn` |
+| Per story | `Floor_01`, `Floor_02`, … each with `Geometry`, `Collision` (StaticBody3D) and `Openings` (Marker3D per opening); `Lights`, `Markers` when present |
+| Exterior walls | `Floor_NN/Geometry/Walls/ExteriorWalls/OutsideFaces`, `InsideFaces`, `EdgeFaces` |
+| Interior walls | `Floor_NN/Geometry/Walls/InteriorWalls/SideAFaces`, `SideBFaces`, `EdgeFaces` |
+| Floor and ceiling | `Floor_NN/Geometry/FloorSlab` (surfaces `TopFaces`/`BottomFaces`/`EdgeFaces`) and `Ceiling` (`RoomFaces`/`RoofSideFaces`/`EdgeFaces`); with `slabsByRoom`, `FloorSlab_<Room>` and `Ceiling_<Room>` per labelled room |
+| Automatic roof | `Floor_NN/Geometry/Roof/Roof_NNN_North`, `_South`, `RidgeCap_NNN` (hip: `_Hip_NN`, mansard top `_Top`) |
+| Manual roofs | Root `ManualRoofs/ManualRoof_NNN_<Type>…` |
+| Windows | `Floor_NN/Geometry/Windows/Window_NNN_<Label>` (surfaces `Frame`/`Glass`), collision `Floor_NN/Collision/Window_NNN_<Label>_Collision` |
+| Doors | `Floor_NN/Geometry/Doors/Door_NNN_<Label>`, instancing `doors/<building>_fNN_door_NNN_<label>.tscn` |
+| Door scenes | Root `Door`, `Frame`, `Hinge` (`DoorMesh`, `AnimatableBody3D/CollisionShape3D`); double leaves (`leaves: 2` or closet) add `Hinge2`; roll-up doors use `Curtain` and `Housing`; GET PROBED profile adds `InteractionArea` |
+| Platforms, railings, stairs | `Floor_NN/Geometry/Platforms/Porch_NNN_<Label>` (`_Post_NNN`, `_Beam_NNN`, `_Step_NN`), `Railings/Railing_NNN_<Label>`, `Stairs/…` |
+
+**Export profile.** `generic` (the default) uses the groups `building_lights` and `sight_transparent` and door collision layer/mask 1. `get_probed` adds GET PROBED's groups (`paranormal_lights`, `scare_sight_transparent`), door layer 4/mask 2 and the door `InteractionArea`. `node cli.mjs new` writes `exportProfile: "generic"`; `--profile` on `export`/`package` overrides the blueprint. Since 1.5.0 a blueprint without the field exports as `generic` (before, `get_probed`).
+
+**After export.** Materials are empty and doors carry no script by design: the game owns them. Assign materials by surface name, set render layers, attach door scripts and add per-door child scenes in one step with a [game layer](GAME_LAYER.md) file (`--game-layer`). Gameplay nodes such as room `Area3D`s, navigation or shelter zones remain the game's own post-processing.
 
 ## 5. Geometry conventions and common pitfalls
 
@@ -116,6 +175,14 @@ Authored diffs use JSON Pointer paths but are reports, not executable patches. A
 - Separate shell meshes and per-story organization are deliberate light-budget controls. Preserve their boundaries, surface names, IDs and collision correspondence. Empty material slots are expected. The generic profile is reusable; preserve an existing GET PROBED profile unless the user requests conversion.
 
 Keep the supplied barn's large ground-level entrance and closed upper gable. The root `farmhouse_example.building.json` intentionally has a stair/wall warning and differs from the supplied `examples/farmhouse.building.json`. Use catalog expectations to identify deliberate fixtures.
+
+### Wall thickness
+
+- `wallThickness` is **one building-wide setting** (`building.update`); there is no separate exterior/interior thickness. Changing it moves every Standard wall, and is the warning-free way to make all walls thicker.
+- Walls that differ use a **wall type**: `wallType.add` with `stations` of `{height, offset, thickness}` (height is a 0–1 fraction, offset positive inward), then `wall.add`/`wall.update` with `wallTypeId` (or `room.add` with `wallTypeId`). Plain Standard walls have no per-wall thickness.
+- **Thicker exterior shell** (e.g. 0.30 m brick on 0.18 m interiors): a type with `thickness: 0.3` and `offset: -0.06` at heights 0 and 1 keeps the inside face where a Standard wall's would be and grows the wall outward. Expect one review warning per typed wall ("profile changes the floor/top edge"), so strict `--warnings-as-errors` runs fail. Floors and ceilings are unaffected; a gable roof's end fill uses the building thickness and shows a ledge on the thicker wall, so prefer hip or flat roofs, or set the building `wallThickness` instead.
+- **A facade on one side only:** the same type on just those walls. Roof fitting needs matching thickness at exterior corners, so a typed wall meeting a Standard wall at a corner adds a "roof fitting needs matching wall thickness" warning there.
+- Typed (shaped) walls cannot end midway along another wall, so interior partitions that form T-junctions should stay Standard.
 
 ## 6. Efficient web use and review
 

@@ -1,6 +1,7 @@
 {
   "version": 9,
   "name": "Barn_v2",
+  "exportProfile": "get_probed",
   "wallHeight": 2.8,
   "wallThickness": 0.18,
   "floorThickness": 0.18,

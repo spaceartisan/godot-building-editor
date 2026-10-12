@@ -40,7 +40,7 @@ try{
   const legacy=write('legacy.json',{walls:[],openings:[]});
   const preparedA=prepareDocument(JSON.parse(fs.readFileSync(legacy))),preparedB=prepareDocument(JSON.parse(fs.readFileSync(legacy)));
   assert.deepEqual(preparedA,preparedB,'Missing IDs are deterministic');
-  assert.equal(preparedA.building.exportProfile,'get_probed');
+  assert.equal(preparedA.building.exportProfile,'generic','no profile: generic (GET PROBED is opt-in since 1.5.0)');
   const authored=JSON.parse(before),copy=structuredClone(authored);
   const shared=prepareDocument(authored);assert.deepEqual(authored,copy);
   assert.deepEqual(shared.building,normalizeBuilding(structuredClone(authored)),'CLI preparation matches existing web normalization for authored IDs');

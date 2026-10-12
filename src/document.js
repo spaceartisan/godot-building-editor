@@ -69,7 +69,9 @@ export function normalizeFloor(floor,index,idFactory=uid){
 }
 
 export function normalizeBuilding(data,{idFactory=uid}={}){
-  data.exportProfile ||= 'get_probed';
+  // A blueprint without a profile exports as generic Godot (since 1.5.0; older
+  // GET PROBED blueprints set exportProfile or pass --profile get_probed).
+  data.exportProfile ||= 'generic';
   const defaults=makeEmptyBuilding();
   for(const key of ['name','wallHeight','wallThickness','floorThickness','gridSize'])data[key] ??= defaults[key];
   data.version=data.openingShapes?.length?10:9;

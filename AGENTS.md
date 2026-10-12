@@ -1,6 +1,6 @@
 # Building Studio: agent entry point
 
-Read [LLM_GUIDE.md](LLM_GUIDE.md) before authoring buildings or changing this tool. It maps the existing capabilities, tested command workflow, geometry constraints and verification evidence. Use [CLI.md](CLI.md) for flags and [TRANSACTIONS.md](TRANSACTIONS.md) for exact operation fields.
+Read [LLM_GUIDE.md](LLM_GUIDE.md) before authoring buildings or changing this tool. The CLI is a working authoring tool, used for a shipped game's buildings on Windows and Linux: author buildings with it (a script that writes a recipe, then `new --ops`, `validate`, `export`; LLM_GUIDE §3) rather than writing your own geometry generator. It maps the existing capabilities, tested command workflow, geometry constraints and verification evidence. Use [CLI.md](CLI.md) for flags and [TRANSACTIONS.md](TRANSACTIONS.md) for exact operation fields.
 
 ## Current maintenance direction
 

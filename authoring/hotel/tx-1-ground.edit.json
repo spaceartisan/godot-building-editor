@@ -1,0 +1,943 @@
+{
+  "version": 1,
+  "operations": [
+    {
+      "op": "building.update",
+      "value": {
+        "name": "Meridian Hotel",
+        "wallThickness": 0.2,
+        "wallHeight": 3,
+        "floorThickness": 0.25,
+        "roof": {
+          "type": "flat"
+        },
+        "slabsByRoom": true
+      }
+    },
+    {
+      "op": "floor.update",
+      "id": "floor_1",
+      "value": {
+        "label": "Ground floor",
+        "wallHeight": 3.6
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "floor_1-ext-n",
+      "value": {
+        "a": {
+          "x": -20,
+          "z": -8
+        },
+        "b": {
+          "x": 20,
+          "z": -8
+        },
+        "role": "exterior",
+        "label": "North facade"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "floor_1-ext-e",
+      "value": {
+        "a": {
+          "x": 20,
+          "z": -8
+        },
+        "b": {
+          "x": 20,
+          "z": 8
+        },
+        "role": "exterior",
+        "label": "East facade"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "floor_1-ext-s",
+      "value": {
+        "a": {
+          "x": 20,
+          "z": 8
+        },
+        "b": {
+          "x": -20,
+          "z": 8
+        },
+        "role": "exterior",
+        "label": "South facade"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "floor_1-ext-w",
+      "value": {
+        "a": {
+          "x": -20,
+          "z": 8
+        },
+        "b": {
+          "x": -20,
+          "z": -8
+        },
+        "role": "exterior",
+        "label": "West facade"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "floor_1-cor-nw",
+      "value": {
+        "a": {
+          "x": -20,
+          "z": -1
+        },
+        "b": {
+          "x": -3.75,
+          "z": -1
+        },
+        "role": "interior",
+        "label": "Corridor north west"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "floor_1-cor-ne",
+      "value": {
+        "a": {
+          "x": 2.6,
+          "z": -1
+        },
+        "b": {
+          "x": 20,
+          "z": -1
+        },
+        "role": "interior",
+        "label": "Corridor north east"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "floor_1-core-w",
+      "value": {
+        "a": {
+          "x": -15,
+          "z": -8
+        },
+        "b": {
+          "x": -15,
+          "z": -1
+        },
+        "role": "interior",
+        "label": "West stair core"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "floor_1-d-core-w",
+      "value": {
+        "type": "door",
+        "wallId": "floor_1-cor-nw",
+        "at": {
+          "x": -17.5,
+          "z": -1
+        },
+        "label": "West stair door",
+        "width": 1,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "floor_1-r-core-w",
+      "value": {
+        "label": "West stair",
+        "minX": -20,
+        "maxX": -15,
+        "minZ": -8,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "floor_1-d-exit-w",
+      "value": {
+        "type": "door",
+        "wallId": "floor_1-ext-n",
+        "at": {
+          "x": -16.25,
+          "z": -8
+        },
+        "label": "West fire exit",
+        "width": 1,
+        "height": 2.1,
+        "doorStyle": "exterior"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "floor_1-core-e",
+      "value": {
+        "a": {
+          "x": 15,
+          "z": -8
+        },
+        "b": {
+          "x": 15,
+          "z": -1
+        },
+        "role": "interior",
+        "label": "East stair core"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "floor_1-d-core-e",
+      "value": {
+        "type": "door",
+        "wallId": "floor_1-cor-ne",
+        "at": {
+          "x": 17.5,
+          "z": -1
+        },
+        "label": "East stair door",
+        "width": 1,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "floor_1-r-core-e",
+      "value": {
+        "label": "East stair",
+        "minX": 15,
+        "maxX": 20,
+        "minZ": -8,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "floor_1-d-exit-e",
+      "value": {
+        "type": "door",
+        "wallId": "floor_1-ext-n",
+        "at": {
+          "x": 16.25,
+          "z": -8
+        },
+        "label": "East fire exit",
+        "width": 1,
+        "height": 2.1,
+        "doorStyle": "exterior"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "floor_1-bay-w",
+      "value": {
+        "a": {
+          "x": -3.75,
+          "z": -8
+        },
+        "b": {
+          "x": -3.75,
+          "z": -1
+        },
+        "role": "interior",
+        "label": "Lift bay west"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "floor_1-bay-e",
+      "value": {
+        "a": {
+          "x": 3.75,
+          "z": -8
+        },
+        "b": {
+          "x": 3.75,
+          "z": -1
+        },
+        "role": "interior",
+        "label": "Lift bay east"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "floor_1-linen",
+      "value": {
+        "a": {
+          "x": -3.75,
+          "z": -3.4
+        },
+        "b": {
+          "x": 2.6,
+          "z": -3.4
+        },
+        "role": "interior",
+        "label": "Luggage room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "floor_1-d-passage",
+      "value": {
+        "type": "door",
+        "wallId": "floor_1-cor-ne",
+        "at": {
+          "x": 3.175,
+          "z": -1
+        },
+        "label": "Luggage door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "floor_1-r-linen",
+      "value": {
+        "label": "Luggage room",
+        "minX": -3.75,
+        "maxX": 3.75,
+        "minZ": -8,
+        "maxZ": -3.4
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "floor_1-r-lifts",
+      "value": {
+        "label": "Lift lobby",
+        "minX": -3.75,
+        "maxX": 3.75,
+        "minZ": -3.4,
+        "maxZ": 1,
+        "kind": "bay"
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "floor_1-lt-lifts",
+      "value": {
+        "label": "Lift lobby",
+        "position": {
+          "x": 0,
+          "y": 2.4,
+          "z": 0
+        }
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "floor_1-lt-linen",
+      "value": {
+        "label": "Luggage room",
+        "position": {
+          "x": 0,
+          "y": 2.4,
+          "z": -5.7
+        }
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "floor_1-lt-core-w",
+      "value": {
+        "label": "West stair",
+        "position": {
+          "x": -16.25,
+          "y": 2.4,
+          "z": -1.6
+        }
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "floor_1-lt-core-e",
+      "value": {
+        "label": "East stair",
+        "position": {
+          "x": 16.25,
+          "y": 2.4,
+          "z": -1.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "floor_1-rest-office",
+      "value": {
+        "a": {
+          "x": 7.5,
+          "z": -8
+        },
+        "b": {
+          "x": 7.5,
+          "z": -1
+        },
+        "role": "interior",
+        "label": "Restrooms/office"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "floor_1-d-kitchen",
+      "value": {
+        "type": "door",
+        "wallId": "floor_1-cor-nw",
+        "at": {
+          "x": -10,
+          "z": -1
+        },
+        "label": "Kitchen door",
+        "width": 1.2,
+        "height": 2.1,
+        "doorStyle": "room",
+        "leaves": 2
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "floor_1-d-rest",
+      "value": {
+        "type": "door",
+        "wallId": "floor_1-cor-ne",
+        "at": {
+          "x": 5.6,
+          "z": -1
+        },
+        "label": "Restrooms door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "floor_1-d-office",
+      "value": {
+        "type": "door",
+        "wallId": "floor_1-cor-ne",
+        "at": {
+          "x": 11.25,
+          "z": -1
+        },
+        "label": "Office door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "floor_1-r-kitchen",
+      "value": {
+        "label": "Kitchen",
+        "minX": -15,
+        "maxX": -3.75,
+        "minZ": -8,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "floor_1-r-rest",
+      "value": {
+        "label": "Restrooms",
+        "minX": 3.75,
+        "maxX": 7.5,
+        "minZ": -8,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "floor_1-r-office",
+      "value": {
+        "label": "Back office",
+        "minX": 7.5,
+        "maxX": 15,
+        "minZ": -8,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "floor_1-w-kitchen--12.5",
+      "value": {
+        "type": "window",
+        "wallId": "floor_1-ext-n",
+        "at": {
+          "x": -12.5,
+          "z": -8
+        },
+        "label": "Kitchen window",
+        "width": 1.6,
+        "height": 1.2,
+        "sill": 1.2,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "floor_1-w-kitchen--6.5",
+      "value": {
+        "type": "window",
+        "wallId": "floor_1-ext-n",
+        "at": {
+          "x": -6.5,
+          "z": -8
+        },
+        "label": "Kitchen window",
+        "width": 1.6,
+        "height": 1.2,
+        "sill": 1.2,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "floor_1-w-office",
+      "value": {
+        "type": "window",
+        "wallId": "floor_1-ext-n",
+        "at": {
+          "x": 11.25,
+          "z": -8
+        },
+        "label": "Office window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "floor_1-rest-lobby",
+      "value": {
+        "a": {
+          "x": -8,
+          "z": -1
+        },
+        "b": {
+          "x": -8,
+          "z": 8
+        },
+        "role": "interior",
+        "label": "Restaurant/lobby"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "floor_1",
+      "id": "floor_1-lobby-lounge",
+      "value": {
+        "a": {
+          "x": 8,
+          "z": -1
+        },
+        "b": {
+          "x": 8,
+          "z": 8
+        },
+        "role": "interior",
+        "label": "Lobby/lounge"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "floor_1-d-restaurant",
+      "value": {
+        "type": "door",
+        "wallId": "floor_1-rest-lobby",
+        "at": {
+          "x": -8,
+          "z": 3.5
+        },
+        "label": "Restaurant entrance",
+        "width": 3,
+        "height": 2.6,
+        "doorStyle": "empty"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "floor_1-d-lounge",
+      "value": {
+        "type": "door",
+        "wallId": "floor_1-lobby-lounge",
+        "at": {
+          "x": 8,
+          "z": 3.5
+        },
+        "label": "Lounge entrance",
+        "width": 3,
+        "height": 2.6,
+        "doorStyle": "empty"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "floor_1-d-entrance",
+      "value": {
+        "type": "door",
+        "wallId": "floor_1-ext-s",
+        "at": {
+          "x": 0,
+          "z": 8
+        },
+        "label": "Main entrance",
+        "width": 2,
+        "height": 2.5,
+        "doorStyle": "exterior",
+        "leaves": 2
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "floor_1-w-s-17",
+      "value": {
+        "type": "window",
+        "wallId": "floor_1-ext-s",
+        "at": {
+          "x": -17,
+          "z": 8
+        },
+        "label": "Restaurant window",
+        "width": 1.8,
+        "height": 2,
+        "sill": 0.5,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "floor_1-w-s-13.5",
+      "value": {
+        "type": "window",
+        "wallId": "floor_1-ext-s",
+        "at": {
+          "x": -13.5,
+          "z": 8
+        },
+        "label": "Restaurant window",
+        "width": 1.8,
+        "height": 2,
+        "sill": 0.5,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "floor_1-w-s-10.5",
+      "value": {
+        "type": "window",
+        "wallId": "floor_1-ext-s",
+        "at": {
+          "x": -10.5,
+          "z": 8
+        },
+        "label": "Restaurant window",
+        "width": 1.8,
+        "height": 2,
+        "sill": 0.5,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "floor_1-w-s-4.5",
+      "value": {
+        "type": "window",
+        "wallId": "floor_1-ext-s",
+        "at": {
+          "x": -4.5,
+          "z": 8
+        },
+        "label": "Lobby window",
+        "width": 1.8,
+        "height": 2,
+        "sill": 0.5,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "floor_1-w-s4.5",
+      "value": {
+        "type": "window",
+        "wallId": "floor_1-ext-s",
+        "at": {
+          "x": 4.5,
+          "z": 8
+        },
+        "label": "Lobby window",
+        "width": 1.8,
+        "height": 2,
+        "sill": 0.5,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "floor_1-w-s10.5",
+      "value": {
+        "type": "window",
+        "wallId": "floor_1-ext-s",
+        "at": {
+          "x": 10.5,
+          "z": 8
+        },
+        "label": "Lounge window",
+        "width": 1.8,
+        "height": 2,
+        "sill": 0.5,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "floor_1-w-s13.5",
+      "value": {
+        "type": "window",
+        "wallId": "floor_1-ext-s",
+        "at": {
+          "x": 13.5,
+          "z": 8
+        },
+        "label": "Lounge window",
+        "width": 1.8,
+        "height": 2,
+        "sill": 0.5,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "floor_1",
+      "id": "floor_1-w-s17",
+      "value": {
+        "type": "window",
+        "wallId": "floor_1-ext-s",
+        "at": {
+          "x": 17,
+          "z": 8
+        },
+        "label": "Lounge window",
+        "width": 1.8,
+        "height": 2,
+        "sill": 0.5,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "floor_1-r-restaurant",
+      "value": {
+        "label": "Restaurant",
+        "minX": -20,
+        "maxX": -8,
+        "minZ": -1,
+        "maxZ": 8
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "floor_1-r-lobby",
+      "value": {
+        "label": "Lobby",
+        "minX": -8,
+        "maxX": 8,
+        "minZ": 1,
+        "maxZ": 8
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "floor_1",
+      "id": "floor_1-r-lounge",
+      "value": {
+        "label": "Lounge",
+        "minX": 8,
+        "maxX": 20,
+        "minZ": -1,
+        "maxZ": 8
+      }
+    },
+    {
+      "op": "marker.add",
+      "floorId": "floor_1",
+      "id": "floor_1-mk-reception",
+      "value": {
+        "label": "Reception",
+        "details": "Front desk position (furniture is the game's)",
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 5
+        }
+      }
+    },
+    {
+      "op": "marker.add",
+      "floorId": "floor_1",
+      "id": "floor_1-mk-arrival",
+      "value": {
+        "label": "Arrival",
+        "details": "Outside the main entrance",
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 10
+        }
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "floor_1-lt-restaurant",
+      "value": {
+        "label": "Restaurant",
+        "position": {
+          "x": -14,
+          "y": 3,
+          "z": 3.5
+        }
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "floor_1-lt-kitchen",
+      "value": {
+        "label": "Kitchen",
+        "position": {
+          "x": -14,
+          "y": 3,
+          "z": -4.5
+        }
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "floor_1-lt-lobby-west",
+      "value": {
+        "label": "Lobby west",
+        "position": {
+          "x": -4,
+          "y": 3,
+          "z": 4.5
+        }
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "floor_1-lt-lobby-east",
+      "value": {
+        "label": "Lobby east",
+        "position": {
+          "x": 4,
+          "y": 3,
+          "z": 4.5
+        }
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "floor_1-lt-lounge",
+      "value": {
+        "label": "Lounge",
+        "position": {
+          "x": 14,
+          "y": 3,
+          "z": 3.5
+        }
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "floor_1-lt-restrooms",
+      "value": {
+        "label": "Restrooms",
+        "position": {
+          "x": 5.6,
+          "y": 3,
+          "z": -4.5
+        }
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "floor_1",
+      "id": "floor_1-lt-back-office",
+      "value": {
+        "label": "Back office",
+        "position": {
+          "x": 11.25,
+          "y": 3,
+          "z": -4.5
+        }
+      }
+    }
+  ]
+}

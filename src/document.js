@@ -77,6 +77,7 @@ export function normalizeBuilding(data,{idFactory=uid}={}){
   data.version=data.openingShapes?.length?10:9;
   data.roof ||= {type:'gable',pitch:35,overhang:.35};
   if(!Array.isArray(data.roofSections))data.roofSections=[];
+  if(data.elevators!==undefined&&!Array.isArray(data.elevators))data.elevators=[];
   if(!Array.isArray(data.manualFloors))data.manualFloors=[];
   if(!Array.isArray(data.manualCeilings))data.manualCeilings=[];
   const legacyCeilingEnabled=typeof data.ceiling?.enabled==='boolean'?data.ceiling.enabled:true;

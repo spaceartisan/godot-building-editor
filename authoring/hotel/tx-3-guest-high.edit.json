@@ -1,0 +1,5339 @@
+{
+  "version": 1,
+  "operations": [
+    {
+      "op": "floor.add-top",
+      "aboveFloorId": "l3",
+      "id": "l4",
+      "value": {
+        "label": "Floor 4"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-ext-n",
+      "value": {
+        "a": {
+          "x": -20,
+          "z": -8
+        },
+        "b": {
+          "x": 20,
+          "z": -8
+        },
+        "role": "exterior",
+        "label": "North facade"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-ext-e",
+      "value": {
+        "a": {
+          "x": 20,
+          "z": -8
+        },
+        "b": {
+          "x": 20,
+          "z": 8
+        },
+        "role": "exterior",
+        "label": "East facade"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-ext-s",
+      "value": {
+        "a": {
+          "x": 20,
+          "z": 8
+        },
+        "b": {
+          "x": -20,
+          "z": 8
+        },
+        "role": "exterior",
+        "label": "South facade"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-ext-w",
+      "value": {
+        "a": {
+          "x": -20,
+          "z": 8
+        },
+        "b": {
+          "x": -20,
+          "z": -8
+        },
+        "role": "exterior",
+        "label": "West facade"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-cor-nw",
+      "value": {
+        "a": {
+          "x": -20,
+          "z": -1
+        },
+        "b": {
+          "x": -3.75,
+          "z": -1
+        },
+        "role": "interior",
+        "label": "Corridor north west"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-cor-ne",
+      "value": {
+        "a": {
+          "x": 2.6,
+          "z": -1
+        },
+        "b": {
+          "x": 20,
+          "z": -1
+        },
+        "role": "interior",
+        "label": "Corridor north east"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-core-w",
+      "value": {
+        "a": {
+          "x": -15,
+          "z": -8
+        },
+        "b": {
+          "x": -15,
+          "z": -1
+        },
+        "role": "interior",
+        "label": "West stair core"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-d-core-w",
+      "value": {
+        "type": "door",
+        "wallId": "l4-cor-nw",
+        "at": {
+          "x": -17.5,
+          "z": -1
+        },
+        "label": "West stair door",
+        "width": 1,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-r-core-w",
+      "value": {
+        "label": "West stair",
+        "minX": -20,
+        "maxX": -15,
+        "minZ": -8,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-core-e",
+      "value": {
+        "a": {
+          "x": 15,
+          "z": -8
+        },
+        "b": {
+          "x": 15,
+          "z": -1
+        },
+        "role": "interior",
+        "label": "East stair core"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-d-core-e",
+      "value": {
+        "type": "door",
+        "wallId": "l4-cor-ne",
+        "at": {
+          "x": 17.5,
+          "z": -1
+        },
+        "label": "East stair door",
+        "width": 1,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-r-core-e",
+      "value": {
+        "label": "East stair",
+        "minX": 15,
+        "maxX": 20,
+        "minZ": -8,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-bay-w",
+      "value": {
+        "a": {
+          "x": -3.75,
+          "z": -8
+        },
+        "b": {
+          "x": -3.75,
+          "z": -1
+        },
+        "role": "interior",
+        "label": "Lift bay west"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-bay-e",
+      "value": {
+        "a": {
+          "x": 3.75,
+          "z": -8
+        },
+        "b": {
+          "x": 3.75,
+          "z": -1
+        },
+        "role": "interior",
+        "label": "Lift bay east"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-linen",
+      "value": {
+        "a": {
+          "x": -3.75,
+          "z": -3.4
+        },
+        "b": {
+          "x": 2.6,
+          "z": -3.4
+        },
+        "role": "interior",
+        "label": "Linen room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-d-passage",
+      "value": {
+        "type": "door",
+        "wallId": "l4-cor-ne",
+        "at": {
+          "x": 3.175,
+          "z": -1
+        },
+        "label": "Linen door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-r-linen",
+      "value": {
+        "label": "Linen room",
+        "minX": -3.75,
+        "maxX": 3.75,
+        "minZ": -8,
+        "maxZ": -3.4
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-r-lifts",
+      "value": {
+        "label": "Lift lobby",
+        "minX": -3.75,
+        "maxX": 3.75,
+        "minZ": -3.4,
+        "maxZ": 1,
+        "kind": "bay"
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "l4-lt-lifts",
+      "value": {
+        "label": "Lift lobby",
+        "position": {
+          "x": 0,
+          "y": 2.4,
+          "z": 0
+        }
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "l4-lt-linen",
+      "value": {
+        "label": "Linen room",
+        "position": {
+          "x": 0,
+          "y": 2.4,
+          "z": -5.7
+        }
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "l4-lt-core-w",
+      "value": {
+        "label": "West stair",
+        "position": {
+          "x": -16.25,
+          "y": 2.4,
+          "z": -1.6
+        }
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "l4-lt-core-e",
+      "value": {
+        "label": "East stair",
+        "position": {
+          "x": 16.25,
+          "y": 2.4,
+          "z": -1.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-cor-s",
+      "value": {
+        "a": {
+          "x": -20,
+          "z": 1
+        },
+        "b": {
+          "x": 20,
+          "z": 1
+        },
+        "role": "interior",
+        "label": "Corridor south"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm401-part",
+      "value": {
+        "a": {
+          "x": -16,
+          "z": 1
+        },
+        "b": {
+          "x": -16,
+          "z": 8
+        },
+        "role": "interior",
+        "label": "Room 401 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm401-bath-a",
+      "value": {
+        "a": {
+          "x": -20,
+          "z": 3.2
+        },
+        "b": {
+          "x": -18,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 401"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm401-bath-b",
+      "value": {
+        "a": {
+          "x": -18,
+          "z": 1
+        },
+        "b": {
+          "x": -18,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 401 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm401-d",
+      "value": {
+        "type": "door",
+        "wallId": "l4-cor-s",
+        "at": {
+          "x": -17,
+          "z": 1
+        },
+        "label": "Room 401 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm401-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l4-rm401-bath-b",
+        "at": {
+          "x": -18,
+          "z": 2.25
+        },
+        "label": "Bath 401 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm401-w",
+      "value": {
+        "type": "window",
+        "wallId": "l4-ext-s",
+        "at": {
+          "x": -18,
+          "z": 8
+        },
+        "label": "Room 401 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm401-r",
+      "value": {
+        "label": "Room 401",
+        "minX": -20,
+        "maxX": -16,
+        "minZ": 1,
+        "maxZ": 8
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm401-r-bath",
+      "value": {
+        "label": "Bath 401",
+        "minX": -20,
+        "maxX": -18,
+        "minZ": 1,
+        "maxZ": 3.2
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "l4-rm401-lt",
+      "value": {
+        "label": "Room 401",
+        "position": {
+          "x": -17.5,
+          "y": 2.4,
+          "z": 5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm402-part",
+      "value": {
+        "a": {
+          "x": -11.25,
+          "z": -1
+        },
+        "b": {
+          "x": -11.25,
+          "z": -8
+        },
+        "role": "interior",
+        "label": "Room 402 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm402-bath-a",
+      "value": {
+        "a": {
+          "x": -15,
+          "z": -3.2
+        },
+        "b": {
+          "x": -13,
+          "z": -3.2
+        },
+        "role": "interior",
+        "label": "Bath 402"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm402-bath-b",
+      "value": {
+        "a": {
+          "x": -13,
+          "z": -1
+        },
+        "b": {
+          "x": -13,
+          "z": -3.2
+        },
+        "role": "interior",
+        "label": "Bath 402 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm402-d",
+      "value": {
+        "type": "door",
+        "wallId": "l4-cor-nw",
+        "at": {
+          "x": -12.125,
+          "z": -1
+        },
+        "label": "Room 402 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm402-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l4-rm402-bath-b",
+        "at": {
+          "x": -13,
+          "z": -2.25
+        },
+        "label": "Bath 402 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm402-w",
+      "value": {
+        "type": "window",
+        "wallId": "l4-ext-n",
+        "at": {
+          "x": -13.125,
+          "z": -8
+        },
+        "label": "Room 402 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm402-r",
+      "value": {
+        "label": "Room 402",
+        "minX": -15,
+        "maxX": -11.25,
+        "minZ": -8,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm402-r-bath",
+      "value": {
+        "label": "Bath 402",
+        "minX": -15,
+        "maxX": -13,
+        "minZ": -3.2,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "l4-rm402-lt",
+      "value": {
+        "label": "Room 402",
+        "position": {
+          "x": -12.625,
+          "y": 2.4,
+          "z": -5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm403-part",
+      "value": {
+        "a": {
+          "x": -12,
+          "z": 1
+        },
+        "b": {
+          "x": -12,
+          "z": 8
+        },
+        "role": "interior",
+        "label": "Room 403 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm403-bath-a",
+      "value": {
+        "a": {
+          "x": -16,
+          "z": 3.2
+        },
+        "b": {
+          "x": -14,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 403"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm403-bath-b",
+      "value": {
+        "a": {
+          "x": -14,
+          "z": 1
+        },
+        "b": {
+          "x": -14,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 403 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm403-d",
+      "value": {
+        "type": "door",
+        "wallId": "l4-cor-s",
+        "at": {
+          "x": -13,
+          "z": 1
+        },
+        "label": "Room 403 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm403-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l4-rm403-bath-b",
+        "at": {
+          "x": -14,
+          "z": 2.25
+        },
+        "label": "Bath 403 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm403-w",
+      "value": {
+        "type": "window",
+        "wallId": "l4-ext-s",
+        "at": {
+          "x": -14,
+          "z": 8
+        },
+        "label": "Room 403 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm403-r",
+      "value": {
+        "label": "Room 403",
+        "minX": -16,
+        "maxX": -12,
+        "minZ": 1,
+        "maxZ": 8
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm403-r-bath",
+      "value": {
+        "label": "Bath 403",
+        "minX": -16,
+        "maxX": -14,
+        "minZ": 1,
+        "maxZ": 3.2
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "l4-rm403-lt",
+      "value": {
+        "label": "Room 403",
+        "position": {
+          "x": -13.5,
+          "y": 2.4,
+          "z": 5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm404-part",
+      "value": {
+        "a": {
+          "x": -7.5,
+          "z": -1
+        },
+        "b": {
+          "x": -7.5,
+          "z": -8
+        },
+        "role": "interior",
+        "label": "Room 404 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm404-bath-a",
+      "value": {
+        "a": {
+          "x": -11.25,
+          "z": -3.2
+        },
+        "b": {
+          "x": -9.25,
+          "z": -3.2
+        },
+        "role": "interior",
+        "label": "Bath 404"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm404-bath-b",
+      "value": {
+        "a": {
+          "x": -9.25,
+          "z": -1
+        },
+        "b": {
+          "x": -9.25,
+          "z": -3.2
+        },
+        "role": "interior",
+        "label": "Bath 404 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm404-d",
+      "value": {
+        "type": "door",
+        "wallId": "l4-cor-nw",
+        "at": {
+          "x": -8.375,
+          "z": -1
+        },
+        "label": "Room 404 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm404-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l4-rm404-bath-b",
+        "at": {
+          "x": -9.25,
+          "z": -2.25
+        },
+        "label": "Bath 404 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm404-w",
+      "value": {
+        "type": "window",
+        "wallId": "l4-ext-n",
+        "at": {
+          "x": -9.375,
+          "z": -8
+        },
+        "label": "Room 404 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm404-r",
+      "value": {
+        "label": "Room 404",
+        "minX": -11.25,
+        "maxX": -7.5,
+        "minZ": -8,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm404-r-bath",
+      "value": {
+        "label": "Bath 404",
+        "minX": -11.25,
+        "maxX": -9.25,
+        "minZ": -3.2,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "l4-rm404-lt",
+      "value": {
+        "label": "Room 404",
+        "position": {
+          "x": -8.875,
+          "y": 2.4,
+          "z": -5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm405-part",
+      "value": {
+        "a": {
+          "x": -8,
+          "z": 1
+        },
+        "b": {
+          "x": -8,
+          "z": 8
+        },
+        "role": "interior",
+        "label": "Room 405 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm405-bath-a",
+      "value": {
+        "a": {
+          "x": -12,
+          "z": 3.2
+        },
+        "b": {
+          "x": -10,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 405"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm405-bath-b",
+      "value": {
+        "a": {
+          "x": -10,
+          "z": 1
+        },
+        "b": {
+          "x": -10,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 405 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm405-d",
+      "value": {
+        "type": "door",
+        "wallId": "l4-cor-s",
+        "at": {
+          "x": -9,
+          "z": 1
+        },
+        "label": "Room 405 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm405-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l4-rm405-bath-b",
+        "at": {
+          "x": -10,
+          "z": 2.25
+        },
+        "label": "Bath 405 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm405-w",
+      "value": {
+        "type": "window",
+        "wallId": "l4-ext-s",
+        "at": {
+          "x": -10,
+          "z": 8
+        },
+        "label": "Room 405 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm405-r",
+      "value": {
+        "label": "Room 405",
+        "minX": -12,
+        "maxX": -8,
+        "minZ": 1,
+        "maxZ": 8
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm405-r-bath",
+      "value": {
+        "label": "Bath 405",
+        "minX": -12,
+        "maxX": -10,
+        "minZ": 1,
+        "maxZ": 3.2
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "l4-rm405-lt",
+      "value": {
+        "label": "Room 405",
+        "position": {
+          "x": -9.5,
+          "y": 2.4,
+          "z": 5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm406-bath-a",
+      "value": {
+        "a": {
+          "x": -7.5,
+          "z": -3.2
+        },
+        "b": {
+          "x": -5.5,
+          "z": -3.2
+        },
+        "role": "interior",
+        "label": "Bath 406"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm406-bath-b",
+      "value": {
+        "a": {
+          "x": -5.5,
+          "z": -1
+        },
+        "b": {
+          "x": -5.5,
+          "z": -3.2
+        },
+        "role": "interior",
+        "label": "Bath 406 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm406-d",
+      "value": {
+        "type": "door",
+        "wallId": "l4-cor-nw",
+        "at": {
+          "x": -4.625,
+          "z": -1
+        },
+        "label": "Room 406 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm406-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l4-rm406-bath-b",
+        "at": {
+          "x": -5.5,
+          "z": -2.25
+        },
+        "label": "Bath 406 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm406-w",
+      "value": {
+        "type": "window",
+        "wallId": "l4-ext-n",
+        "at": {
+          "x": -5.625,
+          "z": -8
+        },
+        "label": "Room 406 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm406-r",
+      "value": {
+        "label": "Room 406",
+        "minX": -7.5,
+        "maxX": -3.75,
+        "minZ": -8,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm406-r-bath",
+      "value": {
+        "label": "Bath 406",
+        "minX": -7.5,
+        "maxX": -5.5,
+        "minZ": -3.2,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "l4-rm406-lt",
+      "value": {
+        "label": "Room 406",
+        "position": {
+          "x": -5.125,
+          "y": 2.4,
+          "z": -5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm407-part",
+      "value": {
+        "a": {
+          "x": -4,
+          "z": 1
+        },
+        "b": {
+          "x": -4,
+          "z": 8
+        },
+        "role": "interior",
+        "label": "Room 407 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm407-bath-a",
+      "value": {
+        "a": {
+          "x": -8,
+          "z": 3.2
+        },
+        "b": {
+          "x": -6,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 407"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm407-bath-b",
+      "value": {
+        "a": {
+          "x": -6,
+          "z": 1
+        },
+        "b": {
+          "x": -6,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 407 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm407-d",
+      "value": {
+        "type": "door",
+        "wallId": "l4-cor-s",
+        "at": {
+          "x": -5,
+          "z": 1
+        },
+        "label": "Room 407 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm407-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l4-rm407-bath-b",
+        "at": {
+          "x": -6,
+          "z": 2.25
+        },
+        "label": "Bath 407 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm407-w",
+      "value": {
+        "type": "window",
+        "wallId": "l4-ext-s",
+        "at": {
+          "x": -6,
+          "z": 8
+        },
+        "label": "Room 407 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm407-r",
+      "value": {
+        "label": "Room 407",
+        "minX": -8,
+        "maxX": -4,
+        "minZ": 1,
+        "maxZ": 8
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm407-r-bath",
+      "value": {
+        "label": "Bath 407",
+        "minX": -8,
+        "maxX": -6,
+        "minZ": 1,
+        "maxZ": 3.2
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "l4-rm407-lt",
+      "value": {
+        "label": "Room 407",
+        "position": {
+          "x": -5.5,
+          "y": 2.4,
+          "z": 5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm408-part",
+      "value": {
+        "a": {
+          "x": 7.5,
+          "z": -1
+        },
+        "b": {
+          "x": 7.5,
+          "z": -8
+        },
+        "role": "interior",
+        "label": "Room 408 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm408-bath-a",
+      "value": {
+        "a": {
+          "x": 3.75,
+          "z": -3.2
+        },
+        "b": {
+          "x": 5.75,
+          "z": -3.2
+        },
+        "role": "interior",
+        "label": "Bath 408"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm408-bath-b",
+      "value": {
+        "a": {
+          "x": 5.75,
+          "z": -1
+        },
+        "b": {
+          "x": 5.75,
+          "z": -3.2
+        },
+        "role": "interior",
+        "label": "Bath 408 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm408-d",
+      "value": {
+        "type": "door",
+        "wallId": "l4-cor-ne",
+        "at": {
+          "x": 6.625,
+          "z": -1
+        },
+        "label": "Room 408 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm408-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l4-rm408-bath-b",
+        "at": {
+          "x": 5.75,
+          "z": -2.25
+        },
+        "label": "Bath 408 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm408-w",
+      "value": {
+        "type": "window",
+        "wallId": "l4-ext-n",
+        "at": {
+          "x": 5.625,
+          "z": -8
+        },
+        "label": "Room 408 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm408-r",
+      "value": {
+        "label": "Room 408",
+        "minX": 3.75,
+        "maxX": 7.5,
+        "minZ": -8,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm408-r-bath",
+      "value": {
+        "label": "Bath 408",
+        "minX": 3.75,
+        "maxX": 5.75,
+        "minZ": -3.2,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "l4-rm408-lt",
+      "value": {
+        "label": "Room 408",
+        "position": {
+          "x": 6.125,
+          "y": 2.4,
+          "z": -5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm409-part",
+      "value": {
+        "a": {
+          "x": 0,
+          "z": 1
+        },
+        "b": {
+          "x": 0,
+          "z": 8
+        },
+        "role": "interior",
+        "label": "Room 409 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm409-bath-a",
+      "value": {
+        "a": {
+          "x": -4,
+          "z": 3.2
+        },
+        "b": {
+          "x": -2,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 409"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm409-bath-b",
+      "value": {
+        "a": {
+          "x": -2,
+          "z": 1
+        },
+        "b": {
+          "x": -2,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 409 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm409-d",
+      "value": {
+        "type": "door",
+        "wallId": "l4-cor-s",
+        "at": {
+          "x": -1,
+          "z": 1
+        },
+        "label": "Room 409 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm409-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l4-rm409-bath-b",
+        "at": {
+          "x": -2,
+          "z": 2.25
+        },
+        "label": "Bath 409 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm409-w",
+      "value": {
+        "type": "window",
+        "wallId": "l4-ext-s",
+        "at": {
+          "x": -2,
+          "z": 8
+        },
+        "label": "Room 409 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm409-r",
+      "value": {
+        "label": "Room 409",
+        "minX": -4,
+        "maxX": 0,
+        "minZ": 1,
+        "maxZ": 8
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm409-r-bath",
+      "value": {
+        "label": "Bath 409",
+        "minX": -4,
+        "maxX": -2,
+        "minZ": 1,
+        "maxZ": 3.2
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "l4-rm409-lt",
+      "value": {
+        "label": "Room 409",
+        "position": {
+          "x": -1.5,
+          "y": 2.4,
+          "z": 5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm410-part",
+      "value": {
+        "a": {
+          "x": 11.25,
+          "z": -1
+        },
+        "b": {
+          "x": 11.25,
+          "z": -8
+        },
+        "role": "interior",
+        "label": "Room 410 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm410-bath-a",
+      "value": {
+        "a": {
+          "x": 7.5,
+          "z": -3.2
+        },
+        "b": {
+          "x": 9.5,
+          "z": -3.2
+        },
+        "role": "interior",
+        "label": "Bath 410"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm410-bath-b",
+      "value": {
+        "a": {
+          "x": 9.5,
+          "z": -1
+        },
+        "b": {
+          "x": 9.5,
+          "z": -3.2
+        },
+        "role": "interior",
+        "label": "Bath 410 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm410-d",
+      "value": {
+        "type": "door",
+        "wallId": "l4-cor-ne",
+        "at": {
+          "x": 10.375,
+          "z": -1
+        },
+        "label": "Room 410 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm410-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l4-rm410-bath-b",
+        "at": {
+          "x": 9.5,
+          "z": -2.25
+        },
+        "label": "Bath 410 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm410-w",
+      "value": {
+        "type": "window",
+        "wallId": "l4-ext-n",
+        "at": {
+          "x": 9.375,
+          "z": -8
+        },
+        "label": "Room 410 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm410-r",
+      "value": {
+        "label": "Room 410",
+        "minX": 7.5,
+        "maxX": 11.25,
+        "minZ": -8,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm410-r-bath",
+      "value": {
+        "label": "Bath 410",
+        "minX": 7.5,
+        "maxX": 9.5,
+        "minZ": -3.2,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "l4-rm410-lt",
+      "value": {
+        "label": "Room 410",
+        "position": {
+          "x": 9.875,
+          "y": 2.4,
+          "z": -5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm411-part",
+      "value": {
+        "a": {
+          "x": 4,
+          "z": 1
+        },
+        "b": {
+          "x": 4,
+          "z": 8
+        },
+        "role": "interior",
+        "label": "Room 411 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm411-bath-a",
+      "value": {
+        "a": {
+          "x": 0,
+          "z": 3.2
+        },
+        "b": {
+          "x": 2,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 411"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm411-bath-b",
+      "value": {
+        "a": {
+          "x": 2,
+          "z": 1
+        },
+        "b": {
+          "x": 2,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 411 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm411-d",
+      "value": {
+        "type": "door",
+        "wallId": "l4-cor-s",
+        "at": {
+          "x": 3,
+          "z": 1
+        },
+        "label": "Room 411 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm411-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l4-rm411-bath-b",
+        "at": {
+          "x": 2,
+          "z": 2.25
+        },
+        "label": "Bath 411 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm411-w",
+      "value": {
+        "type": "window",
+        "wallId": "l4-ext-s",
+        "at": {
+          "x": 2,
+          "z": 8
+        },
+        "label": "Room 411 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm411-r",
+      "value": {
+        "label": "Room 411",
+        "minX": 0,
+        "maxX": 4,
+        "minZ": 1,
+        "maxZ": 8
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm411-r-bath",
+      "value": {
+        "label": "Bath 411",
+        "minX": 0,
+        "maxX": 2,
+        "minZ": 1,
+        "maxZ": 3.2
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "l4-rm411-lt",
+      "value": {
+        "label": "Room 411",
+        "position": {
+          "x": 2.5,
+          "y": 2.4,
+          "z": 5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm412-bath-a",
+      "value": {
+        "a": {
+          "x": 11.25,
+          "z": -3.2
+        },
+        "b": {
+          "x": 13.25,
+          "z": -3.2
+        },
+        "role": "interior",
+        "label": "Bath 412"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm412-bath-b",
+      "value": {
+        "a": {
+          "x": 13.25,
+          "z": -1
+        },
+        "b": {
+          "x": 13.25,
+          "z": -3.2
+        },
+        "role": "interior",
+        "label": "Bath 412 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm412-d",
+      "value": {
+        "type": "door",
+        "wallId": "l4-cor-ne",
+        "at": {
+          "x": 14.125,
+          "z": -1
+        },
+        "label": "Room 412 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm412-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l4-rm412-bath-b",
+        "at": {
+          "x": 13.25,
+          "z": -2.25
+        },
+        "label": "Bath 412 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm412-w",
+      "value": {
+        "type": "window",
+        "wallId": "l4-ext-n",
+        "at": {
+          "x": 13.125,
+          "z": -8
+        },
+        "label": "Room 412 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm412-r",
+      "value": {
+        "label": "Room 412",
+        "minX": 11.25,
+        "maxX": 15,
+        "minZ": -8,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm412-r-bath",
+      "value": {
+        "label": "Bath 412",
+        "minX": 11.25,
+        "maxX": 13.25,
+        "minZ": -3.2,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "l4-rm412-lt",
+      "value": {
+        "label": "Room 412",
+        "position": {
+          "x": 13.625,
+          "y": 2.4,
+          "z": -5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm413-part",
+      "value": {
+        "a": {
+          "x": 8,
+          "z": 1
+        },
+        "b": {
+          "x": 8,
+          "z": 8
+        },
+        "role": "interior",
+        "label": "Room 413 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm413-bath-a",
+      "value": {
+        "a": {
+          "x": 4,
+          "z": 3.2
+        },
+        "b": {
+          "x": 6,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 413"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm413-bath-b",
+      "value": {
+        "a": {
+          "x": 6,
+          "z": 1
+        },
+        "b": {
+          "x": 6,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 413 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm413-d",
+      "value": {
+        "type": "door",
+        "wallId": "l4-cor-s",
+        "at": {
+          "x": 7,
+          "z": 1
+        },
+        "label": "Room 413 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm413-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l4-rm413-bath-b",
+        "at": {
+          "x": 6,
+          "z": 2.25
+        },
+        "label": "Bath 413 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm413-w",
+      "value": {
+        "type": "window",
+        "wallId": "l4-ext-s",
+        "at": {
+          "x": 6,
+          "z": 8
+        },
+        "label": "Room 413 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm413-r",
+      "value": {
+        "label": "Room 413",
+        "minX": 4,
+        "maxX": 8,
+        "minZ": 1,
+        "maxZ": 8
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm413-r-bath",
+      "value": {
+        "label": "Bath 413",
+        "minX": 4,
+        "maxX": 6,
+        "minZ": 1,
+        "maxZ": 3.2
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "l4-rm413-lt",
+      "value": {
+        "label": "Room 413",
+        "position": {
+          "x": 6.5,
+          "y": 2.4,
+          "z": 5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm415-part",
+      "value": {
+        "a": {
+          "x": 12,
+          "z": 1
+        },
+        "b": {
+          "x": 12,
+          "z": 8
+        },
+        "role": "interior",
+        "label": "Room 415 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm415-bath-a",
+      "value": {
+        "a": {
+          "x": 8,
+          "z": 3.2
+        },
+        "b": {
+          "x": 10,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 415"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm415-bath-b",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": 1
+        },
+        "b": {
+          "x": 10,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 415 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm415-d",
+      "value": {
+        "type": "door",
+        "wallId": "l4-cor-s",
+        "at": {
+          "x": 11,
+          "z": 1
+        },
+        "label": "Room 415 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm415-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l4-rm415-bath-b",
+        "at": {
+          "x": 10,
+          "z": 2.25
+        },
+        "label": "Bath 415 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm415-w",
+      "value": {
+        "type": "window",
+        "wallId": "l4-ext-s",
+        "at": {
+          "x": 10,
+          "z": 8
+        },
+        "label": "Room 415 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm415-r",
+      "value": {
+        "label": "Room 415",
+        "minX": 8,
+        "maxX": 12,
+        "minZ": 1,
+        "maxZ": 8
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm415-r-bath",
+      "value": {
+        "label": "Bath 415",
+        "minX": 8,
+        "maxX": 10,
+        "minZ": 1,
+        "maxZ": 3.2
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "l4-rm415-lt",
+      "value": {
+        "label": "Room 415",
+        "position": {
+          "x": 10.5,
+          "y": 2.4,
+          "z": 5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm417-part",
+      "value": {
+        "a": {
+          "x": 16,
+          "z": 1
+        },
+        "b": {
+          "x": 16,
+          "z": 8
+        },
+        "role": "interior",
+        "label": "Room 417 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm417-bath-a",
+      "value": {
+        "a": {
+          "x": 12,
+          "z": 3.2
+        },
+        "b": {
+          "x": 14,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 417"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm417-bath-b",
+      "value": {
+        "a": {
+          "x": 14,
+          "z": 1
+        },
+        "b": {
+          "x": 14,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 417 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm417-d",
+      "value": {
+        "type": "door",
+        "wallId": "l4-cor-s",
+        "at": {
+          "x": 15,
+          "z": 1
+        },
+        "label": "Room 417 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm417-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l4-rm417-bath-b",
+        "at": {
+          "x": 14,
+          "z": 2.25
+        },
+        "label": "Bath 417 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm417-w",
+      "value": {
+        "type": "window",
+        "wallId": "l4-ext-s",
+        "at": {
+          "x": 14,
+          "z": 8
+        },
+        "label": "Room 417 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm417-r",
+      "value": {
+        "label": "Room 417",
+        "minX": 12,
+        "maxX": 16,
+        "minZ": 1,
+        "maxZ": 8
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm417-r-bath",
+      "value": {
+        "label": "Bath 417",
+        "minX": 12,
+        "maxX": 14,
+        "minZ": 1,
+        "maxZ": 3.2
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "l4-rm417-lt",
+      "value": {
+        "label": "Room 417",
+        "position": {
+          "x": 14.5,
+          "y": 2.4,
+          "z": 5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm419-bath-a",
+      "value": {
+        "a": {
+          "x": 16,
+          "z": 3.2
+        },
+        "b": {
+          "x": 18,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 419"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l4",
+      "id": "l4-rm419-bath-b",
+      "value": {
+        "a": {
+          "x": 18,
+          "z": 1
+        },
+        "b": {
+          "x": 18,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 419 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm419-d",
+      "value": {
+        "type": "door",
+        "wallId": "l4-cor-s",
+        "at": {
+          "x": 19,
+          "z": 1
+        },
+        "label": "Room 419 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm419-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l4-rm419-bath-b",
+        "at": {
+          "x": 18,
+          "z": 2.25
+        },
+        "label": "Bath 419 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-rm419-w",
+      "value": {
+        "type": "window",
+        "wallId": "l4-ext-s",
+        "at": {
+          "x": 18,
+          "z": 8
+        },
+        "label": "Room 419 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm419-r",
+      "value": {
+        "label": "Room 419",
+        "minX": 16,
+        "maxX": 20,
+        "minZ": 1,
+        "maxZ": 8
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-rm419-r-bath",
+      "value": {
+        "label": "Bath 419",
+        "minX": 16,
+        "maxX": 18,
+        "minZ": 1,
+        "maxZ": 3.2
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "l4-rm419-lt",
+      "value": {
+        "label": "Room 419",
+        "position": {
+          "x": 18.5,
+          "y": 2.4,
+          "z": 5.6
+        }
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-w-cor-w",
+      "value": {
+        "type": "window",
+        "wallId": "l4-ext-w",
+        "at": {
+          "x": -20,
+          "z": 0
+        },
+        "label": "Corridor end window",
+        "width": 1,
+        "height": 1.6,
+        "sill": 0.8,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l4",
+      "id": "l4-w-cor-e",
+      "value": {
+        "type": "window",
+        "wallId": "l4-ext-e",
+        "at": {
+          "x": 20,
+          "z": 0
+        },
+        "label": "Corridor end window",
+        "width": 1,
+        "height": 1.6,
+        "sill": 0.8,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-r-cor-w",
+      "value": {
+        "label": "Corridor west",
+        "minX": -20,
+        "maxX": -3.75,
+        "minZ": -1,
+        "maxZ": 1,
+        "kind": "bay"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l4",
+      "id": "l4-r-cor-e",
+      "value": {
+        "label": "Corridor east",
+        "minX": 3.75,
+        "maxX": 20,
+        "minZ": -1,
+        "maxZ": 1,
+        "kind": "bay"
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "l4-lt-cor-16",
+      "value": {
+        "label": "Corridor",
+        "position": {
+          "x": -16,
+          "y": 2.4,
+          "z": 0
+        }
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "l4-lt-cor-9",
+      "value": {
+        "label": "Corridor",
+        "position": {
+          "x": -9,
+          "y": 2.4,
+          "z": 0
+        }
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "l4-lt-cor9",
+      "value": {
+        "label": "Corridor",
+        "position": {
+          "x": 9,
+          "y": 2.4,
+          "z": 0
+        }
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l4",
+      "id": "l4-lt-cor16",
+      "value": {
+        "label": "Corridor",
+        "position": {
+          "x": 16,
+          "y": 2.4,
+          "z": 0
+        }
+      }
+    },
+    {
+      "op": "floor.add-top",
+      "aboveFloorId": "l4",
+      "id": "l5",
+      "value": {
+        "label": "Floor 5"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-ext-n",
+      "value": {
+        "a": {
+          "x": -20,
+          "z": -8
+        },
+        "b": {
+          "x": 20,
+          "z": -8
+        },
+        "role": "exterior",
+        "label": "North facade"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-ext-e",
+      "value": {
+        "a": {
+          "x": 20,
+          "z": -8
+        },
+        "b": {
+          "x": 20,
+          "z": 8
+        },
+        "role": "exterior",
+        "label": "East facade"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-ext-s",
+      "value": {
+        "a": {
+          "x": 20,
+          "z": 8
+        },
+        "b": {
+          "x": -20,
+          "z": 8
+        },
+        "role": "exterior",
+        "label": "South facade"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-ext-w",
+      "value": {
+        "a": {
+          "x": -20,
+          "z": 8
+        },
+        "b": {
+          "x": -20,
+          "z": -8
+        },
+        "role": "exterior",
+        "label": "West facade"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-cor-nw",
+      "value": {
+        "a": {
+          "x": -20,
+          "z": -1
+        },
+        "b": {
+          "x": -3.75,
+          "z": -1
+        },
+        "role": "interior",
+        "label": "Corridor north west"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-cor-ne",
+      "value": {
+        "a": {
+          "x": 2.6,
+          "z": -1
+        },
+        "b": {
+          "x": 20,
+          "z": -1
+        },
+        "role": "interior",
+        "label": "Corridor north east"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-core-w",
+      "value": {
+        "a": {
+          "x": -15,
+          "z": -8
+        },
+        "b": {
+          "x": -15,
+          "z": -1
+        },
+        "role": "interior",
+        "label": "West stair core"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-d-core-w",
+      "value": {
+        "type": "door",
+        "wallId": "l5-cor-nw",
+        "at": {
+          "x": -17.5,
+          "z": -1
+        },
+        "label": "West stair door",
+        "width": 1,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-r-core-w",
+      "value": {
+        "label": "West stair",
+        "minX": -20,
+        "maxX": -15,
+        "minZ": -8,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-core-e",
+      "value": {
+        "a": {
+          "x": 15,
+          "z": -8
+        },
+        "b": {
+          "x": 15,
+          "z": -1
+        },
+        "role": "interior",
+        "label": "East stair core"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-d-core-e",
+      "value": {
+        "type": "door",
+        "wallId": "l5-cor-ne",
+        "at": {
+          "x": 17.5,
+          "z": -1
+        },
+        "label": "East stair door",
+        "width": 1,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-r-core-e",
+      "value": {
+        "label": "East stair",
+        "minX": 15,
+        "maxX": 20,
+        "minZ": -8,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-bay-w",
+      "value": {
+        "a": {
+          "x": -3.75,
+          "z": -8
+        },
+        "b": {
+          "x": -3.75,
+          "z": -1
+        },
+        "role": "interior",
+        "label": "Lift bay west"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-bay-e",
+      "value": {
+        "a": {
+          "x": 3.75,
+          "z": -8
+        },
+        "b": {
+          "x": 3.75,
+          "z": -1
+        },
+        "role": "interior",
+        "label": "Lift bay east"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-linen",
+      "value": {
+        "a": {
+          "x": -3.75,
+          "z": -3.4
+        },
+        "b": {
+          "x": 2.6,
+          "z": -3.4
+        },
+        "role": "interior",
+        "label": "Linen room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-d-passage",
+      "value": {
+        "type": "door",
+        "wallId": "l5-cor-ne",
+        "at": {
+          "x": 3.175,
+          "z": -1
+        },
+        "label": "Linen door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-r-linen",
+      "value": {
+        "label": "Linen room",
+        "minX": -3.75,
+        "maxX": 3.75,
+        "minZ": -8,
+        "maxZ": -3.4
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-r-lifts",
+      "value": {
+        "label": "Lift lobby",
+        "minX": -3.75,
+        "maxX": 3.75,
+        "minZ": -3.4,
+        "maxZ": 1,
+        "kind": "bay"
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "l5-lt-lifts",
+      "value": {
+        "label": "Lift lobby",
+        "position": {
+          "x": 0,
+          "y": 2.4,
+          "z": 0
+        }
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "l5-lt-linen",
+      "value": {
+        "label": "Linen room",
+        "position": {
+          "x": 0,
+          "y": 2.4,
+          "z": -5.7
+        }
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "l5-lt-core-w",
+      "value": {
+        "label": "West stair",
+        "position": {
+          "x": -16.25,
+          "y": 2.4,
+          "z": -1.6
+        }
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "l5-lt-core-e",
+      "value": {
+        "label": "East stair",
+        "position": {
+          "x": 16.25,
+          "y": 2.4,
+          "z": -1.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-cor-s",
+      "value": {
+        "a": {
+          "x": -20,
+          "z": 1
+        },
+        "b": {
+          "x": 20,
+          "z": 1
+        },
+        "role": "interior",
+        "label": "Corridor south"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm501-part",
+      "value": {
+        "a": {
+          "x": -16,
+          "z": 1
+        },
+        "b": {
+          "x": -16,
+          "z": 8
+        },
+        "role": "interior",
+        "label": "Room 501 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm501-bath-a",
+      "value": {
+        "a": {
+          "x": -20,
+          "z": 3.2
+        },
+        "b": {
+          "x": -18,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 501"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm501-bath-b",
+      "value": {
+        "a": {
+          "x": -18,
+          "z": 1
+        },
+        "b": {
+          "x": -18,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 501 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm501-d",
+      "value": {
+        "type": "door",
+        "wallId": "l5-cor-s",
+        "at": {
+          "x": -17,
+          "z": 1
+        },
+        "label": "Room 501 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm501-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l5-rm501-bath-b",
+        "at": {
+          "x": -18,
+          "z": 2.25
+        },
+        "label": "Bath 501 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm501-w",
+      "value": {
+        "type": "window",
+        "wallId": "l5-ext-s",
+        "at": {
+          "x": -18,
+          "z": 8
+        },
+        "label": "Room 501 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm501-r",
+      "value": {
+        "label": "Room 501",
+        "minX": -20,
+        "maxX": -16,
+        "minZ": 1,
+        "maxZ": 8
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm501-r-bath",
+      "value": {
+        "label": "Bath 501",
+        "minX": -20,
+        "maxX": -18,
+        "minZ": 1,
+        "maxZ": 3.2
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "l5-rm501-lt",
+      "value": {
+        "label": "Room 501",
+        "position": {
+          "x": -17.5,
+          "y": 2.4,
+          "z": 5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm502-part",
+      "value": {
+        "a": {
+          "x": -11.25,
+          "z": -1
+        },
+        "b": {
+          "x": -11.25,
+          "z": -8
+        },
+        "role": "interior",
+        "label": "Room 502 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm502-bath-a",
+      "value": {
+        "a": {
+          "x": -15,
+          "z": -3.2
+        },
+        "b": {
+          "x": -13,
+          "z": -3.2
+        },
+        "role": "interior",
+        "label": "Bath 502"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm502-bath-b",
+      "value": {
+        "a": {
+          "x": -13,
+          "z": -1
+        },
+        "b": {
+          "x": -13,
+          "z": -3.2
+        },
+        "role": "interior",
+        "label": "Bath 502 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm502-d",
+      "value": {
+        "type": "door",
+        "wallId": "l5-cor-nw",
+        "at": {
+          "x": -12.125,
+          "z": -1
+        },
+        "label": "Room 502 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm502-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l5-rm502-bath-b",
+        "at": {
+          "x": -13,
+          "z": -2.25
+        },
+        "label": "Bath 502 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm502-w",
+      "value": {
+        "type": "window",
+        "wallId": "l5-ext-n",
+        "at": {
+          "x": -13.125,
+          "z": -8
+        },
+        "label": "Room 502 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm502-r",
+      "value": {
+        "label": "Room 502",
+        "minX": -15,
+        "maxX": -11.25,
+        "minZ": -8,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm502-r-bath",
+      "value": {
+        "label": "Bath 502",
+        "minX": -15,
+        "maxX": -13,
+        "minZ": -3.2,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "l5-rm502-lt",
+      "value": {
+        "label": "Room 502",
+        "position": {
+          "x": -12.625,
+          "y": 2.4,
+          "z": -5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm503-part",
+      "value": {
+        "a": {
+          "x": -12,
+          "z": 1
+        },
+        "b": {
+          "x": -12,
+          "z": 8
+        },
+        "role": "interior",
+        "label": "Room 503 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm503-bath-a",
+      "value": {
+        "a": {
+          "x": -16,
+          "z": 3.2
+        },
+        "b": {
+          "x": -14,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 503"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm503-bath-b",
+      "value": {
+        "a": {
+          "x": -14,
+          "z": 1
+        },
+        "b": {
+          "x": -14,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 503 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm503-d",
+      "value": {
+        "type": "door",
+        "wallId": "l5-cor-s",
+        "at": {
+          "x": -13,
+          "z": 1
+        },
+        "label": "Room 503 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm503-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l5-rm503-bath-b",
+        "at": {
+          "x": -14,
+          "z": 2.25
+        },
+        "label": "Bath 503 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm503-w",
+      "value": {
+        "type": "window",
+        "wallId": "l5-ext-s",
+        "at": {
+          "x": -14,
+          "z": 8
+        },
+        "label": "Room 503 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm503-r",
+      "value": {
+        "label": "Room 503",
+        "minX": -16,
+        "maxX": -12,
+        "minZ": 1,
+        "maxZ": 8
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm503-r-bath",
+      "value": {
+        "label": "Bath 503",
+        "minX": -16,
+        "maxX": -14,
+        "minZ": 1,
+        "maxZ": 3.2
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "l5-rm503-lt",
+      "value": {
+        "label": "Room 503",
+        "position": {
+          "x": -13.5,
+          "y": 2.4,
+          "z": 5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm504-part",
+      "value": {
+        "a": {
+          "x": -7.5,
+          "z": -1
+        },
+        "b": {
+          "x": -7.5,
+          "z": -8
+        },
+        "role": "interior",
+        "label": "Room 504 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm504-bath-a",
+      "value": {
+        "a": {
+          "x": -11.25,
+          "z": -3.2
+        },
+        "b": {
+          "x": -9.25,
+          "z": -3.2
+        },
+        "role": "interior",
+        "label": "Bath 504"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm504-bath-b",
+      "value": {
+        "a": {
+          "x": -9.25,
+          "z": -1
+        },
+        "b": {
+          "x": -9.25,
+          "z": -3.2
+        },
+        "role": "interior",
+        "label": "Bath 504 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm504-d",
+      "value": {
+        "type": "door",
+        "wallId": "l5-cor-nw",
+        "at": {
+          "x": -8.375,
+          "z": -1
+        },
+        "label": "Room 504 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm504-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l5-rm504-bath-b",
+        "at": {
+          "x": -9.25,
+          "z": -2.25
+        },
+        "label": "Bath 504 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm504-w",
+      "value": {
+        "type": "window",
+        "wallId": "l5-ext-n",
+        "at": {
+          "x": -9.375,
+          "z": -8
+        },
+        "label": "Room 504 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm504-r",
+      "value": {
+        "label": "Room 504",
+        "minX": -11.25,
+        "maxX": -7.5,
+        "minZ": -8,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm504-r-bath",
+      "value": {
+        "label": "Bath 504",
+        "minX": -11.25,
+        "maxX": -9.25,
+        "minZ": -3.2,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "l5-rm504-lt",
+      "value": {
+        "label": "Room 504",
+        "position": {
+          "x": -8.875,
+          "y": 2.4,
+          "z": -5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm505-part",
+      "value": {
+        "a": {
+          "x": -8,
+          "z": 1
+        },
+        "b": {
+          "x": -8,
+          "z": 8
+        },
+        "role": "interior",
+        "label": "Room 505 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm505-bath-a",
+      "value": {
+        "a": {
+          "x": -12,
+          "z": 3.2
+        },
+        "b": {
+          "x": -10,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 505"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm505-bath-b",
+      "value": {
+        "a": {
+          "x": -10,
+          "z": 1
+        },
+        "b": {
+          "x": -10,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 505 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm505-d",
+      "value": {
+        "type": "door",
+        "wallId": "l5-cor-s",
+        "at": {
+          "x": -9,
+          "z": 1
+        },
+        "label": "Room 505 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm505-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l5-rm505-bath-b",
+        "at": {
+          "x": -10,
+          "z": 2.25
+        },
+        "label": "Bath 505 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm505-w",
+      "value": {
+        "type": "window",
+        "wallId": "l5-ext-s",
+        "at": {
+          "x": -10,
+          "z": 8
+        },
+        "label": "Room 505 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm505-r",
+      "value": {
+        "label": "Room 505",
+        "minX": -12,
+        "maxX": -8,
+        "minZ": 1,
+        "maxZ": 8
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm505-r-bath",
+      "value": {
+        "label": "Bath 505",
+        "minX": -12,
+        "maxX": -10,
+        "minZ": 1,
+        "maxZ": 3.2
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "l5-rm505-lt",
+      "value": {
+        "label": "Room 505",
+        "position": {
+          "x": -9.5,
+          "y": 2.4,
+          "z": 5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm506-bath-a",
+      "value": {
+        "a": {
+          "x": -7.5,
+          "z": -3.2
+        },
+        "b": {
+          "x": -5.5,
+          "z": -3.2
+        },
+        "role": "interior",
+        "label": "Bath 506"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm506-bath-b",
+      "value": {
+        "a": {
+          "x": -5.5,
+          "z": -1
+        },
+        "b": {
+          "x": -5.5,
+          "z": -3.2
+        },
+        "role": "interior",
+        "label": "Bath 506 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm506-d",
+      "value": {
+        "type": "door",
+        "wallId": "l5-cor-nw",
+        "at": {
+          "x": -4.625,
+          "z": -1
+        },
+        "label": "Room 506 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm506-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l5-rm506-bath-b",
+        "at": {
+          "x": -5.5,
+          "z": -2.25
+        },
+        "label": "Bath 506 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm506-w",
+      "value": {
+        "type": "window",
+        "wallId": "l5-ext-n",
+        "at": {
+          "x": -5.625,
+          "z": -8
+        },
+        "label": "Room 506 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm506-r",
+      "value": {
+        "label": "Room 506",
+        "minX": -7.5,
+        "maxX": -3.75,
+        "minZ": -8,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm506-r-bath",
+      "value": {
+        "label": "Bath 506",
+        "minX": -7.5,
+        "maxX": -5.5,
+        "minZ": -3.2,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "l5-rm506-lt",
+      "value": {
+        "label": "Room 506",
+        "position": {
+          "x": -5.125,
+          "y": 2.4,
+          "z": -5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm507-part",
+      "value": {
+        "a": {
+          "x": -4,
+          "z": 1
+        },
+        "b": {
+          "x": -4,
+          "z": 8
+        },
+        "role": "interior",
+        "label": "Room 507 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm507-bath-a",
+      "value": {
+        "a": {
+          "x": -8,
+          "z": 3.2
+        },
+        "b": {
+          "x": -6,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 507"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm507-bath-b",
+      "value": {
+        "a": {
+          "x": -6,
+          "z": 1
+        },
+        "b": {
+          "x": -6,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 507 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm507-d",
+      "value": {
+        "type": "door",
+        "wallId": "l5-cor-s",
+        "at": {
+          "x": -5,
+          "z": 1
+        },
+        "label": "Room 507 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm507-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l5-rm507-bath-b",
+        "at": {
+          "x": -6,
+          "z": 2.25
+        },
+        "label": "Bath 507 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm507-w",
+      "value": {
+        "type": "window",
+        "wallId": "l5-ext-s",
+        "at": {
+          "x": -6,
+          "z": 8
+        },
+        "label": "Room 507 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm507-r",
+      "value": {
+        "label": "Room 507",
+        "minX": -8,
+        "maxX": -4,
+        "minZ": 1,
+        "maxZ": 8
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm507-r-bath",
+      "value": {
+        "label": "Bath 507",
+        "minX": -8,
+        "maxX": -6,
+        "minZ": 1,
+        "maxZ": 3.2
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "l5-rm507-lt",
+      "value": {
+        "label": "Room 507",
+        "position": {
+          "x": -5.5,
+          "y": 2.4,
+          "z": 5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm508-part",
+      "value": {
+        "a": {
+          "x": 7.5,
+          "z": -1
+        },
+        "b": {
+          "x": 7.5,
+          "z": -8
+        },
+        "role": "interior",
+        "label": "Room 508 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm508-bath-a",
+      "value": {
+        "a": {
+          "x": 3.75,
+          "z": -3.2
+        },
+        "b": {
+          "x": 5.75,
+          "z": -3.2
+        },
+        "role": "interior",
+        "label": "Bath 508"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm508-bath-b",
+      "value": {
+        "a": {
+          "x": 5.75,
+          "z": -1
+        },
+        "b": {
+          "x": 5.75,
+          "z": -3.2
+        },
+        "role": "interior",
+        "label": "Bath 508 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm508-d",
+      "value": {
+        "type": "door",
+        "wallId": "l5-cor-ne",
+        "at": {
+          "x": 6.625,
+          "z": -1
+        },
+        "label": "Room 508 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm508-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l5-rm508-bath-b",
+        "at": {
+          "x": 5.75,
+          "z": -2.25
+        },
+        "label": "Bath 508 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm508-w",
+      "value": {
+        "type": "window",
+        "wallId": "l5-ext-n",
+        "at": {
+          "x": 5.625,
+          "z": -8
+        },
+        "label": "Room 508 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm508-r",
+      "value": {
+        "label": "Room 508",
+        "minX": 3.75,
+        "maxX": 7.5,
+        "minZ": -8,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm508-r-bath",
+      "value": {
+        "label": "Bath 508",
+        "minX": 3.75,
+        "maxX": 5.75,
+        "minZ": -3.2,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "l5-rm508-lt",
+      "value": {
+        "label": "Room 508",
+        "position": {
+          "x": 6.125,
+          "y": 2.4,
+          "z": -5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm509-part",
+      "value": {
+        "a": {
+          "x": 0,
+          "z": 1
+        },
+        "b": {
+          "x": 0,
+          "z": 8
+        },
+        "role": "interior",
+        "label": "Room 509 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm509-bath-a",
+      "value": {
+        "a": {
+          "x": -4,
+          "z": 3.2
+        },
+        "b": {
+          "x": -2,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 509"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm509-bath-b",
+      "value": {
+        "a": {
+          "x": -2,
+          "z": 1
+        },
+        "b": {
+          "x": -2,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 509 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm509-d",
+      "value": {
+        "type": "door",
+        "wallId": "l5-cor-s",
+        "at": {
+          "x": -1,
+          "z": 1
+        },
+        "label": "Room 509 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm509-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l5-rm509-bath-b",
+        "at": {
+          "x": -2,
+          "z": 2.25
+        },
+        "label": "Bath 509 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm509-w",
+      "value": {
+        "type": "window",
+        "wallId": "l5-ext-s",
+        "at": {
+          "x": -2,
+          "z": 8
+        },
+        "label": "Room 509 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm509-r",
+      "value": {
+        "label": "Room 509",
+        "minX": -4,
+        "maxX": 0,
+        "minZ": 1,
+        "maxZ": 8
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm509-r-bath",
+      "value": {
+        "label": "Bath 509",
+        "minX": -4,
+        "maxX": -2,
+        "minZ": 1,
+        "maxZ": 3.2
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "l5-rm509-lt",
+      "value": {
+        "label": "Room 509",
+        "position": {
+          "x": -1.5,
+          "y": 2.4,
+          "z": 5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm510-part",
+      "value": {
+        "a": {
+          "x": 11.25,
+          "z": -1
+        },
+        "b": {
+          "x": 11.25,
+          "z": -8
+        },
+        "role": "interior",
+        "label": "Room 510 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm510-bath-a",
+      "value": {
+        "a": {
+          "x": 7.5,
+          "z": -3.2
+        },
+        "b": {
+          "x": 9.5,
+          "z": -3.2
+        },
+        "role": "interior",
+        "label": "Bath 510"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm510-bath-b",
+      "value": {
+        "a": {
+          "x": 9.5,
+          "z": -1
+        },
+        "b": {
+          "x": 9.5,
+          "z": -3.2
+        },
+        "role": "interior",
+        "label": "Bath 510 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm510-d",
+      "value": {
+        "type": "door",
+        "wallId": "l5-cor-ne",
+        "at": {
+          "x": 10.375,
+          "z": -1
+        },
+        "label": "Room 510 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm510-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l5-rm510-bath-b",
+        "at": {
+          "x": 9.5,
+          "z": -2.25
+        },
+        "label": "Bath 510 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm510-w",
+      "value": {
+        "type": "window",
+        "wallId": "l5-ext-n",
+        "at": {
+          "x": 9.375,
+          "z": -8
+        },
+        "label": "Room 510 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm510-r",
+      "value": {
+        "label": "Room 510",
+        "minX": 7.5,
+        "maxX": 11.25,
+        "minZ": -8,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm510-r-bath",
+      "value": {
+        "label": "Bath 510",
+        "minX": 7.5,
+        "maxX": 9.5,
+        "minZ": -3.2,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "l5-rm510-lt",
+      "value": {
+        "label": "Room 510",
+        "position": {
+          "x": 9.875,
+          "y": 2.4,
+          "z": -5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm511-part",
+      "value": {
+        "a": {
+          "x": 4,
+          "z": 1
+        },
+        "b": {
+          "x": 4,
+          "z": 8
+        },
+        "role": "interior",
+        "label": "Room 511 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm511-bath-a",
+      "value": {
+        "a": {
+          "x": 0,
+          "z": 3.2
+        },
+        "b": {
+          "x": 2,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 511"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm511-bath-b",
+      "value": {
+        "a": {
+          "x": 2,
+          "z": 1
+        },
+        "b": {
+          "x": 2,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 511 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm511-d",
+      "value": {
+        "type": "door",
+        "wallId": "l5-cor-s",
+        "at": {
+          "x": 3,
+          "z": 1
+        },
+        "label": "Room 511 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm511-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l5-rm511-bath-b",
+        "at": {
+          "x": 2,
+          "z": 2.25
+        },
+        "label": "Bath 511 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm511-w",
+      "value": {
+        "type": "window",
+        "wallId": "l5-ext-s",
+        "at": {
+          "x": 2,
+          "z": 8
+        },
+        "label": "Room 511 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm511-r",
+      "value": {
+        "label": "Room 511",
+        "minX": 0,
+        "maxX": 4,
+        "minZ": 1,
+        "maxZ": 8
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm511-r-bath",
+      "value": {
+        "label": "Bath 511",
+        "minX": 0,
+        "maxX": 2,
+        "minZ": 1,
+        "maxZ": 3.2
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "l5-rm511-lt",
+      "value": {
+        "label": "Room 511",
+        "position": {
+          "x": 2.5,
+          "y": 2.4,
+          "z": 5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm512-bath-a",
+      "value": {
+        "a": {
+          "x": 11.25,
+          "z": -3.2
+        },
+        "b": {
+          "x": 13.25,
+          "z": -3.2
+        },
+        "role": "interior",
+        "label": "Bath 512"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm512-bath-b",
+      "value": {
+        "a": {
+          "x": 13.25,
+          "z": -1
+        },
+        "b": {
+          "x": 13.25,
+          "z": -3.2
+        },
+        "role": "interior",
+        "label": "Bath 512 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm512-d",
+      "value": {
+        "type": "door",
+        "wallId": "l5-cor-ne",
+        "at": {
+          "x": 14.125,
+          "z": -1
+        },
+        "label": "Room 512 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm512-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l5-rm512-bath-b",
+        "at": {
+          "x": 13.25,
+          "z": -2.25
+        },
+        "label": "Bath 512 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm512-w",
+      "value": {
+        "type": "window",
+        "wallId": "l5-ext-n",
+        "at": {
+          "x": 13.125,
+          "z": -8
+        },
+        "label": "Room 512 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm512-r",
+      "value": {
+        "label": "Room 512",
+        "minX": 11.25,
+        "maxX": 15,
+        "minZ": -8,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm512-r-bath",
+      "value": {
+        "label": "Bath 512",
+        "minX": 11.25,
+        "maxX": 13.25,
+        "minZ": -3.2,
+        "maxZ": -1
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "l5-rm512-lt",
+      "value": {
+        "label": "Room 512",
+        "position": {
+          "x": 13.625,
+          "y": 2.4,
+          "z": -5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm513-part",
+      "value": {
+        "a": {
+          "x": 8,
+          "z": 1
+        },
+        "b": {
+          "x": 8,
+          "z": 8
+        },
+        "role": "interior",
+        "label": "Room 513 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm513-bath-a",
+      "value": {
+        "a": {
+          "x": 4,
+          "z": 3.2
+        },
+        "b": {
+          "x": 6,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 513"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm513-bath-b",
+      "value": {
+        "a": {
+          "x": 6,
+          "z": 1
+        },
+        "b": {
+          "x": 6,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 513 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm513-d",
+      "value": {
+        "type": "door",
+        "wallId": "l5-cor-s",
+        "at": {
+          "x": 7,
+          "z": 1
+        },
+        "label": "Room 513 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm513-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l5-rm513-bath-b",
+        "at": {
+          "x": 6,
+          "z": 2.25
+        },
+        "label": "Bath 513 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm513-w",
+      "value": {
+        "type": "window",
+        "wallId": "l5-ext-s",
+        "at": {
+          "x": 6,
+          "z": 8
+        },
+        "label": "Room 513 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm513-r",
+      "value": {
+        "label": "Room 513",
+        "minX": 4,
+        "maxX": 8,
+        "minZ": 1,
+        "maxZ": 8
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm513-r-bath",
+      "value": {
+        "label": "Bath 513",
+        "minX": 4,
+        "maxX": 6,
+        "minZ": 1,
+        "maxZ": 3.2
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "l5-rm513-lt",
+      "value": {
+        "label": "Room 513",
+        "position": {
+          "x": 6.5,
+          "y": 2.4,
+          "z": 5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm515-part",
+      "value": {
+        "a": {
+          "x": 12,
+          "z": 1
+        },
+        "b": {
+          "x": 12,
+          "z": 8
+        },
+        "role": "interior",
+        "label": "Room 515 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm515-bath-a",
+      "value": {
+        "a": {
+          "x": 8,
+          "z": 3.2
+        },
+        "b": {
+          "x": 10,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 515"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm515-bath-b",
+      "value": {
+        "a": {
+          "x": 10,
+          "z": 1
+        },
+        "b": {
+          "x": 10,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 515 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm515-d",
+      "value": {
+        "type": "door",
+        "wallId": "l5-cor-s",
+        "at": {
+          "x": 11,
+          "z": 1
+        },
+        "label": "Room 515 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm515-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l5-rm515-bath-b",
+        "at": {
+          "x": 10,
+          "z": 2.25
+        },
+        "label": "Bath 515 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm515-w",
+      "value": {
+        "type": "window",
+        "wallId": "l5-ext-s",
+        "at": {
+          "x": 10,
+          "z": 8
+        },
+        "label": "Room 515 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm515-r",
+      "value": {
+        "label": "Room 515",
+        "minX": 8,
+        "maxX": 12,
+        "minZ": 1,
+        "maxZ": 8
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm515-r-bath",
+      "value": {
+        "label": "Bath 515",
+        "minX": 8,
+        "maxX": 10,
+        "minZ": 1,
+        "maxZ": 3.2
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "l5-rm515-lt",
+      "value": {
+        "label": "Room 515",
+        "position": {
+          "x": 10.5,
+          "y": 2.4,
+          "z": 5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm517-part",
+      "value": {
+        "a": {
+          "x": 16,
+          "z": 1
+        },
+        "b": {
+          "x": 16,
+          "z": 8
+        },
+        "role": "interior",
+        "label": "Room 517 partition"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm517-bath-a",
+      "value": {
+        "a": {
+          "x": 12,
+          "z": 3.2
+        },
+        "b": {
+          "x": 14,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 517"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm517-bath-b",
+      "value": {
+        "a": {
+          "x": 14,
+          "z": 1
+        },
+        "b": {
+          "x": 14,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 517 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm517-d",
+      "value": {
+        "type": "door",
+        "wallId": "l5-cor-s",
+        "at": {
+          "x": 15,
+          "z": 1
+        },
+        "label": "Room 517 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm517-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l5-rm517-bath-b",
+        "at": {
+          "x": 14,
+          "z": 2.25
+        },
+        "label": "Bath 517 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm517-w",
+      "value": {
+        "type": "window",
+        "wallId": "l5-ext-s",
+        "at": {
+          "x": 14,
+          "z": 8
+        },
+        "label": "Room 517 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm517-r",
+      "value": {
+        "label": "Room 517",
+        "minX": 12,
+        "maxX": 16,
+        "minZ": 1,
+        "maxZ": 8
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm517-r-bath",
+      "value": {
+        "label": "Bath 517",
+        "minX": 12,
+        "maxX": 14,
+        "minZ": 1,
+        "maxZ": 3.2
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "l5-rm517-lt",
+      "value": {
+        "label": "Room 517",
+        "position": {
+          "x": 14.5,
+          "y": 2.4,
+          "z": 5.6
+        }
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm519-bath-a",
+      "value": {
+        "a": {
+          "x": 16,
+          "z": 3.2
+        },
+        "b": {
+          "x": 18,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 519"
+      }
+    },
+    {
+      "op": "wall.add",
+      "floorId": "l5",
+      "id": "l5-rm519-bath-b",
+      "value": {
+        "a": {
+          "x": 18,
+          "z": 1
+        },
+        "b": {
+          "x": 18,
+          "z": 3.2
+        },
+        "role": "interior",
+        "label": "Bath 519 side"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm519-d",
+      "value": {
+        "type": "door",
+        "wallId": "l5-cor-s",
+        "at": {
+          "x": 19,
+          "z": 1
+        },
+        "label": "Room 519 door",
+        "width": 0.9,
+        "height": 2.1,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm519-d-bath",
+      "value": {
+        "type": "door",
+        "wallId": "l5-rm519-bath-b",
+        "at": {
+          "x": 18,
+          "z": 2.25
+        },
+        "label": "Bath 519 door",
+        "width": 0.8,
+        "height": 2,
+        "doorStyle": "room"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-rm519-w",
+      "value": {
+        "type": "window",
+        "wallId": "l5-ext-s",
+        "at": {
+          "x": 18,
+          "z": 8
+        },
+        "label": "Room 519 window",
+        "width": 1.6,
+        "height": 1.5,
+        "sill": 0.9,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm519-r",
+      "value": {
+        "label": "Room 519",
+        "minX": 16,
+        "maxX": 20,
+        "minZ": 1,
+        "maxZ": 8
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-rm519-r-bath",
+      "value": {
+        "label": "Bath 519",
+        "minX": 16,
+        "maxX": 18,
+        "minZ": 1,
+        "maxZ": 3.2
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "l5-rm519-lt",
+      "value": {
+        "label": "Room 519",
+        "position": {
+          "x": 18.5,
+          "y": 2.4,
+          "z": 5.6
+        }
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-w-cor-w",
+      "value": {
+        "type": "window",
+        "wallId": "l5-ext-w",
+        "at": {
+          "x": -20,
+          "z": 0
+        },
+        "label": "Corridor end window",
+        "width": 1,
+        "height": 1.6,
+        "sill": 0.8,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "opening.add",
+      "floorId": "l5",
+      "id": "l5-w-cor-e",
+      "value": {
+        "type": "window",
+        "wallId": "l5-ext-e",
+        "at": {
+          "x": 20,
+          "z": 0
+        },
+        "label": "Corridor end window",
+        "width": 1,
+        "height": 1.6,
+        "sill": 0.8,
+        "windowStyle": "plain"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-r-cor-w",
+      "value": {
+        "label": "Corridor west",
+        "minX": -20,
+        "maxX": -3.75,
+        "minZ": -1,
+        "maxZ": 1,
+        "kind": "bay"
+      }
+    },
+    {
+      "op": "region.add",
+      "floorId": "l5",
+      "id": "l5-r-cor-e",
+      "value": {
+        "label": "Corridor east",
+        "minX": 3.75,
+        "maxX": 20,
+        "minZ": -1,
+        "maxZ": 1,
+        "kind": "bay"
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "l5-lt-cor-16",
+      "value": {
+        "label": "Corridor",
+        "position": {
+          "x": -16,
+          "y": 2.4,
+          "z": 0
+        }
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "l5-lt-cor-9",
+      "value": {
+        "label": "Corridor",
+        "position": {
+          "x": -9,
+          "y": 2.4,
+          "z": 0
+        }
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "l5-lt-cor9",
+      "value": {
+        "label": "Corridor",
+        "position": {
+          "x": 9,
+          "y": 2.4,
+          "z": 0
+        }
+      }
+    },
+    {
+      "op": "light.add",
+      "floorId": "l5",
+      "id": "l5-lt-cor16",
+      "value": {
+        "label": "Corridor",
+        "position": {
+          "x": 16,
+          "y": 2.4,
+          "z": 0
+        }
+      }
+    }
+  ]
+}

@@ -1,8 +1,8 @@
 // Navigation uses structured scope/IDs and exact validator paths, never names
 // extracted from human-readable messages. Resolve again when a button is used.
 const local={walls:'wall',openings:'opening',stairs:'stair',lights:'light',markers:'marker',slabs:'slab',regions:'region',platforms:'platform',railings:'railing'};
-const global={roofSections:'roofSection',manualFloors:'manualFloor',manualCeilings:'manualCeiling'};
-const names={wall:'wall',opening:'opening',stair:'stair',light:'light',marker:'marker',slab:'footprint',region:'region',platform:'platform',railing:'railing',roofSection:'roof',manualFloor:'manual floor',manualCeiling:'manual ceiling'};
+const global={roofSections:'roofSection',manualFloors:'manualFloor',manualCeilings:'manualCeiling',elevators:'elevator'};
+const names={wall:'wall',opening:'opening',stair:'stair',light:'light',marker:'marker',slab:'footprint',region:'region',platform:'platform',railing:'railing',roofSection:'roof',manualFloor:'manual floor',manualCeiling:'manual ceiling',elevator:'elevator'};
 const unique=(list,id)=>{const matches=(Array.isArray(list)?list:[]).filter(x=>x&&typeof id==='string'&&id&&x.id===id);return matches.length===1?matches[0]:null;};
 
 export function resolveDiagnosticTarget(building,target){

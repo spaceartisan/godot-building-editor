@@ -1,3 +1,4 @@
+import { elevatorLayout, elevatorYaw } from './elevators.js';
 import { wallTypeFor, sampleWallType } from './wall-types.js';
 import { openingShapeFor, shapedDoorLayout, doorLeafCount } from './opening-shapes.js';
 import { profileWallState, profileWallSolids } from './wall-profile-geometry.js';
@@ -1395,7 +1396,7 @@ export function storyCeilingRectangles(building, fi) {
 export function floorRectanglesForView(view, belowStairs=[]) {
   const structureBounds=boundsOfStructuralFloor(view);
   if(structureBounds.width<=EPS||structureBounds.depth<=EPS)return [];
-  const holes=[...clippedStairHoles(structureBounds,belowStairs,.06),...clippedRectHoles(structureBounds,view.platforms||[])];
+  const holes=[...clippedStairHoles(structureBounds,belowStairs,.06),...clippedRectHoles(structureBounds,view.platforms||[]),...clippedRectHoles(structureBounds,view.elevatorHoles||[])];
   return slabRectanglesForBases(floorBaseRects(view,structureBounds),holes);
 }
 
@@ -1632,6 +1633,55 @@ export function wallMeshPiecesByRoom(building,view,mesh){
   return [...pieces,rest].filter(p=>p.mesh.vertices.length);
 }
 
+// Elevator scenes (elevators/<building>_elevator_NNN_<label>.tscn), instanced
+// under the building root's Elevators node like door scenes.
+export function elevatorSceneDescriptors(building){
+  const base=fileBase(building.name);
+  return (building.elevators||[]).map((elevator,i)=>{const n=String(i+1).padStart(3,'0');return {elevator,number:n,extId:`ElevatorScene_${n}`,filename:`elevators/${base}_elevator_${n}_${fileSlug(elevator.label||elevator.id)}.tscn`};});
+}
+// The static elevator assembly; the game moves Car between the Stops markers
+// and slides the landing doors (no script is included, as with doors).
+export function exportElevatorTscn(building,elevator,options={}){
+  const profile=exportProfile(building,options),layout=elevatorLayout(building,elevator),resources=[],nodes=[];
+  const addRes=(type,id,props)=>resources.push(`[sub_resource type="${type}" id="${id}"]\n${props.join('\n')}`);
+  const matShaft='Material_ElevatorShaft',matCar='Material_ElevatorCar',matDoor='Material_ElevatorDoor';
+  addRes('StandardMaterial3D',matShaft,['albedo_color = Color(0.55, 0.55, 0.57, 1)','roughness = 0.9']);
+  addRes('StandardMaterial3D',matCar,['albedo_color = Color(0.62, 0.58, 0.5, 1)','roughness = 0.6']);
+  addRes('StandardMaterial3D',matDoor,['albedo_color = Color(0.7, 0.72, 0.75, 1)','metallic = 0.6','roughness = 0.35']);
+  const mesh=boxes=>{const w=meshWriter();for(const b of boxes)addLocalBoxToMesh(w,b.size,b.pos);return w;};
+  let shapes=0;const shape=(parent,box)=>{const id=`ElevatorShape_${++shapes}`;addRes('BoxShape3D',id,[`size = ${v3(box.size.x,box.size.y,box.size.z)}`]);nodes.push(`[node name="CollisionShape_${shapes}" type="CollisionShape3D" parent="${parent}"]\nposition = ${v3(box.pos.x,box.pos.y,box.pos.z)}\nshape = SubResource("${id}")`);};
+  const label=String(elevator.label||elevator.id).replace(/["\\]/g,'');
+  nodes.push(`[node name="Elevator" type="Node3D"]\neditor_description = "${label}: elevator serving ${layout.stops.length} floors. Move Car on Y between the Stops markers (Stop_NN.position.y); slide each Landing's DoorLeft/DoorRight outward along X by the landing's leaf_travel to open. No script is included."\nmetadata/building_elevator_id = ${JSON.stringify(elevator.id)}`);
+  const shaftRes=arrayMeshResource(mesh(layout.shaft),matShaft,'ElevatorShaftMesh','ShaftFaces');if(shaftRes)resources.push(shaftRes.text);
+  if(shaftRes)nodes.push(`[node name="Shaft" type="MeshInstance3D" parent="."]\nmesh = SubResource("ElevatorShaftMesh")`);
+  nodes.push(`[node name="ShaftBody" type="StaticBody3D" parent="."]`);
+  for(const b of layout.shaft)shape('ShaftBody',b);
+  const carRes=arrayMeshResource(mesh(layout.car),matCar,'ElevatorCarMesh','CarFaces');if(carRes)resources.push(carRes.text);
+  // Car and door leaves are the moving bodies themselves: AnimatableBody3D
+  // follows its own transform, so moving Car (or a DoorLeft) moves its collision.
+  const moving=options.collision===false?'Node3D':'AnimatableBody3D';
+  nodes.push(`[node name="Car" type="${moving}" parent="."]\neditor_description = "Car floor at the bottom stop. Move this node on Y between the Stops markers; its collision moves with it."${options.collision===false?'':`\ncollision_layer = 1\ncollision_mask = ${profile.bodyMask}`}`);
+  if(carRes)nodes.push(`[node name="CarMesh" type="MeshInstance3D" parent="Car"]\nmesh = SubResource("ElevatorCarMesh")`);
+  for(const b of layout.car)shape('Car',b);
+  nodes.push(`[node name="Stops" type="Node3D" parent="."]`);
+  for(const st of layout.stops)nodes.push(`[node name="${st.name}" type="Marker3D" parent="Stops"]\nposition = ${v3(0,st.y,0)}\nmetadata/building_floor_id = ${JSON.stringify(st.floorId)}\nmetadata/building_floor_label = ${JSON.stringify(st.label)}`);
+  const leaf=layout.landings[0]?.leaves[0];
+  if(leaf){const leafRes=arrayMeshResource(mesh([{size:leaf.size,pos:{x:0,y:0,z:0}}]),matDoor,'ElevatorDoorLeafMesh','Door');if(leafRes)resources.push(leafRes.text);}
+  nodes.push(`[node name="Landings" type="Node3D" parent="."]`);
+  for(const landing of layout.landings){
+    const parent=`Landings/${landing.name}`;
+    nodes.push(`[node name="${landing.name}" type="Node3D" parent="Landings"]\nposition = ${v3(0,landing.y,0)}\neditor_description = "Landing doors on ${String(landing.label).replace(/["\\]/g,'')}."\nmetadata/leaf_travel = ${fmt(landing.leafTravel)}`);
+    for(const l of landing.leaves){
+      nodes.push(`[node name="Door${l.side}" type="${moving}" parent="${parent}"]\nposition = ${v3(l.pos.x,l.pos.y,l.pos.z)}${options.collision===false?'':`\ncollision_layer = ${profile.doorLayer}\ncollision_mask = ${profile.bodyMask}`}`);
+      nodes.push(`[node name="DoorMesh" type="MeshInstance3D" parent="${parent}/Door${l.side}"]\nmesh = SubResource("ElevatorDoorLeafMesh")`);
+      shape(`${parent}/Door${l.side}`,{size:l.size,pos:{x:0,y:0,z:0}});
+    }
+  }
+  const sceneNodes=options.collision===false?nodes.filter(n=>!/^\[node[^\n]*type="(?:StaticBody3D|CollisionShape3D)"/.test(n)):nodes;
+  const sceneResources=options.collision===false?resources.filter(r=>!/^\[sub_resource type="BoxShape3D"/.test(r)):resources;
+  return finalizeScene(`[gd_scene load_steps=${sceneResources.length+1} format=3]\n\n${sceneResources.join('\n\n')}\n\n${sceneNodes.join('\n\n')}\n`,options);
+}
+
 export function exportGodotTscn(building, options={collision:true, markers:true}, suppliedDoorScenes=null) {
   options={collision:true,markers:true,...options};
   assertValidBuilding(building);
@@ -1681,8 +1731,14 @@ export function exportGodotTscn(building, options={collision:true, markers:true}
   const doorScenes=suppliedDoorScenes||doorSceneDescriptors(building);
   const doorExtIds=new Set();
   for(const d of doorScenes) if(!doorExtIds.has(d.extId)){doorExtIds.add(d.extId);extResources.push(`[ext_resource type="PackedScene" path="${d.filename}" id="${d.extId}"]`);}
+  const elevatorScenes=elevatorSceneDescriptors(building);
+  for(const d of elevatorScenes)extResources.push(`[ext_resource type="PackedScene" path="${d.filename}" id="${d.extId}"]`);
 
   nodes.push(`[node name="${nodeClean(building.name)}" type="Node3D"]`);
+  if(elevatorScenes.length){
+    nodes.push(`[node name="Elevators" type="Node3D" parent="."]\neditor_description = "Elevator assemblies: shaft, movable car, landing doors and stop markers (no scripts)."`);
+    for(const d of elevatorScenes)nodes.push(`[node name="Elevator_${d.number}_${nodeClean(d.elevator.label||d.elevator.id)}" parent="Elevators" instance=ExtResource("${d.extId}")]\nposition = ${v3(d.elevator.x,elevatorLayout(building,d.elevator).base,d.elevator.z)}\nrotation = ${v3(0,elevatorYaw(d.elevator),0)}`);
+  }
 
   const addBoxNode=(parent,name,size,position,rotation,materialId,collisionParent=null)=>{
     const meshId=resId('BoxMesh');
@@ -2235,6 +2291,8 @@ export function exportGodotFiles(building, options={collision:true,markers:true}
     });
     doors=[...[...shared.values()].map(q=>({filename:q.filename,tscn:q.text,openings:q.users,shared:q.users.length})),...doors.filter(d=>d.tscn==null)];
   }
+  // Elevator scenes travel with the door scenes (kind: 'elevator').
+  doors=[...doors,...elevatorSceneDescriptors(building).map(d=>({filename:d.filename,tscn:exportElevatorTscn(building,d.elevator,options),kind:'elevator',elevator:d.elevator}))];
   const files={base,tscnName,tscn:exportGodotTscn(building,options,doorScenes),doors,warnings:validation.warnings};
   // Optional game layer (materials, render layers, scripts, door children).
   return options.gameLayer?applyGameLayer(files,options.gameLayer):files;

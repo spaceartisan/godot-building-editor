@@ -419,3 +419,28 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   assert.deepEqual(e.errors,[]);
   console.log('PASS web Split floors, ceilings and walls by room equals building.update slabsByRoom');
 }
+{
+  // Elevators: the Elevators panel equals elevator.add/update/remove, and refuses what the shared check refuses.
+  const base=tx([{op:'room.add',floorId:'floor_1',id:'g',value:{minX:-6,maxX:6,minZ:-5,maxZ:5}},{op:'floor.add-top',aboveFloorId:'floor_1',id:'f2'},
+    {op:'room.add',floorId:'f2',id:'u',value:{minX:-6,maxX:6,minZ:-5,maxZ:5}}]);
+  await e.loadBuildingData(structuredClone(base));
+  await $('#add-elevator-btn').dispatch('click');
+  const added=tx([{op:'elevator.add',id:'elevator_1',value:{label:'Elevator 1',x:0,z:0,bottomFloorId:'floor_1',topFloorId:'f2'}}],base);
+  assert.deepEqual(e.snapshot(),added,'Add elevator equals elevator.add from the active floor to the next');
+  const entry=()=>$('#elevator-list').children[0],field=label=>entry().children.find(c=>c.textContent?.startsWith(label))?.children[0];
+  await change(field('Centre X'),3);await change(field('Door side'),'maxX');await change(field('Label'),'Main lift');
+  const updated=tx([{op:'elevator.update',id:'elevator_1',value:{x:3,doorSide:'maxX',label:'Main lift'}}],added);
+  assert.deepEqual(e.snapshot(),updated,'panel fields equal elevator.update');
+  await change(field('Centre X'),5.5);assert.deepEqual(e.snapshot(),updated,'a shaft crossing the outer wall is refused');
+  assert.match($('#status-text').textContent,/runs through elevator/);
+  await change(field('Top floor'),'floor_1');assert.deepEqual(e.snapshot(),updated,'top must be above bottom');
+  const preview=e.preview.scene.objects.length;assert.ok(preview>0);
+  // Show elevator (from a check result) opens the panel on the lowest served floor.
+  await change($('#floor-select'),1);assert.equal(e.activeFloor(),1);
+  e.visitDiagnosticTarget({type:'elevator',id:'elevator_1'});
+  assert.equal(e.activeFloor(),0);assert.match($('#status-text').textContent,/Reviewing elevator · Main lift/);
+  await entry().children.find(c=>c.tagName==='BUTTON'&&c.textContent==='Delete elevator').dispatch('click');
+  assert.deepEqual(e.snapshot(),tx([{op:'elevator.remove',id:'elevator_1'}],updated),'Delete equals elevator.remove');
+  assert.deepEqual(e.errors,[]);
+  console.log('PASS web Elevators panel equals elevator.add/update/remove and refuses invalid shafts');
+}

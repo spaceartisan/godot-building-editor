@@ -1,3 +1,4 @@
+import { elevatorProblem } from './elevators.js';
 import {roofWallDiagnostics} from './roof-wall-diagnostics.js';
 import {profileWallState} from './wall-profile-geometry.js';
 import {standardProfileJunction} from './profile-junctions.js';
@@ -33,6 +34,10 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
   if(building.name!=null&&typeof building.name!=='string')error('name','must be text');
   if(building.exportProfile!=null&&!['generic','get_probed'].includes(building.exportProfile))error('exportProfile','unknown profile');
   if(building.slabsByRoom!==undefined&&typeof building.slabsByRoom!=='boolean')error('slabsByRoom','slabsByRoom must be true or false');
+  if(building.elevators!==undefined){
+    if(!Array.isArray(building.elevators))error('elevators','elevators must be an array');
+    else{const ids=new Set();for(const e of building.elevators){if(typeof e?.id!=='string'||!e.id||ids.has(e.id))error('elevators',`duplicate or missing elevator ID: ${e?.id}`);ids.add(e?.id);const problem=elevatorProblem(building,e);if(problem)error('elevators',`${e?.label||e?.id}: ${problem}`,[{type:'elevator',id:e?.id}]);}}
+  }
   for(const k of ['roof','ceiling','windowMesh','doorMesh']){
     const cfg=building[k];if(cfg==null)continue;
     if(typeof cfg!=='object'||Array.isArray(cfg)){error(k,'must be an object');continue;}

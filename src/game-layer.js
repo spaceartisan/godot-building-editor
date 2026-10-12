@@ -55,7 +55,7 @@ export function parseGameLayer(value){
   const scripts={};
   if(data.scripts!==undefined){
     if(!isObject(data.scripts))fail('expected {building, door}','scripts');
-    for(const [key,path] of Object.entries(data.scripts)){if(!['building','door'].includes(key))fail(`unknown script target ${key}`,'scripts');scripts[key]=resourcePath(path,`scripts/${key}`);}
+    for(const [key,path] of Object.entries(data.scripts)){if(!['building','door','elevator'].includes(key))fail(`unknown script target ${key}`,'scripts');scripts[key]=resourcePath(path,`scripts/${key}`);}
   }
   const doorChildren=[];
   if(data.doorChildren!==undefined){
@@ -84,7 +84,7 @@ function applyToScene(text,layer,kind){
     if(!header)return block;
     const [,name,type,parent]=header;
     if(parent===undefined){
-      const script=kind==='door'?layer.scripts.door:layer.scripts.building;
+      const script=kind==='door'?layer.scripts.door:kind==='elevator'?layer.scripts.elevator:layer.scripts.building;
       return script?`${block}\nscript = ExtResource("${resource('Script',script)}")`:block;
     }
     if(type==='MeshInstance3D'){
@@ -120,5 +120,5 @@ function applyToScene(text,layer,kind){
 // files: the result of exportGodotFiles. Returns a copy with the layer applied.
 export function applyGameLayer(files,layer){
   if(!layer)return files;
-  return {...files,tscn:applyToScene(files.tscn,layer,'building'),doors:files.doors.map(d=>d.tscn==null?d:{...d,tscn:applyToScene(d.tscn,layer,'door')}),gameLayer:true};
+  return {...files,tscn:applyToScene(files.tscn,layer,'building'),doors:files.doors.map(d=>d.tscn==null?d:{...d,tscn:applyToScene(d.tscn,layer,d.kind==='elevator'?'elevator':'door')}),gameLayer:true};
 }

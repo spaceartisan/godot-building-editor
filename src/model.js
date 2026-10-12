@@ -1,3 +1,4 @@
+import { elevatorFloorHoles } from './elevators.js';
 import { regionAreaCells } from './regions.js';
 import { roofFootprintAreas } from './roof-outline.js';
 import { areaSize, wallPolygonAreas, unionPolygonAreas, subtractPolygonAreas, mergeConvexAreas } from './polygon-areas.js';
@@ -61,6 +62,8 @@ export function floorView(building, floorOrIndex = 0, includeRoof = true) {
     // Wall continuity is tied to story spacing, not to whether a slab exists.
     storyFloorSkirt: floors.indexOf(floor)>0 ? floorSlabThickness(building, floors.indexOf(floor)) : 0,
     boundaryMode: floor.boundaryMode || 'closed',
+    // Elevator shafts cut the automatic floor of every served floor above the bottom stop.
+    elevatorHoles: elevatorFloorHoles(building, index),
     wallUvElevation: floorElevation(building, Math.max(0, floors.indexOf(floor))),
     roof: includeRoof ? building.roof : { ...(building.roof || {}), type: 'none' }
   };

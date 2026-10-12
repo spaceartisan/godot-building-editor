@@ -4,7 +4,7 @@ import { profileWallState, profileWallSolids } from './wall-profile-geometry.js'
 import { polygonSlabFaces } from './polygon-geometry.js';
 import { roofFootprintAreas, manualRoofOverhang } from './roof-outline.js';
 import { applyGameLayer } from './game-layer.js';
-import { areaPoints, areaSize, polygonArea, unionPolygonAreas, subtractPolygonAreas, intersectPolygonAreas } from './polygon-areas.js';
+import { areaPoints, areaSize, polygonArea, unionPolygonAreas, subtractPolygonAreas, intersectPolygonAreas, edgePlanes } from './polygon-areas.js';
 import { regionAreaCells } from './regions.js';
 import { roofBoxParts, roofInteriorBlockers, roofAttachmentBlockers, trimRoofBox, trimmedGableEnds } from './roof-geometry.js';
 import { higherFloorBlockerRectangles, exteriorFootprintRectangles, unionRectAreas, automaticRoofRectangles, automaticRoofSections, boundsOfAutomaticRoof, boundsOfBuilding, boundsOfStructuralFloor, constrainedOpening, floorElevation, floorView, findWall, manualCeilingRectanglesAtLevel, manualFloorRectanglesAtLevel, pointOnWall, rectValid, roofSectionsForFloor, stairFootprint, storyHeight, structuralFloorRectangles, subtractRectAreas, splitWallIntoSolidSegments, validateOpeningLayout, wallLength } from './model.js';
@@ -1576,19 +1576,60 @@ export function exportDoorTscn(building, opening, options={}) {
 // building.slabsByRoom: split a story's automatic floor/ceiling areas by its
 // labelled solid or label regions (first region wins an overlap). Pieces are
 // named after the region; the rest keeps the plain name. Off: one piece.
+// Labelled solid/label regions of a story, in order, with unique node-name
+// suffixes (shared by the floor, ceiling and wall-face splits).
+function storyRooms(view){
+  const used=new Set();
+  return (view.regions||[]).filter(r=>r.effect!=='void'&&typeof r.label==='string'&&r.label.trim()&&rectValid(r)).map(region=>{
+    let suffix='_'+nodeClean(region.label),n=2;while(used.has(suffix.toLowerCase()))suffix=`_${nodeClean(region.label)}_${n++}`;used.add(suffix.toLowerCase());
+    return {suffix,room:region.label.replace(/["\\]/g,''),cells:regionAreaCells(region)};
+  });
+}
 export function slabPiecesByRoom(building,view,areas){
   if(building.slabsByRoom!==true)return [{suffix:'',room:null,areas}];
-  const rooms=(view.regions||[]).filter(r=>r.effect!=='void'&&typeof r.label==='string'&&r.label.trim()&&rectValid(r));
+  const rooms=storyRooms(view);
   if(!rooms.length)return [{suffix:'',room:null,areas}];
-  const out=[],used=new Set();let rest=areas.map(a=>a.polygon?a:polygonArea(areaPoints(a))).filter(Boolean);
-  for(const region of rooms){
-    const cells=regionAreaCells(region),inside=intersectPolygonAreas(rest,cells).filter(a=>areaSize(a)>1e-6);
+  const out=[];let rest=areas.map(a=>a.polygon?a:polygonArea(areaPoints(a))).filter(Boolean);
+  for(const room of rooms){
+    const inside=intersectPolygonAreas(rest,room.cells).filter(a=>areaSize(a)>1e-6);
     if(!inside.length)continue;
-    rest=subtractPolygonAreas(rest,cells);
-    let suffix='_'+nodeClean(region.label),n=2;while(used.has(suffix.toLowerCase()))suffix=`_${nodeClean(region.label)}_${n++}`;used.add(suffix.toLowerCase());
-    out.push({suffix,room:region.label.replace(/["\\]/g,''),areas:inside});
+    rest=subtractPolygonAreas(rest,room.cells);
+    out.push({suffix:room.suffix,room:room.room,areas:inside});
   }
   return rest.some(a=>areaSize(a)>1e-6)?[...out,{suffix:'',room:null,areas:rest.filter(a=>areaSize(a)>1e-6)}]:out;
+}
+// slabsByRoom also splits room-facing wall meshes (InsideFaces, SideAFaces,
+// SideBFaces): each triangle is clipped by every room's plan cells; a face
+// is tested a few millimetres out along its normal, so a face on a room
+// boundary belongs to the room it faces. Returns [{suffix, room, mesh}].
+export function wallMeshPiecesByRoom(building,view,mesh){
+  if(building.slabsByRoom!==true||!mesh?.vertices?.length)return [{suffix:'',room:null,mesh}];
+  const rooms=storyRooms(view);if(!rooms.length)return [{suffix:'',room:null,mesh}];
+  const pieces=rooms.map(r=>({suffix:r.suffix,room:r.room,mesh:{vertices:[],normals:[],uvs:[]}})),rest={suffix:'',room:null,mesh:{vertices:[],normals:[],uvs:[]}};
+  const lerp=(a,b,t)=>({p:{x:a.p.x+(b.p.x-a.p.x)*t,y:a.p.y+(b.p.y-a.p.y)*t,z:a.p.z+(b.p.z-a.p.z)*t},uv:{u:a.uv.u+(b.uv.u-a.uv.u)*t,v:a.uv.v+(b.uv.v-a.uv.v)*t}});
+  const clip=(poly,n,d)=>{const out=[];for(let i=0;i<poly.length;i++){const a=poly[i],b=poly[(i+1)%poly.length],da=n.x*a.p.x+n.z*a.p.z-d,db=n.x*b.p.x+n.z*b.p.z-d;if(da<=1e-9)out.push(a);if((da>1e-9)!==(db>1e-9))out.push(lerp(a,b,da/(da-db)));}return out.length>=3?out:[];};
+  const emit=(target,poly,normal)=>{for(let i=1;i<poly.length-1;i++)for(const v of [poly[0],poly[i],poly[i+1]]){target.vertices.push({...v.p});target.normals.push({...normal});target.uvs.push({...v.uv});}};
+  for(let t=0;t<mesh.vertices.length;t+=3){
+    const normal=mesh.normals[t],shift=.005;
+    let remaining=[[0,1,2].map(k=>({p:mesh.vertices[t+k],uv:mesh.uvs[t+k]}))];
+    rooms.forEach((room,ri)=>{
+      for(const cell of room.cells){
+        const next=[];
+        for(const poly of remaining){
+          let inside=poly;
+          for(const {n,d} of edgePlanes(areaPoints(cell))){
+            const dd=d-shift*(n.x*normal.x+n.z*normal.z);
+            const outside=clip(inside,{x:-n.x,z:-n.z},-dd);if(outside.length)next.push(outside);
+            inside=clip(inside,n,dd);if(!inside.length)break;
+          }
+          if(inside.length)emit(pieces[ri].mesh,inside,normal);
+        }
+        remaining=next;
+      }
+    });
+    for(const poly of remaining)emit(rest.mesh,poly,normal);
+  }
+  return [...pieces,rest].filter(p=>p.mesh.vertices.length);
 }
 
 export function exportGodotTscn(building, options={collision:true, markers:true}, suppliedDoorScenes=null) {
@@ -1775,7 +1816,14 @@ export function exportGodotTscn(building, options={collision:true, markers:true}
       if(exteriorResources.edges)resources.push(exteriorResources.edges.text);
       nodes.push(`[node name="ExteriorWalls" type="Node3D" parent="${floorName}/Geometry/Walls"]`);
       if(exteriorResources.outside)nodes.push(`[node name="OutsideFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/ExteriorWalls"]\nmesh = SubResource("${exteriorResources.ids.outside}")\neditor_description = "Outward-facing exterior faces."`);
-      if(exteriorResources.inside)nodes.push(`[node name="InsideFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/ExteriorWalls"]\nmesh = SubResource("${exteriorResources.ids.inside}")\neditor_description = "Inward-facing faces of the exterior shell."`);
+      if(exteriorResources.inside&&building.slabsByRoom===true){
+        // Room-facing faces per labelled room (slabsByRoom); the rest keeps the plain name.
+        resources.splice(resources.indexOf(exteriorResources.inside.text),1);
+        for(const piece of wallMeshPiecesByRoom(building,view,exteriorResources.data.inside)){
+          const id=`${exteriorResources.ids.inside}${piece.suffix}`,res=arrayMeshResource(piece.mesh,matExteriorInside,id,'InsideFaces');if(!res)continue;resources.push(res.text);
+          nodes.push(`[node name="InsideFaces${piece.suffix}" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/ExteriorWalls"]\nmesh = SubResource("${id}")\neditor_description = "${piece.room?`Inward-facing exterior faces in ${piece.room}.`:'Inward-facing faces of the exterior shell.'}"`);
+        }
+      }else if(exteriorResources.inside)nodes.push(`[node name="InsideFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/ExteriorWalls"]\nmesh = SubResource("${exteriorResources.ids.inside}")\neditor_description = "Inward-facing faces of the exterior shell."`);
       if(exteriorResources.edges)nodes.push(`[node name="EdgeFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/ExteriorWalls"]\nmesh = SubResource("${exteriorResources.ids.edges}")\neditor_description = "Window/door reveals and wall-thickness faces."`);
     }
     if(interiorResources){
@@ -1783,12 +1831,15 @@ export function exportGodotTscn(building, options={collision:true, markers:true}
       if(interiorResources.sideB)resources.push(interiorResources.sideB.text);
       if(interiorResources.edges)resources.push(interiorResources.edges.text);
       nodes.push(`[node name="InteriorWalls" type="Node3D" parent="${floorName}/Geometry/Walls"]`);
-      if(interiorResources.sideA)nodes.push(`[node name="SideAFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/InteriorWalls"]
-mesh = SubResource("${interiorResources.ids.sideA}")
-editor_description = "One face direction of the baked interior walls."`);
-      if(interiorResources.sideB)nodes.push(`[node name="SideBFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/InteriorWalls"]
-mesh = SubResource("${interiorResources.ids.sideB}")
-editor_description = "Opposite face direction of the baked interior walls."`);
+      for(const [key,surface,material,description] of [['sideA','SideAFaces',matInteriorA,'One face direction of the baked interior walls.'],['sideB','SideBFaces',matInteriorB,'Opposite face direction of the baked interior walls.']]){
+        if(!interiorResources[key])continue;
+        if(building.slabsByRoom!==true){nodes.push(`[node name="${surface}" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/InteriorWalls"]\nmesh = SubResource("${interiorResources.ids[key]}")\neditor_description = "${description}"`);continue;}
+        resources.splice(resources.indexOf(interiorResources[key].text),1);
+        for(const piece of wallMeshPiecesByRoom(building,view,interiorResources.data[key])){
+          const id=`${interiorResources.ids[key]}${piece.suffix}`,res=arrayMeshResource(piece.mesh,material,id,surface);if(!res)continue;resources.push(res.text);
+          nodes.push(`[node name="${surface}${piece.suffix}" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/InteriorWalls"]\nmesh = SubResource("${id}")\neditor_description = "${piece.room?`Interior wall faces in ${piece.room}.`:description}"`);
+        }
+      }
       if(interiorResources.edges)nodes.push(`[node name="EdgeFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/InteriorWalls"]
 mesh = SubResource("${interiorResources.ids.edges}")
 editor_description = "Interior wall tops, bottoms, jambs, and exposed ends."`);

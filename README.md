@@ -117,7 +117,7 @@ Both automatic and manual gable fills have matching triangular collision when co
 
 ## Floor faces and half walls
 
-Each automatic floor slab exports as one baked `ArrayMesh` / `MeshInstance3D` (with **Split floors and ceilings by room** / `slabsByRoom`, one per labelled room region instead). The mesh contains three material surfaces named `TopFaces`, `BottomFaces`, and `EdgeFaces`, so Godot materials remain independently assignable without creating three visual nodes. Exposed story regions can generate an automatic ceiling with `RoomFaces`, `RoofSideFaces`, and `EdgeFaces`; regions covered by a higher structural floor continue to use the upper slab underside rather than duplicating a ceiling. Manual floor and ceiling objects use the same hard-surface material separation.
+Each automatic floor slab exports as one baked `ArrayMesh` / `MeshInstance3D` (with **Split floors, ceilings and walls by room** / `slabsByRoom`, one per labelled room region instead, and the room-facing wall faces are split the same way). The mesh contains three material surfaces named `TopFaces`, `BottomFaces`, and `EdgeFaces`, so Godot materials remain independently assignable without creating three visual nodes. Exposed story regions can generate an automatic ceiling with `RoomFaces`, `RoofSideFaces`, and `EdgeFaces`; regions covered by a higher structural floor continue to use the upper slab underside rather than duplicating a ceiling. Manual floor and ceiling objects use the same hard-surface material separation.
 
 New walls can be created as **Full story** or **Half wall** from the Build panel. A selected non-full-height wall exposes its exact height for editing. Per-wall height is honored by baked visual meshes, opening constraints, and primitive wall collision.
 

@@ -22,7 +22,7 @@ try{
   write('scenes/receiver.tscn','[gd_scene format=3]\n\n[node name="Receiver" type="Node3D"]\n');
   fs.writeFileSync(path.join(temp,'layer.json'),JSON.stringify({version:1,
     materials:{OutsideFaces:'res://materials/siding.tres',Door:'res://materials/door.tres'},
-    nodeMaterials:[{match:'*FloorSlab_Kitchen',surface:'TopFaces',material:'res://materials/quarry.tres'}],
+    nodeMaterials:[{match:'*FloorSlab_Kitchen',surface:'TopFaces',material:'res://materials/quarry.tres'},{match:'*SideAFaces_Kitchen',surface:'SideAFaces',material:'res://materials/quarry.tres'},{match:'*SideBFaces_Kitchen',surface:'SideBFaces',material:'res://materials/quarry.tres'},{match:'*Roof/*',material:'res://materials/door.tres'}],
     layers:[{match:'*ExteriorWalls/OutsideFaces',layers:2},{match:'*',layers:4,in:'building'},{match:'*',layers:6,in:'doors'}],
     scripts:{building:'res://scripts/building.gd',door:'res://scripts/door.gd'},
     doorChildren:[{name:'UVResidue',scene:'res://scenes/receiver.tscn'}]}));
@@ -57,6 +57,12 @@ func _initialize() -> void:
 	var dining: MeshInstance3D = diner.find_children("FloorSlab_Dining", "MeshInstance3D", true, false)[0]
 	report["kitchen_floor"] = kitchen.get_surface_override_material(0).resource_path
 	report["dining_floor_empty"] = dining.get_surface_override_material(0) == null and dining.mesh.surface_get_material(0) == null
+	var kitchen_walls := diner.find_children("Side*Faces_Kitchen", "MeshInstance3D", true, false)
+	report["kitchen_walls"] = kitchen_walls.size()
+	report["kitchen_walls_tiled"] = kitchen_walls.filter(func(n): return n.get_surface_override_material(0) != null and n.get_surface_override_material(0).resource_path == "res://materials/quarry.tres").size()
+	var roofs := building.find_children("*", "MeshInstance3D", true, false).filter(func(n): return str(n.get_parent().name) == "Roof")
+	report["roof_nodes"] = roofs.size()
+	report["roof_nodes_with_material"] = roofs.filter(func(n): return n.material_override != null and n.material_override.resource_path == "res://materials/door.tres").size()
 	diner.free()
 	print("GAME_LAYER " + JSON.stringify(report))
 	building.free()
@@ -75,5 +81,7 @@ func _initialize() -> void:
   assert.ok(report.doors_with_script>0);assert.equal(report.doors_with_child,report.doors_with_script,'every door gets the extra child');
   assert.equal(report.door_layers,6);
   assert.equal(report.kitchen_floor,'res://materials/quarry.tres','per-room material via nodeMaterials');assert.equal(report.dining_floor_empty,true);
+  assert.ok(report.kitchen_walls>=1);assert.equal(report.kitchen_walls_tiled,report.kitchen_walls,'kitchen wall faces take their own finish');
+  assert.ok(report.roof_nodes>=4);assert.equal(report.roof_nodes_with_material,report.roof_nodes,'whole-node rules reach every roof part, including plain boxes');
   console.log(`PASS game layer in Godot: materials by surface, render layers, building/door scripts and door children on ${report.doors_with_script} doors`);
 }finally{fs.rmSync(temp,{recursive:true,force:true});}

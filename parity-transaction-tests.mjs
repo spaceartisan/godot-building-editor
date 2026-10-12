@@ -363,3 +363,28 @@ const base=ok(room('floor_1','w'));
   rejects([{op:'building.update',value:{slabsByRoom:'yes'}}],/Expected a boolean/);
   console.log('PASS slabsByRoom: floor and ceiling meshes per labelled room plus the rest, same collision, exact coverage');
 }
+{
+  // slabsByRoom also splits room-facing wall faces (InsideFaces, SideAFaces,
+  // SideBFaces) so rooms can take their own wall finish; the pieces cover the
+  // original faces exactly and collision is unchanged.
+  const {exportGodotFiles,wallMeshPiecesByRoom,buildInteriorSplitMeshData,buildExteriorMeshData}=await import('./src/exporter.js');
+  const {floorView}=await import('./src/model.js');
+  const ops=[{op:'room.add',floorId:'floor_1',id:'d',value:{minX:-12,maxX:12,minZ:-8,maxZ:8}},{op:'wall.add',floorId:'floor_1',id:'k',value:{a:{x:4,z:-8},b:{x:4,z:8}}},
+    {op:'wall.add',floorId:'floor_1',id:'r',value:{a:{x:4,z:2},b:{x:12,z:2}}},{op:'opening.add',floorId:'floor_1',id:'kd',value:{type:'door',wallId:'k',at:{x:4,z:-3},width:.9,height:2.1}},
+    {op:'region.add',floorId:'floor_1',id:'kitchen',value:{minX:4,maxX:12,minZ:-8,maxZ:2,label:'Kitchen'}},{op:'region.add',floorId:'floor_1',id:'rest',value:{minX:4,maxX:12,minZ:2,maxZ:8,label:'Restrooms'}},
+    {op:'region.add',floorId:'floor_1',id:'dining',value:{minX:-12,maxX:4,minZ:-8,maxZ:8,label:'Dining room'}}];
+  const whole=ok(ops),split=ok([{op:'building.update',value:{slabsByRoom:true}}],whole),view=floorView(split,0);
+  const area=m=>{let s=0;for(let i=0;i<m.vertices.length;i+=3){const [a,b,c]=[0,1,2].map(k=>m.vertices[i+k]),u={x:b.x-a.x,y:b.y-a.y,z:b.z-a.z},v={x:c.x-a.x,y:c.y-a.y,z:c.z-a.z};s+=Math.hypot(u.y*v.z-u.z*v.y,u.z*v.x-u.x*v.z,u.x*v.y-u.y*v.x)/2;}return s;};
+  for(const mesh of [buildExteriorMeshData(view).inside,buildInteriorSplitMeshData(view).sideA,buildInteriorSplitMeshData(view).sideB]){
+    const pieces=wallMeshPiecesByRoom(split,view,mesh);
+    assert.ok(Math.abs(pieces.reduce((s,p)=>s+area(p.mesh),0)-area(mesh))<1e-6,'pieces cover the faces exactly');
+  }
+  const t=exportGodotFiles(split).tscn;
+  for(const name of ['InsideFaces_Kitchen','InsideFaces_Restrooms','InsideFaces_Dining_room'])assert.match(t,new RegExp(`\\[node name="${name}" type="MeshInstance3D"`));
+  assert.match(t,/\[node name="SideAFaces_Kitchen"/);assert.match(t,/\[node name="SideBFaces_Dining_room"/);
+  const kitchenSide=wallMeshPiecesByRoom(split,view,buildInteriorSplitMeshData(view).sideA).find(p=>p.room==='Kitchen').mesh;
+  assert.ok(kitchenSide.vertices.every(v=>v.x>=4-1e-6),'kitchen-facing faces lie on the kitchen side');
+  const collisions=x=>[...x.matchAll(/\[node name="[^"]*Collision[^"]*"[^\]]*\]\n[^[]*/g)].map(m=>m[0]).join('');
+  assert.equal(collisions(t),collisions(exportGodotFiles(whole).tscn),'collision is unchanged');
+  console.log('PASS slabsByRoom wall faces: InsideFaces/SideAFaces/SideBFaces per room, exact coverage, faces on the room they face, same collision');
+}

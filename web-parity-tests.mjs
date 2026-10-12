@@ -417,5 +417,5 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   assert.equal(e.snapshot().slabsByRoom,true);assert.deepEqual(e.snapshot(),tx([{op:'building.update',value:{slabsByRoom:true}}]));
   toggle.checked=false;await toggle.dispatch('change');assert.equal('slabsByRoom' in e.snapshot(),false);
   assert.deepEqual(e.errors,[]);
-  console.log('PASS web Split floors and ceilings by room equals building.update slabsByRoom');
+  console.log('PASS web Split floors, ceilings and walls by room equals building.update slabsByRoom');
 }

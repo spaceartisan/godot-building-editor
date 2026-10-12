@@ -916,7 +916,7 @@ document.querySelectorAll('.file-menu-body button').forEach(button=>button.addEv
 $('#load-json-input').addEventListener('change',()=>{$('.file-menu').open=false;});
 document.addEventListener('pointerdown',e=>{const menu=$('.file-menu');if(menu.open&&!menu.contains(e.target))menu.open=false;});
 $('#export-profile').addEventListener('change',e=>{building.exportProfile=e.target.value;commit('Export profile changed');});
-$('#slabs-by-room-toggle').addEventListener('change',e=>{if(e.target.checked)building.slabsByRoom=true;else delete building.slabsByRoom;commit(e.target.checked?'Floors and ceilings split by room on export':'Floors and ceilings exported whole');});
+$('#slabs-by-room-toggle').addEventListener('change',e=>{if(e.target.checked)building.slabsByRoom=true;else delete building.slabsByRoom;commit(e.target.checked?'Floors, ceilings and wall faces split by room on export':'Floors, ceilings and wall faces exported whole');});
 function showValidation(){
   const r=validateBuilding(building,{roofDiagnostics:true}),list=$('#validation-results'),summary=$('#validation-summary'),review=$('#review-checks-btn');
   // Opt-in route check shared with the CLI (validate --reachability).

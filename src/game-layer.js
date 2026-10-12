@@ -34,9 +34,10 @@ export function parseGameLayer(value){
       const where=`nodeMaterials/${i}`;if(!isObject(rule))fail('expected an object',where);
       for(const key of Object.keys(rule))if(!['match','surface','material','in'].includes(key))fail(`unknown field ${key}`,where);
       if(typeof rule.match!=='string'||!rule.match||rule.match.length>256||/["\n]/.test(rule.match))fail('match must be a node path pattern (* matches anything)',`${where}/match`);
-      if(typeof rule.surface!=='string'||!NAME.test(rule.surface))fail('surface must be a surface name such as TopFaces',`${where}/surface`);
+      // No surface: the whole node (material_override), e.g. plain roof boxes with unnamed surfaces.
+      if(rule.surface!==undefined&&(typeof rule.surface!=='string'||!NAME.test(rule.surface)))fail('surface must be a surface name such as TopFaces, or omitted for the whole node',`${where}/surface`);
       if(rule.in!==undefined&&!['building','doors'].includes(rule.in))fail('in must be building or doors',`${where}/in`);
-      nodeMaterials.push({match:rule.match,pattern:glob(rule.match),surface:rule.surface,material:resourcePath(rule.material,`${where}/material`),in:rule.in||null});
+      nodeMaterials.push({match:rule.match,pattern:glob(rule.match),surface:rule.surface??null,material:resourcePath(rule.material,`${where}/material`),in:rule.in||null});
     });
   }
   const layers=[];
@@ -91,6 +92,7 @@ function applyToScene(text,layer,kind){
       let result=block;
       const names=surfaces.get(/^mesh = SubResource\("([^"]+)"\)$/m.exec(block)?.[1])||[],done=new Set();
       for(const rule of (layer.nodeMaterials||[]).filter(r=>scope(r)&&r.pattern.test(path))){
+        if(rule.surface===null){if(!done.has('node')){done.add('node');result+=`\nmaterial_override = ExtResource("${resource('Material',rule.material)}")`;}continue;}
         const index=names.indexOf(rule.surface);if(index<0||done.has(index))continue;done.add(index);
         result+=`\nsurface_material_override/${index} = ExtResource("${resource('Material',rule.material)}")`;
       }

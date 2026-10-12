@@ -12,6 +12,8 @@ Use `examples --json` to find a suitable starting plan, its actual path, purpose
 
 For a new design, start from `node cli.mjs new --out NEW.json --name NAME` (floor ID `floor_1`) or from a copy of the closest existing example. Use `building.update` for building settings. There is no arbitrary-property patch command or TSCN import. If the requested design needs fields outside supported transactions, use the web controls or a carefully scoped JSON edit based on the shared model and validator; preserve unrelated fields and validate the candidate before export.
 
+Know the scope before planning. The tool makes the building shell; materials, navmesh, door scripts and animation, gameplay nodes, lighting setup, furniture, terrain and performance settings are done in Godot or by the game ([README: Scope](README.md#scope-what-the-tool-makes-and-what-stays-in-godot)). A user asking for a "game-ready building" still gets a shell from this tool plus a note of what Godot-side work remains; list that work in the handoff instead of building a substitute generator.
+
 ## 2. Discover capabilities instead of inventing commands
 
 | Need | Supported route | Limits to remember |
@@ -239,6 +241,6 @@ Change shared logic at its source and exercise affected web/CLI consumers. Exist
 
 ## 9. Handoff checklist
 
-State the source/revision used, exact requested change, output paths and what was tested. List intentional warnings and unavailable checks. Deliver the editable JSON for building edits and retain relative door files with the main scene. For tool maintenance, provide the updated package and a concise change summary. Report whether examples/scene bytes changed; do not claim a previous release report's fingerprint covers modified documentation or code.
+State the source/revision used, exact requested change, output paths and what was tested. List intentional warnings and unavailable checks, and the Godot-side work that remains for the user (materials, navmesh, door scripts, gameplay nodes and anything else from the README's Scope table). Deliver the editable JSON for building edits and retain relative door files with the main scene. For tool maintenance, provide the updated package and a concise change summary. Report whether examples/scene bytes changed; do not claim a previous release report's fingerprint covers modified documentation or code.
 
 Useful references: [QUICKSTART.md](QUICKSTART.md), [CLI.md](CLI.md), [TRANSACTIONS.md](TRANSACTIONS.md), [PREVIEWS.md](PREVIEWS.md), [CHECK_REPORTS.md](CHECK_REPORTS.md), [ROOF_DIAGNOSTICS.md](ROOF_DIAGNOSTICS.md), [RELEASE_CHECKS.md](RELEASE_CHECKS.md), [ROADMAP.md](ROADMAP.md).

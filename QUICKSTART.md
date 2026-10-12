@@ -25,6 +25,17 @@ Extract the asset ZIP inside a folder in your Godot project, keeping the buildin
 
 Exterior walls retain **OutsideFaces**, **InsideFaces**, and **EdgeFaces**. Interior walls retain **SideAFaces**, **SideBFaces**, and **EdgeFaces**, organized per story. Keep those intentional lighting boundaries when integrating the scene. Custom shaped doors expose a **Panel** pivot with matching collision; add movement in Godot. Marker names and positions export as Marker3D nodes; their notes remain in JSON. No furniture or gameplay implementation is generated.
 
+### Then, in Godot
+
+The export is the building shell. These are done in Godot or by the game, not by Building Studio (see the README's [Scope](README.md#scope-what-the-tool-makes-and-what-stays-in-godot)):
+
+- materials and textures (or a [game layer](GAME_LAYER.md) that assigns them on every export);
+- navigation: bake a navmesh from the exported collision;
+- door scripts and animation (the hinge, `Hinge2` and `Curtain` pivots are ready for them);
+- gameplay nodes, lighting setup (environment, GI, lightmaps), furniture and props, terrain and placement.
+
+Keep these outside the generated scenes (a parent or inherited scene), since re-exporting replaces the `.tscn` files.
+
 ## CLI loop
 
 Run these commands from the extracted `building-editor` folder, choosing output paths that do not already exist:

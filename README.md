@@ -22,6 +22,26 @@ A recipe is plain JSON: `{"version": 1, "operations": [...]}`. For example, `roo
 - **Release gates** run on Linux with Godot 4.5.1 ([RELEASE_CHECKS.md](RELEASE_CHECKS.md)). That is where every check is automated, not the only place the tool works.
 - **Stress tests:** a castle, a starship interior and an 11-level mixed-use complex were built through the CLI alone ([authoring/](authoring/)), with findings fixed and recorded.
 
+## Scope: what the tool makes, and what stays in Godot
+
+Building Studio makes the **building shell** and stops there on purpose. Everything that depends on a particular game, look or level is left to Godot (or the game's own tools), so the same export works in any project. A missing item in the right-hand column is a design decision, not a gap to work around, and not a reason to write a separate generator.
+
+| Building Studio makes | Left to Godot / the game |
+| --- | --- |
+| Walls (exterior and interior, half walls, shaped profiles), with separate inside, outside and edge meshes per story for lighting | **Materials and textures.** Slots are empty by default. A [game layer](GAME_LAYER.md) file can assign them by surface name at export; authoring the materials themselves stays in Godot. |
+| Floors, ceilings, stairs and ramps, platforms (porches and decks with posts and steps), railings | **Navigation.** No `NavigationRegion3D` or navmesh is exported. Bake it in Godot from the exported collision; `validate --reachability` is an authoring check, not a navmesh. |
+| Roofs (automatic and manual: gable, shed, flat, hip, mansard), gable fills | **Door behaviour.** Doors export hinge pivots (`Hinge`, `Hinge2`), a roll-up `Curtain` and collision, but no script or animation. Attach the game's door script (a game layer can do it on every export). |
+| Openings: doors (single, double, closet, roll-up, custom outline) and windows (frame and glass) as separate door scenes and meshes | **Gameplay nodes:** room `Area3D`s and triggers, spawn points, interaction logic, shelter or hiding zones, AI hints, audio emitters and reverb areas. Markers (`Marker3D`) and labelled regions in the export can serve as anchors. |
+| Static collision for everything above, with the export profile's layers and groups | **Lighting setup beyond placement:** the tool places `OmniLight3D` lights; `WorldEnvironment`, sky, global illumination, lightmap baking, shadow and light-energy tuning stay in Godot. Render layers can come from a game layer. |
+| Labelled regions, markers and lights as authoring data in the scene | **Furniture, props and decoration:** fixtures, signs, decals, trims beyond the generated frames, interior dressing. |
+| The editable `.building.json` blueprint | **Site and terrain:** ground, landscaping, foundations into slopes, the building's placement in a level (raise it slightly to avoid z-fighting with terrain at y = 0). |
+| Checks: validation, route check, Godot resource and collision checks, renders | **Performance and import settings:** LODs, occluders and occlusion culling, mesh import options, physics materials. |
+
+Two consequences worth knowing:
+
+- **Export is one-way.** The `.tscn` files are generated output; they cannot be loaded back as an editable building. Keep the `.building.json`, and re-export when the building changes. Anything added in Godot should live outside the generated scenes (an inherited scene, a parent scene, or a game layer applied at export), or it is lost on re-export.
+- **The game owns its post-processing.** A game layer covers materials, render layers, door scripts and door child scenes. Anything else (navmesh baking, gameplay nodes) belongs in the game's own import step or scenes.
+
 ## Documentation
 
 | File | What it covers |

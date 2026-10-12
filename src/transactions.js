@@ -1,3 +1,4 @@
+import { ELEVATOR_DOOR_SIDES, ELEVATOR_DEFAULTS, elevatorProblem } from './elevators.js';
 import { regionPolygonProblem, regionBounds } from './regions.js';
 import { prepareDocument, resolvedFloorDimensions, inspectStair, inspectPlatform, inspectFloorCoverage } from './diagnostics.js';
 import { validateBuilding } from './validation.js';
@@ -28,11 +29,12 @@ function number(value,where,min=-1e6,max=1e6){if(typeof value!=='number'||!Numbe
 function choice(value,allowed,where){if(!allowed.includes(value))fail(`Expected one of: ${allowed.join(', ')}`,where);}
 function point(value,where){keys(value,['x','z'],where);number(value.x,`${where}/x`);number(value.z,`${where}/z`);}
 const rectKeys=['minX','maxX','minZ','maxZ'];
-const GROUP_TYPES=['wall','opening','light','marker','stair','railing','region','slab','platform','manualFloor','manualCeiling','roofSection'];
+const GROUP_TYPES=['wall','opening','light','marker','stair','railing','region','slab','platform','manualFloor','manualCeiling','roofSection','elevator'];
 const fields={
   building:['name','exportProfile','wallHeight','wallThickness','floorThickness','gridSize','roof','ceiling','doorMesh','windowMesh','slabsByRoom'],
   floor:['label','elevation','wallHeight','floorThickness','autoFloor','autoCeiling','boundaryMode'],
   platform:['label',...rectKeys,'kind','height','covered','steps'],
+  elevator:['label','x','z','width','depth','doorSide','doorWidth','doorHeight','bottomFloorId','topFloorId','skipFloorIds'],
   stair:['label','x','z','width','run','direction','style','steps','blockBelow'],
   wall:['label','role','height','a','b','wallTypeId','inwardSide','inwardToward'],
   // Building-level shared definitions (no floorId), as in the web dialogs.
@@ -62,6 +64,12 @@ function checkValue(kind,value,action,where){
   for(const [key,v] of Object.entries(value)){
     const p=`${where}/${key}`;
     if(key==='label')text(v,p,kind==='wall'||kind==='opening');
+    else if(kind==='elevator'){
+      if(key==='doorSide')choice(v,ELEVATOR_DOOR_SIDES,p);
+      else if(key==='bottomFloorId'||key==='topFloorId')text(v,p);
+      else if(key==='skipFloorIds'){if(!Array.isArray(v)||v.length>1000)fail('skipFloorIds must be a list of floor IDs',p);v.forEach((id,i)=>text(id,`${p}/${i}`));}
+      else number(v,p,key==='x'||key==='z'?-1e6:.1,key==='x'||key==='z'?1e6:100);
+    }
     else if(kind==='platform'){
       if(key==='kind')choice(v,['porch','deck'],p);
       else if(key==='covered'){if(typeof v!=='boolean')fail('Expected a boolean',p);}
@@ -155,7 +163,8 @@ function checkValue(kind,value,action,where){
   if(action==='add'&&kind==='light'&&!Object.hasOwn(value,'position'))fail('Missing required field: position',where);
   if(action==='add'&&kind==='marker'&&!Object.hasOwn(value,'position'))fail('Missing required field: position',where);
   if(action==='add'&&(kind==='manualFloor'||kind==='manualCeiling'))for(const required of [...rectKeys,'topY'])if(!Object.hasOwn(value,required))fail(`Missing required field: ${required}`,where);
-  if(action==='add'&&!['wallType','openingShape','light','marker','manualFloor','manualCeiling'].includes(kind))for(const required of kind==='stair'?['x','z','width','run','direction']:kind==='wall'||kind==='railing'?['a','b']:kind==='opening'?['type','wallId',Object.hasOwn(value,'at')?'at':'t','width','height']:(kind==='region'||kind==='roof')&&value.polygon?['polygon']:rectKeys)
+  if(action==='add'&&kind==='elevator')for(const required of ['x','z','bottomFloorId','topFloorId'])if(!Object.hasOwn(value,required))fail(`Missing required field: ${required}`,where);
+  if(action==='add'&&!['wallType','openingShape','light','marker','manualFloor','manualCeiling','elevator'].includes(kind))for(const required of kind==='stair'?['x','z','width','run','direction']:kind==='wall'||kind==='railing'?['a','b']:kind==='opening'?['type','wallId',Object.hasOwn(value,'at')?'at':'t','width','height']:(kind==='region'||kind==='roof')&&value.polygon?['polygon']:rectKeys)
     if(!Object.hasOwn(value,required))fail(`Missing required field: ${required}`,where);
 }
 
@@ -247,7 +256,7 @@ export function validateTransaction(transaction){
       for(const key of ['removeContents','removeAffectedStairs'])if(op[key]!==undefined&&typeof op[key]!=='boolean')fail('Expected a boolean',`${p}/${key}`);
       return;
     }
-    const scoped=!['roof','floor','wallType','openingShape','manualFloor','manualCeiling'].includes(kind);
+    const scoped=!['roof','floor','wallType','openingShape','manualFloor','manualCeiling','elevator'].includes(kind);
     keys(op,['op','id',...(scoped?['floorId']:[]),...(['add','update'].includes(action)?['value']:action==='move-endpoint'?['end','point','connected']:[])],p);
     text(op.id,`${p}/id`);if(scoped)text(op.floorId,`${p}/floorId`);
     if(['add','update'].includes(action))checkValue(kind,op.value,action,`${p}/value`);
@@ -350,6 +359,17 @@ function applyOperation(building,op,index){
     const result=proposeGroupMove(building,fi,op.items,op.delta,{connected:op.connected!==false});
     if(!result.ok)fail(result.reason,p);
     Object.assign(building,result.building);return;
+  }
+  if(kind==='elevator'){
+    // Building-level, like manual roofs: one shaft serving a range of floors.
+    const list=building.elevators ||= [],item=list.find(v=>v.id===op.id);
+    if(action==='add'&&item)fail(`ID already exists: ${op.id}`,p);
+    if(action!=='add'&&!item)fail(`Unknown elevator ID: ${op.id}`,p);
+    if(action==='remove'){list.splice(list.indexOf(item),1);if(!list.length)delete building.elevators;return;}
+    if(action==='add')list.push({id:op.id,label:op.value.label||`Elevator ${list.length+1}`,...ELEVATOR_DEFAULTS,...structuredClone(op.value)});
+    else Object.assign(item,structuredClone(op.value));
+    const problem=elevatorProblem(building,list.find(v=>v.id===op.id));if(problem)fail(problem,p);
+    return;
   }
   if(kind==='manualFloor'||kind==='manualCeiling'){
     const key=kind==='manualFloor'?'manualFloors':'manualCeilings',list=building[key] ||= [],item=list.find(v=>v.id===op.id);

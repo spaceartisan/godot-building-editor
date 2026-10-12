@@ -1,6 +1,7 @@
 {
   "version": 9,
   "name": "Miller Farmhouse",
+  "exportProfile": "get_probed",
   "wallHeight": 3.2,
   "wallThickness": 0.18,
   "floorThickness": 0.18,

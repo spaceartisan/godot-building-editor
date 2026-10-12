@@ -4,8 +4,8 @@ export const EXPORT_PROFILES=Object.freeze({
 });
 
 export function exportProfile(building,options={}){
-  // Unversioned/older data retains its original game integration contract.
-  const id=options.profile||building.exportProfile||'get_probed';
+  // No profile anywhere: generic Godot (GET PROBED is opt-in since 1.5.0).
+  const id=options.profile||building.exportProfile||'generic';
   if(!EXPORT_PROFILES[id])throw new Error(`Unknown export profile: ${id}`);
   return EXPORT_PROFILES[id];
 }

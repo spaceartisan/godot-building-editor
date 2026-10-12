@@ -1,10 +1,11 @@
+import { elevatorLayout, elevatorYaw } from './elevators.js';
 import { wallTypeFor, sampleWallType } from './wall-types.js';
 import { openingShapeFor, shapedDoorLayout, doorLeafCount } from './opening-shapes.js';
 import { profileWallState, profileWallSolids } from './wall-profile-geometry.js';
 import { polygonSlabFaces } from './polygon-geometry.js';
 import { roofFootprintAreas, manualRoofOverhang } from './roof-outline.js';
 import { applyGameLayer } from './game-layer.js';
-import { areaPoints, areaSize, polygonArea, unionPolygonAreas, subtractPolygonAreas, intersectPolygonAreas } from './polygon-areas.js';
+import { areaPoints, areaSize, polygonArea, unionPolygonAreas, subtractPolygonAreas, intersectPolygonAreas, edgePlanes } from './polygon-areas.js';
 import { regionAreaCells } from './regions.js';
 import { roofBoxParts, roofInteriorBlockers, roofAttachmentBlockers, trimRoofBox, trimmedGableEnds } from './roof-geometry.js';
 import { higherFloorBlockerRectangles, exteriorFootprintRectangles, unionRectAreas, automaticRoofRectangles, automaticRoofSections, boundsOfAutomaticRoof, boundsOfBuilding, boundsOfStructuralFloor, constrainedOpening, floorElevation, floorView, findWall, manualCeilingRectanglesAtLevel, manualFloorRectanglesAtLevel, pointOnWall, rectValid, roofSectionsForFloor, stairFootprint, storyHeight, structuralFloorRectangles, subtractRectAreas, splitWallIntoSolidSegments, validateOpeningLayout, wallLength } from './model.js';
@@ -298,16 +299,21 @@ function meshWriter() {
 }
 
 function addLocalBoxToMesh(writer, size, center={x:0,y:0,z:0}) {
+  addLocalBoxFaces(()=>writer,size,center);
+}
+// Each face goes to the writer pick(normal, faceCenter) returns (null skips it).
+function addLocalBoxFaces(pick, size, center={x:0,y:0,z:0}) {
   const hx=size.x/2, hy=size.y/2, hz=size.z/2;
   if(hx<EPS || hy<EPS || hz<EPS) return;
   const x0=center.x-hx,x1=center.x+hx,y0=center.y-hy,y1=center.y+hy,z0=center.z-hz,z1=center.z+hz;
   const uv=(u,v)=>({u,v});
-  writer.face([{x:x0,y:y0,z:z0},{x:x1,y:y0,z:z0},{x:x1,y:y1,z:z0},{x:x0,y:y1,z:z0}], [uv(x0,y0),uv(x1,y0),uv(x1,y1),uv(x0,y1)], {x:0,y:0,z:-1});
-  writer.face([{x:x0,y:y0,z:z1},{x:x0,y:y1,z:z1},{x:x1,y:y1,z:z1},{x:x1,y:y0,z:z1}], [uv(x0,y0),uv(x0,y1),uv(x1,y1),uv(x1,y0)], {x:0,y:0,z:1});
-  writer.face([{x:x0,y:y0,z:z0},{x:x0,y:y1,z:z0},{x:x0,y:y1,z:z1},{x:x0,y:y0,z:z1}], [uv(z0,y0),uv(z0,y1),uv(z1,y1),uv(z1,y0)], {x:-1,y:0,z:0});
-  writer.face([{x:x1,y:y0,z:z0},{x:x1,y:y0,z:z1},{x:x1,y:y1,z:z1},{x:x1,y:y1,z:z0}], [uv(z0,y0),uv(z1,y0),uv(z1,y1),uv(z0,y1)], {x:1,y:0,z:0});
-  writer.face([{x:x0,y:y1,z:z0},{x:x1,y:y1,z:z0},{x:x1,y:y1,z:z1},{x:x0,y:y1,z:z1}], [uv(x0,z0),uv(x1,z0),uv(x1,z1),uv(x0,z1)], {x:0,y:1,z:0});
-  writer.face([{x:x0,y:y0,z:z0},{x:x0,y:y0,z:z1},{x:x1,y:y0,z:z1},{x:x1,y:y0,z:z0}], [uv(x0,z0),uv(x0,z1),uv(x1,z1),uv(x1,z0)], {x:0,y:-1,z:0});
+  const put=(pts,uvs,n)=>{const c=pts.reduce((a,p)=>({x:a.x+p.x/4,y:a.y+p.y/4,z:a.z+p.z/4}),{x:0,y:0,z:0}),w=pick(n,c);if(w)w.face(pts,uvs,n);};
+  put([{x:x0,y:y0,z:z0},{x:x1,y:y0,z:z0},{x:x1,y:y1,z:z0},{x:x0,y:y1,z:z0}], [uv(x0,y0),uv(x1,y0),uv(x1,y1),uv(x0,y1)], {x:0,y:0,z:-1});
+  put([{x:x0,y:y0,z:z1},{x:x0,y:y1,z:z1},{x:x1,y:y1,z:z1},{x:x1,y:y0,z:z1}], [uv(x0,y0),uv(x0,y1),uv(x1,y1),uv(x1,y0)], {x:0,y:0,z:1});
+  put([{x:x0,y:y0,z:z0},{x:x0,y:y1,z:z0},{x:x0,y:y1,z:z1},{x:x0,y:y0,z:z1}], [uv(z0,y0),uv(z0,y1),uv(z1,y1),uv(z1,y0)], {x:-1,y:0,z:0});
+  put([{x:x1,y:y0,z:z0},{x:x1,y:y0,z:z1},{x:x1,y:y1,z:z1},{x:x1,y:y1,z:z0}], [uv(z0,y0),uv(z1,y0),uv(z1,y1),uv(z0,y1)], {x:1,y:0,z:0});
+  put([{x:x0,y:y1,z:z0},{x:x1,y:y1,z:z0},{x:x1,y:y1,z:z1},{x:x0,y:y1,z:z1}], [uv(x0,z0),uv(x1,z0),uv(x1,z1),uv(x0,z1)], {x:0,y:1,z:0});
+  put([{x:x0,y:y0,z:z0},{x:x0,y:y0,z:z1},{x:x1,y:y0,z:z1},{x:x1,y:y0,z:z0}], [uv(x0,z0),uv(x0,z1),uv(x1,z1),uv(x1,z0)], {x:0,y:-1,z:0});
 }
 
 function addLocalRotatedBoxToMesh(writer,size,center={x:0,y:0,z:0},rotationZ=0){
@@ -1395,7 +1401,7 @@ export function storyCeilingRectangles(building, fi) {
 export function floorRectanglesForView(view, belowStairs=[]) {
   const structureBounds=boundsOfStructuralFloor(view);
   if(structureBounds.width<=EPS||structureBounds.depth<=EPS)return [];
-  const holes=[...clippedStairHoles(structureBounds,belowStairs,.06),...clippedRectHoles(structureBounds,view.platforms||[])];
+  const holes=[...clippedStairHoles(structureBounds,belowStairs,.06),...clippedRectHoles(structureBounds,view.platforms||[]),...clippedRectHoles(structureBounds,view.elevatorHoles||[])];
   return slabRectanglesForBases(floorBaseRects(view,structureBounds),holes);
 }
 
@@ -1576,19 +1582,123 @@ export function exportDoorTscn(building, opening, options={}) {
 // building.slabsByRoom: split a story's automatic floor/ceiling areas by its
 // labelled solid or label regions (first region wins an overlap). Pieces are
 // named after the region; the rest keeps the plain name. Off: one piece.
+// Labelled solid/label regions of a story, in order, with unique node-name
+// suffixes (shared by the floor, ceiling and wall-face splits).
+function storyRooms(view){
+  const used=new Set();
+  return (view.regions||[]).filter(r=>r.effect!=='void'&&typeof r.label==='string'&&r.label.trim()&&rectValid(r)).map(region=>{
+    let suffix='_'+nodeClean(region.label),n=2;while(used.has(suffix.toLowerCase()))suffix=`_${nodeClean(region.label)}_${n++}`;used.add(suffix.toLowerCase());
+    return {suffix,room:region.label.replace(/["\\]/g,''),cells:regionAreaCells(region)};
+  });
+}
 export function slabPiecesByRoom(building,view,areas){
   if(building.slabsByRoom!==true)return [{suffix:'',room:null,areas}];
-  const rooms=(view.regions||[]).filter(r=>r.effect!=='void'&&typeof r.label==='string'&&r.label.trim()&&rectValid(r));
+  const rooms=storyRooms(view);
   if(!rooms.length)return [{suffix:'',room:null,areas}];
-  const out=[],used=new Set();let rest=areas.map(a=>a.polygon?a:polygonArea(areaPoints(a))).filter(Boolean);
-  for(const region of rooms){
-    const cells=regionAreaCells(region),inside=intersectPolygonAreas(rest,cells).filter(a=>areaSize(a)>1e-6);
+  const out=[];let rest=areas.map(a=>a.polygon?a:polygonArea(areaPoints(a))).filter(Boolean);
+  for(const room of rooms){
+    const inside=intersectPolygonAreas(rest,room.cells).filter(a=>areaSize(a)>1e-6);
     if(!inside.length)continue;
-    rest=subtractPolygonAreas(rest,cells);
-    let suffix='_'+nodeClean(region.label),n=2;while(used.has(suffix.toLowerCase()))suffix=`_${nodeClean(region.label)}_${n++}`;used.add(suffix.toLowerCase());
-    out.push({suffix,room:region.label.replace(/["\\]/g,''),areas:inside});
+    rest=subtractPolygonAreas(rest,room.cells);
+    out.push({suffix:room.suffix,room:room.room,areas:inside});
   }
   return rest.some(a=>areaSize(a)>1e-6)?[...out,{suffix:'',room:null,areas:rest.filter(a=>areaSize(a)>1e-6)}]:out;
+}
+// slabsByRoom also splits room-facing wall meshes (InsideFaces, SideAFaces,
+// SideBFaces): each triangle is clipped by every room's plan cells; a face
+// is tested a few millimetres out along its normal, so a face on a room
+// boundary belongs to the room it faces. Returns [{suffix, room, mesh}].
+export function wallMeshPiecesByRoom(building,view,mesh){
+  if(building.slabsByRoom!==true||!mesh?.vertices?.length)return [{suffix:'',room:null,mesh}];
+  const rooms=storyRooms(view);if(!rooms.length)return [{suffix:'',room:null,mesh}];
+  const pieces=rooms.map(r=>({suffix:r.suffix,room:r.room,mesh:{vertices:[],normals:[],uvs:[]}})),rest={suffix:'',room:null,mesh:{vertices:[],normals:[],uvs:[]}};
+  const lerp=(a,b,t)=>({p:{x:a.p.x+(b.p.x-a.p.x)*t,y:a.p.y+(b.p.y-a.p.y)*t,z:a.p.z+(b.p.z-a.p.z)*t},uv:{u:a.uv.u+(b.uv.u-a.uv.u)*t,v:a.uv.v+(b.uv.v-a.uv.v)*t}});
+  const clip=(poly,n,d)=>{const out=[];for(let i=0;i<poly.length;i++){const a=poly[i],b=poly[(i+1)%poly.length],da=n.x*a.p.x+n.z*a.p.z-d,db=n.x*b.p.x+n.z*b.p.z-d;if(da<=1e-9)out.push(a);if((da>1e-9)!==(db>1e-9))out.push(lerp(a,b,da/(da-db)));}return out.length>=3?out:[];};
+  const emit=(target,poly,normal)=>{for(let i=1;i<poly.length-1;i++)for(const v of [poly[0],poly[i],poly[i+1]]){target.vertices.push({...v.p});target.normals.push({...normal});target.uvs.push({...v.uv});}};
+  for(let t=0;t<mesh.vertices.length;t+=3){
+    const normal=mesh.normals[t],shift=.005;
+    let remaining=[[0,1,2].map(k=>({p:mesh.vertices[t+k],uv:mesh.uvs[t+k]}))];
+    rooms.forEach((room,ri)=>{
+      for(const cell of room.cells){
+        const next=[];
+        for(const poly of remaining){
+          let inside=poly;
+          for(const {n,d} of edgePlanes(areaPoints(cell))){
+            const dd=d-shift*(n.x*normal.x+n.z*normal.z);
+            const outside=clip(inside,{x:-n.x,z:-n.z},-dd);if(outside.length)next.push(outside);
+            inside=clip(inside,n,dd);if(!inside.length)break;
+          }
+          if(inside.length)emit(pieces[ri].mesh,inside,normal);
+        }
+        remaining=next;
+      }
+    });
+    for(const poly of remaining)emit(rest.mesh,poly,normal);
+  }
+  return [...pieces,rest].filter(p=>p.mesh.vertices.length);
+}
+
+// Elevator scenes (elevators/<building>_elevator_NNN_<label>.tscn), instanced
+// under the building root's Elevators node like door scenes.
+export function elevatorSceneDescriptors(building){
+  const base=fileBase(building.name);
+  return (building.elevators||[]).map((elevator,i)=>{const n=String(i+1).padStart(3,'0');return {elevator,number:n,extId:`ElevatorScene_${n}`,filename:`elevators/${base}_elevator_${n}_${fileSlug(elevator.label||elevator.id)}.tscn`};});
+}
+// The static elevator assembly; the game moves Car between the Stops markers
+// and slides the landing doors (no script is included, as with doors).
+export function exportElevatorTscn(building,elevator,options={}){
+  const profile=exportProfile(building,options),layout=elevatorLayout(building,elevator),resources=[],nodes=[];
+  const addRes=(type,id,props)=>resources.push(`[sub_resource type="${type}" id="${id}"]\n${props.join('\n')}`);
+  const matShaft='Material_ElevatorShaft',matCar='Material_ElevatorCar',matDoor='Material_ElevatorDoor';
+  addRes('StandardMaterial3D',matShaft,['albedo_color = Color(0.55, 0.55, 0.57, 1)','roughness = 0.9']);
+  addRes('StandardMaterial3D',matCar,['albedo_color = Color(0.62, 0.58, 0.5, 1)','roughness = 0.6']);
+  addRes('StandardMaterial3D',matDoor,['albedo_color = Color(0.7, 0.72, 0.75, 1)','metallic = 0.6','roughness = 0.35']);
+  const mesh=boxes=>{const w=meshWriter();for(const b of boxes)addLocalBoxToMesh(w,b.size,b.pos);return w;};
+  // Separate surfaces for a game layer: shaft ShaftOutside/ShaftInside/ShaftEdges
+  // (faces on the shaft's outer or inner boundary, the rest), car CarFloor/CarWalls/CarCeiling.
+  const {width,depth}=layout.size,hw=width/2,hd=depth/2,t=layout.shaftWall,near=(a,b)=>Math.abs(a-b)<1e-6;
+  const shaftSurfaces={ShaftOutside:meshWriter(),ShaftInside:meshWriter(),ShaftEdges:meshWriter()};
+  const shaftSurface=(n,c)=>n.y?'ShaftEdges':n.x?(near(c.x,n.x*hw)?'ShaftOutside':near(c.x,-n.x*(hw-t))?'ShaftInside':'ShaftEdges'):(near(c.z,n.z*hd)?'ShaftOutside':near(c.z,-n.z*(hd-t))?'ShaftInside':'ShaftEdges');
+  for(const b of layout.shaft)addLocalBoxFaces((n,c)=>shaftSurfaces[shaftSurface(n,c)],b.size,b.pos);
+  const carSurfaces={CarFloor:meshWriter(),CarWalls:meshWriter(),CarCeiling:meshWriter()};
+  for(const b of layout.car)addLocalBoxToMesh(carSurfaces[b.surface],b.size,b.pos);
+  let shapes=0;const shape=(parent,box)=>{const id=`ElevatorShape_${++shapes}`;addRes('BoxShape3D',id,[`size = ${v3(box.size.x,box.size.y,box.size.z)}`]);nodes.push(`[node name="CollisionShape_${shapes}" type="CollisionShape3D" parent="${parent}"]\nposition = ${v3(box.pos.x,box.pos.y,box.pos.z)}\nshape = SubResource("${id}")`);};
+  const label=String(elevator.label||elevator.id).replace(/["\\]/g,'');
+  nodes.push(`[node name="Elevator" type="Node3D"]\neditor_description = "${label}: elevator with ${layout.stops.length} stops. Move Car on Y between the Stops markers (Stop_NN.position.y); open by sliding the car's CarDoorLeft/CarDoorRight and the Landing's DoorLeft/DoorRight outward along X by leaf_travel. CallButton, Indicator and CarPanel markers are anchors for the game's controls. No script is included."\nmetadata/building_elevator_id = ${JSON.stringify(elevator.id)}\nmetadata/shaft_size = ${v3(width,layout.topY,depth)}\nmetadata/door_width = ${fmt(layout.size.doorWidth)}\nmetadata/door_height = ${fmt(layout.size.doorHeight)}`);
+  const shaftRes=multiSurfaceArrayMeshResource(Object.entries(shaftSurfaces).map(([surfaceName,mesh])=>({mesh,materialId:matShaft,surfaceName})),'ElevatorShaftMesh');if(shaftRes)resources.push(shaftRes.text);
+  if(shaftRes)nodes.push(`[node name="Shaft" type="MeshInstance3D" parent="."]\nmesh = SubResource("ElevatorShaftMesh")`);
+  nodes.push(`[node name="ShaftBody" type="StaticBody3D" parent="."]`);
+  for(const b of layout.shaft)shape('ShaftBody',b);
+  const carRes=multiSurfaceArrayMeshResource(Object.entries(carSurfaces).map(([surfaceName,mesh])=>({mesh,materialId:matCar,surfaceName})),'ElevatorCarMesh');if(carRes)resources.push(carRes.text);
+  // Car and door leaves are the moving bodies themselves: AnimatableBody3D
+  // follows its own transform, so moving Car (or a DoorLeft) moves its collision.
+  const moving=options.collision===false?'Node3D':'AnimatableBody3D';
+  nodes.push(`[node name="Car" type="${moving}" parent="."]\neditor_description = "Car floor at the bottom stop. Move this node on Y between the Stops markers; its collision and doors move with it."${options.collision===false?'':`\ncollision_layer = 1\ncollision_mask = ${profile.bodyMask}`}\nmetadata/leaf_travel = ${fmt(layout.carDoors.leafTravel)}`);
+  if(carRes)nodes.push(`[node name="CarMesh" type="MeshInstance3D" parent="Car"]\nmesh = SubResource("ElevatorCarMesh")`);
+  for(const b of layout.car)shape('Car',b);
+  const leafRes=arrayMeshResource(mesh([{size:layout.carDoors.leaves[0].size,pos:{x:0,y:0,z:0}}]),matDoor,'ElevatorDoorLeafMesh','Door');if(leafRes)resources.push(leafRes.text);
+  // Door leaves are bodies too. The car's ride with it, so they follow their
+  // parent's global transform (sync_to_physics off); landing leaves are moved directly.
+  const doorLeaf=(parent,name,l,riding)=>{
+    nodes.push(`[node name="${name}" type="${moving}" parent="${parent}"]\nposition = ${v3(l.pos.x,l.pos.y,l.pos.z)}${options.collision===false?'':`\ncollision_layer = ${profile.doorLayer}\ncollision_mask = ${profile.bodyMask}${riding?'\nsync_to_physics = false':''}`}`);
+    nodes.push(`[node name="DoorMesh" type="MeshInstance3D" parent="${parent}/${name}"]\nmesh = SubResource("ElevatorDoorLeafMesh")`);
+    shape(`${parent}/${name}`,{size:l.size,pos:{x:0,y:0,z:0}});
+  };
+  for(const l of layout.carDoors.leaves)doorLeaf('Car',`CarDoor${l.side}`,l,true);
+  nodes.push(`[node name="CarPanel" type="Marker3D" parent="Car"]\nposition = ${v3(layout.carPanel.x,layout.carPanel.y,layout.carPanel.z)}\neditor_description = "Anchor for the car's button panel (on the side wall right of the doors, seen from inside)."`);
+  nodes.push(`[node name="Stops" type="Node3D" parent="."]`);
+  for(const st of layout.stops)nodes.push(`[node name="${st.name}" type="Marker3D" parent="Stops"]\nposition = ${v3(0,st.y,0)}\nmetadata/building_floor_id = ${JSON.stringify(st.floorId)}\nmetadata/building_floor_label = ${JSON.stringify(st.label)}`);
+  nodes.push(`[node name="Landings" type="Node3D" parent="."]`);
+  for(const landing of layout.landings){
+    const parent=`Landings/${landing.name}`;
+    nodes.push(`[node name="${landing.name}" type="Node3D" parent="Landings"]\nposition = ${v3(0,landing.y,0)}\neditor_description = "Landing doors on ${String(landing.label).replace(/["\\]/g,'')}."\nmetadata/leaf_travel = ${fmt(landing.leafTravel)}\nmetadata/building_floor_id = ${JSON.stringify(landing.floorId)}`);
+    for(const l of landing.leaves)doorLeaf(parent,`Door${l.side}`,l,false);
+    nodes.push(`[node name="CallButton" type="Marker3D" parent="${parent}"]\nposition = ${v3(landing.callButton.x,landing.callButton.y,landing.callButton.z)}\neditor_description = "Anchor for the call button, right of the doors seen from the landing."`);
+    nodes.push(`[node name="Indicator" type="Marker3D" parent="${parent}"]\nposition = ${v3(landing.indicator.x,landing.indicator.y,landing.indicator.z)}\neditor_description = "Anchor for the floor indicator above the doors."`);
+  }
+  const sceneNodes=options.collision===false?nodes.filter(n=>!/^\[node[^\n]*type="(?:StaticBody3D|CollisionShape3D)"/.test(n)):nodes;
+  const sceneResources=options.collision===false?resources.filter(r=>!/^\[sub_resource type="BoxShape3D"/.test(r)):resources;
+  return finalizeScene(`[gd_scene load_steps=${sceneResources.length+1} format=3]\n\n${sceneResources.join('\n\n')}\n\n${sceneNodes.join('\n\n')}\n`,options);
 }
 
 export function exportGodotTscn(building, options={collision:true, markers:true}, suppliedDoorScenes=null) {
@@ -1640,8 +1750,14 @@ export function exportGodotTscn(building, options={collision:true, markers:true}
   const doorScenes=suppliedDoorScenes||doorSceneDescriptors(building);
   const doorExtIds=new Set();
   for(const d of doorScenes) if(!doorExtIds.has(d.extId)){doorExtIds.add(d.extId);extResources.push(`[ext_resource type="PackedScene" path="${d.filename}" id="${d.extId}"]`);}
+  const elevatorScenes=elevatorSceneDescriptors(building);
+  for(const d of elevatorScenes)extResources.push(`[ext_resource type="PackedScene" path="${d.filename}" id="${d.extId}"]`);
 
   nodes.push(`[node name="${nodeClean(building.name)}" type="Node3D"]`);
+  if(elevatorScenes.length){
+    nodes.push(`[node name="Elevators" type="Node3D" parent="."]\neditor_description = "Elevator assemblies: shaft, movable car, landing doors and stop markers (no scripts)."`);
+    for(const d of elevatorScenes)nodes.push(`[node name="Elevator_${d.number}_${nodeClean(d.elevator.label||d.elevator.id)}" parent="Elevators" instance=ExtResource("${d.extId}")]\nposition = ${v3(d.elevator.x,elevatorLayout(building,d.elevator).base,d.elevator.z)}\nrotation = ${v3(0,elevatorYaw(d.elevator),0)}`);
+  }
 
   const addBoxNode=(parent,name,size,position,rotation,materialId,collisionParent=null)=>{
     const meshId=resId('BoxMesh');
@@ -1775,7 +1891,14 @@ export function exportGodotTscn(building, options={collision:true, markers:true}
       if(exteriorResources.edges)resources.push(exteriorResources.edges.text);
       nodes.push(`[node name="ExteriorWalls" type="Node3D" parent="${floorName}/Geometry/Walls"]`);
       if(exteriorResources.outside)nodes.push(`[node name="OutsideFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/ExteriorWalls"]\nmesh = SubResource("${exteriorResources.ids.outside}")\neditor_description = "Outward-facing exterior faces."`);
-      if(exteriorResources.inside)nodes.push(`[node name="InsideFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/ExteriorWalls"]\nmesh = SubResource("${exteriorResources.ids.inside}")\neditor_description = "Inward-facing faces of the exterior shell."`);
+      if(exteriorResources.inside&&building.slabsByRoom===true){
+        // Room-facing faces per labelled room (slabsByRoom); the rest keeps the plain name.
+        resources.splice(resources.indexOf(exteriorResources.inside.text),1);
+        for(const piece of wallMeshPiecesByRoom(building,view,exteriorResources.data.inside)){
+          const id=`${exteriorResources.ids.inside}${piece.suffix}`,res=arrayMeshResource(piece.mesh,matExteriorInside,id,'InsideFaces');if(!res)continue;resources.push(res.text);
+          nodes.push(`[node name="InsideFaces${piece.suffix}" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/ExteriorWalls"]\nmesh = SubResource("${id}")\neditor_description = "${piece.room?`Inward-facing exterior faces in ${piece.room}.`:'Inward-facing faces of the exterior shell.'}"`);
+        }
+      }else if(exteriorResources.inside)nodes.push(`[node name="InsideFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/ExteriorWalls"]\nmesh = SubResource("${exteriorResources.ids.inside}")\neditor_description = "Inward-facing faces of the exterior shell."`);
       if(exteriorResources.edges)nodes.push(`[node name="EdgeFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/ExteriorWalls"]\nmesh = SubResource("${exteriorResources.ids.edges}")\neditor_description = "Window/door reveals and wall-thickness faces."`);
     }
     if(interiorResources){
@@ -1783,12 +1906,15 @@ export function exportGodotTscn(building, options={collision:true, markers:true}
       if(interiorResources.sideB)resources.push(interiorResources.sideB.text);
       if(interiorResources.edges)resources.push(interiorResources.edges.text);
       nodes.push(`[node name="InteriorWalls" type="Node3D" parent="${floorName}/Geometry/Walls"]`);
-      if(interiorResources.sideA)nodes.push(`[node name="SideAFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/InteriorWalls"]
-mesh = SubResource("${interiorResources.ids.sideA}")
-editor_description = "One face direction of the baked interior walls."`);
-      if(interiorResources.sideB)nodes.push(`[node name="SideBFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/InteriorWalls"]
-mesh = SubResource("${interiorResources.ids.sideB}")
-editor_description = "Opposite face direction of the baked interior walls."`);
+      for(const [key,surface,material,description] of [['sideA','SideAFaces',matInteriorA,'One face direction of the baked interior walls.'],['sideB','SideBFaces',matInteriorB,'Opposite face direction of the baked interior walls.']]){
+        if(!interiorResources[key])continue;
+        if(building.slabsByRoom!==true){nodes.push(`[node name="${surface}" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/InteriorWalls"]\nmesh = SubResource("${interiorResources.ids[key]}")\neditor_description = "${description}"`);continue;}
+        resources.splice(resources.indexOf(interiorResources[key].text),1);
+        for(const piece of wallMeshPiecesByRoom(building,view,interiorResources.data[key])){
+          const id=`${interiorResources.ids[key]}${piece.suffix}`,res=arrayMeshResource(piece.mesh,material,id,surface);if(!res)continue;resources.push(res.text);
+          nodes.push(`[node name="${surface}${piece.suffix}" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/InteriorWalls"]\nmesh = SubResource("${id}")\neditor_description = "${piece.room?`Interior wall faces in ${piece.room}.`:description}"`);
+        }
+      }
       if(interiorResources.edges)nodes.push(`[node name="EdgeFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/InteriorWalls"]
 mesh = SubResource("${interiorResources.ids.edges}")
 editor_description = "Interior wall tops, bottoms, jambs, and exposed ends."`);
@@ -2184,6 +2310,8 @@ export function exportGodotFiles(building, options={collision:true,markers:true}
     });
     doors=[...[...shared.values()].map(q=>({filename:q.filename,tscn:q.text,openings:q.users,shared:q.users.length})),...doors.filter(d=>d.tscn==null)];
   }
+  // Elevator scenes travel with the door scenes (kind: 'elevator').
+  doors=[...doors,...elevatorSceneDescriptors(building).map(d=>({filename:d.filename,tscn:exportElevatorTscn(building,d.elevator,options),kind:'elevator',elevator:d.elevator}))];
   const files={base,tscnName,tscn:exportGodotTscn(building,options,doorScenes),doors,warnings:validation.warnings};
   // Optional game layer (materials, render layers, scripts, door children).
   return options.gameLayer?applyGameLayer(files,options.gameLayer):files;

@@ -12,6 +12,8 @@ Use `examples --json` to find a suitable starting plan, its actual path, purpose
 
 For a new design, start from `node cli.mjs new --out NEW.json --name NAME` (floor ID `floor_1`) or from a copy of the closest existing example. Use `building.update` for building settings. There is no arbitrary-property patch command or TSCN import. If the requested design needs fields outside supported transactions, use the web controls or a carefully scoped JSON edit based on the shared model and validator; preserve unrelated fields and validate the candidate before export.
 
+Know the scope before planning. The tool makes the building shell; materials, navmesh, door scripts and animation, gameplay nodes, lighting setup, furniture, terrain and performance settings are done in Godot or by the game ([README: Scope](README.md#scope-what-the-tool-makes-and-what-stays-in-godot)). A user asking for a "game-ready building" still gets a shell from this tool plus a note of what Godot-side work remains; list that work in the handoff instead of building a substitute generator.
+
 ## 2. Discover capabilities instead of inventing commands
 
 | Need | Supported route | Limits to remember |
@@ -24,9 +26,10 @@ For a new design, start from `node cli.mjs new --out NEW.json --name NAME` (floo
 | Building settings | `building.update` (name, default dimensions, wall thickness, automatic roof, ceiling, profile, `doorMesh`, `windowMesh`) | Materials stay empty by design |
 | Floors | `floor.update`, `floor.add-top`/`remove-top`, `floor.insert` (above/below any floor, basements), `floor.duplicate`, `floor.move`, `floor.remove` | Duplicates omit stairs; copied IDs are `<new floor id>-<original id>` |
 | Stairs/platforms | Add, update, remove transactions; `stair.guard` rails a flight's opening on the floor above | Stairs connect adjacent floors; independent pieces do not automatically follow platform edits |
+| Elevators | `elevator.add`/`update`/`remove` (building-level, `bottomFloorId`–`topFloorId`); web **Elevator** tool (click to place; select to drag), Selection fields and **Elevators** panel; `group.move` | Static assembly only: shaft, movable car with its own doors, sliding landing doors, stop markers and anchors for the game's controls. `skipFloorIds` makes an express lift (no landing on those floors). Walls and railings may touch the shaft but not cross it; porches, manual floors/ceilings and roofs stay out of its height; plan a clear landing in front of the door on every served floor. Moving the car is the game's script. |
 | Wall/door shapes | Web dialogs; `wallType.add/update/remove`, `openingShape.add/update/remove`, `wall.add/update` `wallTypeId`/`inwardSide`/`inwardToward`, opening `shapeId` | Doorway shapes are door-only and must reach the floor |
 | Parapets and guards | `wall.crenellate` (crenels as empty windows), `railing.add/update/remove` | Wall thickness remains building-wide |
-| Lights | `light.add/update/remove` (omni lights, web light tool defaults) | Exported as `OmniLight3D` per floor |
+| Lights | `light.add/update/remove` (omni lights, web light tool defaults) | Exported as `OmniLight3D` per floor; placeholders for where lights go, to be replaced or tuned in Godot |
 | Markers, Floor Footprints, manual floors/ceilings | `marker.*`, `slab.*` (Floor Footprints), `manualFloor.*`/`manualCeiling.*` (building-level, absolute `topY`) | Manual surfaces keep absolute heights when floors change |
 | Move a selection | `group.move` (`items`, `delta`, `connected`) | Same guards as the web Move selection |
 | Inspect appearance | Web 3D preview; CLI `preview` with floor/roof views, comparisons and overlays | Optional canvas dependency for PNGs; no CLI plan/collision-overlay mode |
@@ -77,6 +80,43 @@ For a custom transaction:
 
 An empty version-1 operations list can save an explicit normalized copy. A failed transaction publishes no candidate. `operations` in a failed report describes attempted steps, not committed edits. Local move constraints must pass at the step where they occur; final reference and geometry validation evaluates the completed transaction. There is no implicit cascade: removing a wall needs explicit handling of its openings, and deleting a roof host needs explicit child detach/remove/rehost operations.
 
+### New buildings: generate the recipe with a script
+
+For anything beyond a few walls, write a short script that generates the recipe, then build it in one step. This is the expected route for real buildings, not a workaround: recipes stay plain, reviewable data, and the script holds the loops and arithmetic. GET PROBED's ~15 buildings were made this way (with Python); any language works. This Node script needs no dependencies:
+
+```js
+// make-recipe.mjs: writes shop.edit.json for `node cli.mjs new --ops`.
+import fs from 'node:fs';
+const ops=[];
+const wall=(id,a,b,role='interior')=>ops.push({op:'wall.add',floorId:'floor_1',id,value:{a:{x:a[0],z:a[1]},b:{x:b[0],z:b[1]},role}});
+const door=(id,wallId,at,width,doorStyle='room',extra={})=>ops.push({op:'opening.add',floorId:'floor_1',id,value:{type:'door',wallId,at:{x:at[0],z:at[1]},width,height:2.1,doorStyle,...extra}});
+const room=(id,label,minX,maxX,minZ,maxZ)=>ops.push({op:'region.add',floorId:'floor_1',id,value:{minX,maxX,minZ,maxZ,label}});
+ops.push({op:'room.add',floorId:'floor_1',id:'shell',value:{minX:-8,maxX:8,minZ:-5,maxZ:5}});
+wall('back',[3,-5],[3,5]);
+door('entry','shell-north',[-3,-5],1.8,'exterior',{leaves:2});
+door('kitchen','back',[3,0],0.9);
+for(let i=0;i<3;i++)ops.push({op:'opening.add',floorId:'floor_1',id:`win${i}`,value:{type:'window',wallId:'shell-south',at:{x:-6+i*4,z:5},width:1.2,height:1.1,sill:1}});
+room('dining','Dining',-8,3,-5,5);room('kitchen_area','Kitchen',3,8,-5,5);
+ops.push({op:'building.update',value:{slabsByRoom:true,roof:{type:'hip',pitch:30}}});
+fs.writeFileSync('shop.edit.json',JSON.stringify({version:1,operations:ops},null,1));
+```
+
+```bash
+node make-recipe.mjs
+node cli.mjs new --ops shop.edit.json --out shop.building.json --warnings-as-errors   # add --replace to re-run
+node cli.mjs validate shop.building.json --reachability
+node cli.mjs export shop.building.json --out shop-scenes
+```
+
+Tips from real builds:
+
+- `room.add` makes a closed rectangle of four walls (`<id>-north/-east/-south/-west`, north is −Z). Interior walls can end anywhere along another wall (a T).
+- An exterior outline closes only at shared endpoints. Where an exterior wall ends partway along another exterior wall, `wall.split` that wall at the meeting point. After a split, the original keeps end A and the new piece (`newId`) takes the rest, so place later openings on the right piece.
+- Place openings with `at: {x, z}` (a world point on the wall) instead of computing `t`.
+- A recipe's top-level `points` names coordinates once (see TRANSACTIONS.md) if you are not using a script.
+- `new --ops` and `edit` never overwrite an existing file unless `--replace` is given (and never an input).
+- Labels become node and file names (`Door_001_Front_entrance`, `FloorSlab_Kitchen`), so meaningful labels give readable scenes.
+
 ## 4. Read machine output correctly
 
 Use subprocess argument arrays rather than shell interpolation when automating filenames. Quote paths in shell examples. Input/output paths are caller-relative, while bundled catalog/test resources are installation-relative. Place flags before `--` when passing filenames beginning with a dash. Shells expand globs; an unmatched literal glob is a missing input.
@@ -93,6 +133,29 @@ Destinations must be new. Unknown/repeated flags are errors. There is no `--forc
 
 Authored diffs use JSON Pointer paths but are reports, not executable patches. Added/removed objects in ID'd arrays are per-ID `add`/`remove` entries whose `path` names the array (with `id` and `index`); arrays without unique IDs or with reordered IDs still appear as one `replace`. `null` overrides mean automatic/default only for fields documented that way. `before:null`/`after:null` in derived reports mean addition/removal or unavailable state as documented; never interpret them as zero elevation or zero rise. Manual surfaces listed in alignment review are context, not proof of a collision.
 
+### Exported node and file names
+
+Games hook into exported scenes by node name, so these names are a contract. `NNN` is a 1-based counter; `<Label>` is the authored label with spaces and punctuation turned into `_`.
+
+| What | Name |
+| --- | --- |
+| Scene root | `<Building_Name>`; file `<building_name>.tscn` |
+| Per story | `Floor_01`, `Floor_02`, … each with `Geometry`, `Collision` (StaticBody3D) and `Openings` (Marker3D per opening); `Lights`, `Markers` when present |
+| Exterior walls | `Floor_NN/Geometry/Walls/ExteriorWalls/OutsideFaces`, `InsideFaces`, `EdgeFaces` |
+| Interior walls | `Floor_NN/Geometry/Walls/InteriorWalls/SideAFaces`, `SideBFaces`, `EdgeFaces` |
+| Floor and ceiling | `Floor_NN/Geometry/FloorSlab` (surfaces `TopFaces`/`BottomFaces`/`EdgeFaces`) and `Ceiling` (`RoomFaces`/`RoofSideFaces`/`EdgeFaces`); with `slabsByRoom`, `FloorSlab_<Room>` and `Ceiling_<Room>` per labelled room, and wall faces `InsideFaces_<Room>`, `SideAFaces_<Room>`, `SideBFaces_<Room>` |
+| Automatic roof | `Floor_NN/Geometry/Roof/Roof_NNN_North`, `_South`, `RidgeCap_NNN` (hip: `_Hip_NN`, mansard top `_Top`). Untrimmed gable/shed/flat slabs and ridge caps are plain boxes with no surface name: colour them with a whole-node game-layer rule. |
+| Manual roofs | Root `ManualRoofs/ManualRoof_NNN_<Type>…` |
+| Windows | `Floor_NN/Geometry/Windows/Window_NNN_<Label>` (surfaces `Frame`/`Glass`), collision `Floor_NN/Collision/Window_NNN_<Label>_Collision` |
+| Doors | `Floor_NN/Geometry/Doors/Door_NNN_<Label>`, instancing `doors/<building>_fNN_door_NNN_<label>.tscn` |
+| Door scenes | Root `Door`, `Frame`, `Hinge` (`DoorMesh`, `AnimatableBody3D/CollisionShape3D`); double leaves (`leaves: 2` or closet) add `Hinge2`; roll-up doors use `Curtain` and `Housing`; GET PROBED profile adds `InteractionArea` |
+| Elevators | Root `Elevators/Elevator_NNN_<Label>`, instancing `elevators/<building>_elevator_NNN_<label>.tscn`: `Shaft` (surfaces `ShaftOutside`/`ShaftInside`/`ShaftEdges`) + `ShaftBody` (static); `Car` (AnimatableBody3D with `CarMesh` surfaces `CarFloor`/`CarWalls`/`CarCeiling`; move it on Y) with `CarDoorLeft`/`CarDoorRight` (riding leaves, `sync_to_physics` off) and a `CarPanel` marker; `Stops/Stop_NN` (Marker3D at each stop, metadata `building_floor_id`; skipped floors have none); `Landings/Landing_NN/DoorLeft`, `DoorRight` (AnimatableBody3D leaves overlapping the jambs) with `CallButton` (right of the doors, seen from the landing) and `Indicator` (above them) markers. To open, slide each leaf outward on X by `leaf_travel` (metadata on each `Landing_NN` and on `Car`). Root metadata: `building_elevator_id`, `shaft_size`, `door_width`, `door_height`. No script: moving the car and doors is the game's (game layer `scripts.elevator`). |
+| Platforms, railings, stairs | `Floor_NN/Geometry/Platforms/Porch_NNN_<Label>` (`_Post_NNN`, `_Beam_NNN`, `_Step_NN`), `Railings/Railing_NNN_<Label>`, `Stairs/…` |
+
+**Export profile.** `generic` (the default) uses the groups `building_lights` and `sight_transparent` and door collision layer/mask 1. `get_probed` adds GET PROBED's groups (`paranormal_lights`, `scare_sight_transparent`), door layer 4/mask 2 and the door `InteractionArea`. `node cli.mjs new` writes `exportProfile: "generic"`; `--profile` on `export`/`package` overrides the blueprint. Since 1.5.0 a blueprint without the field exports as `generic` (before, `get_probed`).
+
+**After export.** Materials are empty and doors carry no script by design: the game owns them. Assign materials by surface name, set render layers, attach door scripts and add per-door child scenes in one step with a [game layer](GAME_LAYER.md) file (`--game-layer`). Gameplay nodes such as room `Area3D`s, navigation or shelter zones remain the game's own post-processing.
+
 ## 5. Geometry conventions and common pitfalls
 
 - Plan coordinates use X/Z in metres; Y is elevation. North is −Z, south +Z, east +X, west −X. Preview camera angles use radians; roof pitch uses degrees. CLI `--floor` is a 1-based display index; transaction `floorId` is an ID.
@@ -105,7 +168,8 @@ Authored diffs use JSON Pointer paths but are reports, not executable patches. A
 - Automatic elevation includes the new floor's slab: a 4.0 m ground story with 0.18 m slabs puts the next floor at 4.18 m, and its wall top at 4.18 m + wall height. Independent roof `baseY` is absolute, so read resolved values from the dry run's `structuralChanges` or `inspect` before placing roofs on a story.
 - Terrain at y = 0: a ground-floor slab top at exactly 0 z-fights with game terrain at 0. Set the ground floor's elevation slightly above it (`floor.update` `{elevation: 0.04}`, or the web floor panel's **Elevation**); every automatic floor above follows. Moving the building instance up in Godot works too.
 - Porch, deck or veranda: `platform.add` against an exterior wall with `height` (deck top above the floor), `kind:"porch"` and `covered:true` (posts and beams; the building roof extends over it). Add `steps:{edge,at,width}` for steps down to the floor, and `railing.add` with `elevation` equal to the deck height so railings stand on the deck (validation warns when they don't). For a separate shed roof instead of the extended main roof, add `roof.add` `{type:"shed", direction, baseY: wall top}` over the porch rectangle; it replaces the automatic roof there. Web: the Porch/Deck tool, the platform panel's **Steps** and the railing panel's **Elevation above floor**.
-- Different floor materials per room, or many lights in a large building (Compatibility renderer limits lights per mesh): `building.update` `{slabsByRoom: true}` (web: **Split floors and ceilings by room**) exports each labelled room region's floor and ceiling as its own mesh; map materials per room with the game layer's `nodeMaterials`.
+- Elevators: `elevator.add` with the shaft centre `x`, `z`, `bottomFloorId` and `topFloorId` (web: the **Elevator** tool). Reserve the shaft and a clear landing in front of its doors on every floor it stops at, as you would stair runs: walls and railings may touch the shaft but not cross it, and porches, stairs, manual floors/ceilings and roofs must stay out of it. The validator names whatever crosses it. `skipFloorIds` makes an express lift. Door width is at most shaft width/2 − 0.35 m (0.95 m in the default 2.6 m shaft). `validate --reachability` counts lifts as routes between their stops; `godot-check --assets` probes each lift in Godot. A navmesh cannot ride a lift: the game links landings itself.
+- Different floor or wall finishes per room, or many lights in a large building (Compatibility renderer limits lights per mesh): `building.update` `{slabsByRoom: true}` (web: **Split floors, ceilings and walls by room**) exports each labelled room region's floor, ceiling and room-facing wall faces as their own meshes; map materials per room with the game layer's `nodeMaterials`.
 - Flat roof with a parapet (tall exterior walls, lower interior ceiling): make the occupied story the interior height (`floor.update` `wallHeight`, e.g. 3.42), set `building.update` `roof:{type:"none"}`, then `floor.add-top` a story with the parapet height (e.g. `wallHeight:1`, `autoCeiling:false`) and repeat only the exterior wall outline on it. That story's automatic floor slab is the flat roof, its walls are the parapet, and the room below keeps its automatic ceiling at the interior height, with interior walls reaching it. No manual ceiling or shortened interior walls are needed. Manual roofs can still cover other parts.
 - Mansard / truncated hip (steep slopes around a flat top): a hip roof with `flatTopHeight` (manual `roof.add`, or the automatic roof via `building.update`). Web: **Flat top height** in the roof panel and the automatic roof settings.
 - Automatic Hip roofs support convex footprints; continuous concave valleys remain unsupported. Independent manual slabs use rectangular footprints; manual roofs take a rectangle or a polygon (flat or hip, as above). Do not confuse clipping an existing roof with generating a new valley or dormer.
@@ -116,6 +180,14 @@ Authored diffs use JSON Pointer paths but are reports, not executable patches. A
 - Separate shell meshes and per-story organization are deliberate light-budget controls. Preserve their boundaries, surface names, IDs and collision correspondence. Empty material slots are expected. The generic profile is reusable; preserve an existing GET PROBED profile unless the user requests conversion.
 
 Keep the supplied barn's large ground-level entrance and closed upper gable. The root `farmhouse_example.building.json` intentionally has a stair/wall warning and differs from the supplied `examples/farmhouse.building.json`. Use catalog expectations to identify deliberate fixtures.
+
+### Wall thickness
+
+- `wallThickness` is **one building-wide setting** (`building.update`); there is no separate exterior/interior thickness. Changing it moves every Standard wall, and is the warning-free way to make all walls thicker.
+- Walls that differ use a **wall type**: `wallType.add` with `stations` of `{height, offset, thickness}` (height is a 0–1 fraction, offset positive inward), then `wall.add`/`wall.update` with `wallTypeId` (or `room.add` with `wallTypeId`). Plain Standard walls have no per-wall thickness.
+- **Thicker exterior shell** (e.g. 0.30 m brick on 0.18 m interiors): a type with `thickness: 0.3` and `offset: -0.06` at heights 0 and 1 keeps the inside face where a Standard wall's would be and grows the wall outward. Expect one review warning per typed wall ("profile changes the floor/top edge"), so strict `--warnings-as-errors` runs fail. Floors and ceilings are unaffected; a gable roof's end fill uses the building thickness and shows a ledge on the thicker wall, so prefer hip or flat roofs, or set the building `wallThickness` instead.
+- **A facade on one side only:** the same type on just those walls. Roof fitting needs matching thickness at exterior corners, so a typed wall meeting a Standard wall at a corner adds a "roof fitting needs matching wall thickness" warning there.
+- Typed (shaped) walls cannot end midway along another wall, so interior partitions that form T-junctions should stay Standard.
 
 ## 6. Efficient web use and review
 
@@ -139,12 +211,12 @@ Save JSON reports a download request or a synchronous failure without changing t
 | --- | --- | --- |
 | `validate` / saved checks | Existing schema/authoring rules and warnings | Full geometric correctness or playability |
 | `inspect` | Derived dimensions, coverage, resource counts, shell paths | Watertightness, useful collision everywhere |
-| `validate --reachability [--from "x,z[,floorId]"]` | Floor areas and stairs connected to open ground, or to interior start points, through doors, passages and stairs, with walker clearance and shaped-wall profiles | Headroom, stair comfort, door swing, physics traversal |
+| `validate --reachability [--from "x,z[,floorId]"]` | Floor areas and stairs connected to open ground, or to interior start points, through doors, passages, stairs and elevators, with walker clearance and shaped-wall profiles | Headroom, stair comfort, door swing, physics traversal |
 | CLI software PNG | Shared preview geometry and camera framing (approximation) | Godot lighting or browser layout |
 | `godot-check --assets --render` | How the exported scene renders in Godot with default materials and a neutral sun/sky | Game lighting, materials or post-processing; physics |
 | DOM editor suites | Actual handler behavior, history, modeled focus intent | Real CSS, responsive sizing, browser focus behavior |
 | Playwright browser suite | The executed live interactions and viewport checks | Engine physics |
-| `godot-check --assets` | Supported scene loading/resources and configured checks | Character traversal; it reports zero fixture physics rays |
+| `godot-check --assets` | Supported scene loading/resources and configured checks; for exported elevators, physics probes of the car at every stop and the landing and car doors | Character traversal; its only physics rays are the elevator probes |
 | Bundled Godot/engine suites | Their specific generated scenes and authored probes | Arbitrary building or character clearance |
 | `release-check` | Reported gates on an isolated source snapshot | Skipped dependencies or untested target engines/platforms |
 
@@ -166,12 +238,13 @@ The shipped runtime baseline was tested on Linux/Node 24.19.0/Godot 4.5.1 Compat
 | Shapes and junctions | `src/wall-types.js`, `src/wall-profile-geometry.js`, `src/profile-junctions.js`, `src/opening-shapes.js` |
 | Roofs/footprints | `src/roof-geometry.js`, `src/roof-diagnostics.js`, `src/roof-wall-diagnostics.js`, `src/polygon-areas.js`, `src/regions.js` |
 | Scene/preview generation | `src/exporter.js`, `src/preview-web.js`, `src/preview-review.js`, `src/preview-overlays.js` |
+| Elevators (rules, layout shared by export, preview, routes and web) | `src/elevators.js`, `qa/validate-scenes.gd` (`godot-check --assets` probe), `qa/validate-elevators.gd` |
 | Tests and packaging evidence | `test-suites.mjs`, `release-check.mjs`, `qa/editor-harness.mjs`, `qa/recipe-workflows.mjs`, `browser-tests.mjs` |
 
 Change shared logic at its source and exercise affected web/CLI consumers. Existing user changes must be preserved. The example generator rewrites JSON, scenes and dependencies; use it only when regeneration is intended and review its diff. Generated assets should demonstrate an exporter change, not contain hand repairs that the next export loses.
 
 ## 9. Handoff checklist
 
-State the source/revision used, exact requested change, output paths and what was tested. List intentional warnings and unavailable checks. Deliver the editable JSON for building edits and retain relative door files with the main scene. For tool maintenance, provide the updated package and a concise change summary. Report whether examples/scene bytes changed; do not claim a previous release report's fingerprint covers modified documentation or code.
+State the source/revision used, exact requested change, output paths and what was tested. List intentional warnings and unavailable checks, and the Godot-side work that remains for the user (materials, navmesh and lift navigation links, door and elevator scripts, gameplay nodes and anything else from the README's Scope table). Deliver the editable JSON for building edits and retain relative door files with the main scene. For tool maintenance, provide the updated package and a concise change summary. Report whether examples/scene bytes changed; do not claim a previous release report's fingerprint covers modified documentation or code.
 
 Useful references: [QUICKSTART.md](QUICKSTART.md), [CLI.md](CLI.md), [TRANSACTIONS.md](TRANSACTIONS.md), [PREVIEWS.md](PREVIEWS.md), [CHECK_REPORTS.md](CHECK_REPORTS.md), [ROOF_DIAGNOSTICS.md](ROOF_DIAGNOSTICS.md), [RELEASE_CHECKS.md](RELEASE_CHECKS.md), [ROADMAP.md](ROADMAP.md).

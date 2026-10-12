@@ -54,6 +54,7 @@
                 <button data-tool="manual-ceiling" title="Draw an independent ceiling slab with its own absolute height and thickness.">Manual Ceiling</button>
                 <button data-tool="platform" title="Drag an outdoor porch or deck platform.">Porch/Deck</button>
                 <button data-tool="railing" title="Drag a railing segment.">Railing</button>
+                <button data-tool="elevator" title="Click to place an elevator shaft centred on the point, serving the active floor and the floor above. Select it to drag it or edit its size, doors and floors.">Elevator</button>
                 <button data-tool="roof" title="Draw an independent four-corner roof footprint. Its height is independent of the active floor.">Manual Roof</button>
               </div>
               <p class="muted compact-help">Select an item and press <b>Delete</b> to remove it. Undo remains available with Ctrl/Cmd+Z.</p>
@@ -241,7 +242,7 @@
               <label>Default wall height <input id="wall-height" type="number" min="1" step="0.1" value="2.8" title="Full wall height. Automatic upper elevations add the upper slab thickness." /></label>
               <label>Wall thickness <input id="wall-thickness" type="number" min="0.05" step="0.05" value="0.18" /></label>
               <label>Floor / platform thickness <input id="floor-thickness" type="number" min="0.05" step="0.05" value="0.18" title="Used by building floor slabs and porch/deck slabs." /></label>
-              <label class="checkbox" title="Export each labelled room region's automatic floor and ceiling as its own mesh (FloorSlab_Kitchen, Ceiling_Kitchen, …) so rooms can take different materials and fewer lights affect each mesh. Collision is unchanged. Same as building.update slabsByRoom."><input id="slabs-by-room-toggle" type="checkbox" /> Split floors and ceilings by room</label>
+              <label class="checkbox" title="Export each labelled room region's automatic floor, ceiling and room-facing wall faces as their own meshes (FloorSlab_Kitchen, Ceiling_Kitchen, InsideFaces_Kitchen, SideAFaces_Kitchen, …) so rooms can take different materials and fewer lights affect each mesh. Collision is unchanged. Same as building.update slabsByRoom."><input id="slabs-by-room-toggle" type="checkbox" /> Split floors, ceilings and walls by room</label>
               <div class="option-group">
                 <h3>Automatic surface defaults</h3>
                 <label>Ceiling thickness <input id="ceiling-thickness" type="number" min="0.02" step="0.01" value="0.12" title="Default thickness for automatically generated ceilings and newly drawn manual ceilings." /></label>
@@ -355,7 +356,7 @@
       <aside class="panel properties-panel">
         <section>
           <h2>Selection</h2>
-          <label>Pick objects<select id="selection-filter"><option value="all">All objects</option><option value="areas">All areas</option><option value="roofSection">Manual roofs</option><option value="platform">Porches / decks</option><option value="slab">Floor footprints</option><option value="manualFloor">Manual floors</option><option value="manualCeiling">Manual ceilings</option><option value="region">Regions</option><option value="wall">Walls</option><option value="opening">Doors / windows</option><option value="stair">Stairs / ramps</option><option value="light">Lights</option><option value="marker">Markers</option><option value="railing">Railings</option></select></label>
+          <label>Pick objects<select id="selection-filter"><option value="all">All objects</option><option value="areas">All areas</option><option value="roofSection">Manual roofs</option><option value="platform">Porches / decks</option><option value="slab">Floor footprints</option><option value="manualFloor">Manual floors</option><option value="manualCeiling">Manual ceilings</option><option value="region">Regions</option><option value="wall">Walls</option><option value="opening">Doors / windows</option><option value="stair">Stairs / ramps</option><option value="elevator">Elevators</option><option value="light">Lights</option><option value="marker">Markers</option><option value="railing">Railings</option></select></label>
           <p class="muted compact-help">Closed exterior outlines, including angled walls, define automatic floors and ceilings. Floor Footprints override that outline with rectangles.</p>
           <p id="footprint-status" class="muted compact-help" aria-live="polite"></p>
           <div id="selection-candidates" class="selection-candidates" aria-label="Overlapping areas at the picked point" hidden></div>
@@ -388,6 +389,13 @@
           </div></details>
         </section>
         <section class="collapsible-section">
+          <details class="collapsible" data-section="elevators"><summary><h2>Elevators</h2></summary><div class="section-body">
+            <p id="elevator-empty" class="muted compact-help">Use the <b>Elevator</b> tool to click a shaft into place; select it on the plan to drag it. An elevator is a shaft serving a range of floors. It exports as its own scene with a movable car, sliding landing doors and a stop marker per floor; the game moves them.</p>
+            <div id="elevator-list" aria-label="Elevators"></div>
+            <button id="add-elevator-btn" type="button">Place elevator on plan…</button>
+          </div></details>
+        </section>
+        <section class="collapsible-section">
           <details class="collapsible" data-section="scene-summary"><summary><h2>Scene summary</h2></summary><div class="section-body"><dl class="summary" id="scene-summary"></dl></div></details>
         </section>
         <section>
@@ -395,7 +403,7 @@
           <label>Export profile<select id="export-profile"><option value="generic">Generic Godot</option><option value="get_probed">GET PROBED compatibility</option></select></label>
           <button id="validate-btn">Check building</button>
           <button id="download-check-report-btn" type="button" title="Download current errors, warnings and object references as JSON">Download check report</button>
-          <label class="checkbox" title="Also check that every floor area and stair can be reached from open ground through doors, empty passages and stairs (0.25 m walker clearance). Same check as the CLI validate --reachability."><input id="route-check-toggle" type="checkbox" /> Include route check</label>
+          <label class="checkbox" title="Also check that every floor area and stair can be reached from open ground through doors, empty passages, stairs and elevators (0.25 m walker clearance). Same check as the CLI validate --reachability."><input id="route-check-toggle" type="checkbox" /> Include route check</label>
           <label title="Optional interior start points for the route check, for buildings with no opening to the outside (a sealed ship or bunker): x,z or x,z,floorId, several separated by ;. The floor defaults to the ground floor. Same as the CLI --from option.">Route start (optional)<input id="route-start" type="text" placeholder="x,z[,floorId]; …" autocomplete="off" spellcheck="false" /></label>
           <p class="muted compact-help">Reports describe the current checks. Save the building JSON separately for editing.</p>
           <p id="validation-summary" class="muted compact-help" role="status" aria-live="polite" aria-atomic="true" tabindex="-1"></p>

@@ -1,0 +1,19 @@
+{
+  "start": [0, 0, 7],
+  "targets": [
+    {"name": "Lobby, in front of Lift A", "at": [-1.3, 0, 0.3]},
+    {"name": "Restaurant", "at": [-14, 0, 4]},
+    {"name": "Kitchen", "at": [-9, 0, -5]},
+    {"name": "Lounge", "at": [14, 0, 4]},
+    {"name": "Luggage room", "at": [0, 0, -6]},
+    {"name": "Floor 2 corridor at the lifts (west stair)", "at": [-1.3, 3.85, 0.3]},
+    {"name": "Room 201", "at": [-17, 3.85, 6]},
+    {"name": "Bath 204", "at": [-14, 3.85, -2.2]},
+    {"name": "Floor 3 linen room", "at": [0, 7.1, -6]},
+    {"name": "Room 312", "at": [13, 7.1, -5]},
+    {"name": "Floor 4 corridor east", "at": [17, 10.35, 0]},
+    {"name": "Room 519", "at": [18, 13.6, 6]},
+    {"name": "Bath 505", "at": [-11, 13.6, 2.2]},
+    {"name": "East stair, top floor beside the arriving flight", "at": [18.75, 13.6, -6]}
+  ]
+}

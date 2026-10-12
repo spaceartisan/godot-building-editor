@@ -34,9 +34,10 @@ export function parseGameLayer(value){
       const where=`nodeMaterials/${i}`;if(!isObject(rule))fail('expected an object',where);
       for(const key of Object.keys(rule))if(!['match','surface','material','in'].includes(key))fail(`unknown field ${key}`,where);
       if(typeof rule.match!=='string'||!rule.match||rule.match.length>256||/["\n]/.test(rule.match))fail('match must be a node path pattern (* matches anything)',`${where}/match`);
-      if(typeof rule.surface!=='string'||!NAME.test(rule.surface))fail('surface must be a surface name such as TopFaces',`${where}/surface`);
+      // No surface: the whole node (material_override), e.g. plain roof boxes with unnamed surfaces.
+      if(rule.surface!==undefined&&(typeof rule.surface!=='string'||!NAME.test(rule.surface)))fail('surface must be a surface name such as TopFaces, or omitted for the whole node',`${where}/surface`);
       if(rule.in!==undefined&&!['building','doors'].includes(rule.in))fail('in must be building or doors',`${where}/in`);
-      nodeMaterials.push({match:rule.match,pattern:glob(rule.match),surface:rule.surface,material:resourcePath(rule.material,`${where}/material`),in:rule.in||null});
+      nodeMaterials.push({match:rule.match,pattern:glob(rule.match),surface:rule.surface??null,material:resourcePath(rule.material,`${where}/material`),in:rule.in||null});
     });
   }
   const layers=[];
@@ -54,7 +55,7 @@ export function parseGameLayer(value){
   const scripts={};
   if(data.scripts!==undefined){
     if(!isObject(data.scripts))fail('expected {building, door}','scripts');
-    for(const [key,path] of Object.entries(data.scripts)){if(!['building','door'].includes(key))fail(`unknown script target ${key}`,'scripts');scripts[key]=resourcePath(path,`scripts/${key}`);}
+    for(const [key,path] of Object.entries(data.scripts)){if(!['building','door','elevator'].includes(key))fail(`unknown script target ${key}`,'scripts');scripts[key]=resourcePath(path,`scripts/${key}`);}
   }
   const doorChildren=[];
   if(data.doorChildren!==undefined){
@@ -83,7 +84,7 @@ function applyToScene(text,layer,kind){
     if(!header)return block;
     const [,name,type,parent]=header;
     if(parent===undefined){
-      const script=kind==='door'?layer.scripts.door:layer.scripts.building;
+      const script=kind==='door'?layer.scripts.door:kind==='elevator'?layer.scripts.elevator:layer.scripts.building;
       return script?`${block}\nscript = ExtResource("${resource('Script',script)}")`:block;
     }
     if(type==='MeshInstance3D'){
@@ -91,6 +92,7 @@ function applyToScene(text,layer,kind){
       let result=block;
       const names=surfaces.get(/^mesh = SubResource\("([^"]+)"\)$/m.exec(block)?.[1])||[],done=new Set();
       for(const rule of (layer.nodeMaterials||[]).filter(r=>scope(r)&&r.pattern.test(path))){
+        if(rule.surface===null){if(!done.has('node')){done.add('node');result+=`\nmaterial_override = ExtResource("${resource('Material',rule.material)}")`;}continue;}
         const index=names.indexOf(rule.surface);if(index<0||done.has(index))continue;done.add(index);
         result+=`\nsurface_material_override/${index} = ExtResource("${resource('Material',rule.material)}")`;
       }
@@ -118,5 +120,5 @@ function applyToScene(text,layer,kind){
 // files: the result of exportGodotFiles. Returns a copy with the layer applied.
 export function applyGameLayer(files,layer){
   if(!layer)return files;
-  return {...files,tscn:applyToScene(files.tscn,layer,'building'),doors:files.doors.map(d=>d.tscn==null?d:{...d,tscn:applyToScene(d.tscn,layer,'door')}),gameLayer:true};
+  return {...files,tscn:applyToScene(files.tscn,layer,'building'),doors:files.doors.map(d=>d.tscn==null?d:{...d,tscn:applyToScene(d.tscn,layer,d.kind==='elevator'?'elevator':'door')}),gameLayer:true};
 }

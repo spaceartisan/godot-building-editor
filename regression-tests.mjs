@@ -120,7 +120,7 @@ test('generic profile and legacy override preserve custom light groups',()=>{
   assert.match(generic,/groups=\["building_lights"\]/);assert.match(generic,/groups=\["sight_transparent"\]/);
   assert.doesNotMatch(generic,/paranormal_lights|scare_sight_transparent/);
   b.floors[0].lights[0].group='my_custom_lights';assert.match(exportGodotFiles(b,{profile:'generic'}).tscn,/my_custom_lights/);
-  delete b.exportProfile;assert.match(exportGodotFiles(b).tscn,/scare_sight_transparent/);
+  delete b.exportProfile;assert.doesNotMatch(exportGodotFiles(b).tscn,/scare_sight_transparent/,'no profile exports as generic since 1.5.0');assert.match(exportGodotFiles(b,{profile:'get_probed'}).tscn,/scare_sight_transparent/);
   assert.equal(makeEmptyBuilding().exportProfile,'generic');
 });
 test('collision toggle includes separate door files',()=>{
@@ -145,7 +145,7 @@ test('actual editor normalization preserves legacy surfaces, wall roles and prof
   for(const wall of legacy.walls)delete wall.role;
   for(const opening of legacy.openings)delete opening.id;
   const result=normalize(legacy);
-  assert.equal(result.exportProfile,'get_probed');assert.equal(result.floors[0].slabs.length,1);
+  assert.equal(result.exportProfile,'generic');assert.equal(result.floors[0].slabs.length,1);
   assert.equal(result.floors[0].walls.filter(w=>w.role==='exterior').length,4);
   assert.ok(result.floors[0].openings.every(o=>typeof o.id==='string'));
   assert.equal(validateBuilding(result).errors.length,0);

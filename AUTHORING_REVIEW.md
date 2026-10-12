@@ -6,7 +6,7 @@ Use this review for new buildings and substantial layout edits. A successful val
 
 Record intended use, approximate scale, occupied levels, entrances, room/courtyard arrangement and defining architectural features. For a vague request such as “cool castle,” choose reasonable assumptions and state them. A useful default is an enterable blockout with connected occupied levels, an identifiable gatehouse, keep, towers and open courtyard. Distinguish an exterior-only prop from an enterable building; do not quietly substitute one for the other.
 
-Choose a footprint and reserve stair runs/landings before filling every level. Existing stairs connect adjacent floors, so a four-level route needs transitions across three floor boundaries. Each separate occupied tower needs an access route; a single staircase somewhere in the plan is insufficient. Labels such as “Wall Walk” do not create walkways or access.
+Choose a footprint and reserve stair runs/landings and any lift shafts (with a clear landing in front of each lift door) before filling every level. Existing stairs connect adjacent floors, so a four-level route needs transitions across three floor boundaries. Each separate occupied tower needs an access route; a single staircase somewhere in the plan is insufficient. Labels such as “Wall Walk” do not create walkways or access.
 
 ## 2. Check the building by level and route
 
@@ -15,7 +15,8 @@ Keep a short evidence table. For each item record **verified**, **failed**, **un
 | Review item | Required evidence |
 | --- | --- |
 | Entrance to usable interior | Opening and door clearance, floor under the entrance, route into the intended interior |
-| Each occupied upper level | Connected stair/ramp route with usable lower/upper landings, opening and headroom |
+| Each occupied upper level | Connected stair/ramp route with usable lower/upper landings, opening and headroom, or a lift stop with a clear landing |
+| Lifts | A stop on every floor the brief needs it (check `skipFloorIds`), no `elevator-landing-blocked` route warning, and `godot-check --assets` elevator probes with 0 failures |
 | Separate towers, wings and keep | Explicit horizontal and vertical connections; no sealed occupied volumes |
 | Intended floors | Coverage at room centers, corners, door thresholds and landings, especially near voids |
 | Courtyard and open decks | Correct outdoor floor/ground strategy and open sky above; no unintended ceiling |
@@ -23,7 +24,7 @@ Keep a short evidence table. For each item record **verified**, **failed**, **un
 | Architectural brief | Whole-building views show the requested silhouette and authored defining details |
 | Export | Scene and relative door dependencies exist and load under the checks actually performed |
 
-Run `node cli.mjs validate FILE --reachability` for route evidence. It rasterizes each floor's walkable surface, blocks walls and railings with a 0.25 m walker clearance, opens doors and empty passages, links stair entrances to their arrivals and floods from open ground outside the building. Shaped walls block by their profile's reach up to body height. For an interior with no exterior opening (a sealed ship, a bunker), add `--from "x,z[,floorId]"` at the spawn or entry point instead of cutting a fake exit. Every floor area of 1 m² or more that cannot be reached becomes a warning naming the floor, its approximate location and the labelled regions it covers; blocked stair entrances or arrivals are reported per stair. It is a connectivity check, not a physics, headroom or door-swing test. Also use Plan and floor-isolated views to inspect coverage and routes. A whole-building thumbnail hides floor holes and disconnected stories. Review opposite exterior viewpoints, every distinct floor, the entrance, stairs/landings and void boundaries. Software preview is geometry evidence; it does not prove Godot lighting or character clearance. Use target-engine traversal/physics checks before claiming playability, or clearly mark traversal unverified.
+Run `node cli.mjs validate FILE --reachability` for route evidence. It rasterizes each floor's walkable surface, blocks walls and railings with a 0.25 m walker clearance, opens doors and empty passages, links stair entrances to their arrivals and lift landings to each other and floods from open ground outside the building. Shaped walls block by their profile's reach up to body height. For an interior with no exterior opening (a sealed ship, a bunker), add `--from "x,z[,floorId]"` at the spawn or entry point instead of cutting a fake exit. Every floor area of 1 m² or more that cannot be reached becomes a warning naming the floor, its approximate location and the labelled regions it covers; blocked stair entrances or arrivals are reported per stair. It is a connectivity check, not a physics, headroom or door-swing test. Also use Plan and floor-isolated views to inspect coverage and routes. A whole-building thumbnail hides floor holes and disconnected stories. Review opposite exterior viewpoints, every distinct floor, the entrance, stairs/landings and void boundaries. Software preview is geometry evidence; it does not prove Godot lighting or character clearance. Use target-engine traversal/physics checks before claiming playability, or clearly mark traversal unverified.
 
 ## 3. Understand region precedence
 

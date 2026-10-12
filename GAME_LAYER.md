@@ -29,7 +29,8 @@ Without a game layer, exports are byte-for-byte unchanged.
   ],
   "scripts": {
     "building": "res://scripts/building.gd",
-    "door": "res://scripts/door.gd"
+    "door": "res://scripts/door.gd",
+    "elevator": "res://scripts/elevator.gd"
   },
   "doorChildren": [
     {"name": "UVResidue", "scene": "res://scenes/uv_residue_receiver.tscn"}
@@ -41,10 +42,10 @@ All sections are optional.
 
 | Field | What it does |
 | --- | --- |
-| `materials` | Surface name → material resource. Every exported mesh surface with that name gets the material, in the building scene and in door scenes. Surface names are the ones in the exported meshes: exterior `OutsideFaces`/`InsideFaces`/`EdgeFaces`, interior `SideAFaces`/`SideBFaces`/`EdgeFaces`, slab `TopFaces`/`BottomFaces`, roof `RoofFaces`/`RoofSideFaces`, window `Frame`/`Glass`, door `Frame`/`Door`/`Hardware`, and so on. Open an export in a text editor and search for `"name":` to list them. Unmapped surfaces keep empty slots. |
-| `nodeMaterials` | Ordered rules `{match, surface, material, in}` that override one surface's material on matching `MeshInstance3D` nodes (`surface_material_override`), for per-room floors: with `slabsByRoom`, `{"match": "*FloorSlab_Kitchen", "surface": "TopFaces", "material": "res://materials/quarry_tile.tres"}`. `match` works as in `layers`; a node without that surface is skipped. These overrides take precedence over `materials`. |
+| `materials` | Surface name → material resource. Every exported mesh surface with that name gets the material, in the building scene and in door scenes. Surface names are the ones in the exported meshes: exterior `OutsideFaces`/`InsideFaces`/`EdgeFaces`, interior `SideAFaces`/`SideBFaces`/`EdgeFaces`, slab `TopFaces`/`BottomFaces`, roof `RoofFaces`/`RoofSideFaces`, window `Frame`/`Glass`, door `Frame`/`Door`/`Hardware`, elevator `ShaftOutside`/`ShaftInside`/`ShaftEdges`, `CarFloor`/`CarWalls`/`CarCeiling` and door leaves `Door`, and so on. Open an export in a text editor and search for `"name":` to list them. Unmapped surfaces keep empty slots. |
+| `nodeMaterials` | Ordered rules `{match, surface, material, in}` that set materials on matching `MeshInstance3D` nodes. With `surface`, one surface is overridden (`surface_material_override`); a node without that surface is skipped. Per-room floors and walls with `slabsByRoom`: `{"match": "*FloorSlab_Kitchen", "surface": "TopFaces", "material": "res://materials/quarry_tile.tres"}`, `{"match": "*Faces_Bathroom", "material": "res://materials/wall_tile.tres"}`. **Without `surface`**, the whole node (`material_override`): this is how to colour parts whose surfaces have no name, such as plain gable/shed roof slabs, ridge caps, porch posts and steps (`{"match": "*Roof/*", "material": "res://materials/shingles.tres"}`). `match` works as in `layers`. These take precedence over `materials`. |
 | `layers` | Ordered rules that set `layers` (the render layer bitmask, 1–1048575) on `MeshInstance3D` nodes. `match` is a node path pattern relative to the scene root (`*` matches anything, including `/`), for example `Floor_01/Geometry/Walls/ExteriorWalls/OutsideFaces` in the building scene or `Hinge/DoorMesh` in a door scene. The first matching rule wins. `in` limits a rule to the `building` scene or to `doors`. Nodes matched by no rule keep Godot's default layer. |
-| `scripts` | `building` is attached to the building scene's root node, `door` to each door scene's root, so every door instance has it. |
+| `scripts` | `building` is attached to the building scene's root node, `door` to each door scene's root, so every door instance has it, and `elevator` to each elevator scene's root. Door children are not added to elevator scenes. |
 | `doorChildren` | Scenes instanced as children of every door scene's root, with the given node names. A name that collides with an exported door node (`Frame`, `Hinge`, `Hinge2`, `Panel`, `InteractionArea`, …) is an error. |
 
 Paths are `res://` project paths, or paths relative to the exported scene (no `..`). Unknown fields, a wrong version, invalid names or paths, and out-of-range layer masks are errors. The CLI exits with code 2 before writing anything, and the web editor refuses the file with the same message.

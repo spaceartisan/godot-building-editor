@@ -7,6 +7,8 @@ var trimmed_mesh_checks: int = 0
 var mesh_checks: int = 0
 var collision_checks: int = 0
 var material_surfaces: int = 0
+var elevator_probes: int = 0
+var elevator_stops: int = 0
 var generic_mode: bool = OS.get_environment("BUILDING_CHECK_MODE") == "assets"
 var allow_materials: bool = OS.get_environment("BUILDING_ALLOW_MATERIALS") == "1"
 
@@ -86,6 +88,66 @@ func check_roof_clearance(instance: Node3D, scene_path: String) -> void:
 		shape_node.disabled = saved[shape_node]
 	await physics_frame
 
+# Exported elevators, in their building: at every stop the car carries a floor
+# at the stop height, closed landing doors block the opening, and with the
+# landing and car doors slid open by leaf_travel a ray reaches the car. With
+# the car at the bottom, the shaft above it is clear of building collision.
+func check_elevators(instance: Node3D, scene_path: String) -> void:
+	var group := instance.get_node_or_null("Elevators")
+	if group == null:
+		return
+	var world := instance.get_world_3d()
+	for elevator_node in group.get_children():
+		var elevator := elevator_node as Node3D
+		var where := scene_path + " " + str(elevator.name)
+		check(elevator != null and elevator.has_meta("shaft_size"), "Elevator metadata missing: " + where)
+		if elevator == null or not elevator.has_meta("shaft_size"):
+			continue
+		elevator_probes += 1
+		var size: Vector3 = elevator.get_meta("shaft_size")
+		var car := elevator.get_node("Car") as Node3D
+		var stops := elevator.get_node("Stops").get_children()
+		var landings := elevator.get_node("Landings").get_children()
+		check(car != null and stops.size() >= 2 and stops.size() == landings.size(), "Elevator car, stops or landings missing: " + where)
+		if car == null or stops.size() < 2 or stops.size() != landings.size():
+			continue
+		var car_travel: float = car.get_meta("leaf_travel")
+		for k in stops.size():
+			elevator_stops += 1
+			var y: float = (stops[k] as Node3D).position.y
+			var landing := landings[k] as Node3D
+			car.position = Vector3(0, y, 0)
+			await physics_frame
+			await physics_frame
+			var stop_y := elevator.to_global(Vector3(0, y, 0)).y
+			var down := ray(world, elevator.to_global(Vector3(0, y + 1.2, -0.2)), elevator.to_global(Vector3(0, y - 0.3, -0.2)))
+			# At the bottom stop the car floor is flush with the building slab; either may answer.
+			check(not down.is_empty() and absf(down.position.y - stop_y) < 0.03 and (k == 0 or down.collider == car), "Elevator car floor missing at stop %d: %s" % [k + 1, where])
+			var outside := elevator.to_global(Vector3(0, y + 1.0, size.z / 2 + 0.05))
+			var inside := elevator.to_global(Vector3(0, y + 1.0, 0))
+			var closed := ray(world, outside, inside)
+			check(not closed.is_empty() and (closed.collider as Node).get_parent() == landing, "Elevator landing %d doors do not close the opening: %s" % [k + 1, where])
+			var slid: Array[Node3D] = []
+			var travel: float = landing.get_meta("leaf_travel")
+			for pair in [[landing, travel], [car, car_travel]]:
+				for side in ["DoorLeft", "DoorRight", "CarDoorLeft", "CarDoorRight"]:
+					var leaf := (pair[0] as Node).get_node_or_null(side) as Node3D
+					if leaf != null:
+						leaf.position.x += (-1.0 if side.ends_with("Left") else 1.0) * float(pair[1])
+						slid.append(leaf)
+			await physics_frame
+			await physics_frame
+			var open := ray(world, outside, elevator.to_global(Vector3(0, y + 1.0, -size.z / 2)))
+			check(not open.is_empty() and open.collider == car, "Elevator stop %d: opened doors do not lead into the car: %s" % [k + 1, where])
+			for leaf in slid:
+				leaf.position.x -= (-1.0 if str(leaf.name).ends_with("Left") else 1.0) * (travel if leaf.get_parent() == landing else car_travel)
+		car.position = Vector3.ZERO
+		await physics_frame
+		await physics_frame
+		var top_y: float = (stops[stops.size() - 1] as Node3D).position.y
+		var shaft := ray(world, elevator.to_global(Vector3(0, top_y + 1.0, -0.2)), elevator.to_global(Vector3(0, float(elevator.get_meta("door_height")) + 0.45, -0.2)))
+		check(shaft.is_empty() or shaft.collider == car, "Elevator shaft blocked above the car by " + (str((shaft.collider as Node).get_path()) if not shaft.is_empty() else "") + ": " + where)
+
 func run_checks() -> void:
 	for scene_path in collect_scenes("res://assets"):
 		var packed := load(scene_path) as PackedScene
@@ -130,6 +192,7 @@ func run_checks() -> void:
 						check(mesh_node.to_global(visual_faces[vertex_index]).distance_to(shape_node.to_global(collision_faces[vertex_index])) < 0.0001, "Trimmed roof mesh/collision mismatch")
 					trimmed_mesh_checks += 1
 		if generic_mode:
+			await check_elevators(instance, scene_path)
 			print("ASSET PASS ", scene_path)
 			instance.free()
 			continue
@@ -236,7 +299,7 @@ func run_checks() -> void:
 		check(scenes_checked > 0, "No asset scenes checked")
 		if OS.get_environment("BUILDING_REQUIRE_COLLISION") == "1":
 			check(collision_checks > 0, "No collision shapes found in asset set")
-		print("ASSET_RESULT: ", JSON.stringify({"scenes": scenes_checked, "meshInstances": mesh_checks, "collisionShapes": collision_checks, "materialSurfaces": material_surfaces, "trimmedMeshComparisons": trimmed_mesh_checks, "physicsRays": 0, "failures": failures}))
+		print("ASSET_RESULT: ", JSON.stringify({"scenes": scenes_checked, "meshInstances": mesh_checks, "collisionShapes": collision_checks, "materialSurfaces": material_surfaces, "trimmedMeshComparisons": trimmed_mesh_checks, "physicsRays": ray_checks, "elevators": elevator_probes, "elevatorStops": elevator_stops, "failures": failures}))
 	else:
 		print("RESULT: ", scenes_checked, " scenes; ", ray_checks, " physics rays; ", trimmed_mesh_checks, " trimmed mesh/collision comparisons; ", failures, " failures")
 	quit(1 if failures else 0)

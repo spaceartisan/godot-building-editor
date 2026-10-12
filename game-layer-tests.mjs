@@ -54,6 +54,10 @@ const layerSpec={version:1,materials:{OutsideFaces:'res://m/siding.tres',Glass:'
     assert.match(t,/\[node name="FloorSlab" type="MeshInstance3D"[^\]]*\]\nmesh = SubResource\("[^"]+"\)\n[^\n]*\nsurface_material_override\/0 = ExtResource\("GL_Material_\d+"\)/);
     assert.doesNotMatch(t,/res:\/\/m\/x.tres/,'a surface the node does not have adds nothing');
     assert.throws(()=>parseGameLayer({version:1,nodeMaterials:[{match:'*',surface:'Top Faces',material:'res://a.tres'}]}),/surface must be a surface name/);
+    // No surface: the whole node, which reaches plain roof boxes (unnamed BoxMesh surfaces).
+    const roofs=exportGodotFiles(farmhouse,{gameLayer:parseGameLayer({version:1,nodeMaterials:[{match:'*Roof/*',material:'res://m/shingles.tres'}]})}).tscn;
+    const roofNodes=[...roofs.matchAll(/\[node name="(?:Roof_|RidgeCap_)[^"]*" type="MeshInstance3D" parent="[^"]*\/Roof"\][^[]*/g)].map(m=>m[0]);
+    assert.ok(roofNodes.length>=4&&roofNodes.every(n=>/\nmaterial_override = ExtResource\("GL_Material_\d+"\)/.test(n)),'every roof node, box or array mesh, gets the material');
   }
   console.log('PASS game layer validation: version, fields, names, paths, layer masks, script targets, door child names');
 }

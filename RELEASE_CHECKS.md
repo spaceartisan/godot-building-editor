@@ -1,6 +1,8 @@
-# Release checks (1.2.5)
+# Release checks
 
 For 1.5.0, `release-check --canvas required --engine required` passed all 7 gates on Linux with Node 22.22.2 and Godot 4.5.1. `npm run test:browser` and `npm run test:browser-parity` also passed in Chromium 141 (Playwright 1.56). That report was not packaged with the source either.
+
+Used in practice beyond the release gates: the buildings of GET PROBED (about 15, one to three storeys) were authored with the CLI on Windows 10 with Node 20+ and used in Godot 4.7 with the Compatibility renderer. The gates themselves run on Linux with Godot 4.5.1.
 
 For 1.3.0, `release-check --canvas required --engine required` passed all 7 gates (syntax, infrastructure, catalog, preview-render, godot-fixtures, engine-assets, source-integrity) on Linux with Node 22.22.2 and Godot 4.5.1. That report was not packaged with the source. The rest of this page describes the 1.2.5 package.
 
@@ -29,7 +31,7 @@ node cli.mjs release-check --canvas skip --engine skip --json
 | `catalog` | All 33 examples against their expected warnings, attachments, doors and configured coverage areas |
 | `preview-render` | Both optional CLI and interactive-canvas rendering suites |
 | `godot-fixtures` | The bundled scene loader and authored physics/roof checks |
-| `engine-assets` | 13 scripts: all-recipe workflow audit (11 recipes / 27 fresh scenes / 524 collision shapes; resource checks, no new physics rays), exported-asset integration; CLI top-floor lifecycle (5 cases / 60 rays, full/partial footprints, separate shells and exact restoration); edited stairs (16 variants / 488 rays); stair creation/removal (8 stages / 208 rays); platform edits (10 cases / 130 rays and mesh bounds); platform creation/removal (12 cases / 168 rays and mesh/support checks); web floor-stack/marker exports (8 cases / 24 marker transforms / 34 rays); polygon surfaces/roofs (6 cases / 70 rays); polygon regions (4 cases / 20 rays plus metadata checks) |
+| `engine-assets` | 17 scripts, including the game layer, Godot render and elevator suites (a three-storey lift moved to every stop: car floor, slab holes, landing and car doors, jambs; plus the built-in `godot-check --assets` elevator probe, which a broken export must fail): all-recipe workflow audit (11 recipes / 27 fresh scenes / 524 collision shapes; resource checks, no new physics rays), exported-asset integration; CLI top-floor lifecycle (5 cases / 60 rays, full/partial footprints, separate shells and exact restoration); edited stairs (16 variants / 488 rays); stair creation/removal (8 stages / 208 rays); platform edits (10 cases / 130 rays and mesh bounds); platform creation/removal (12 cases / 168 rays and mesh/support checks); web floor-stack/marker exports (8 cases / 24 marker transforms / 34 rays); polygon surfaces/roofs (6 cases / 70 rays); polygon regions (4 cases / 20 rays plus metadata checks) |
 | `source-integrity` | Original and copied source content/permission fingerprints compared to the starting snapshot |
 
 The CLI and infrastructure runner share `test-suites.mjs`; tests are no longer maintained in two independent lists. `test --suite release` runs the release runner's own regression tests. Those tests use small controlled fixture projects to exercise orchestration and do not recursively run a full release check on themselves.

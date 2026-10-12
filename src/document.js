@@ -69,12 +69,15 @@ export function normalizeFloor(floor,index,idFactory=uid){
 }
 
 export function normalizeBuilding(data,{idFactory=uid}={}){
-  data.exportProfile ||= 'get_probed';
+  // A blueprint without a profile exports as generic Godot (since 1.5.0; older
+  // GET PROBED blueprints set exportProfile or pass --profile get_probed).
+  data.exportProfile ||= 'generic';
   const defaults=makeEmptyBuilding();
   for(const key of ['name','wallHeight','wallThickness','floorThickness','gridSize'])data[key] ??= defaults[key];
   data.version=data.openingShapes?.length?10:9;
   data.roof ||= {type:'gable',pitch:35,overhang:.35};
   if(!Array.isArray(data.roofSections))data.roofSections=[];
+  if(data.elevators!==undefined&&!Array.isArray(data.elevators))data.elevators=[];
   if(!Array.isArray(data.manualFloors))data.manualFloors=[];
   if(!Array.isArray(data.manualCeilings))data.manualCeilings=[];
   const legacyCeilingEnabled=typeof data.ceiling?.enabled==='boolean'?data.ceiling.enabled:true;

@@ -1,3 +1,4 @@
+import { elevatorFloorRange, elevatorFootprint, elevatorSize } from './elevators.js';
 import { floorView, floorElevation, stairFootprint, rectValid } from './model.js';
 import { inspectFloorCoverage } from './diagnostics.js';
 import { areaPoints } from './polygon-areas.js';
@@ -7,7 +8,7 @@ import { exteriorWallOutsideSign, isExteriorWall } from './exporter.js';
 
 // Static route check on the authored model: can a person walk from open ground
 // outside the building to every walkable floor area through doors, empty
-// passages and stairs? Each floor's walkable surface (automatic slab after
+// passages, stairs and elevators? Each floor's walkable surface (automatic slab after
 // stair/platform cutouts, level platforms and level manual floors; open
 // terrain around and beneath the ground floor) is rasterized, walls and
 // railings are inflated by the walker radius, doors reopen their clear span,
@@ -100,8 +101,9 @@ export function analyzeReachability(building,options={}){
       // Openings for stairs arriving from a basement are holes, not terrain.
       for(const s of below)forCells(stairFootprint(s,.06),k=>{grid[k]=0;});
     }
-    // Stair flights occupy their footprint on their own floor.
+    // Stair flights occupy their footprint on their own floor; elevator shafts on every floor they serve.
     for(const s of view.stairs)forCells(stairFootprint(s),k=>{grid[k]=0;});
+    for(const e of building.elevators||[]){const {bottom,top}=elevatorFloorRange(building,e);if(fi>=bottom&&fi<=top)forCells(elevatorFootprint(e),k=>{grid[k]=0;});}
     // Walls and railings block, inflated by the walker radius; doors and
     // empty passages reopen their clear span.
     // Shaped walls use their profile's reach on each side up to body height,
@@ -147,6 +149,20 @@ export function analyzeReachability(building,options={}){
     }
   });
 
+  // Elevators link the cells just outside their landing doors on every served floor.
+  for(const e of building.elevators||[]){
+    const {served}=elevatorFloorRange(building,e);if(served.length<2)continue;
+    const fp=elevatorFootprint(e),{doorWidth,doorSide}=elevatorSize(e),half=Math.max(.05,doorWidth/2-radius),out=cell*1.5+radius;
+    const landing=offset=>doorSide==='minZ'?{x:e.x+offset,z:fp.minZ-out}:doorSide==='maxZ'?{x:e.x+offset,z:fp.maxZ+out}:doorSide==='minX'?{x:fp.minX-out,z:e.z+offset}:{x:fp.maxX+out,z:e.z+offset};
+    const stops=[];
+    for(const fi of served){
+      const cells=[-half,0,half].map(o=>cellOf(landing(o))).filter(k=>k>=0&&walkable[fi][k]).map(k=>fi*n+k);
+      if(!cells.length)stairIssues.push({floorId:floors[fi].id,elevatorId:e.id,label:e.label||e.id,issue:'elevator-landing-blocked'});
+      stops.push(cells);
+    }
+    for(let a=0;a<stops.length;a++)for(let b=a+1;b<stops.length;b++)for(const u of stops[a])for(const v of stops[b])link(u,v);
+  }
+
   // Flood from the terrain margin of the ground floor.
   const reached=new Uint8Array(n*floors.length),queue=new Int32Array(n*floors.length);let head=0,tail=0;
   const push=g=>{if(!reached[g]&&walkable[Math.floor(g/n)][g%n]){reached[g]=1;queue[tail++]=g;}};
@@ -191,7 +207,7 @@ export function analyzeReachability(building,options={}){
     report.push({floorId:f.id,label:f.label||`Floor ${fi+1}`,index:fi+1,ground:fi===ground,walkableArea:Math.round(walkableCells*cellArea*100)/100,reachedArea:Math.round(reachedCells*cellArea*100)/100});
   });
   return {ok:!unreachable.length&&startReport.every(s=>s.ok),settings:{cell,radius,minArea,bodyHeight},starts:startReport,floors:report,unreachable,stairIssues,
-    note:'Static connectivity from open ground (and any route start points) through doors, empty passages and stairs; walls/railings are inflated by the walker radius, shaped walls by their profile up to body height. Not a physics, headroom or door-swing check.'};
+    note:'Static connectivity from open ground (and any route start points) through doors, empty passages, stairs and elevators; walls/railings are inflated by the walker radius, shaped walls by their profile up to body height. Not a physics, headroom or door-swing check.'};
 }
 
 // Validation-style warnings for callers that opt in (CLI validate --reachability).
@@ -201,11 +217,11 @@ export function reachabilityWarnings(building,options){
   for(const s of result.starts.filter(s=>!s.ok))warnings.push({path:`Floor ${floorIndexOf(building,s.floorId)}`,message:`Floor ${floorIndexOf(building,s.floorId)}: route start (${s.x}, ${s.z}) is not on walkable floor (inside a wall, stair or railing clearance, or off the floor)`,targets:[{type:'floor',floorId:s.floorId}]});
   for(const u of result.unreachable){
     const where=u.regionLabels.length?` (${u.regionLabels.join(', ')})`:'';
-    warnings.push({path:`Floor ${u.floorIndex}`,message:`Floor ${u.floorIndex}: ${u.area.toFixed(1)} m² of floor near (${u.centroid.x}, ${u.centroid.z})${where} cannot be reached from outside${from} through doors, passages and stairs`,targets:[{type:'floor',floorId:u.floorId}]});
+    warnings.push({path:`Floor ${u.floorIndex}`,message:`Floor ${u.floorIndex}: ${u.area.toFixed(1)} m² of floor near (${u.centroid.x}, ${u.centroid.z})${where} cannot be reached from outside${from} through doors, passages${building.elevators?.length?', stairs and elevators':' and stairs'}`,targets:[{type:'floor',floorId:u.floorId}]});
   }
   for(const s of result.stairIssues){
-    const text={'no-upper-floor':'has no upper floor','lower-entrance-blocked':'lower entrance is blocked or has no floor','upper-arrival-blocked':'upper arrival is blocked or has no floor'}[s.issue];
-    warnings.push({path:`Floor ${floorIndexOf(building,s.floorId)}`,message:`Floor ${floorIndexOf(building,s.floorId)}: ${s.label} ${text}`,targets:[{type:'stair',id:s.stairId,floorId:s.floorId}]});
+    const text={'no-upper-floor':'has no upper floor','lower-entrance-blocked':'lower entrance is blocked or has no floor','upper-arrival-blocked':'upper arrival is blocked or has no floor','elevator-landing-blocked':'landing in front of the elevator doors is blocked or has no floor'}[s.issue];
+    warnings.push({path:`Floor ${floorIndexOf(building,s.floorId)}`,message:`Floor ${floorIndexOf(building,s.floorId)}: ${s.label} ${text}`,targets:[s.elevatorId?{type:'elevator',id:s.elevatorId}:{type:'stair',id:s.stairId,floorId:s.floorId}]});
   }
   return {result,warnings};
 }

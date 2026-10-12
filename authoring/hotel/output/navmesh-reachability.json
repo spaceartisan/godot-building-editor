@@ -1,0 +1,344 @@
+{
+  "engine": "4.5.1.stable.official.f62fdbde1",
+  "agent": {
+    "height": 1.8,
+    "max_climb": 0.3,
+    "max_slope": 46,
+    "radius": 0.3
+  },
+  "doorPanelsRemoved": 149,
+  "iteration": 2,
+  "mapRegions": 1,
+  "navBounds": [
+    -20.0500011444092,
+    0.100000008940697,
+    -8.05000019073486,
+    20.0500011444092,
+    16.7999992370605,
+    8.04999828338623
+  ],
+  "navPolygons": 1988,
+  "results": [
+    {
+      "end": [
+        -1.30000030994415,
+        0.100000008940697,
+        0.299998760223389
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Lobby, in front of Lift A",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 6.82495558261871,
+      "snap": [
+        -1.29999995231628,
+        0.100000008940697,
+        0.300000011920929
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -14,
+        0.100000008940697,
+        4
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Restaurant",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 14.3748715631664,
+      "snap": [
+        -14,
+        0.100000008940697,
+        4
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -9,
+        0.100000008940697,
+        -4.99999904632568
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Kitchen",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 17.2233516257256,
+      "snap": [
+        -9,
+        0.100000008940697,
+        -5
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        14,
+        0.100000008940697,
+        3.99999952316284
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Lounge",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 14.374871998094,
+      "snap": [
+        14,
+        0.100000008940697,
+        4
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -1.19209289550781e-7,
+        0.100000008940697,
+        -6
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Luggage room",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 15.0038338042796,
+      "snap": [
+        0,
+        0.100000008940697,
+        -6
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -1.29999995231628,
+        3.95000004768372,
+        0.299999952316284
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Floor 2 corridor at the lifts (west stair)",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 50.2509529003873,
+      "snap": [
+        -1.29999995231628,
+        3.95000004768372,
+        0.300000011920929
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -17,
+        3.95000004768372,
+        6
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Room 201",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 40.9257093004417,
+      "snap": [
+        -17,
+        3.95000004768372,
+        6
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -14,
+        3.95000004768372,
+        -2.20000004768372
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Bath 204",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 42.0719401910901,
+      "snap": [
+        -14,
+        3.95000004768372,
+        -2.20000004768372
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -1.19209289550781e-7,
+        7.20000028610229,
+        -6
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Floor 3 linen room",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 56.7081819900777,
+      "snap": [
+        0,
+        7.20000028610229,
+        -6
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        13,
+        7.20000028610229,
+        -5
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Room 312",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 43.4549601653125,
+      "snap": [
+        13,
+        7.20000028610229,
+        -5
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        17,
+        10.4500007629395,
+        2.98023223876953e-8
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Floor 4 corridor east",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 49.4575965011027,
+      "snap": [
+        17,
+        10.4500007629395,
+        0
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        18,
+        13.7000007629395,
+        6
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Room 519",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 57.7268837108277,
+      "snap": [
+        18,
+        13.7000007629395,
+        6
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        -11,
+        13.7000007629395,
+        2.20000004768372
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "Bath 505",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 61.5757776666433,
+      "snap": [
+        -11,
+        13.7000007629395,
+        2.20000004768372
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    },
+    {
+      "end": [
+        18.75,
+        13.7000007629395,
+        -6.00000095367432
+      ],
+      "floorCovered": true,
+      "maxLength": null,
+      "name": "East stair, top floor beside the arriving flight",
+      "ok": true,
+      "originCovered": true,
+      "originSnapDistance": 0,
+      "pathArrives": true,
+      "pathLength": 53.8723473227583,
+      "snap": [
+        18.75,
+        13.7000007629395,
+        -6
+      ],
+      "targetSnapDistance": 0,
+      "withinMaxLength": true
+    }
+  ],
+  "start": [
+    0,
+    0,
+    7
+  ],
+  "startCovered": true,
+  "startSnap": [
+    0,
+    0.100000008940697,
+    7
+  ],
+  "startSnapDistance": 0,
+  "unreachable": 0
+}

@@ -30,7 +30,7 @@ node cli.mjs preview examples/roof_attachment.building.json --view roofs --out .
 | View | Visible geometry |
 | --- | --- |
 | `building` (default) | Complete building preview, including all stories and independent surfaces. `--floor` selects active-story shading. |
-| `floor` | Selected story's walls, openings, floor, platforms, railings and its outgoing stair flight. Other stories, all roofs/gables and all ceilings are hidden. Independent manual floors are included only when their top height matches the selected story elevation within the existing slab tolerance. |
+| `floor` | Selected story's walls, openings, floor, platforms, railings and its outgoing stair flight. Other stories, all roofs/gables and all ceilings are hidden. Independent manual floors are included only when their top height matches the selected story elevation within the existing slab tolerance. An elevator (its full-height shaft, car and landing doors) shows with the floor of its bottom stop. |
 | `roofs` | All automatic and manual roof slabs, ridge pieces and gable fills. Original roof-to-wall and roof-to-roof trimming remains applied even though blocking walls/hosts may be hidden or occluded. |
 
 Floor selection is 1-based. Incoming stairs belong to the lower story and are hidden in an upper-floor cutaway, but their openings in the upper slab remain. Outgoing stairs may extend above the selected story because no new slicing plane is introduced. Off-level independent manual floors remain visible in building mode only. The matching tolerance for manual floor top heights is the greater of 0.05 m or 60% of the selected story's slab thickness. Manual ceilings are always hidden in floor mode. No inferred ownership is written into a blueprint.

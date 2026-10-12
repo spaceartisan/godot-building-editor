@@ -1,6 +1,7 @@
 {
   "version": 9,
   "name": "Twostory",
+  "exportProfile": "get_probed",
   "wallHeight": 4,
   "wallThickness": 0.18,
   "floorThickness": 0.18,

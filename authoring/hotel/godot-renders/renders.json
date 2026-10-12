@@ -1,0 +1,117 @@
+{
+  "engineVersion": "4.5.1.stable.official.f62fdbde1",
+  "colorMode": "materials",
+  "renderer": "4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.1 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)",
+  "virtualDisplay": false,
+  "scenes": [
+    "meridian_hotel.tscn"
+  ],
+  "views": [
+    {
+      "eye": [
+        34,
+        26,
+        34
+      ],
+      "file": "southeast-aerial.png",
+      "fov": 55,
+      "look": [
+        0,
+        7,
+        0
+      ],
+      "scene": "assets/meridian_hotel.tscn"
+    },
+    {
+      "eye": [
+        8,
+        3,
+        30
+      ],
+      "file": "south-facade.png",
+      "fov": 60,
+      "look": [
+        0,
+        7,
+        0
+      ],
+      "scene": "assets/meridian_hotel.tscn"
+    },
+    {
+      "eye": [
+        0,
+        1.6,
+        6.5
+      ],
+      "file": "lobby-lifts.png",
+      "fov": 70,
+      "look": [
+        0,
+        1.4,
+        -2
+      ],
+      "scene": "assets/meridian_hotel.tscn"
+    },
+    {
+      "eye": [
+        -1.3,
+        1.6,
+        -2.9
+      ],
+      "file": "inside-lift-a.png",
+      "fov": 80,
+      "look": [
+        -1.3,
+        1.3,
+        -1
+      ],
+      "scene": "assets/meridian_hotel.tscn"
+    },
+    {
+      "eye": [
+        -17,
+        8.7,
+        0
+      ],
+      "file": "floor3-corridor.png",
+      "fov": 65,
+      "look": [
+        16,
+        8.5,
+        0
+      ],
+      "scene": "assets/meridian_hotel.tscn"
+    },
+    {
+      "eye": [
+        -9,
+        8.7,
+        1.8
+      ],
+      "file": "room-305.png",
+      "fov": 80,
+      "look": [
+        -10.5,
+        8.2,
+        8
+      ],
+      "scene": "assets/meridian_hotel.tscn"
+    },
+    {
+      "eye": [
+        -17.5,
+        1.7,
+        -1.6
+      ],
+      "file": "west-stair.png",
+      "fov": 75,
+      "look": [
+        -17.5,
+        3.5,
+        -7
+      ],
+      "scene": "assets/meridian_hotel.tscn"
+    }
+  ],
+  "note": "Scenes loaded unmodified (empty materials render as default grey); only camera, sky, sun, ambient light and a camera headlamp were added; exported Glass surfaces render with a clear material. Lighting in a game scene will differ."
+}

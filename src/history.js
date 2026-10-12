@@ -49,6 +49,8 @@ export function createHistory(initialState, limit = 100) {
       redoStack.length = 0;
     },
 
+    current() { return cloneState(current); },
+
     canUndo() { return undoStack.length > 0; },
     canRedo() { return redoStack.length > 0; },
     undoCount() { return undoStack.length; },

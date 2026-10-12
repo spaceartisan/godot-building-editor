@@ -3,6 +3,7 @@ import { roofBoxParts, roofInteriorBlockers, roofAttachmentBlockers, trimRoofBox
 import { boundsOfBuilding, boundsOfStructuralFloor, constrainedOpening, floorElevation, floorView, findWall, manualCeilingRectanglesAtLevel, manualFloorRectanglesAtLevel, pointOnWall, rectValid, roofSectionsForFloor, stairFootprint, storyHeight, structuralFloorRectangles, subtractRectAreas, splitWallIntoSolidSegments, wallLength } from './model.js';
 
 import { stairOpeningFootprint, platformStepBoxes } from './model.js';
+import { elevatorLayout, elevatorYaw, elevatorFloorRange, elevatorProblem } from './elevators.js';
 import { buildExteriorMeshData, buildProfileMeshData, hasProfileWalls, openingAnchor, floorRectanglesForView, buildDoorMeshData, storyCeilingRectangles } from './exporter.js';
 import {openingShapeFor,doorLeafCount} from './opening-shapes.js';
 // Every edit rebuilds the whole preview; shaped-wall meshes are the slowest
@@ -64,7 +65,7 @@ function slabRectsForView(view,bounds,stairs=[]){
   const bases=structuralFloorRectangles(view);
   if(!bases.length) return [];
   if(bases.some(r=>r.polygon))return floorRectanglesForView(view,stairs);
-  return bases.flatMap(r=>splitRectByHoles(r,stairs,view.platforms||[]));
+  return bases.flatMap(r=>splitRectByHoles(r,stairs,[...(view.platforms||[]),...(view.elevatorHoles||[])]));
 }
 
 function unionBounds(building){let minX=Infinity,maxX=-Infinity,minZ=Infinity,maxZ=-Infinity,any=false;for(let i=0;i<building.floors.length;i++){const b=boundsOfBuilding(floorView(building,building.floors[i],i===building.floors.length-1));if(!building.floors[i].walls.length&&!building.floors[i].slabs?.length&&!building.floors[i].regions?.some(r=>r.effect==='solid'))continue;any=true;minX=Math.min(minX,b.minX);maxX=Math.max(maxX,b.maxX);minZ=Math.min(minZ,b.minZ);maxZ=Math.max(maxZ,b.maxZ);}for(const r of building.roofSections||[]){if(!rectValid(r))continue;any=true;const o=Math.max(0,Number(r.overhang)||0);minX=Math.min(minX,r.minX-o);maxX=Math.max(maxX,r.maxX+o);minZ=Math.min(minZ,r.minZ-o);maxZ=Math.max(maxZ,r.maxZ+o);}for(const r of [...(building.manualFloors||[]),...(building.manualCeilings||[])]){if(!rectValid(r))continue;any=true;minX=Math.min(minX,r.minX);maxX=Math.max(maxX,r.maxX);minZ=Math.min(minZ,r.minZ);maxZ=Math.max(maxZ,r.maxZ);}return any?{minX,maxX,minZ,maxZ,width:maxX-minX,depth:maxZ-minZ}:{minX:-2,maxX:2,minZ:-2,maxZ:2,width:4,depth:4};}
@@ -395,6 +396,17 @@ export class Preview3D{
     for(let si=0;si<(b.manualCeilings||[]).length;si++){
       const s=b.manualCeilings[si];if(!rectValid(s))continue;const t=Math.max(.01,Number(s.thickness)||Number(b.ceiling?.thickness)||.12),topY=Number(s.topY)||0,w=s.maxX-s.minX,d=s.maxZ-s.minZ;addObj(objs,{x:w,y:t,z:d},{x:(s.minX+s.maxX)/2,y:topY-t/2,z:(s.minZ+s.maxZ)/2},{x:0,y:0,z:0},'#a8a2b3',{strokeAlpha:.34,variation:hashJitter(`manual-ceiling-${si}`)});
       Object.assign(objs.at(-1),{category:'manual-ceiling',topY,surfaceId:s.id});
+    }
+
+    // Elevators: the exported layout (shaft, car at the bottom stop, closed landing doors).
+    for(const el of b.elevators||[]){
+      if(elevatorProblem(b,el))continue;
+      const layout=elevatorLayout(b,el),yaw=elevatorYaw(el),{bottom}=elevatorFloorRange(b,el);
+      const put=(box,color,dy=0)=>{const p=applyYaw(box.pos.x,box.pos.z,yaw);addObj(objs,box.size,{x:el.x+p.x,y:layout.base+dy+box.pos.y,z:el.z+p.z},{x:0,y:yaw,z:0},color,{strokeAlpha:.35});Object.assign(objs.at(-1),{category:'story',floorIndex:bottom,elevatorId:el.id});};
+      for(const box of layout.shaft)put(box,'#7d8087');
+      for(const box of layout.car)put(box,'#a99f8a');
+      for(const leaf of layout.carDoors.leaves)put(leaf,'#b9c0c8');
+      for(const landing of layout.landings)for(const leaf of landing.leaves)put(leaf,'#b9c0c8',landing.y);
     }
 
     // Independent manual roofs use absolute height rather than floor ownership.

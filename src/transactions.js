@@ -29,7 +29,7 @@ function number(value,where,min=-1e6,max=1e6){if(typeof value!=='number'||!Numbe
 function choice(value,allowed,where){if(!allowed.includes(value))fail(`Expected one of: ${allowed.join(', ')}`,where);}
 function point(value,where){keys(value,['x','z'],where);number(value.x,`${where}/x`);number(value.z,`${where}/z`);}
 const rectKeys=['minX','maxX','minZ','maxZ'];
-const GROUP_TYPES=['wall','opening','light','marker','stair','railing','region','slab','platform','manualFloor','manualCeiling','roofSection'];
+const GROUP_TYPES=['wall','opening','light','marker','stair','railing','region','slab','platform','manualFloor','manualCeiling','roofSection','elevator'];
 const fields={
   building:['name','exportProfile','wallHeight','wallThickness','floorThickness','gridSize','roof','ceiling','doorMesh','windowMesh','slabsByRoom'],
   floor:['label','elevation','wallHeight','floorThickness','autoFloor','autoCeiling','boundaryMode'],

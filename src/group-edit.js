@@ -1,19 +1,23 @@
 import {floorView,projectToWall,pointOnWall,stairFootprint,validateOpeningLayout} from './model.js';
 import {wallSegmentProblem} from './authoring.js';
 import {validateBuilding} from './validation.js';
+import {elevatorFootprint,elevatorFloorRange} from './elevators.js';
 
-const collections={wall:'walls',opening:'openings',light:'lights',marker:'markers',stair:'stairs',railing:'railings',region:'regions',slab:'slabs',platform:'platforms',manualFloor:'manualFloors',manualCeiling:'manualCeilings',roofSection:'roofSections'};
-const independent=new Set(['manualFloor','manualCeiling','roofSection']);
+const collections={wall:'walls',opening:'openings',light:'lights',marker:'markers',stair:'stairs',railing:'railings',region:'regions',slab:'slabs',platform:'platforms',manualFloor:'manualFloors',manualCeiling:'manualCeilings',roofSection:'roofSections',elevator:'elevators'};
+const independent=new Set(['manualFloor','manualCeiling','roofSection','elevator']);
+// Elevators are building-level but only selectable on the floors they serve.
+const serves=(building,index,e)=>{const {bottom,top}=elevatorFloorRange(building,e);return index>=bottom&&index<=top;};
 export const selectionKey=s=>s.type+':'+s.id;
 export function groupEntity(building,index,s){return (independent.has(s.type)?building:building.floors[index])?.[collections[s.type]]?.find(o=>o.id===s.id);}
 export function selectableItems(building,index,filter='all'){
   return Object.keys(collections).filter(type=>filter==='all'||filter===type||filter==='areas'&&['region','slab','platform',...independent].includes(type))
-    .flatMap(type=>((independent.has(type)?building:building.floors[index])?.[collections[type]]||[]).map(o=>({type,id:o.id})));
+    .flatMap(type=>((independent.has(type)?building:building.floors[index])?.[collections[type]]||[]).filter(o=>type!=='elevator'||serves(building,index,o)).map(o=>({type,id:o.id})));
 }
 export function selectionBounds(building,index,s){
   const o=groupEntity(building,index,s);if(!o)return null;
   if(s.type==='wall'||s.type==='railing')return {minX:Math.min(o.a.x,o.b.x),maxX:Math.max(o.a.x,o.b.x),minZ:Math.min(o.a.z,o.b.z),maxZ:Math.max(o.a.z,o.b.z)};
   if(s.type==='stair')return stairFootprint(o);
+  if(s.type==='elevator')return elevatorFootprint(o);
   if((s.type==='light'||s.type==='marker'))return {minX:o.position.x,maxX:o.position.x,minZ:o.position.z,maxZ:o.position.z};
   if(s.type==='opening'){
     const wall=building.floors[index].walls.find(w=>w.id===o.wallId);if(!wall)return null;
@@ -37,6 +41,7 @@ export function proposeGroupMove(source,index,selection,delta,{connected=true}={
   if(!delta||![delta.x,delta.z].every(v=>typeof v==='number'&&Number.isFinite(v)&&Math.abs(v)<=1e6))return reject('Enter finite movement within ±1,000,000 m');
   const items=[...new Map(selection.map(s=>[selectionKey(s),s])).values()];
   if(!items.length||items.some(s=>!groupEntity(source,index,s)))return reject('Select existing objects to move');
+  const offFloor=items.find(s=>s.type==='elevator'&&!serves(source,index,groupEntity(source,index,s)));if(offFloor)return reject(`Elevator ${offFloor.id} does not serve this floor`);
   const building=structuredClone(source),before=source.floors[index],after=building.floors[index];
   const wallIds=new Set(items.filter(s=>s.type==='wall').map(s=>s.id)),changedWalls=new Set(wallIds);
   const afterWalls=new Map(after.walls.map(w=>[w.id,w])),selectedWalls=before.walls.filter(w=>wallIds.has(w.id));
@@ -47,7 +52,7 @@ export function proposeGroupMove(source,index,selection,delta,{connected=true}={
     if(s.type==='opening')continue;
     if(s.type==='wall'||s.type==='railing'){shift(o.a);shift(o.b);}
     else if((s.type==='light'||s.type==='marker'))shift(o.position);
-    else if(s.type==='stair')shift(o);
+    else if(s.type==='stair'||s.type==='elevator')shift(o);
     else {if(o.polygon)for(const p of o.polygon)shift(p);o.minX+=delta.x;o.maxX+=delta.x;o.minZ+=delta.z;o.maxZ+=delta.z;}
   }
   if(connected)for(const wall of before.walls){

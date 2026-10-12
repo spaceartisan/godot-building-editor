@@ -306,7 +306,7 @@ function drawPlan(){
   for(const r of building.manualFloors||[]){const isSel=highlights.has('manualFloor:'+r.id),same=Math.abs((Number(r.topY)||0)-activeFloorY)<=surfaceTol;drawRectEntity(r,isSel?'rgba(255,244,123,.16)':same?'rgba(63,143,158,.12)':'rgba(63,143,158,.025)',same?'#58afbc':'rgba(88,175,188,.34)',isSel,true);if(isSel||same){const p=worldToScreen({x:r.minX,z:r.minZ});ctx.fillStyle=isSel?'#fff47b':'#76c0ca';ctx.font='10px ui-monospace, monospace';ctx.fillText(`${r.label||'Manual Floor'} @ ${Number(r.topY).toFixed(2)}m`,p.x+4,p.y-5);}}
   for(const r of building.manualCeilings||[]){const isSel=highlights.has('manualCeiling:'+r.id),same=Math.abs((Number(r.topY)||0)-activeCeilingY)<=surfaceTol;drawRectEntity(r,isSel?'rgba(255,244,123,.16)':same?'rgba(142,111,167,.10)':'rgba(142,111,167,.022)',same?'#a788c2':'rgba(167,136,194,.32)',isSel,true);if(isSel||same){const p=worldToScreen({x:r.minX,z:r.maxZ});ctx.fillStyle=isSel?'#fff47b':'#b69bd0';ctx.font='10px ui-monospace, monospace';ctx.fillText(`${r.label||'Manual Ceiling'} @ ${Number(r.topY).toFixed(2)}m`,p.x+4,p.y+12);}}
   for(const r of f.platforms||[]) drawRectEntity(r,highlights.has('platform:'+r.id)?'rgba(255,244,123,.15)':(r.kind==='deck'?'rgba(134,116,92,.16)':'rgba(143,126,88,.16)'),r.kind==='deck'?'#a78d66':'#b79e68',highlights.has('platform:'+r.id));
-  for(const e of building.elevators||[]){const {bottom,top}=elevatorFloorRange(building,e);if(activeFloorIndex<bottom||activeFloorIndex>top)continue;const r=elevatorFootprint(e);drawRectEntity(r,'rgba(110,120,135,.22)','#9aa6b6');const a=worldToScreen({x:r.minX,z:r.minZ}),c=worldToScreen({x:r.maxX,z:r.maxZ});ctx.strokeStyle='#9aa6b6';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(c.x,c.y);ctx.moveTo(c.x,a.y);ctx.lineTo(a.x,c.y);ctx.stroke();const side=e.doorSide||ELEVATOR_DEFAULTS.doorSide,dw=(Number(e.doorWidth)||ELEVATOR_DEFAULTS.doorWidth)/2,door=side.endsWith('Z')?[{x:e.x-dw,z:r[side]},{x:e.x+dw,z:r[side]}]:[{x:r[side],z:e.z-dw},{x:r[side],z:e.z+dw}];const d0=worldToScreen(door[0]),d1=worldToScreen(door[1]);ctx.strokeStyle='#f0c674';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(d0.x,d0.y);ctx.lineTo(d1.x,d1.y);ctx.stroke();ctx.fillStyle='#c8d0da';ctx.font='10px ui-monospace, monospace';ctx.fillText(e.label||'Elevator',a.x+4,a.y-5);}
+  for(const e of building.elevators||[]){const {bottom,top}=elevatorFloorRange(building,e);if(activeFloorIndex<bottom||activeFloorIndex>top)continue;const r=elevatorFootprint(e),isSel=highlights.has('elevator:'+e.id);drawRectEntity(r,isSel?'rgba(255,244,123,.16)':'rgba(110,120,135,.22)','#9aa6b6',isSel);const a=worldToScreen({x:r.minX,z:r.minZ}),c=worldToScreen({x:r.maxX,z:r.maxZ});ctx.strokeStyle='#9aa6b6';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(c.x,c.y);ctx.moveTo(c.x,a.y);ctx.lineTo(a.x,c.y);ctx.stroke();const side=e.doorSide||ELEVATOR_DEFAULTS.doorSide,dw=(Number(e.doorWidth)||ELEVATOR_DEFAULTS.doorWidth)/2,door=side.endsWith('Z')?[{x:e.x-dw,z:r[side]},{x:e.x+dw,z:r[side]}]:[{x:r[side],z:e.z-dw},{x:r[side],z:e.z+dw}];const d0=worldToScreen(door[0]),d1=worldToScreen(door[1]);ctx.strokeStyle='#f0c674';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(d0.x,d0.y);ctx.lineTo(d1.x,d1.y);ctx.stroke();ctx.fillStyle='#c8d0da';ctx.font='10px ui-monospace, monospace';ctx.fillText(e.label||'Elevator',a.x+4,a.y-5);}
   const activeRoofY=defaultRoofBaseY();
   for(const r of building.roofSections||[]){
     const isSel=highlights.has('roofSection:'+r.id), sameLevel=Math.abs((Number(r.baseY)||0)-activeRoofY)<=Math.max(.1,building.floorThickness*.75);
@@ -358,6 +358,7 @@ function selectedDescription(sel=selected){
   if(sel.type==='platform')return 'Porch / deck';
   if(sel.type==='roofSection')return 'Roof section';
   if(sel.type==='railing')return 'Railing';
+  if(sel.type==='elevator')return 'Elevator';
   if(sel.type==='opening'){
     const o=floor().openings.find(x=>x.id===sel.id);
     return o?.type==='window'?'Window':'Door';
@@ -373,7 +374,7 @@ function renderSelection(statusText=null){
 }
 function selectionEntity(sel=selected){
   if(!sel)return null;
-  const list={wall:floor().walls,opening:floor().openings,light:floor().lights,marker:floor().markers||[],stair:floor().stairs,railing:floor().railings,region:floor().regions,slab:floor().slabs,platform:floor().platforms,manualFloor:building.manualFloors,manualCeiling:building.manualCeilings,roofSection:building.roofSections}[sel.type];
+  const list={wall:floor().walls,opening:floor().openings,light:floor().lights,marker:floor().markers||[],stair:floor().stairs,railing:floor().railings,region:floor().regions,slab:floor().slabs,platform:floor().platforms,manualFloor:building.manualFloors,manualCeiling:building.manualCeilings,roofSection:building.roofSections,elevator:building.elevators||[]}[sel.type];
   return list?.find(o=>o.id===sel.id);
 }
 function selectionCaption(sel=selected){
@@ -420,6 +421,7 @@ function selectAt(screen){
   const w=nearestWall(screenToWorld(screen));if(w&&['all','wall'].includes(selectionFilter))return chooseSelection({type:'wall',id:w.wall.id});
   const rail=nearestRailing(screen);if(rail&&['all','railing'].includes(selectionFilter))return chooseSelection({type:'railing',id:rail.rail.id});
   const stair=nearestStair(screen);if(stair&&['all','stair'].includes(selectionFilter))return chooseSelection({type:'stair',id:stair.stair.id});
+  const lift=elevatorAt(screenToWorld(screen));if(lift&&['all','elevator'].includes(selectionFilter))return chooseSelection({type:'elevator',id:lift.id});
   const groups=[],addArea=(type,list)=>{if(['all','areas',type].includes(selectionFilter))groups.push([type,list]);};
   addArea('region',floor().regions);addArea('slab',floor().slabs);addArea('platform',floor().platforms);addArea('manualFloor',building.manualFloors);addArea('manualCeiling',building.manualCeilings);addArea('roofSection',building.roofSections);
   const areaCandidates=areaSelectionCandidates(groups,screenToWorld(screen),view.scale,{roofSection:defaultRoofBaseY(),manualFloor:defaultManualFloorY(),manualCeiling:defaultManualCeilingY(),tolerance:Math.max(.1,building.floorThickness*.75)});
@@ -434,7 +436,7 @@ function selectAt(screen){
   }
   chooseSelection(null);
 }
-function deleteSelectedEntity(){cancelDrawing();if(!selected)return false;const group=selectionItems();if(group.length>1){building=removeGroupSelection(building,activeFloorIndex,group);multiSelection=[];selected=null;commit(`${group.length} selected objects deleted`);return true;}const label=selectedDescription(),f=floor();if(selected.type==='wall'){f.walls=f.walls.filter(w=>w.id!==selected.id);f.openings=f.openings.filter(o=>o.wallId!==selected.id);}else if(selected.type==='marker')f.markers=f.markers.filter(m=>m.id!==selected.id);else if(selected.type==='light')f.lights=f.lights.filter(l=>l.id!==selected.id);else if(selected.type==='stair')f.stairs=f.stairs.filter(s=>s.id!==selected.id);else if(selected.type==='region')f.regions=f.regions.filter(r=>r.id!==selected.id);else if(selected.type==='slab')f.slabs=f.slabs.filter(r=>r.id!==selected.id);else if(selected.type==='platform')f.platforms=f.platforms.filter(r=>r.id!==selected.id);else if(selected.type==='manualFloor')building.manualFloors=building.manualFloors.filter(r=>r.id!==selected.id);else if(selected.type==='manualCeiling')building.manualCeilings=building.manualCeilings.filter(r=>r.id!==selected.id);else if(selected.type==='roofSection'){building.roofSections=building.roofSections.filter(r=>r.id!==selected.id);for(const r of building.roofSections)if(r.hostRoofId===selected.id)delete r.hostRoofId;}else if(selected.type==='railing')f.railings=f.railings.filter(r=>r.id!==selected.id);else f.openings=f.openings.filter(o=>o.id!==selected.id);selected=null;commit(`${label} deleted`);return true;}
+function deleteSelectedEntity(){cancelDrawing();if(!selected)return false;const group=selectionItems();if(group.length>1){building=removeGroupSelection(building,activeFloorIndex,group);multiSelection=[];selected=null;commit(`${group.length} selected objects deleted`);return true;}const label=selectedDescription(),f=floor();if(selected.type==='wall'){f.walls=f.walls.filter(w=>w.id!==selected.id);f.openings=f.openings.filter(o=>o.wallId!==selected.id);}else if(selected.type==='marker')f.markers=f.markers.filter(m=>m.id!==selected.id);else if(selected.type==='light')f.lights=f.lights.filter(l=>l.id!==selected.id);else if(selected.type==='stair')f.stairs=f.stairs.filter(s=>s.id!==selected.id);else if(selected.type==='region')f.regions=f.regions.filter(r=>r.id!==selected.id);else if(selected.type==='slab')f.slabs=f.slabs.filter(r=>r.id!==selected.id);else if(selected.type==='platform')f.platforms=f.platforms.filter(r=>r.id!==selected.id);else if(selected.type==='manualFloor')building.manualFloors=building.manualFloors.filter(r=>r.id!==selected.id);else if(selected.type==='manualCeiling')building.manualCeilings=building.manualCeilings.filter(r=>r.id!==selected.id);else if(selected.type==='roofSection'){building.roofSections=building.roofSections.filter(r=>r.id!==selected.id);for(const r of building.roofSections)if(r.hostRoofId===selected.id)delete r.hostRoofId;}else if(selected.type==='railing')f.railings=f.railings.filter(r=>r.id!==selected.id);else if(selected.type==='elevator'){building.elevators=building.elevators.filter(v=>v.id!==selected.id);if(!building.elevators.length)delete building.elevators;}else f.openings=f.openings.filter(o=>o.id!==selected.id);selected=null;commit(`${label} deleted`);return true;}
 function beginSelectionGesture(e){
   const sp=pointerPos(e),prior=[...selectionItems()];
   if(moveArmed&&prior.length){groupDrag={pointerId:e.pointerId,origin:screenToWorld(sp),screen:sp,items:prior,moved:false,result:null};canvas.setPointerCapture(e.pointerId);return;}
@@ -533,36 +535,40 @@ function syncMarkerList(){
     button.addEventListener('click',e=>{setTool('select');selectionIntent={toggle:!!e.shiftKey};try{chooseSelection({type:'marker',id:marker.id});}finally{selectionIntent=null;}});list.append(button);
   }
 }
+// Panel and Selection share the same fields; both go through updateElevator.
+function elevatorFields(index){
+  const e=building.elevators[index],floors=building.floors.map(f=>[f.id,f.label||f.id]),set=(key,value)=>updateElevator(index,{[key]:value});
+  return [textInput('Label',e.label,v=>set('label',v.trim()||undefined)),numInput('Centre X (m)',e.x,v=>set('x',v)),numInput('Centre Z (m)',e.z,v=>set('z',v)),
+    numInput('Width along doors (m)',e.width??ELEVATOR_DEFAULTS.width,v=>set('width',v)),numInput('Depth (m)',e.depth??ELEVATOR_DEFAULTS.depth,v=>set('depth',v)),
+    selectInput('Door side',e.doorSide||ELEVATOR_DEFAULTS.doorSide,ELEVATOR_DOOR_SIDES.map(v=>[v,v]),v=>set('doorSide',v)),
+    numInput('Door width (m)',e.doorWidth??ELEVATOR_DEFAULTS.doorWidth,v=>set('doorWidth',v)),numInput('Door height (m)',e.doorHeight??ELEVATOR_DEFAULTS.doorHeight,v=>set('doorHeight',v)),
+    selectInput('Bottom floor',e.bottomFloorId,floors,v=>set('bottomFloorId',v)),selectInput('Top floor',e.topFloorId,floors,v=>set('topFloorId',v))];
+}
 function syncElevatorList(){
-  const list=$('#elevator-list');if(!list)return;list.replaceChildren();const elevators=building.elevators||[];$('#elevator-empty').hidden=false;
-  const floors=building.floors.map(f=>[f.id,f.label||f.id]);
-  elevators.forEach((e,index)=>{
-    const box=document.createElement('fieldset');box.className='elevator-entry';box.dataset.elevatorId=e.id;const legend=document.createElement('legend');legend.textContent=e.label||e.id;box.append(legend);
-    const set=(key,value)=>updateElevator(index,{[key]:value});
-    box.append(textInput('Label',e.label,v=>set('label',v.trim()||undefined)),numInput('Centre X (m)',e.x,v=>set('x',v)),numInput('Centre Z (m)',e.z,v=>set('z',v)),
-      numInput('Width along doors (m)',e.width??ELEVATOR_DEFAULTS.width,v=>set('width',v)),numInput('Depth (m)',e.depth??ELEVATOR_DEFAULTS.depth,v=>set('depth',v)),
-      selectInput('Door side',e.doorSide||ELEVATOR_DEFAULTS.doorSide,ELEVATOR_DOOR_SIDES.map(v=>[v,v]),v=>set('doorSide',v)),
-      numInput('Door width (m)',e.doorWidth??ELEVATOR_DEFAULTS.doorWidth,v=>set('doorWidth',v)),numInput('Door height (m)',e.doorHeight??ELEVATOR_DEFAULTS.doorHeight,v=>set('doorHeight',v)),
-      selectInput('Bottom floor',e.bottomFloorId,floors,v=>set('bottomFloorId',v)),selectInput('Top floor',e.topFloorId,floors,v=>set('topFloorId',v)));
-    const del=document.createElement('button');del.type='button';del.textContent='Delete elevator';del.addEventListener('click',()=>{building.elevators.splice(index,1);if(!building.elevators.length)delete building.elevators;commit('Elevator deleted');});box.append(del);
+  const list=$('#elevator-list');if(!list)return;list.replaceChildren();
+  (building.elevators||[]).forEach((e,index)=>{
+    const box=document.createElement('fieldset');box.className='elevator-entry';box.dataset.elevatorId=e.id;const legend=document.createElement('legend');legend.textContent=e.label||e.id;box.append(legend,...elevatorFields(index));
+    const del=document.createElement('button');del.type='button';del.textContent='Delete elevator';del.addEventListener('click',()=>{building.elevators.splice(index,1);if(!building.elevators.length)delete building.elevators;if(selected?.type==='elevator'&&selected.id===e.id)selected=null;commit('Elevator deleted');});box.append(del);
     list.append(box);
   });
 }
+// The shaft under a plan point on the active floor (only shafts serving it).
+function elevatorAt(p){return (building.elevators||[]).find(e=>{const {bottom,top}=elevatorFloorRange(building,e),r=elevatorFootprint(e);return activeFloorIndex>=bottom&&activeFloorIndex<=top&&p.x>=r.minX&&p.x<=r.maxX&&p.z>=r.minZ&&p.z<=r.maxZ;});}
 function elevatorChangeProblem(candidate,elevator){return elevatorProblem(candidate,elevator)||validateBuilding(candidate).errors[0]?.message||null;}
 function updateElevator(index,patch){
   const candidate=structuredClone(building),e=candidate.elevators[index];Object.assign(e,patch);for(const k of Object.keys(e))if(e[k]===undefined)delete e[k];
-  const problem=elevatorChangeProblem(candidate,e);if(problem){setStatus(problem);syncElevatorList();return false;}
+  const problem=elevatorChangeProblem(candidate,e);if(problem){setStatus(problem);syncElevatorList();refreshSelection();return false;}
   building.elevators[index]=e;commit('Elevator updated');return true;
 }
-function addElevator(){
-  if(activeFloorIndex>=building.floors.length-1){setStatus('Add an elevator from a floor that has a floor above it');return;}
-  const bb=boundsOfBuilding(fb()),x=bb?(bb.minX+bb.maxX)/2:0,z=bb?(bb.minZ+bb.maxZ)/2:0,ids=new Set((building.elevators||[]).map(e=>e.id));let n=(building.elevators||[]).length+1;while(ids.has(`elevator_${n}`))n++;
-  const e={id:`elevator_${n}`,label:`Elevator ${n}`,...ELEVATOR_DEFAULTS,x:Math.round(x*10)/10,z:Math.round(z*10)/10,bottomFloorId:floor().id,topFloorId:building.floors[activeFloorIndex+1].id};
+function addElevatorAt(screen,ev){
+  if(activeFloorIndex>=building.floors.length-1){setStatus('An elevator needs a floor above: place it from a lower floor (it serves the active floor and the one above; widen the range afterwards)');return;}
+  const p=snapPoint(screenToWorld(screen),ev),ids=new Set((building.elevators||[]).map(e=>e.id));let n=(building.elevators||[]).length+1;while(ids.has(`elevator_${n}`))n++;
+  const e={id:`elevator_${n}`,label:`Elevator ${n}`,...ELEVATOR_DEFAULTS,x:p.x,z:p.z,bottomFloorId:floor().id,topFloorId:building.floors[activeFloorIndex+1].id};
   const candidate=structuredClone(building);(candidate.elevators??=[]).push(e);const problem=elevatorChangeProblem(candidate,e);
-  if(problem){setStatus(`Elevator not added: ${problem} Edit the building or add it with a recipe at a clear spot.`);return;}
-  (building.elevators??=[]).push(e);commit('Elevator added — set its position, door side and floors in Elevators');
+  if(problem){setStatus(`Elevator not placed: ${problem}`);return;}
+  (building.elevators??=[]).push(e);setTool('select');selected={type:'elevator',id:e.id};commit('Elevator placed — drag it, or set its size, door side and floors in Selection');
 }
-$('#add-elevator-btn').addEventListener('click',addElevator);
+$('#add-elevator-btn').addEventListener('click',()=>{setTool('elevator');setStatus('Elevator tool — click the shaft centre on the plan');});
 function markerNotesInput(value,onChange){
   const label=document.createElement('label');label.textContent='Notes (JSON only)';const input=document.createElement('textarea');input.value=value;input.rows=3;input.maxLength=2000;
   input.addEventListener('change',()=>onChange(input.value));label.append(input);return label;
@@ -577,7 +583,7 @@ function addLightAt(screen,e){const p=snapPoint(screenToWorld(screen),e),light=m
 function updateOpening(o,patch,status='Opening updated'){const b=fb(),candidate={...o,...patch};applyOpeningConstraints(b,candidate);const conflict=findOpeningConflict(b,candidate,o.id);if(conflict){setStatus(`Opening blocked: overlaps ${conflict.label||conflict.type}`);refreshSelection();drawPlan();return false;}const wall=findWall(b,o.wallId),type=wallTypeFor(b,wall),problem=type&&wallTypeOpeningProblem(type,wallHeightFor(b,wall),candidate,b.wallThickness,b);if(problem){setStatus(problem);refreshSelection();return false;}if(candidate.shapeId||b.walls.some(w=>w.wallTypeId)){const proposed=structuredClone(building);Object.assign(proposed.floors[activeFloorIndex].openings.find(q=>q.id===o.id),candidate);const errors=validateBuilding(proposed).errors;if(errors.length){setStatus(errors[0].message);refreshSelection();return false;}}Object.assign(o,candidate);for(const key of Object.keys(o))if(o[key]===undefined)delete o[key];commit(status);return true;}
 function addOpeningAt(type,screen){const b=fb(),hit=nearestWall(screenToWorld(screen));if(!hit)return;if(wallLength(hit.wall)<.08){setStatus('Wall is too short for an opening');return;}const o={id:uid(type),type,wallId:hit.wall.id,t:hit.t,width:type==='door'?1:1.3,height:type==='door'?2.1:1.05,label:type==='door'?'Door':'Window'};if(type==='window'){o.sill=.9;o.windowStyle=newWindowStyle;}if(type==='door'){o.doorStyle=newDoorStyle;if(newOpeningShapeId)o.shapeId=newOpeningShapeId;}applyOpeningConstraints(b,o);const conflict=findOpeningConflict(b,o,null);if(conflict){setStatus(`Cannot place opening here: overlaps ${conflict.label||conflict.type}`);return;}const typeProfile=wallTypeFor(b,hit.wall),problem=typeProfile&&wallTypeOpeningProblem(typeProfile,wallHeightFor(b,hit.wall),o,b.wallThickness,b);if(problem){setStatus(problem);return;}floor().openings.push(o);if(o.shapeId||b.walls.some(w=>w.wallTypeId)){const errors=validateBuilding(building).errors;if(errors.length){floor().openings.pop();setStatus(errors[0].message);return;}}selected={type:'opening',id:o.id};commit(`${type==='door'?'Door':'Window'} added`);}
 
-canvas.addEventListener('pointerdown',e=>{if(endpointDrag||groupDrag||selectionBox)return;const sp=pointerPos(e);if(e.button===1){clearSelectionCandidates();e.preventDefault();panState={x:e.clientX,y:e.clientY,px:view.panX,py:view.panY};canvas.setPointerCapture(e.pointerId);return;}if(e.button!==0||endpointDrag)return;if(tool==='select'){beginSelectionGesture(e);return;}const wp=snapPoint(screenToWorld(sp),e);if(tool==='select')selectAt(sp);else if(tool==='door'||tool==='window')addOpeningAt(tool,sp);else if(tool==='light')addLightAt(sp,e);else if(tool==='marker')addMarkerAt(sp,e);else if(tool==='wall'){
+canvas.addEventListener('pointerdown',e=>{if(endpointDrag||groupDrag||selectionBox)return;const sp=pointerPos(e);if(e.button===1){clearSelectionCandidates();e.preventDefault();panState={x:e.clientX,y:e.clientY,px:view.panX,py:view.panY};canvas.setPointerCapture(e.pointerId);return;}if(e.button!==0||endpointDrag)return;if(tool==='select'){beginSelectionGesture(e);return;}const wp=snapPoint(screenToWorld(sp),e);if(tool==='select')selectAt(sp);else if(tool==='door'||tool==='window')addOpeningAt(tool,sp);else if(tool==='light')addLightAt(sp,e);else if(tool==='marker')addMarkerAt(sp,e);else if(tool==='elevator')addElevatorAt(sp,e);else if(tool==='wall'){
   if(!wallStart){wallStart={...wp};wallOrigin={...wp};wallChainSegments=0;roomCurrent=wp;setStatus('Choose wall endpoint — snap to the first point to close the loop');drawPlan();}
   else{
     const problem=wallSegmentProblem(wallStart,wp,floor().walls);
@@ -710,6 +716,9 @@ function refreshSelection(){
       });
     }else for(const [key,label] of [['minX','Min X'],['maxX','Max X'],['minZ','Min Z'],['maxZ','Max Z']])form.append(numInput(label,r[key],v=>update(key,v)));
     const help=document.createElement('p');help.className='muted';help.textContent='Regions never create or delete walls. Label only leaves geometry unchanged. Define footprint replaces wall-derived automatic areas unless Floor Footprints exist. Cut removes automatic floors, ceilings and roof footprints on this story; independent pieces stay untouched.';form.append(help);
+  }else if(selected.type==='elevator'){
+    const index=(building.elevators||[]).findIndex(v=>v.id===selected.id);if(index<0){selected=null;return refreshSelection();}
+    form.append(...elevatorFields(index));
   }else if(selected.type==='marker'){
     const marker=(f.markers||[]).find(m=>m.id===selected.id);if(!marker){selected=null;return refreshSelection();}
     const change=(patch)=>{const next={...marker,...patch},problem=markerProblem(next);if(problem){refreshSelection();setStatus(problem);return;}Object.assign(marker,next);commit('Marker updated');};
@@ -799,7 +808,16 @@ $('#apply-wall-type-btn').addEventListener('click',()=>applyWallType(selectionIt
 function syncControls(){normalizeBuilding(building);syncWallTypeControls();$('#new-region-shape').value=newRegionShape;syncRegionDraft();$('#export-profile').value=building.exportProfile;activeFloorIndex=Math.min(activeFloorIndex,building.floors.length-1);$('#show-floor-below').checked=showFloorBelow;$('#building-name').value=building.name;$('#wall-height').value=building.wallHeight;$('#wall-thickness').value=building.wallThickness;$('#floor-thickness').value=building.floorThickness;$('#slabs-by-room-toggle').checked=building.slabsByRoom===true;$('#grid-size').value=building.gridSize;$('#roof-type').value=building.roof.type;$('#roof-pitch').value=building.roof.pitch;$('#roof-overhang').value=building.roof.overhang;$('#roof-flat-top').value=building.roof.flatTopHeight||0;$('#ceiling-thickness').value=building.ceiling.thickness;$('#window-mesh-toggle').checked=building.windowMesh.enabled;$('#window-frame-width').value=building.windowMesh.frameWidth;$('#window-frame-depth').value=building.windowMesh.frameDepth;$('#window-glass-thickness').value=building.windowMesh.glassThickness;$('#door-mesh-toggle').checked=building.doorMesh.enabled;$('#door-frame-width').value=building.doorMesh.frameWidth;$('#door-frame-depth').value=building.doorMesh.frameDepth;$('#door-panel-thickness').value=building.doorMesh.panelThickness;$('#door-detail-depth').value=building.doorMesh.detailDepth;$('#new-wall-role').value=newWallRole;$('#new-wall-height').value=newWallHeightMode;$('#new-door-style').value=newDoorStyle;$('#new-window-style').value=newWindowStyle;$('#new-light-height').value=newLightHeight;$('#new-marker-height').value=newMarkerHeight;$('#new-stair-width').value=newStairWidth;$('#new-stair-style').value=newStairStyle;$('#new-stair-steps').value=newStairSteps;$('#new-stair-steps-row').hidden=newStairStyle!=='steps';$('#new-stair-block-below').checked=newStairBlockBelow;$('#new-platform-type').value=newPlatformType;$('#new-platform-height').value=newPlatformHeight;$('#new-railing-height').value=newRailingHeight;$('#new-railing-style').value=newRailingStyle;$('#new-roof-section-type').value=newRoofSectionType;$('#new-roof-direction').value=newRoofDirection;$('#new-roof-base-y').value=newRoofBaseY;$('#new-roof-pitch').value=newRoofPitch;$('#new-roof-overhang').value=newRoofOverhang;$('#new-roof-gable-ends').value=newRoofGableEnds;$('#new-manual-floor-y').value=newManualFloorY;$('#new-manual-floor-thickness').value=newManualFloorThickness;$('#new-manual-ceiling-y').value=newManualCeilingY;$('#new-manual-ceiling-thickness').value=newManualCeilingThickness;syncFloorControls();syncToolOptionVisibility();}
 function updateHistoryButtons(){$('#undo-btn').disabled=!history.canUndo();$('#redo-btn').disabled=!history.canRedo();}
 function renderEditorState(status='Updated',refreshSel=true){syncWallTypeControls();syncRegionList();showValidation();drawPlan();preview.rebuild(building,activeFloorIndex);updateSummary();syncFloorControls();if(refreshSel)refreshSelection();updateHistoryButtons();setStatus(status);}
-function commit(status='Updated',refreshSel=true){invalidatePendingLoad();if(groupDrag||selectionBox)cancelDrawing();clearSelectionCandidates();history.record(building,status);renderEditorState(status,refreshSel);}
+// Any web edit (a porch, railing, manual floor or roof drawn across a shaft)
+// that newly breaks an elevator is undone with the shared elevator rule, as the
+// CLI rejects the same transaction.
+function elevatorConflict(before,after){
+  for(const e of after.elevators||[]){const problem=elevatorProblem(after,e);if(!problem)continue;const old=(before.elevators||[]).find(v=>v.id===e.id);if(!old||!elevatorProblem(before,old))return problem;}
+  return null;
+}
+function commit(status='Updated',refreshSel=true){invalidatePendingLoad();if(groupDrag||selectionBox)cancelDrawing();clearSelectionCandidates();
+  if(building.elevators?.length){const before=history.current(),blocked=elevatorConflict(before,building);if(blocked){building=before;if(selected&&!selectionEntity())selected=null;multiSelection=multiSelection.filter(s=>selectionEntity(s));renderEditorState(`Not applied: ${blocked}`,true);return;}}
+  history.record(building,status);renderEditorState(status,refreshSel);}
 function restoreHistory(direction){invalidatePendingLoad();cancelDrawing();const r=direction==='undo'?history.undo():history.redo();if(!r){setStatus(direction==='undo'?'Nothing to undo':'Nothing to redo');return updateHistoryButtons();}building=normalizeBuilding(r.state);activeFloorIndex=Math.min(activeFloorIndex,building.floors.length-1);selected=null;cancelDrawing();syncControls();renderEditorState(`${direction==='undo'?'Undo':'Redo'}: ${r.action}`);}
 function fitPlan(){let b=boundsOfBuilding(fb());for(const m of floor().markers||[]){b.minX=Math.min(b.minX,m.position.x);b.maxX=Math.max(b.maxX,m.position.x);b.minZ=Math.min(b.minZ,m.position.z);b.maxZ=Math.max(b.maxZ,m.position.z);}for(const r of [...(floor().regions||[]),...(building.roofSections||[]),...(building.manualFloors||[]),...(building.manualCeilings||[])]){if(!rectValid(r))continue;b={minX:Math.min(b.minX,r.minX),maxX:Math.max(b.maxX,r.maxX),minZ:Math.min(b.minZ,r.minZ),maxZ:Math.max(b.maxZ,r.maxZ)};}b.width=b.maxX-b.minX;b.depth=b.maxZ-b.minZ;const{w,h}=dims(),bw=Math.max(4,b.width+2),bd=Math.max(4,b.depth+2);view.scale=Math.max(18,Math.min(90,Math.min(w/bw,h/bd)));const cx=(b.minX+b.maxX)/2,cz=(b.minZ+b.maxZ)/2;view.panX=-cx*view.scale;view.panY=-cz*view.scale;drawPlan();}
 function editStructure(change,status='Building settings updated'){

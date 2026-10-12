@@ -54,6 +54,7 @@
                 <button data-tool="manual-ceiling" title="Draw an independent ceiling slab with its own absolute height and thickness.">Manual Ceiling</button>
                 <button data-tool="platform" title="Drag an outdoor porch or deck platform.">Porch/Deck</button>
                 <button data-tool="railing" title="Drag a railing segment.">Railing</button>
+                <button data-tool="elevator" title="Click to place an elevator shaft centred on the point, serving the active floor and the floor above. Select it to drag it or edit its size, doors and floors.">Elevator</button>
                 <button data-tool="roof" title="Draw an independent four-corner roof footprint. Its height is independent of the active floor.">Manual Roof</button>
               </div>
               <p class="muted compact-help">Select an item and press <b>Delete</b> to remove it. Undo remains available with Ctrl/Cmd+Z.</p>
@@ -355,7 +356,7 @@
       <aside class="panel properties-panel">
         <section>
           <h2>Selection</h2>
-          <label>Pick objects<select id="selection-filter"><option value="all">All objects</option><option value="areas">All areas</option><option value="roofSection">Manual roofs</option><option value="platform">Porches / decks</option><option value="slab">Floor footprints</option><option value="manualFloor">Manual floors</option><option value="manualCeiling">Manual ceilings</option><option value="region">Regions</option><option value="wall">Walls</option><option value="opening">Doors / windows</option><option value="stair">Stairs / ramps</option><option value="light">Lights</option><option value="marker">Markers</option><option value="railing">Railings</option></select></label>
+          <label>Pick objects<select id="selection-filter"><option value="all">All objects</option><option value="areas">All areas</option><option value="roofSection">Manual roofs</option><option value="platform">Porches / decks</option><option value="slab">Floor footprints</option><option value="manualFloor">Manual floors</option><option value="manualCeiling">Manual ceilings</option><option value="region">Regions</option><option value="wall">Walls</option><option value="opening">Doors / windows</option><option value="stair">Stairs / ramps</option><option value="elevator">Elevators</option><option value="light">Lights</option><option value="marker">Markers</option><option value="railing">Railings</option></select></label>
           <p class="muted compact-help">Closed exterior outlines, including angled walls, define automatic floors and ceilings. Floor Footprints override that outline with rectangles.</p>
           <p id="footprint-status" class="muted compact-help" aria-live="polite"></p>
           <div id="selection-candidates" class="selection-candidates" aria-label="Overlapping areas at the picked point" hidden></div>
@@ -389,9 +390,9 @@
         </section>
         <section class="collapsible-section">
           <details class="collapsible" data-section="elevators"><summary><h2>Elevators</h2></summary><div class="section-body">
-            <p id="elevator-empty" class="muted compact-help">An elevator is a shaft serving a range of floors. It exports as its own scene with a movable car, sliding landing doors and a stop marker per floor; the game moves them.</p>
+            <p id="elevator-empty" class="muted compact-help">Use the <b>Elevator</b> tool to click a shaft into place; select it on the plan to drag it. An elevator is a shaft serving a range of floors. It exports as its own scene with a movable car, sliding landing doors and a stop marker per floor; the game moves them.</p>
             <div id="elevator-list" aria-label="Elevators"></div>
-            <button id="add-elevator-btn" type="button">Add elevator at active floor</button>
+            <button id="add-elevator-btn" type="button">Place elevator on plan…</button>
           </div></details>
         </section>
         <section class="collapsible-section">

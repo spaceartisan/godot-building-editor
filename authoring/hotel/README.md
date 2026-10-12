@@ -27,7 +27,7 @@ Totals: 5 floors, 242 walls, 151 doors, 83 windows, 8 stair flights, 24 guard ra
 
 | Path | What it is |
 | --- | --- |
-| `output/meridian_hotel.building.json` | **The editable building.** Load it in the web editor to continue by hand; the lifts are in the **Elevators** panel. |
+| `output/meridian_hotel.building.json` | **The editable building.** Load it in the web editor to continue by hand; click a lift on the plan to select, drag or edit it. |
 | `output/checks.json` | `validate --warnings-as-errors --reachability --from "0,9"` report |
 | `output/navmesh-reachability.json` | Godot navmesh probe (14 targets) |
 | `output/lift-probes.json` | Godot physics probe of both lifts (car at every stop, slab holes, doors) |

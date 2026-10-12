@@ -17,6 +17,7 @@ import { parseGameLayer } from './src/game-layer.js';
 import { diagnosticTargets } from './src/diagnostic-targets.js';
 import { elevatorLayout, elevatorFloorHoles, ELEVATOR_DEFAULTS } from './src/elevators.js';
 import { elevatorRecipe } from './qa/elevator-fixture.mjs';
+import { selectableItems, selectionBounds } from './src/group-edit.js';
 const root=path.dirname(fileURLToPath(import.meta.url));
 const blank=(()=>{const b=makeEmptyBuilding();b.floors[0].id='floor_1';return prepareDocument(b).building;})();
 const apply=(ops,base=blank)=>applyTransaction(base,{version:1,operations:ops});
@@ -45,6 +46,32 @@ const shell=tx(elevatorRecipe.slice(0,-1),blank),lifted=tx(elevatorRecipe.slice(
   // Removing a served floor leaves the elevator invalid, so the operation is refused.
   fails([{op:'floor.remove',id:'f3',removeContents:true}],lifted,/topFloorId f3 is not a floor|elevator/i);
   console.log('PASS elevator.add/update/remove: defaults, required fields, floor range, walls, stairs, door size and overlap checks');
+}
+{
+  // Other objects in the shaft: railings, porches/decks, manual floors and ceilings, roofs.
+  // The shaft (lifted) is x 1.8..4.2, z 1.3..3.7, from 0 m to the top floor's wall top (8.76 m).
+  fails([{op:'railing.add',floorId:'f2',id:'r',value:{a:{x:1,z:2.5},b:{x:5,z:2.5}}}],lifted,/Railing .* runs through elevator Main lift/);
+  fails([{op:'platform.add',floorId:'floor_1',id:'p',value:{minX:3,maxX:5,minZ:2,maxZ:4}}],lifted,/Porch\/deck .* overlaps elevator Main lift/);
+  fails([{op:'manualFloor.add',id:'m',value:{minX:2,maxX:4,minZ:2,maxZ:3,topY:1.5}}],lifted,/Manual floor .* crosses elevator Main lift/);
+  fails([{op:'manualCeiling.add',id:'c',value:{minX:2,maxX:4,minZ:2,maxZ:3,topY:5}}],lifted,/Manual ceiling .* crosses elevator Main lift/);
+  fails([{op:'roof.add',id:'rf',value:{type:'flat',minX:2,maxX:4,minZ:2,maxZ:3,baseY:4}}],lifted,/Roof .* is below the top of elevator Main lift/);
+  // Allowed: a pit-level manual floor, a roof capping the shaft, objects that only touch it.
+  tx([{op:'manualFloor.add',id:'pit',value:{minX:2,maxX:4,minZ:2,maxZ:3,topY:0,thickness:.18}},{op:'roof.add',id:'cap',value:{type:'flat',minX:1.5,maxX:4.5,minZ:1,maxZ:4,baseY:8.9}},
+    {op:'railing.add',floorId:'f2',id:'edge',value:{a:{x:1.8,z:0},b:{x:1.8,z:4}}},{op:'platform.add',floorId:'floor_1',id:'beside',value:{minX:4.2,maxX:5.5,minZ:2,maxZ:3}}],lifted);
+  // The check runs on the final building, so the elevator side of the edit is caught too.
+  fails([{op:'platform.add',floorId:'floor_1',id:'p',value:{minX:-5,maxX:-3,minZ:2,maxZ:4}},{op:'elevator.update',id:'lift',value:{x:-3.5}}],lifted,/overlaps elevator Main lift/);
+  console.log('PASS railings, porches, manual floors/ceilings and roofs may not cross a shaft; pit floors, capping roofs and touching objects may');
+}
+{
+  // group.move (web drag / Move selection) moves elevators on floors they serve, with the same checks.
+  const moved=tx([{op:'group.move',floorId:'f2',items:[{type:'elevator',id:'lift'}],delta:{x:-6,z:0}}],lifted);
+  assert.deepEqual([moved.elevators[0].x,moved.elevators[0].z],[-3,2.5]);
+  fails([{op:'group.move',floorId:'floor_1',items:[{type:'elevator',id:'lift'}],delta:{x:2.5,z:0}}],lifted,/runs through elevator/);
+  const four=tx([{op:'floor.add-top',aboveFloorId:'f3',id:'f4'},{op:'room.add',floorId:'f4',id:'v',value:{minX:-6,maxX:6,minZ:-5,maxZ:5}}],lifted);
+  fails([{op:'group.move',floorId:'f4',items:[{type:'elevator',id:'lift'}],delta:{x:1,z:0}}],four,/does not serve this floor/);
+  assert.ok(selectableItems(four,2).some(s=>s.type==='elevator')&&!selectableItems(four,3).some(s=>s.type==='elevator'),'selectable only on served floors');
+  assert.deepEqual(selectionBounds(lifted,0,{type:'elevator',id:'lift'}),{minX:1.8,maxX:4.2,minZ:1.3,maxZ:3.7});
+  console.log('PASS group.move moves elevators on served floors with the shared checks; selection only on served floors');
 }
 {
   const hand=structuredClone(lifted);hand.elevators.push({...hand.elevators[0]});

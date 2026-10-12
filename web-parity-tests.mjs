@@ -420,13 +420,18 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   console.log('PASS web Split floors, ceilings and walls by room equals building.update slabsByRoom');
 }
 {
-  // Elevators: the Elevators panel equals elevator.add/update/remove, and refuses what the shared check refuses.
+  // Elevators: the Elevator tool, the panel, plan selection, dragging and Delete equal elevator.add/update/remove
+  // and group.move, and refuse what the shared check refuses.
   const base=tx([{op:'room.add',floorId:'floor_1',id:'g',value:{minX:-6,maxX:6,minZ:-5,maxZ:5}},{op:'floor.add-top',aboveFloorId:'floor_1',id:'f2'},
     {op:'room.add',floorId:'f2',id:'u',value:{minX:-6,maxX:6,minZ:-5,maxZ:5}}]);
+  const plan=$('#plan-canvas'),at=async(type,x,z)=>{const p=e.coordinates({x,z});await plan.dispatch(type,{clientX:p.x,clientY:p.y});};
   await e.loadBuildingData(structuredClone(base));
-  await $('#add-elevator-btn').dispatch('click');
-  const added=tx([{op:'elevator.add',id:'elevator_1',value:{label:'Elevator 1',x:0,z:0,bottomFloorId:'floor_1',topFloorId:'f2'}}],base);
-  assert.deepEqual(e.snapshot(),added,'Add elevator equals elevator.add from the active floor to the next');
+  await $('#add-elevator-btn').dispatch('click');await at('pointerdown',5.5,0);await at('pointerup',5.5,0);
+  assert.deepEqual(e.snapshot(),base,'a click where the shaft would cross a wall places nothing');assert.match($('#status-text').textContent,/Elevator not placed: .*runs through/);
+  await at('pointerdown',2,1.5);await at('pointerup',2,1.5);
+  const added=tx([{op:'elevator.add',id:'elevator_1',value:{label:'Elevator 1',x:2,z:1.5,bottomFloorId:'floor_1',topFloorId:'f2'}}],base);
+  assert.deepEqual(e.snapshot(),added,'an Elevator tool click equals elevator.add from the active floor to the next');
+  assert.deepEqual(e.selection(),{type:'elevator',id:'elevator_1'},'the new elevator is selected');
   const entry=()=>$('#elevator-list').children[0],field=label=>entry().children.find(c=>c.textContent?.startsWith(label))?.children[0];
   await change(field('Centre X'),3);await change(field('Door side'),'maxX');await change(field('Label'),'Main lift');
   const updated=tx([{op:'elevator.update',id:'elevator_1',value:{x:3,doorSide:'maxX',label:'Main lift'}}],added);
@@ -435,12 +440,26 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   assert.match($('#status-text').textContent,/runs through elevator/);
   await change(field('Top floor'),'floor_1');assert.deepEqual(e.snapshot(),updated,'top must be above bottom');
   const preview=e.preview.scene.objects.length;assert.ok(preview>0);
+  // Plan selection and Selection fields.
+  e.chooseSelection(null);await $('[data-tool="select"]').click();await at('pointerdown',3,1.5);await at('pointerup',3,1.5);
+  assert.deepEqual(e.selection(),{type:'elevator',id:'elevator_1'},'clicking the shaft selects the elevator');
+  await change(property('Door width'),.8);
+  const narrowed=tx([{op:'elevator.update',id:'elevator_1',value:{doorWidth:.8}}],updated);assert.deepEqual(e.snapshot(),narrowed,'Selection fields equal elevator.update');
+  // Dragging the selected shaft equals group.move.
+  await at('pointerdown',3,1.5);await at('pointermove',2,1.5);await at('pointerup',2,1.5);
+  const moved=tx([{op:'group.move',floorId:'floor_1',items:[{type:'elevator',id:'elevator_1'}],delta:{x:-1,z:0}}],narrowed);
+  assert.deepEqual(e.snapshot(),moved,'dragging the elevator equals group.move');
+  // Another edit that would cross the shaft is undone with the shared rule.
+  await $('[data-tool="railing"]').click();await at('pointerdown',0,1.5);await at('pointerup',5,1.5);
+  assert.deepEqual(e.snapshot(),moved,'a railing across the shaft is not applied');assert.match($('#status-text').textContent,/Not applied: Railing .* runs through elevator Main lift/);
+  await $('[data-tool="select"]').click();
   // Show elevator (from a check result) opens the panel on the lowest served floor.
   await change($('#floor-select'),1);assert.equal(e.activeFloor(),1);
   e.visitDiagnosticTarget({type:'elevator',id:'elevator_1'});
   assert.equal(e.activeFloor(),0);assert.match($('#status-text').textContent,/Reviewing elevator · Main lift/);
-  await entry().children.find(c=>c.tagName==='BUTTON'&&c.textContent==='Delete elevator').dispatch('click');
-  assert.deepEqual(e.snapshot(),tx([{op:'elevator.remove',id:'elevator_1'}],updated),'Delete equals elevator.remove');
+  // Delete key on the selected elevator equals elevator.remove.
+  e.chooseSelection({type:'elevator',id:'elevator_1'});await e.window.dispatch('keydown',{key:'Delete'});
+  assert.deepEqual(e.snapshot(),tx([{op:'elevator.remove',id:'elevator_1'}],moved),'Delete equals elevator.remove');
   assert.deepEqual(e.errors,[]);
-  console.log('PASS web Elevators panel equals elevator.add/update/remove and refuses invalid shafts');
+  console.log('PASS web elevators: Elevator tool, panel, plan selection, drag and Delete equal elevator.add/update/remove and group.move; crossing edits are undone');
 }

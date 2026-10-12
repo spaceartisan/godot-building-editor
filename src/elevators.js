@@ -49,16 +49,27 @@ export function elevatorProblem(building,e){
   if(top<0)return `Elevator topFloorId ${e.topFloorId} is not a floor.`;
   if(top<=bottom)return 'Elevator topFloorId must be above bottomFloorId.';
   for(let i=bottom;i<=top;i++)if(!(s.doorHeight>=1.8&&s.doorHeight<=floorWallHeight(building,i)-.2))return `Elevator doors must be 1.8 m tall or more and leave 0.2 m of wall on floor ${i+1}.`;
-  const fp=elevatorFootprint(e);
+  const fp=elevatorFootprint(e),name=e.label||e.id;
   for(let i=bottom;i<=top;i++){
     const floor=building.floors[i];
-    for(const w of floor.walls||[])if(segmentCrossesInterior(w,fp))return `Wall ${w.label||w.id} on floor ${i+1} runs through elevator ${e.label||e.id}; walls may touch the shaft but not cross it.`;
+    for(const w of floor.walls||[])if(segmentCrossesInterior(w,fp))return `Wall ${w.label||w.id} on floor ${i+1} runs through elevator ${name}; walls may touch the shaft but not cross it.`;
+    for(const r of floor.railings||[])if(segmentCrossesInterior(r,fp))return `Railing ${r.label||r.id} on floor ${i+1} runs through elevator ${name}.`;
+    for(const p of floor.platforms||[])if(overlaps(p,fp))return `Porch/deck ${p.label||p.id} on floor ${i+1} overlaps elevator ${name}.`;
     for(const st of [...(floor.stairs||[]),...(building.floors[i-1]?.stairs||[])])if(overlaps(stairOpeningFootprint(st,0),fp))return `Stair ${st.label||st.id} overlaps elevator ${e.label||e.id} on floor ${i+1}.`;
   }
+  // Building-level surfaces inside the shaft's height would block the car. A
+  // manual floor at the bottom stop (the pit floor) and roofs at or above the
+  // shaft top (capping it) are fine.
+  const base=floorElevation(building,bottom),shaftTop=floorElevation(building,top)+floorWallHeight(building,top),inShaft=(lo,hi)=>hi>base+.05&&lo<shaftTop-.05;
+  for(const [list,kind] of [[building.manualFloors,'Manual floor'],[building.manualCeilings,'Manual ceiling']])for(const m of list||[]){
+    const topY=Number(m.topY),thick=Number.isFinite(Number(m.thickness))?Number(m.thickness):0;
+    if(Number.isFinite(topY)&&overlaps(m,fp)&&inShaft(topY-thick,topY))return `${kind} ${m.label||m.id} at ${topY.toFixed(2)} m crosses elevator ${name}; it may only sit at the bottom stop or above the shaft.`;
+  }
+  for(const r of building.roofSections||[]){const y=Number(r.baseY);if(Number.isFinite(y)&&overlaps(r,fp)&&y<shaftTop-.05)return `Roof ${r.label||r.id} (base ${y.toFixed(2)} m) is below the top of elevator ${name} (${shaftTop.toFixed(2)} m); a roof may cap the shaft but not cross it.`;}
   for(const other of building.elevators||[])if(other!==e&&other.id!==e.id&&overlaps(elevatorFootprint(other),fp)){const r=elevatorFloorRange(building,other);if(Math.max(r.bottom,bottom)<=Math.min(r.top,top))return `Elevators ${e.label||e.id} and ${other.label||other.id} overlap.`;}
   return null;
 }
-const overlaps=(a,b)=>Math.min(a.maxX,b.maxX)-Math.max(a.minX,b.minX)>1e-4&&Math.min(a.maxZ,b.maxZ)-Math.max(a.minZ,b.minZ)>1e-4;
+const overlaps=(a,b)=>[a.minX,a.maxX,a.minZ,a.maxZ].every(Number.isFinite)&&Math.min(a.maxX,b.maxX)-Math.max(a.minX,b.minX)>1e-4&&Math.min(a.maxZ,b.maxZ)-Math.max(a.minZ,b.minZ)>1e-4;
 // A wall crosses the shaft when part of its centreline lies strictly inside.
 function segmentCrossesInterior(w,fp){
   const e=1e-3,inside=p=>p.x>fp.minX+e&&p.x<fp.maxX-e&&p.z>fp.minZ+e&&p.z<fp.maxZ-e,L=wallLength(w);if(!(L>0))return false;

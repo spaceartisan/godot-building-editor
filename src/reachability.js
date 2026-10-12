@@ -8,7 +8,7 @@ import { exteriorWallOutsideSign, isExteriorWall } from './exporter.js';
 
 // Static route check on the authored model: can a person walk from open ground
 // outside the building to every walkable floor area through doors, empty
-// passages and stairs? Each floor's walkable surface (automatic slab after
+// passages, stairs and elevators? Each floor's walkable surface (automatic slab after
 // stair/platform cutouts, level platforms and level manual floors; open
 // terrain around and beneath the ground floor) is rasterized, walls and
 // railings are inflated by the walker radius, doors reopen their clear span,
@@ -217,7 +217,7 @@ export function reachabilityWarnings(building,options){
   for(const s of result.starts.filter(s=>!s.ok))warnings.push({path:`Floor ${floorIndexOf(building,s.floorId)}`,message:`Floor ${floorIndexOf(building,s.floorId)}: route start (${s.x}, ${s.z}) is not on walkable floor (inside a wall, stair or railing clearance, or off the floor)`,targets:[{type:'floor',floorId:s.floorId}]});
   for(const u of result.unreachable){
     const where=u.regionLabels.length?` (${u.regionLabels.join(', ')})`:'';
-    warnings.push({path:`Floor ${u.floorIndex}`,message:`Floor ${u.floorIndex}: ${u.area.toFixed(1)} m² of floor near (${u.centroid.x}, ${u.centroid.z})${where} cannot be reached from outside${from} through doors, passages and stairs`,targets:[{type:'floor',floorId:u.floorId}]});
+    warnings.push({path:`Floor ${u.floorIndex}`,message:`Floor ${u.floorIndex}: ${u.area.toFixed(1)} m² of floor near (${u.centroid.x}, ${u.centroid.z})${where} cannot be reached from outside${from} through doors, passages${building.elevators?.length?', stairs and elevators':' and stairs'}`,targets:[{type:'floor',floorId:u.floorId}]});
   }
   for(const s of result.stairIssues){
     const text={'no-upper-floor':'has no upper floor','lower-entrance-blocked':'lower entrance is blocked or has no floor','upper-arrival-blocked':'upper arrival is blocked or has no floor','elevator-landing-blocked':'landing in front of the elevator doors is blocked or has no floor'}[s.issue];

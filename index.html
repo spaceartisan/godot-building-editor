@@ -403,7 +403,7 @@
           <label>Export profile<select id="export-profile"><option value="generic">Generic Godot</option><option value="get_probed">GET PROBED compatibility</option></select></label>
           <button id="validate-btn">Check building</button>
           <button id="download-check-report-btn" type="button" title="Download current errors, warnings and object references as JSON">Download check report</button>
-          <label class="checkbox" title="Also check that every floor area and stair can be reached from open ground through doors, empty passages and stairs (0.25 m walker clearance). Same check as the CLI validate --reachability."><input id="route-check-toggle" type="checkbox" /> Include route check</label>
+          <label class="checkbox" title="Also check that every floor area and stair can be reached from open ground through doors, empty passages, stairs and elevators (0.25 m walker clearance). Same check as the CLI validate --reachability."><input id="route-check-toggle" type="checkbox" /> Include route check</label>
           <label title="Optional interior start points for the route check, for buildings with no opening to the outside (a sealed ship or bunker): x,z or x,z,floorId, several separated by ;. The floor defaults to the ground floor. Same as the CLI --from option.">Route start (optional)<input id="route-start" type="text" placeholder="x,z[,floorId]; …" autocomplete="off" spellcheck="false" /></label>
           <p class="muted compact-help">Reports describe the current checks. Save the building JSON separately for editing.</p>
           <p id="validation-summary" class="muted compact-help" role="status" aria-live="polite" aria-atomic="true" tabindex="-1"></p>

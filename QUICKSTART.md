@@ -8,20 +8,21 @@ Loading cleanup: wait for file/example loading to complete before editing the im
 
 Automating with an LLM? Read [AGENTS.md](AGENTS.md) and [LLM_GUIDE.md](LLM_GUIDE.md) for a verified CLI workflow and the limits of each authoring route.
 
-Build reusable houses, interiors and other structures in the web editor; use the Linux CLI for repeatable edits and exports. The output is a building `.tscn` and its relative door scenes. It does not include a game project or runtime geometry generator.
+Build reusable houses, interiors and other structures in the web editor; use the Linux CLI for repeatable edits and exports. The output is a building `.tscn` and its relative door (and elevator) scenes. It does not include a game project or runtime geometry generator.
 
 ## Web builder
 
 1. Extract the ZIP, open a terminal inside `building-editor`, and run `npm run dev` with Node 20 or newer. Open the local address printed by the server. No npm install is needed for the editor.
 2. Pick an **Example**, or use **Project files → Load JSON** for an existing blueprint. Drawing and selection controls are in the side panels. Shift-click or drag a selection box to select multiple objects; use **Move selection** or exact offsets to move them together.
 3. Use **Floors** to add above/below, duplicate, reorder or delete floors. The active floor carries its own contents. Changed stair connections can block a stack edit. Top-floor deletion also removes incoming stairs; other affected connections require **Remove affected stairs**. Undo restores the complete edit. Independent manual roofs/floors/ceilings keep their authored absolute heights.
-4. Use **3D Preview** and its floor/roof views to inspect geometry. The preview uses illustrative colors; exported material slots are empty by default.
-5. The **Checks** button near Export shows errors or authoring warnings. Click it or **Check building** to focus the results in Godot Export. Errors block export; warnings allow export and remain visible for review. Use an issue’s **Show…** buttons to select and center its object, or open the affected floor. These inspection actions cancel unfinished drawing without adding undo steps. Ordinary background updates do not move keyboard focus. Invalid numeric building settings roll back without adding an undo step.
-6. Save **Project files → Save JSON** to keep your editable source. Then use **Export .tscn ZIP**. The exported scene is not a replacement for your editable blueprint; this tool does not reimport edited TSCNs.
+4. For a lift, choose the **Elevator** tool and click the shaft centre on the lower floor it starts from; select the shaft to drag it, or set its size, door side, floors and **Stops at** in Selection (all lifts are also listed under **Elevators**).
+5. Use **3D Preview** and its floor/roof views to inspect geometry. The preview uses illustrative colors; exported material slots are empty by default.
+6. The **Checks** button near Export shows errors or authoring warnings. Click it or **Check building** to focus the results in Godot Export. Errors block export; warnings allow export and remain visible for review. Use an issue’s **Show…** buttons to select and center its object, or open the affected floor. These inspection actions cancel unfinished drawing without adding undo steps. Ordinary background updates do not move keyboard focus. Invalid numeric building settings roll back without adding an undo step.
+7. Save **Project files → Save JSON** to keep your editable source. Then use **Export .tscn ZIP**. The exported scene is not a replacement for your editable blueprint; this tool does not reimport edited TSCNs.
 
 ## Bring the asset into Godot
 
-Extract the asset ZIP inside a folder in your Godot project, keeping the building scene and `doors/` in their relative locations. Open or instance the main `.tscn`. Geometry and collision are baked and visible in the editor. Assign your materials to the named mesh surfaces.
+Extract the asset ZIP inside a folder in your Godot project, keeping the building scene, `doors/` and (when the building has lifts) `elevators/` in their relative locations. Open or instance the main `.tscn`. Geometry and collision are baked and visible in the editor. Assign your materials to the named mesh surfaces.
 
 Exterior walls retain **OutsideFaces**, **InsideFaces**, and **EdgeFaces**. Interior walls retain **SideAFaces**, **SideBFaces**, and **EdgeFaces**, organized per story. Keep those intentional lighting boundaries when integrating the scene. Custom shaped doors expose a **Panel** pivot with matching collision; add movement in Godot. Marker names and positions export as Marker3D nodes; their notes remain in JSON. No furniture or gameplay implementation is generated.
 
@@ -30,8 +31,9 @@ Exterior walls retain **OutsideFaces**, **InsideFaces**, and **EdgeFaces**. Inte
 The export is the building shell. These are done in Godot or by the game, not by Building Studio (see the README's [Scope](README.md#scope-what-the-tool-makes-and-what-stays-in-godot)):
 
 - materials and textures (or a [game layer](GAME_LAYER.md) that assigns them on every export);
-- navigation: bake a navmesh from the exported collision;
+- navigation: bake a navmesh from the exported collision, and link lift landings (for example with `NavigationLink3D`), since a navmesh cannot ride a lift;
 - door scripts and animation (the hinge, `Hinge2` and `Curtain` pivots are ready for them);
+- elevator scripts: moving `Car` between the `Stop_NN` markers and sliding the car and landing door leaves by `leaf_travel`; the `CallButton`, `Indicator` and `CarPanel` markers are anchors for the controls;
 - lighting: exported lights are placeholders marking positions; replace or tune them, and set up environment, GI and lightmaps;
 - gameplay nodes, furniture and props, terrain and placement.
 

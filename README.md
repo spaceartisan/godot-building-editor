@@ -4,7 +4,7 @@
 
 Building Studio authors reusable Godot 4 building scenes: houses, shops, interiors, multi-level structures and other architectural assets. It has two front ends over the same code: a web editor for drawing and visual review, and a CLI for scripted authoring, checking and export. Every capability is available in both.
 
-The deliverable is a building `.tscn` with its door `.tscn` dependencies. No game project or runtime generator is exported. Separate outward/inward shell meshes, interior wall side meshes, and per-story mesh organization are intentional for material and per-mesh lighting control. GET PROBED is an optional export profile, not a dependency.
+The deliverable is a building `.tscn` with its door (and elevator) `.tscn` dependencies. No game project or runtime generator is exported. Separate outward/inward shell meshes, interior wall side meshes, and per-story mesh organization are intentional for material and per-mesh lighting control. GET PROBED is an optional export profile, not a dependency.
 
 ## Quick start (CLI)
 
@@ -20,7 +20,7 @@ A recipe is plain JSON: `{"version": 1, "operations": [...]}`. For example, `roo
 
 - **Shipped game:** the buildings of GET PROBED (about 15 across five maps: one to three storeys, gable, hip and flat roofs, double doors) were authored with the CLI on **Windows 10 with Node 20+** and used in **Godot 4.7** (Compatibility renderer): exported scenes, doors, collision and lighting shells.
 - **Release gates** run on Linux with Godot 4.5.1 ([RELEASE_CHECKS.md](RELEASE_CHECKS.md)). That is where every check is automated, not the only place the tool works.
-- **Stress tests:** a castle, a starship interior and an 11-level mixed-use complex were built through the CLI alone ([authoring/](authoring/)), with findings fixed and recorded.
+- **Stress tests:** a castle, a starship interior, an 11-level mixed-use complex and a five-storey hotel with two lifts were built through the CLI alone ([authoring/](authoring/)), with findings fixed and recorded.
 
 ## Scope: what the tool makes, and what stays in Godot
 
@@ -67,7 +67,7 @@ Open `http://localhost:5173`. To render exports in Godot from the web editor (**
 
 ## Godot export
 
-Choose an **Export profile** in the Godot Export panel. **New** buildings use Generic Godot. The farmhouse preset and old JSON without a profile retain GET PROBED compatibility. Profiles are saved in JSON and changes support undo/redo.
+Choose an **Export profile** in the Godot Export panel. **New** buildings use Generic Godot. The farmhouse preset and the supplied GET PROBED examples set GET PROBED compatibility in their JSON. JSON without a profile exports as Generic (since 1.5.0; before, it fell back to GET PROBED). Profiles are saved in JSON and changes support undo/redo.
 
 | Convention | Generic Godot | GET PROBED compatibility |
 | --- | --- | --- |
@@ -81,6 +81,7 @@ Explicit custom light groups survive profile changes. Empty window openings expo
 
 - `<building>.tscn` — the building scene.
 - `doors/*.tscn` — one separate scene for every generated door.
+- `elevators/*.tscn` — one scene per elevator, when the building has any.
 
 The building scene instances those door scenes with relative `PackedScene` references. Exterior and interior walls are baked embedded `ArrayMesh` resources; exterior walls are split into outside/inside/edge faces and interior walls into Side A/Side B/edge faces for independent materials. Windows remain separate meshes; ceiling and roof remain separate nodes. Placed lights are written directly into the building scene as `OmniLight3D` nodes (no light sidecar scene, mesh, collision, or script). No CSG or runtime building generator is used.
 
@@ -165,6 +166,33 @@ Manual floors remain explicitly authored objects: arrange their rectangles aroun
 
 
 
+## Elevators
+
+An elevator is a building-level shaft serving a range of floors. Place it with the **Elevator** tool (click the shaft centre on the floor it starts from; it serves that floor and the one above). Select it on the plan to drag it, or set its size, door side, door size, bottom and top floors and **Stops at** in Selection; all lifts are also listed under **Elevators**. In the CLI: `elevator.add`, `elevator.update`, `elevator.remove` and `group.move` ([TRANSACTIONS.md](TRANSACTIONS.md)).
+
+- Unchecking **Stops at** for a floor (CLI `skipFloorIds`) makes an express lift. The shaft passes that floor behind a solid wall, with no landing or stop.
+- Floors above the bottom stop get a hole in their automatic floor at the shaft; the bottom floor's slab is the pit floor.
+- Walls and railings may touch the shaft but not cross it. Stairs, porches, manual floors/ceilings and roofs must stay out of it, and doors must leave room for each leaf to slide open (at most shaft width/2 − 0.35 m). The CLI rejects such edits and the web editor undoes them, with the same message.
+- The route check (`validate --reachability`, web **Include route check**) treats each lift as a route between its stops and warns when a landing is blocked.
+
+Each elevator exports its own scene, instanced under the root `Elevators` node:
+
+```text
+Elevator (Node3D)
+├── Shaft (MeshInstance3D: ShaftOutside, ShaftInside, ShaftEdges)
+├── ShaftBody (StaticBody3D)
+├── Car (AnimatableBody3D: CarMesh with CarFloor, CarWalls, CarCeiling)
+│   ├── CarDoorLeft, CarDoorRight (AnimatableBody3D leaves riding with the car)
+│   └── CarPanel (Marker3D)
+├── Stops/Stop_NN (Marker3D per stop)
+└── Landings/Landing_NN
+    ├── DoorLeft, DoorRight (AnimatableBody3D leaves)
+    ├── CallButton (Marker3D)
+    └── Indicator (Marker3D)
+```
+
+Nothing moves on its own: a game script moves `Car` on Y between the `Stop_NN` markers and slides each door leaf outward on X by `leaf_travel` (metadata on `Car` and each `Landing_NN`). A [game layer](GAME_LAYER.md) can attach that script on every export (`scripts.elevator`). `godot-check --assets` probes every exported lift in Godot (car floor at each stop, closed and opened doors, clear shaft). A navmesh cannot ride a lift; link landings in Godot. [authoring/hotel](authoring/hotel/README.md) is a worked example.
+
 ## Per-floor dimensions and edit behavior
 
 Floor elevation, wall height and slab thickness may be overridden in **Floors**. Leave an override blank to inherit the building default or automatic elevation. Automatic elevation = preceding floor elevation + preceding wall height + this floor's slab thickness. Explicit elevations are absolute, including negative elevations, and must increase in floor order. Walls, slabs, ceilings, roof bases, stair rise, UV continuity and collision share these values. Stair flights connect adjacent floors; arbitrary intermediate landings and multi-flight stair layouts remain future work.
@@ -202,13 +230,13 @@ For optional engine-side checks, set `GODOT_BIN` to your Godot 4 executable and 
 - Stair checks do not replace testing your game's character capsule, headroom, step/slope settings or gameplay movement.
 - Automatic polygon footprints derive from exterior wall loops, not arbitrary room inference. Independent authored surface footprints remain rectangular; manual roofs may follow a polygon (flat or hip).
 - Lighting limits depend on the target renderer and scene. This release preserves existing mesh separation; it does not promise unlimited lights or introduce a new lighting allocator.
-- This release passed headless validation in Godot 4.5.1. Your Godot 4.7 build and rendered lighting/seam appearance still need visual verification; full browser automation was unavailable in this environment. The included canvas previews are generated by the editor renderer, not Godot screenshots.
+- Release gates run headless in Godot 4.5.1. Buildings from this tool are used in Godot 4.7 (see **Used in practice**), but the release gates have not run there; check new features such as elevators with `godot-check --assets` in your own Godot version. The included canvas previews are generated by the editor renderer, not Godot screenshots.
 
 ## Editor verification
 
 The layout wraps the toolbar and retains both side panels on narrow windows; below 720px the canvas and panels stack with scrolling. Status text wraps, validation errors/warnings remain visible, and numeric inputs reject blank/invalid required values. Optional per-floor override fields accept blank values intentionally.
 
-Optional browser checks: install Playwright and Chromium locally, then run `npm run test:browser`. Set `SCREENSHOT_DIR` for browser captures. The test covers examples, dimensions, rollback, wall-loop closure, region creation/deletion, undo, download and three viewport sizes. It could not launch here because the Chromium executable is unavailable.
+Optional browser checks: install Playwright and Chromium locally, then run `npm run test:browser`. Set `SCREENSHOT_DIR` for browser captures. The test covers examples, dimensions, rollback, wall-loop closure, region creation/deletion, undo, download and three viewport sizes. `npm run test:browser-parity` checks web/CLI parity in a real browser. For 1.5.0 both passed in Chromium 141 ([RELEASE_CHECKS.md](RELEASE_CHECKS.md)).
 
 `qa/previews/` contains actual editor-canvas renders. Regenerate them with `CANVAS_MODULE=/path/to/@napi-rs/canvas node qa/render-preview.mjs qa/previews`. This optional rendering dependency is not needed to run the editor.
 

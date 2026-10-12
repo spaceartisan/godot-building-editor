@@ -17,7 +17,7 @@
     16.7999992370605,
     8.04999828338623
   ],
-  "navPolygons": 1996,
+  "navPolygons": 1988,
   "results": [
     {
       "end": [
@@ -131,7 +131,7 @@
     },
     {
       "end": [
-        -1.29999983310699,
+        -1.29999995231628,
         3.95000004768372,
         0.299999952316284
       ],
@@ -142,7 +142,7 @@
       "originCovered": true,
       "originSnapDistance": 0,
       "pathArrives": true,
-      "pathLength": 50.2509529308882,
+      "pathLength": 50.2509529003873,
       "snap": [
         -1.29999995231628,
         3.95000004768372,
@@ -208,7 +208,7 @@
       "originCovered": true,
       "originSnapDistance": 0,
       "pathArrives": true,
-      "pathLength": 56.6602545210626,
+      "pathLength": 56.7081819900777,
       "snap": [
         0,
         7.20000028610229,

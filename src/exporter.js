@@ -299,16 +299,21 @@ function meshWriter() {
 }
 
 function addLocalBoxToMesh(writer, size, center={x:0,y:0,z:0}) {
+  addLocalBoxFaces(()=>writer,size,center);
+}
+// Each face goes to the writer pick(normal, faceCenter) returns (null skips it).
+function addLocalBoxFaces(pick, size, center={x:0,y:0,z:0}) {
   const hx=size.x/2, hy=size.y/2, hz=size.z/2;
   if(hx<EPS || hy<EPS || hz<EPS) return;
   const x0=center.x-hx,x1=center.x+hx,y0=center.y-hy,y1=center.y+hy,z0=center.z-hz,z1=center.z+hz;
   const uv=(u,v)=>({u,v});
-  writer.face([{x:x0,y:y0,z:z0},{x:x1,y:y0,z:z0},{x:x1,y:y1,z:z0},{x:x0,y:y1,z:z0}], [uv(x0,y0),uv(x1,y0),uv(x1,y1),uv(x0,y1)], {x:0,y:0,z:-1});
-  writer.face([{x:x0,y:y0,z:z1},{x:x0,y:y1,z:z1},{x:x1,y:y1,z:z1},{x:x1,y:y0,z:z1}], [uv(x0,y0),uv(x0,y1),uv(x1,y1),uv(x1,y0)], {x:0,y:0,z:1});
-  writer.face([{x:x0,y:y0,z:z0},{x:x0,y:y1,z:z0},{x:x0,y:y1,z:z1},{x:x0,y:y0,z:z1}], [uv(z0,y0),uv(z0,y1),uv(z1,y1),uv(z1,y0)], {x:-1,y:0,z:0});
-  writer.face([{x:x1,y:y0,z:z0},{x:x1,y:y0,z:z1},{x:x1,y:y1,z:z1},{x:x1,y:y1,z:z0}], [uv(z0,y0),uv(z1,y0),uv(z1,y1),uv(z0,y1)], {x:1,y:0,z:0});
-  writer.face([{x:x0,y:y1,z:z0},{x:x1,y:y1,z:z0},{x:x1,y:y1,z:z1},{x:x0,y:y1,z:z1}], [uv(x0,z0),uv(x1,z0),uv(x1,z1),uv(x0,z1)], {x:0,y:1,z:0});
-  writer.face([{x:x0,y:y0,z:z0},{x:x0,y:y0,z:z1},{x:x1,y:y0,z:z1},{x:x1,y:y0,z:z0}], [uv(x0,z0),uv(x0,z1),uv(x1,z1),uv(x1,z0)], {x:0,y:-1,z:0});
+  const put=(pts,uvs,n)=>{const c=pts.reduce((a,p)=>({x:a.x+p.x/4,y:a.y+p.y/4,z:a.z+p.z/4}),{x:0,y:0,z:0}),w=pick(n,c);if(w)w.face(pts,uvs,n);};
+  put([{x:x0,y:y0,z:z0},{x:x1,y:y0,z:z0},{x:x1,y:y1,z:z0},{x:x0,y:y1,z:z0}], [uv(x0,y0),uv(x1,y0),uv(x1,y1),uv(x0,y1)], {x:0,y:0,z:-1});
+  put([{x:x0,y:y0,z:z1},{x:x0,y:y1,z:z1},{x:x1,y:y1,z:z1},{x:x1,y:y0,z:z1}], [uv(x0,y0),uv(x0,y1),uv(x1,y1),uv(x1,y0)], {x:0,y:0,z:1});
+  put([{x:x0,y:y0,z:z0},{x:x0,y:y1,z:z0},{x:x0,y:y1,z:z1},{x:x0,y:y0,z:z1}], [uv(z0,y0),uv(z0,y1),uv(z1,y1),uv(z1,y0)], {x:-1,y:0,z:0});
+  put([{x:x1,y:y0,z:z0},{x:x1,y:y0,z:z1},{x:x1,y:y1,z:z1},{x:x1,y:y1,z:z0}], [uv(z0,y0),uv(z1,y0),uv(z1,y1),uv(z0,y1)], {x:1,y:0,z:0});
+  put([{x:x0,y:y1,z:z0},{x:x1,y:y1,z:z0},{x:x1,y:y1,z:z1},{x:x0,y:y1,z:z1}], [uv(x0,z0),uv(x1,z0),uv(x1,z1),uv(x0,z1)], {x:0,y:1,z:0});
+  put([{x:x0,y:y0,z:z0},{x:x0,y:y0,z:z1},{x:x1,y:y0,z:z1},{x:x1,y:y0,z:z0}], [uv(x0,z0),uv(x0,z1),uv(x1,z1),uv(x1,z0)], {x:0,y:-1,z:0});
 }
 
 function addLocalRotatedBoxToMesh(writer,size,center={x:0,y:0,z:0},rotationZ=0){
@@ -1649,33 +1654,47 @@ export function exportElevatorTscn(building,elevator,options={}){
   addRes('StandardMaterial3D',matCar,['albedo_color = Color(0.62, 0.58, 0.5, 1)','roughness = 0.6']);
   addRes('StandardMaterial3D',matDoor,['albedo_color = Color(0.7, 0.72, 0.75, 1)','metallic = 0.6','roughness = 0.35']);
   const mesh=boxes=>{const w=meshWriter();for(const b of boxes)addLocalBoxToMesh(w,b.size,b.pos);return w;};
+  // Separate surfaces for a game layer: shaft ShaftOutside/ShaftInside/ShaftEdges
+  // (faces on the shaft's outer or inner boundary, the rest), car CarFloor/CarWalls/CarCeiling.
+  const {width,depth}=layout.size,hw=width/2,hd=depth/2,t=layout.shaftWall,near=(a,b)=>Math.abs(a-b)<1e-6;
+  const shaftSurfaces={ShaftOutside:meshWriter(),ShaftInside:meshWriter(),ShaftEdges:meshWriter()};
+  const shaftSurface=(n,c)=>n.y?'ShaftEdges':n.x?(near(c.x,n.x*hw)?'ShaftOutside':near(c.x,-n.x*(hw-t))?'ShaftInside':'ShaftEdges'):(near(c.z,n.z*hd)?'ShaftOutside':near(c.z,-n.z*(hd-t))?'ShaftInside':'ShaftEdges');
+  for(const b of layout.shaft)addLocalBoxFaces((n,c)=>shaftSurfaces[shaftSurface(n,c)],b.size,b.pos);
+  const carSurfaces={CarFloor:meshWriter(),CarWalls:meshWriter(),CarCeiling:meshWriter()};
+  for(const b of layout.car)addLocalBoxToMesh(carSurfaces[b.surface],b.size,b.pos);
   let shapes=0;const shape=(parent,box)=>{const id=`ElevatorShape_${++shapes}`;addRes('BoxShape3D',id,[`size = ${v3(box.size.x,box.size.y,box.size.z)}`]);nodes.push(`[node name="CollisionShape_${shapes}" type="CollisionShape3D" parent="${parent}"]\nposition = ${v3(box.pos.x,box.pos.y,box.pos.z)}\nshape = SubResource("${id}")`);};
   const label=String(elevator.label||elevator.id).replace(/["\\]/g,'');
-  nodes.push(`[node name="Elevator" type="Node3D"]\neditor_description = "${label}: elevator serving ${layout.stops.length} floors. Move Car on Y between the Stops markers (Stop_NN.position.y); slide each Landing's DoorLeft/DoorRight outward along X by the landing's leaf_travel to open. No script is included."\nmetadata/building_elevator_id = ${JSON.stringify(elevator.id)}`);
-  const shaftRes=arrayMeshResource(mesh(layout.shaft),matShaft,'ElevatorShaftMesh','ShaftFaces');if(shaftRes)resources.push(shaftRes.text);
+  nodes.push(`[node name="Elevator" type="Node3D"]\neditor_description = "${label}: elevator with ${layout.stops.length} stops. Move Car on Y between the Stops markers (Stop_NN.position.y); open by sliding the car's CarDoorLeft/CarDoorRight and the Landing's DoorLeft/DoorRight outward along X by leaf_travel. CallButton, Indicator and CarPanel markers are anchors for the game's controls. No script is included."\nmetadata/building_elevator_id = ${JSON.stringify(elevator.id)}\nmetadata/shaft_size = ${v3(width,layout.topY,depth)}\nmetadata/door_width = ${fmt(layout.size.doorWidth)}\nmetadata/door_height = ${fmt(layout.size.doorHeight)}`);
+  const shaftRes=multiSurfaceArrayMeshResource(Object.entries(shaftSurfaces).map(([surfaceName,mesh])=>({mesh,materialId:matShaft,surfaceName})),'ElevatorShaftMesh');if(shaftRes)resources.push(shaftRes.text);
   if(shaftRes)nodes.push(`[node name="Shaft" type="MeshInstance3D" parent="."]\nmesh = SubResource("ElevatorShaftMesh")`);
   nodes.push(`[node name="ShaftBody" type="StaticBody3D" parent="."]`);
   for(const b of layout.shaft)shape('ShaftBody',b);
-  const carRes=arrayMeshResource(mesh(layout.car),matCar,'ElevatorCarMesh','CarFaces');if(carRes)resources.push(carRes.text);
+  const carRes=multiSurfaceArrayMeshResource(Object.entries(carSurfaces).map(([surfaceName,mesh])=>({mesh,materialId:matCar,surfaceName})),'ElevatorCarMesh');if(carRes)resources.push(carRes.text);
   // Car and door leaves are the moving bodies themselves: AnimatableBody3D
   // follows its own transform, so moving Car (or a DoorLeft) moves its collision.
   const moving=options.collision===false?'Node3D':'AnimatableBody3D';
-  nodes.push(`[node name="Car" type="${moving}" parent="."]\neditor_description = "Car floor at the bottom stop. Move this node on Y between the Stops markers; its collision moves with it."${options.collision===false?'':`\ncollision_layer = 1\ncollision_mask = ${profile.bodyMask}`}`);
+  nodes.push(`[node name="Car" type="${moving}" parent="."]\neditor_description = "Car floor at the bottom stop. Move this node on Y between the Stops markers; its collision and doors move with it."${options.collision===false?'':`\ncollision_layer = 1\ncollision_mask = ${profile.bodyMask}`}\nmetadata/leaf_travel = ${fmt(layout.carDoors.leafTravel)}`);
   if(carRes)nodes.push(`[node name="CarMesh" type="MeshInstance3D" parent="Car"]\nmesh = SubResource("ElevatorCarMesh")`);
   for(const b of layout.car)shape('Car',b);
+  const leafRes=arrayMeshResource(mesh([{size:layout.carDoors.leaves[0].size,pos:{x:0,y:0,z:0}}]),matDoor,'ElevatorDoorLeafMesh','Door');if(leafRes)resources.push(leafRes.text);
+  // Door leaves are bodies too. The car's ride with it, so they follow their
+  // parent's global transform (sync_to_physics off); landing leaves are moved directly.
+  const doorLeaf=(parent,name,l,riding)=>{
+    nodes.push(`[node name="${name}" type="${moving}" parent="${parent}"]\nposition = ${v3(l.pos.x,l.pos.y,l.pos.z)}${options.collision===false?'':`\ncollision_layer = ${profile.doorLayer}\ncollision_mask = ${profile.bodyMask}${riding?'\nsync_to_physics = false':''}`}`);
+    nodes.push(`[node name="DoorMesh" type="MeshInstance3D" parent="${parent}/${name}"]\nmesh = SubResource("ElevatorDoorLeafMesh")`);
+    shape(`${parent}/${name}`,{size:l.size,pos:{x:0,y:0,z:0}});
+  };
+  for(const l of layout.carDoors.leaves)doorLeaf('Car',`CarDoor${l.side}`,l,true);
+  nodes.push(`[node name="CarPanel" type="Marker3D" parent="Car"]\nposition = ${v3(layout.carPanel.x,layout.carPanel.y,layout.carPanel.z)}\neditor_description = "Anchor for the car's button panel (on the side wall right of the doors, seen from inside)."`);
   nodes.push(`[node name="Stops" type="Node3D" parent="."]`);
   for(const st of layout.stops)nodes.push(`[node name="${st.name}" type="Marker3D" parent="Stops"]\nposition = ${v3(0,st.y,0)}\nmetadata/building_floor_id = ${JSON.stringify(st.floorId)}\nmetadata/building_floor_label = ${JSON.stringify(st.label)}`);
-  const leaf=layout.landings[0]?.leaves[0];
-  if(leaf){const leafRes=arrayMeshResource(mesh([{size:leaf.size,pos:{x:0,y:0,z:0}}]),matDoor,'ElevatorDoorLeafMesh','Door');if(leafRes)resources.push(leafRes.text);}
   nodes.push(`[node name="Landings" type="Node3D" parent="."]`);
   for(const landing of layout.landings){
     const parent=`Landings/${landing.name}`;
-    nodes.push(`[node name="${landing.name}" type="Node3D" parent="Landings"]\nposition = ${v3(0,landing.y,0)}\neditor_description = "Landing doors on ${String(landing.label).replace(/["\\]/g,'')}."\nmetadata/leaf_travel = ${fmt(landing.leafTravel)}`);
-    for(const l of landing.leaves){
-      nodes.push(`[node name="Door${l.side}" type="${moving}" parent="${parent}"]\nposition = ${v3(l.pos.x,l.pos.y,l.pos.z)}${options.collision===false?'':`\ncollision_layer = ${profile.doorLayer}\ncollision_mask = ${profile.bodyMask}`}`);
-      nodes.push(`[node name="DoorMesh" type="MeshInstance3D" parent="${parent}/Door${l.side}"]\nmesh = SubResource("ElevatorDoorLeafMesh")`);
-      shape(`${parent}/Door${l.side}`,{size:l.size,pos:{x:0,y:0,z:0}});
-    }
+    nodes.push(`[node name="${landing.name}" type="Node3D" parent="Landings"]\nposition = ${v3(0,landing.y,0)}\neditor_description = "Landing doors on ${String(landing.label).replace(/["\\]/g,'')}."\nmetadata/leaf_travel = ${fmt(landing.leafTravel)}\nmetadata/building_floor_id = ${JSON.stringify(landing.floorId)}`);
+    for(const l of landing.leaves)doorLeaf(parent,`Door${l.side}`,l,false);
+    nodes.push(`[node name="CallButton" type="Marker3D" parent="${parent}"]\nposition = ${v3(landing.callButton.x,landing.callButton.y,landing.callButton.z)}\neditor_description = "Anchor for the call button, right of the doors seen from the landing."`);
+    nodes.push(`[node name="Indicator" type="Marker3D" parent="${parent}"]\nposition = ${v3(landing.indicator.x,landing.indicator.y,landing.indicator.z)}\neditor_description = "Anchor for the floor indicator above the doors."`);
   }
   const sceneNodes=options.collision===false?nodes.filter(n=>!/^\[node[^\n]*type="(?:StaticBody3D|CollisionShape3D)"/.test(n)):nodes;
   const sceneResources=options.collision===false?resources.filter(r=>!/^\[sub_resource type="BoxShape3D"/.test(r)):resources;

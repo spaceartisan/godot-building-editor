@@ -405,6 +405,7 @@ export class Preview3D{
       const put=(box,color,dy=0)=>{const p=applyYaw(box.pos.x,box.pos.z,yaw);addObj(objs,box.size,{x:el.x+p.x,y:layout.base+dy+box.pos.y,z:el.z+p.z},{x:0,y:yaw,z:0},color,{strokeAlpha:.35});Object.assign(objs.at(-1),{category:'story',floorIndex:bottom,elevatorId:el.id});};
       for(const box of layout.shaft)put(box,'#7d8087');
       for(const box of layout.car)put(box,'#a99f8a');
+      for(const leaf of layout.carDoors.leaves)put(leaf,'#b9c0c8');
       for(const landing of layout.landings)for(const leaf of landing.leaves)put(leaf,'#b9c0c8',landing.y);
     }
 

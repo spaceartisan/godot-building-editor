@@ -21,7 +21,8 @@ const GROUND_H = 3.6, GUEST_H = 3.0, SLAB = 0.25;
 // Stair cores at both ends of the north band; lift bay in the middle.
 const CORES = { w: { x0: -20, x1: -15, lanes: [-18.75, -16.25], door: -17.5 }, e: { x0: 15, x1: 20, lanes: [18.75, 16.25], door: 17.5 } };
 const BAY = { x0: -3.75, x1: 3.75 }, LIFT_Z = -2.2, LIFT = 2.6, LIFT_DEPTH = 2.4, LINEN_Z = -3.4;
-const LIFTS = [{ id: 'lift_a', label: 'Lift A', x: -1.3 }, { id: 'lift_b', label: 'Lift B', x: 1.3 }];
+// Lift B runs express past floor 2 (skipFloorIds): no landing or stop there.
+const LIFTS = [{ id: 'lift_a', label: 'Lift A', x: -1.3 }, { id: 'lift_b', label: 'Lift B', x: 1.3, skip: ['l2'] }];
 const PASSAGE_DOOR = 3.175;
 
 let ops = [];
@@ -151,5 +152,5 @@ for (const [side, c] of Object.entries(CORES)) {
     ops.push({ op: 'stair.guard', floorId: f, id: `st-${side}-${f}` });
   }
 }
-for (const l of LIFTS) ops.push({ op: 'elevator.add', id: l.id, value: { label: l.label, x: l.x, z: LIFT_Z, width: LIFT, depth: LIFT_DEPTH, doorSide: 'maxZ', doorWidth: 1.0, doorHeight: 2.2, bottomFloorId: FLOORS[0], topFloorId: FLOORS.at(-1) } });
+for (const l of LIFTS) ops.push({ op: 'elevator.add', id: l.id, value: { label: l.label, x: l.x, z: LIFT_Z, width: LIFT, depth: LIFT_DEPTH, doorSide: 'maxZ', doorWidth: 0.9, doorHeight: 2.2, bottomFloorId: FLOORS[0], topFloorId: FLOORS.at(-1), ...(l.skip ? { skipFloorIds: l.skip } : {}) } });
 tx('tx-4-circulation.edit.json', ops);

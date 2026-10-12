@@ -1,6 +1,7 @@
 {
   "engine": "4.5.1.stable.official.f62fdbde1",
   "script": "qa/validate-elevators.gd",
+  "note": "Also run by godot-check --assets: 2 elevators, 9 stops, 0 failures",
   "probes": [
     {
       "lift": "Elevator_001_Lift_A",
@@ -22,11 +23,11 @@
         "shaftZ": -1,
         "leafZ": -1.21,
         "jambX": -0.3,
-        "leaf": 0.55,
+        "leaf": 0.45,
         "farZ": -4,
         "backZ": -3.1
       },
-      "result": "ELEVATOR CHECK: 18 physics rays; 0 failures"
+      "result": "ELEVATOR CHECK: 19 physics rays; 0 failures"
     },
     {
       "lift": "Elevator_002_Lift_B",
@@ -37,7 +38,6 @@
         "z": -2.2,
         "stops": [
           0,
-          3.85,
           7.1,
           10.35,
           13.6
@@ -48,11 +48,11 @@
         "shaftZ": -1,
         "leafZ": -1.21,
         "jambX": 2.3,
-        "leaf": 0.55,
+        "leaf": 0.45,
         "farZ": -4,
         "backZ": -3.1
       },
-      "result": "ELEVATOR CHECK: 18 physics rays; 0 failures"
+      "result": "ELEVATOR CHECK: 16 physics rays; 0 failures"
     }
   ]
 }

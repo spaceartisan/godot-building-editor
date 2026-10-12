@@ -25,7 +25,7 @@ const tx=(ops,base)=>{const r=apply(ops,base);assert.equal(r.ok,true,JSON.string
 const fails=(ops,base,pattern)=>{const r=apply(ops,base);assert.equal(r.ok,false,'expected failure: '+JSON.stringify(ops));assert.match(JSON.stringify(r.errors),pattern);};
 const shell=tx(elevatorRecipe.slice(0,-1),blank),lifted=tx(elevatorRecipe.slice(-1),shell);
 {
-  assert.deepEqual(lifted.elevators,[{id:'lift',label:'Main lift',...ELEVATOR_DEFAULTS,x:3,z:2.5,width:2.4,depth:2.4,doorSide:'minZ',bottomFloorId:'floor_1',topFloorId:'f3'}]);
+  assert.deepEqual(lifted.elevators,[{id:'lift',label:'Main lift',...ELEVATOR_DEFAULTS,x:3,z:2.5,width:2.4,depth:2.4,doorWidth:0.8,doorSide:'minZ',bottomFloorId:'floor_1',topFloorId:'f3'}]);
   const moved=tx([{op:'elevator.update',id:'lift',value:{x:-3,doorSide:'maxX'}}],lifted);assert.equal(moved.elevators[0].x,-3);assert.equal(moved.elevators[0].doorSide,'maxX');
   assert.equal('elevators' in tx([{op:'elevator.remove',id:'lift'}],lifted),false,'removing the last elevator removes the list');
   const add=value=>[{op:'elevator.add',id:'e2',value:{x:-3,z:-2,bottomFloorId:'floor_1',topFloorId:'f2',...value}}];
@@ -35,10 +35,10 @@ const shell=tx(elevatorRecipe.slice(0,-1),blank),lifted=tx(elevatorRecipe.slice(
   fails(add({topFloorId:'nope'}),shell,/topFloorId nope is not a floor/);
   fails(add({bottomFloorId:'f2'}),shell,/must be above bottomFloorId/);
   fails(add({x:5.5}),shell,/runs through elevator/);
-  fails(add({doorWidth:2}),shell,/slide open inside the shaft/);
-  fails(add({width:2.4,doorWidth:1.0}),shell,/at most 0.95 m/);
+  fails(add({doorWidth:2}),shell,/slide open into its pocket in the car/);
+  fails(add({width:2.4,doorWidth:0.9}),shell,/at most 0.85 m for a 2.4 m wide shaft/);
   fails(add({doorHeight:2.8}),shell,/leave 0.2 m of wall/);
-  fails(add({width:1}),shell,/1.4–12 m/);
+  fails(add({width:2}),shell,/width must be 2.1–12 m/);
   fails(add({x:3,z:2}),lifted,/overlap/);
   fails([{op:'stair.add',floorId:'floor_1',id:'s',value:{x:3,z:0,width:1.2,run:4,direction:'north'}},...add({x:3,z:-1})],shell,/Stair .* overlaps elevator/);
   fails([{op:'elevator.update',id:'missing',value:{x:0}}],lifted,/Unknown elevator ID/);
@@ -92,6 +92,11 @@ const shell=tx(elevatorRecipe.slice(0,-1),blank),lifted=tx(elevatorRecipe.slice(
   const {size}=layout,[left,right]=layout.landings[0].leaves,travel=layout.landings[0].leafTravel,inner=size.width/2-.2;
   assert.ok(right.pos.x+right.size.x/2>size.doorWidth/2,'closed leaves overlap the jambs');
   assert.ok(right.pos.x-right.size.x/2+travel>=size.doorWidth/2-1e-9&&right.pos.x+right.size.x/2+travel<=inner+1e-9,'open leaves clear the opening and stay inside the shaft');
+  // Car doors: same leaves inside the car front; open, they stay inside the car's side walls.
+  const carRight=layout.carDoors.leaves[1],carSide=layout.car.find(b=>b.name==='Right'),carInner=carSide.pos.x-carSide.size.x/2;
+  assert.ok(carRight.pos.x-carRight.size.x/2+layout.carDoors.leafTravel>=size.doorWidth/2-1e-9&&carRight.pos.x+carRight.size.x/2+layout.carDoors.leafTravel<=carInner+1e-9,'open car doors clear the opening and stay inside the car');
+  const front=layout.car.find(b=>b.name==='FrontRight');assert.ok(carRight.pos.z<front.pos.z-front.size.z/2,'car doors are inside the car front');
+  assert.ok(right.pos.z-right.size.z/2>front.pos.z+front.size.z/2,'landing doors are outside the car');
   assert.equal(left.pos.x,-right.pos.x);
   console.log('PASS floor holes above the bottom stop; stops at each served floor');
 }
@@ -106,19 +111,42 @@ const shell=tx(elevatorRecipe.slice(0,-1),blank),lifted=tx(elevatorRecipe.slice(
   console.log('PASS route check links elevator landings and reports a blocked landing');
 }
 {
+  // skipFloorIds: the shaft passes floor 2 with no landing; stops and route links skip it.
+  const express=tx([{op:'elevator.update',id:'lift',value:{skipFloorIds:['f2']}}],lifted),layout=elevatorLayout(express,express.elevators[0]);
+  assert.deepEqual(layout.stops.map(s=>[s.name,s.floorId]),[['Stop_01','floor_1'],['Stop_02','f3']]);
+  assert.deepEqual(layout.landings.map(l=>l.floorId),['floor_1','f3']);
+  const header=layout.shaft.filter(b=>Math.abs(b.pos.x)<1e-9&&b.size.x===layout.size.doorWidth);
+  assert.equal(header.length,2);assert.ok(Math.abs(header[0].pos.y-header[0].size.y/2-2.1)<1e-9&&Math.abs(header[0].pos.y+header[0].size.y/2-5.96)<1e-9,'solid front wall from the ground-floor door top to the floor-3 landing');
+  assert.deepEqual(floorView(express,1).elevatorHoles.length,1,'the shaft still passes through the skipped floor');
+  const r=analyzeReachability(express);assert.deepEqual(r.unreachable.map(u=>u.floorId),['f2'],'the skipped floor is not served');
+  assert.deepEqual(analyzeReachability(tx([{op:'elevator.update',id:'lift',value:{skipFloorIds:[]}}],express)).unreachable,[],'an empty list serves every floor');
+  fails([{op:'elevator.update',id:'lift',value:{skipFloorIds:['floor_1']}}],lifted,/between the bottom and top stops/);
+  fails([{op:'elevator.update',id:'lift',value:{skipFloorIds:['f2','f2']}}],lifted,/lists f2 twice/);
+  fails([{op:'elevator.update',id:'lift',value:{skipFloorIds:'f2'}}],lifted,/skipFloorIds must be a list/);
+  // A wall in the skipped floor still may not cross the shaft (the car passes there).
+  fails([{op:'wall.add',floorId:'f2',id:'x',value:{a:{x:3,z:1},b:{x:3,z:4}}}],express,/runs through elevator/);
+  const t=exportGodotFiles(express).doors.find(d=>d.kind==='elevator').tscn;
+  assert.doesNotMatch(t,/Stop_03|Landing_03/);assert.match(t,/\[node name="Landing_02"[^\]]*\]\nposition = Vector3\(0, 5.96, 0\)/);
+  console.log('PASS skipFloorIds: no landing or stop on skipped floors, shaft still passes, route check skips them');
+}
+{
   const plain=exportGodotFiles(shell),files=exportGodotFiles(lifted),elev=files.doors.filter(d=>d.kind==='elevator');
   assert.doesNotMatch(plain.tscn,/Elevators|ElevatorScene/,'buildings without elevators export unchanged');
   assert.deepEqual(elev.map(d=>d.filename),['elevators/new_building_elevator_001_main_lift.tscn']);
   assert.match(files.tscn,/\[ext_resource type="PackedScene" path="elevators\/new_building_elevator_001_main_lift.tscn" id="ElevatorScene_001"\]/);
   assert.match(files.tscn,/\[node name="Elevator_001_Main_lift" parent="Elevators" instance=ExtResource\("ElevatorScene_001"\)\]\nposition = Vector3\(3, 0, 2.5\)\nrotation = Vector3\(0, 3.14159, 0\)/);
   const t=elev[0].tscn;
-  for(const name of ['Shaft','ShaftBody','Car','CarMesh','Stops','Stop_01','Stop_02','Stop_03','Landings','Landing_01','Landing_03','DoorLeft','DoorRight'])assert.match(t,new RegExp(`\\[node name="${name}"`));
+  for(const name of ['Shaft','ShaftBody','Car','CarMesh','CarDoorLeft','CarDoorRight','CarPanel','Stops','Stop_01','Stop_02','Stop_03','Landings','Landing_01','Landing_03','DoorLeft','DoorRight','CallButton','Indicator'])assert.match(t,new RegExp(`\\[node name="${name}"`));
+  assert.match(t,/\[node name="CarDoorLeft" type="AnimatableBody3D" parent="Car"\]\nposition = [^\n]+\ncollision_layer = \d+\ncollision_mask = \d+\nsync_to_physics = false/,'car doors follow the moving car');
+  assert.match(t,/\[node name="CallButton" type="Marker3D" parent="Landings\/Landing_02"\]/);assert.match(t,/\[node name="CarPanel" type="Marker3D" parent="Car"\]/);
+  for(const surface of ['ShaftOutside','ShaftInside','ShaftEdges','CarFloor','CarWalls','CarCeiling','Door'])assert.match(t,new RegExp(`"name": "${surface}"`),surface);
+  assert.match(t,/metadata\/shaft_size = Vector3\(2.4, 8.76, 2.4\)/);
   assert.match(t,/\[node name="Car" type="AnimatableBody3D" parent="\."\]/,'the car is the moving body');
   assert.match(t,/\[node name="DoorLeft" type="AnimatableBody3D" parent="Landings\/Landing_01"\]/,'door leaves are moving bodies');
   assert.match(t,/\[node name="CollisionShape_\d+" type="CollisionShape3D" parent="Car"\]/);
   const bare=exportGodotFiles(lifted,{collision:false}).doors.find(d=>d.kind==='elevator').tscn;
   assert.match(bare,/\[node name="Car" type="Node3D" parent="\."\]/);assert.doesNotMatch(bare,/CollisionShape3D|BoxShape3D|StaticBody3D|AnimatableBody3D|collision_layer/,'no collision when collision is off');
-  assert.match(t,/\nmetadata\/leaf_travel = 0.5\n/);
+  assert.match(t,/\nmetadata\/leaf_travel = 0.4\n/);
   assert.doesNotMatch(t,/^script = /m,'no scripts by default');
   assert.doesNotMatch(t,/"material": /,'materials stay empty');
   const layered=exportGodotFiles(lifted,{gameLayer:parseGameLayer({version:1,scripts:{elevator:'res://s/elevator.gd',door:'res://s/door.gd'},doorChildren:[{name:'Extra',scene:'res://x.tscn'}]})});

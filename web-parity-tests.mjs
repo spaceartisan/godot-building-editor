@@ -457,6 +457,16 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   await change($('#floor-select'),1);assert.equal(e.activeFloor(),1);
   e.visitDiagnosticTarget({type:'elevator',id:'elevator_1'});
   assert.equal(e.activeFloor(),0);assert.match($('#status-text').textContent,/Reviewing elevator · Main lift/);
+  // "Stops at" toggles equal skipFloorIds (three floors, so floor 2 can be skipped).
+  {
+    const three=tx([{op:'floor.add-top',aboveFloorId:'f2',id:'f3'},{op:'room.add',floorId:'f3',id:'t',value:{minX:-6,maxX:6,minZ:-5,maxZ:5}},{op:'elevator.update',id:'elevator_1',value:{topFloorId:'f3'}}],moved);
+    await e.loadBuildingData(structuredClone(three));
+    const toggle=()=>$('#elevator-list').children[0].children.find(c=>c.textContent?.startsWith('Stops at'))?.children[0];
+    assert.equal(toggle().checked,true);toggle().checked=false;await toggle().dispatch('change');
+    assert.deepEqual(e.snapshot(),tx([{op:'elevator.update',id:'elevator_1',value:{skipFloorIds:['f2']}}],three),'unchecking Stops at equals skipFloorIds');
+    toggle().checked=true;await toggle().dispatch('change');assert.deepEqual(e.snapshot(),three,'checking it again removes skipFloorIds');
+    await e.loadBuildingData(structuredClone(moved));
+  }
   // Delete key on the selected elevator equals elevator.remove.
   e.chooseSelection({type:'elevator',id:'elevator_1'});await e.window.dispatch('keydown',{key:'Delete'});
   assert.deepEqual(e.snapshot(),tx([{op:'elevator.remove',id:'elevator_1'}],moved),'Delete equals elevator.remove');

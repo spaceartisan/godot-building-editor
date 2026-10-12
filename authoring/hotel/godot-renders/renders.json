@@ -69,21 +69,6 @@
     },
     {
       "eye": [
-        -7,
-        8.7,
-        0.5
-      ],
-      "file": "floor3-lift-lobby.png",
-      "fov": 70,
-      "look": [
-        -0.5,
-        8.2,
-        -1.2
-      ],
-      "scene": "assets/meridian_hotel.tscn"
-    },
-    {
-      "eye": [
         -17,
         8.7,
         0

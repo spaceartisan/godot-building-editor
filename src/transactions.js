@@ -34,7 +34,7 @@ const fields={
   building:['name','exportProfile','wallHeight','wallThickness','floorThickness','gridSize','roof','ceiling','doorMesh','windowMesh','slabsByRoom'],
   floor:['label','elevation','wallHeight','floorThickness','autoFloor','autoCeiling','boundaryMode'],
   platform:['label',...rectKeys,'kind','height','covered','steps'],
-  elevator:['label','x','z','width','depth','doorSide','doorWidth','doorHeight','bottomFloorId','topFloorId'],
+  elevator:['label','x','z','width','depth','doorSide','doorWidth','doorHeight','bottomFloorId','topFloorId','skipFloorIds'],
   stair:['label','x','z','width','run','direction','style','steps','blockBelow'],
   wall:['label','role','height','a','b','wallTypeId','inwardSide','inwardToward'],
   // Building-level shared definitions (no floorId), as in the web dialogs.
@@ -67,6 +67,7 @@ function checkValue(kind,value,action,where){
     else if(kind==='elevator'){
       if(key==='doorSide')choice(v,ELEVATOR_DOOR_SIDES,p);
       else if(key==='bottomFloorId'||key==='topFloorId')text(v,p);
+      else if(key==='skipFloorIds'){if(!Array.isArray(v)||v.length>1000)fail('skipFloorIds must be a list of floor IDs',p);v.forEach((id,i)=>text(id,`${p}/${i}`));}
       else number(v,p,key==='x'||key==='z'?-1e6:.1,key==='x'||key==='z'?1e6:100);
     }
     else if(kind==='platform'){

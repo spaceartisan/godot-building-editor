@@ -76,13 +76,19 @@ func run_checks() -> void:
 		check(not door.is_empty() and absf(door.position.z - float(item.leafZ)) < 0.02 and hit_path(door).contains("Landing_%02d/Door" % (i + 1)), "Landing %d doors: %s at %s" % [i + 1, hit_path(door), str(door.get("position"))])
 		var jamb: Dictionary = ray(world, Vector3(item.jambX, y, item.approachZ), Vector3(item.jambX, y, z))
 		check(not jamb.is_empty() and absf(jamb.position.z - float(item.shaftZ)) < 0.02 and hit_path(jamb).contains("ShaftBody"), "Landing %d jamb: %s" % [i + 1, hit_path(jamb)])
-	# Car back at the bottom, landing doors slid open: the ray reaches the car's back wall.
+	# Car back at the bottom, landing and car doors slid open: the ray reaches the car's back wall.
 	car.position = (stops[0] as Node3D).position
 	var landing: Node3D = elevator.get_node("Landings/Landing_01") as Node3D
 	var left: Node3D = landing.get_node("DoorLeft") as Node3D
 	var right: Node3D = landing.get_node("DoorRight") as Node3D
 	left.position.x -= float(item.leaf)
 	right.position.x += float(item.leaf)
+	await settle()
+	# Landing doors open, car doors still closed: the car's own doors (riding with the car) block.
+	var car_closed: Dictionary = ray(world, Vector3(x, 1.0, item.approachZ), Vector3(x, 1.0, item.farZ))
+	check(not car_closed.is_empty() and hit_path(car_closed).contains("/Car/CarDoor"), "Car doors do not close the car: %s" % hit_path(car_closed))
+	(car.get_node("CarDoorLeft") as Node3D).position.x -= float(item.leaf)
+	(car.get_node("CarDoorRight") as Node3D).position.x += float(item.leaf)
 	await settle()
 	var inside: Dictionary = ray(world, Vector3(x, 1.0, item.approachZ), Vector3(x, 1.0, item.farZ))
 	check(not inside.is_empty() and absf(inside.position.z - float(item.backZ)) < 0.03 and hit_path(inside).ends_with("/Car"), "Open doors do not lead into the car: %s at %s" % [hit_path(inside), str(inside.get("position"))])

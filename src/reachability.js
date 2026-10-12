@@ -151,11 +151,11 @@ export function analyzeReachability(building,options={}){
 
   // Elevators link the cells just outside their landing doors on every served floor.
   for(const e of building.elevators||[]){
-    const {bottom,top}=elevatorFloorRange(building,e);if(bottom<0||top<=bottom)continue;
+    const {served}=elevatorFloorRange(building,e);if(served.length<2)continue;
     const fp=elevatorFootprint(e),{doorWidth,doorSide}=elevatorSize(e),half=Math.max(.05,doorWidth/2-radius),out=cell*1.5+radius;
     const landing=offset=>doorSide==='minZ'?{x:e.x+offset,z:fp.minZ-out}:doorSide==='maxZ'?{x:e.x+offset,z:fp.maxZ+out}:doorSide==='minX'?{x:fp.minX-out,z:e.z+offset}:{x:fp.maxX+out,z:e.z+offset};
     const stops=[];
-    for(let fi=bottom;fi<=top;fi++){
+    for(const fi of served){
       const cells=[-half,0,half].map(o=>cellOf(landing(o))).filter(k=>k>=0&&walkable[fi][k]).map(k=>fi*n+k);
       if(!cells.length)stairIssues.push({floorId:floors[fi].id,elevatorId:e.id,label:e.label||e.id,issue:'elevator-landing-blocked'});
       stops.push(cells);

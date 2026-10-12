@@ -512,6 +512,7 @@ function human(result,verbose){
     lines.push(p.note);
   }
   if(result.mode==='assets')lines.push('Asset resource checks only; no building-specific walking/headroom probes.');
+  if(result.mode==='assets'&&result.checks?.elevators)lines.push(`Elevator probes: ${result.checks.elevators} elevators, ${result.checks.elevatorStops} stops (car floor at each stop, closed and opened doors, clear shaft)`);
   if(result.render)lines.push(`Rendered ${result.render.images} views${result.render.virtualDisplay?' (virtual display)':''}${result.render.renderer?' · '+result.render.renderer:''}: ${result.render.output}`);
   if(result.checks)lines.push(`${result.checks.scenes} scenes · ${result.checks.physicsRays} physics rays · ${result.checks.trimmedMeshComparisons} trimmed mesh comparisons · ${result.checks.failures} failures`);
   if(result.output)lines.push('Output: '+result.output);

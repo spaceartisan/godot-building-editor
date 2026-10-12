@@ -171,7 +171,7 @@
         "width": 2.6,
         "depth": 2.4,
         "doorSide": "maxZ",
-        "doorWidth": 1,
+        "doorWidth": 0.9,
         "doorHeight": 2.2,
         "bottomFloorId": "floor_1",
         "topFloorId": "l5"
@@ -187,10 +187,13 @@
         "width": 2.6,
         "depth": 2.4,
         "doorSide": "maxZ",
-        "doorWidth": 1,
+        "doorWidth": 0.9,
         "doorHeight": 2.2,
         "bottomFloorId": "floor_1",
-        "topFloorId": "l5"
+        "topFloorId": "l5",
+        "skipFloorIds": [
+          "l2"
+        ]
       }
     }
   ]

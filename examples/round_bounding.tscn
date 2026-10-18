@@ -391,6 +391,8 @@ editor_description = "Window/door reveals and wall-thickness faces."
 [node name="Door_001_Door" parent="Floor_01/Geometry/Doors" instance=ExtResource("F01_DoorScene_001")]
 position = Vector3(-3.4941, 0, -2.0118)
 rotation = Vector3(0, 1.10715, 0)
+metadata/building_opening_id = "door_hh3e3c"
+metadata/building_opening_label = "Door"
 
 [node name="ExteriorCollision_001" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(-4, 1.4, 0)
@@ -479,6 +481,8 @@ shape = SubResource("CeilingShape_16")
 [node name="Door_001_Door" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(-3.4941, 1.05, -2.0118)
 rotation = Vector3(0, 1.10715, 0)
+metadata/building_opening_id = "door_hh3e3c"
+metadata/building_opening_label = "Door"
 
 [node name="Roof" type="Node3D" parent="Floor_01/Geometry"]
 

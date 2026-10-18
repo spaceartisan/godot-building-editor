@@ -35,6 +35,10 @@ backface_collision = true
 
 [node name="Door" type="Node3D"]
 editor_description = "Room door. Attach your door script manually to this root. Custom outline: Panel is the movable pivot. Add sliding or other movement in Godot; no movement script is included."
+metadata/door_width = 3
+metadata/door_height = 2.4
+metadata/door_leaves = 1
+metadata/door_style = "custom"
 
 [node name="Frame" type="MeshInstance3D" parent="."]
 position = Vector3(0, 1.2, 0)

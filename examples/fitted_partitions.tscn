@@ -173,3 +173,5 @@ shape = SubResource("FloorShape_2")
 [node name="Door_001_Open_passage" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(0, 1.05, 1)
 rotation = Vector3(0, 0, 0)
+metadata/building_opening_id = "passage"
+metadata/building_opening_label = "Open passage"

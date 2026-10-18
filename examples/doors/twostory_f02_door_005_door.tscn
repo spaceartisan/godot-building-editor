@@ -70,6 +70,10 @@ size = Vector3(1.0396, 2.0298, 0.42)
 
 [node name="Door" type="Node3D"]
 editor_description = "Closet door. Attach your door script manually to this root. Set double_hinge = true; expected hinge paths: $Hinge and $Hinge2."
+metadata/door_width = 1
+metadata/door_height = 2.1
+metadata/door_leaves = 2
+metadata/door_style = "closet"
 
 [node name="Frame" type="MeshInstance3D" parent="."]
 position = Vector3(0, 1.05, 0)
@@ -83,6 +87,7 @@ position = Vector3(0.20865, 1.05, 0)
 mesh = SubResource("DoorLeafLeftMesh")
 
 [node name="AnimatableBody3D" type="AnimatableBody3D" parent="Hinge"]
+sync_to_physics = false
 collision_layer = 4
 collision_mask = 2
 
@@ -98,6 +103,7 @@ position = Vector3(-0.20865, 1.05, 0)
 mesh = SubResource("DoorLeafRightMesh")
 
 [node name="AnimatableBody3D" type="AnimatableBody3D" parent="Hinge2"]
+sync_to_physics = false
 collision_layer = 4
 collision_mask = 2
 

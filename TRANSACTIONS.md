@@ -1,5 +1,7 @@
 # CLI authoring transactions (format 1)
 
+> Start with the [README](README.md) (what the tool makes, and its **Scope**: what stays in Godot) and [LLM_GUIDE.md](LLM_GUIDE.md) (workflow, recipes and the export names table). This page is a reference for one part.
+
 Transactions edit an existing building blueprint; `node cli.mjs new --out NEW.json` creates a blank one-floor starting blueprint (floor ID `floor_1`). The web editor remains available for drawing and visual inspection. Supported edits cover building settings (name, default story dimensions, wall thickness, automatic-roof type, ceiling thickness, export profile), shared wall types and doorway shapes, walls (including their wall type and inward side), omni lights, openings, independent manual roofs, rectangular/polygon regions, markers, Floor Footprints, manual floors and ceilings, group moves, floor creation/insertion/duplication/reordering/removal, existing floor labels/dimension overrides/automatic-surface switches/boundary mode, door/window mesh settings, porch/deck creation/update/removal, stair creation/update/removal and elevators (`elevator.add/update/remove`, including skipped floors): every editing capability of the web editor. Materials stay empty by design.
 
 ## Inspect, review, save

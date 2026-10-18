@@ -365,6 +365,8 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   const expected=exportGodotFiles(g.snapshot(),{collision:true,markers:false,placeholderMaterials:false,shareDoorScenes:false,gameLayer:parseGameLayer(spec)});
   const zip=Buffer.from(await blobs[0].arrayBuffer());
   assert.ok(zip.includes(Buffer.from(expected.tscn))&&expected.doors.every(d=>zip.includes(Buffer.from(d.tscn))),'the web package carries the same layered scenes as --game-layer');
+  const {gameLayerSurfaceGaps}=await import('./src/game-layer.js'),gaps=gameLayerSurfaceGaps(expected,parseGameLayer(spec));
+  assert.ok(gaps.includes('InsideFaces'));assert.ok($g('#status-text').textContent.includes(`Note: the game layer leaves these surfaces without a material: ${gaps.join(', ')}.`),'same unmapped-surface note as the CLI');
   await $g('#godot-render-btn').click();
   const plain=exportGodotFiles(g.snapshot(),{collision:true,markers:false,placeholderMaterials:false,shareDoorScenes:false});
   assert.deepEqual(JSON.parse(calls[0].body).files,[{name:plain.tscnName,text:plain.tscn},...plain.doors.map(d=>({name:d.filename,text:d.tscn}))],'Render in Godot posts the plain export');

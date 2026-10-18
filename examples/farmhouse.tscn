@@ -994,6 +994,8 @@ editor_description = "Interior wall tops, bottoms, jambs, and exposed ends."
 position = Vector3(6.992, 1.425, 6)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("F01_WindowMesh_001")
+metadata/building_opening_id = "window_035r08"
+metadata/building_opening_label = "Window"
 
 [node name="Window_001_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(6.992, 1.425, 6)
@@ -1004,6 +1006,8 @@ shape = SubResource("WindowShape_1")
 position = Vector3(-6.98878, 1.425, 6)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("F01_WindowMesh_002")
+metadata/building_opening_id = "window_jfa13z"
+metadata/building_opening_label = "Window"
 
 [node name="Window_002_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(-6.98878, 1.425, 6)
@@ -1014,6 +1018,8 @@ shape = SubResource("WindowShape_2")
 position = Vector3(-3.98894, 1.425, 6)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("F01_WindowMesh_003")
+metadata/building_opening_id = "window_l95qn5"
+metadata/building_opening_label = "Window"
 
 [node name="Window_003_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(-3.98894, 1.425, 6)
@@ -1024,6 +1030,8 @@ shape = SubResource("WindowShape_3")
 position = Vector3(4.00532, 1.425, 6)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("F01_WindowMesh_004")
+metadata/building_opening_id = "window_sap8ms"
+metadata/building_opening_label = "Window"
 
 [node name="Window_004_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(4.00532, 1.425, 6)
@@ -1034,6 +1042,8 @@ shape = SubResource("WindowShape_4")
 position = Vector3(-6.99326, 1.425, -10)
 rotation = Vector3(0, -3.14159, 0)
 mesh = SubResource("F01_WindowMesh_005")
+metadata/building_opening_id = "window_6q02bu"
+metadata/building_opening_label = "Window"
 
 [node name="Window_005_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(-6.99326, 1.425, -10)
@@ -1044,6 +1054,8 @@ shape = SubResource("WindowShape_5")
 position = Vector3(-4.00715, 1.425, -10)
 rotation = Vector3(0, -3.14159, 0)
 mesh = SubResource("F01_WindowMesh_006")
+metadata/building_opening_id = "window_hyla1o"
+metadata/building_opening_label = "Window"
 
 [node name="Window_006_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(-4.00715, 1.425, -10)
@@ -1054,6 +1066,8 @@ shape = SubResource("WindowShape_6")
 position = Vector3(3.9787, 1.425, -10)
 rotation = Vector3(0, -3.14159, 0)
 mesh = SubResource("F01_WindowMesh_007")
+metadata/building_opening_id = "window_deux8z"
+metadata/building_opening_label = "Window"
 
 [node name="Window_007_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(3.9787, 1.425, -10)
@@ -1064,6 +1078,8 @@ shape = SubResource("WindowShape_7")
 position = Vector3(0.00094, 1.425, -10)
 rotation = Vector3(0, -3.14159, 0)
 mesh = SubResource("F01_WindowMesh_008")
+metadata/building_opening_id = "window_c7v6z5"
+metadata/building_opening_label = "Window"
 
 [node name="Window_008_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(0.00094, 1.425, -10)
@@ -1074,6 +1090,8 @@ shape = SubResource("WindowShape_8")
 position = Vector3(10, 1.425, 3.0117)
 rotation = Vector3(0, 1.5708, 0)
 mesh = SubResource("F01_WindowMesh_009")
+metadata/building_opening_id = "window_tw4v27"
+metadata/building_opening_label = "Window"
 
 [node name="Window_009_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(10, 1.425, 3.0117)
@@ -1084,6 +1102,8 @@ shape = SubResource("WindowShape_9")
 position = Vector3(10, 1.425, -6.99136)
 rotation = Vector3(0, 1.5708, 0)
 mesh = SubResource("F01_WindowMesh_010")
+metadata/building_opening_id = "window_akgbmx"
+metadata/building_opening_label = "Window"
 
 [node name="Window_010_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(10, 1.425, -6.99136)
@@ -1094,6 +1114,8 @@ shape = SubResource("WindowShape_10")
 position = Vector3(-10, 1.425, -7.00445)
 rotation = Vector3(0, 1.5708, 0)
 mesh = SubResource("F01_WindowMesh_011")
+metadata/building_opening_id = "window_p4mebz"
+metadata/building_opening_label = "Window"
 
 [node name="Window_011_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(-10, 1.425, -7.00445)
@@ -1104,6 +1126,8 @@ shape = SubResource("WindowShape_11")
 position = Vector3(-10, 1.425, 3.00426)
 rotation = Vector3(0, 1.5708, 0)
 mesh = SubResource("F01_WindowMesh_012")
+metadata/building_opening_id = "window_b8cmg5"
+metadata/building_opening_label = "Window"
 
 [node name="Window_012_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(-10, 1.425, 3.00426)
@@ -1114,6 +1138,8 @@ shape = SubResource("WindowShape_12")
 position = Vector3(-10, 1.425, -1.9938)
 rotation = Vector3(0, 1.5708, 0)
 mesh = SubResource("F01_WindowMesh_013")
+metadata/building_opening_id = "window_r2xheq"
+metadata/building_opening_label = "Window"
 
 [node name="Window_013_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(-10, 1.425, -1.9938)
@@ -1124,6 +1150,8 @@ shape = SubResource("WindowShape_13")
 position = Vector3(10, 1.425, -2.00526)
 rotation = Vector3(0, 1.5708, 0)
 mesh = SubResource("F01_WindowMesh_014")
+metadata/building_opening_id = "window_g49l45"
+metadata/building_opening_label = "Window"
 
 [node name="Window_014_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(10, 1.425, -2.00526)
@@ -1135,26 +1163,38 @@ shape = SubResource("WindowShape_14")
 [node name="Door_001_Door" parent="Floor_01/Geometry/Doors" instance=ExtResource("F01_DoorScene_001")]
 position = Vector3(-0.00733, 0, 6)
 rotation = Vector3(0, 0, 0)
+metadata/building_opening_id = "door_qjglyw"
+metadata/building_opening_label = "Door"
 
 [node name="Door_002_Door" parent="Floor_01/Geometry/Doors" instance=ExtResource("F01_DoorScene_002")]
 position = Vector3(-2, 0, 2.98361)
 rotation = Vector3(0, 1.5708, 0)
+metadata/building_opening_id = "door_wd18fz"
+metadata/building_opening_label = "Door"
 
 [node name="Door_003_Door" parent="Floor_01/Geometry/Doors" instance=ExtResource("F01_DoorScene_003")]
 position = Vector3(-2, 0, -3.00471)
 rotation = Vector3(0, 1.5708, 0)
+metadata/building_opening_id = "door_0h9vpa"
+metadata/building_opening_label = "Door"
 
 [node name="Door_004_Door" parent="Floor_01/Geometry/Doors" instance=ExtResource("F01_DoorScene_004")]
 position = Vector3(-2, 0, -6.47964)
 rotation = Vector3(0, 1.5708, 0)
+metadata/building_opening_id = "door_ybdcl0"
+metadata/building_opening_label = "Door"
 
 [node name="Door_005_Door" parent="Floor_01/Geometry/Doors" instance=ExtResource("F01_DoorScene_005")]
 position = Vector3(6.98387, 0, -10)
 rotation = Vector3(0, -3.14159, 0)
+metadata/building_opening_id = "door_6futcd"
+metadata/building_opening_label = "Door"
 
 [node name="Door_006_Door" parent="Floor_01/Geometry/Doors" instance=ExtResource("F01_DoorScene_006")]
 position = Vector3(-8.01599, 0, -3.5)
 rotation = Vector3(0, -3.14159, 0)
+metadata/building_opening_id = "door_z1it5h"
+metadata/building_opening_label = "Door"
 
 [node name="ExteriorCollision_001" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(-10, 2, -8.87222)
@@ -1671,82 +1711,122 @@ shape = SubResource("RailingShape_110")
 [node name="Door_001_Door" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(-0.00733, 1.05, 6)
 rotation = Vector3(0, 0, 0)
+metadata/building_opening_id = "door_qjglyw"
+metadata/building_opening_label = "Door"
 
 [node name="Window_002_Window" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(6.992, 1.425, 6)
 rotation = Vector3(0, 0, 0)
+metadata/building_opening_id = "window_035r08"
+metadata/building_opening_label = "Window"
 
 [node name="Window_003_Window" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(-6.98878, 1.425, 6)
 rotation = Vector3(0, 0, 0)
+metadata/building_opening_id = "window_jfa13z"
+metadata/building_opening_label = "Window"
 
 [node name="Window_004_Window" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(-3.98894, 1.425, 6)
 rotation = Vector3(0, 0, 0)
+metadata/building_opening_id = "window_l95qn5"
+metadata/building_opening_label = "Window"
 
 [node name="Window_005_Window" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(4.00532, 1.425, 6)
 rotation = Vector3(0, 0, 0)
+metadata/building_opening_id = "window_sap8ms"
+metadata/building_opening_label = "Window"
 
 [node name="Window_006_Window" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(-6.99326, 1.425, -10)
 rotation = Vector3(0, -3.14159, 0)
+metadata/building_opening_id = "window_6q02bu"
+metadata/building_opening_label = "Window"
 
 [node name="Window_007_Window" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(-4.00715, 1.425, -10)
 rotation = Vector3(0, -3.14159, 0)
+metadata/building_opening_id = "window_hyla1o"
+metadata/building_opening_label = "Window"
 
 [node name="Window_008_Window" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(3.9787, 1.425, -10)
 rotation = Vector3(0, -3.14159, 0)
+metadata/building_opening_id = "window_deux8z"
+metadata/building_opening_label = "Window"
 
 [node name="Window_009_Window" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(0.00094, 1.425, -10)
 rotation = Vector3(0, -3.14159, 0)
+metadata/building_opening_id = "window_c7v6z5"
+metadata/building_opening_label = "Window"
 
 [node name="Window_010_Window" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(10, 1.425, 3.0117)
 rotation = Vector3(0, 1.5708, 0)
+metadata/building_opening_id = "window_tw4v27"
+metadata/building_opening_label = "Window"
 
 [node name="Window_011_Window" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(10, 1.425, -6.99136)
 rotation = Vector3(0, 1.5708, 0)
+metadata/building_opening_id = "window_akgbmx"
+metadata/building_opening_label = "Window"
 
 [node name="Window_012_Window" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(-10, 1.425, -7.00445)
 rotation = Vector3(0, 1.5708, 0)
+metadata/building_opening_id = "window_p4mebz"
+metadata/building_opening_label = "Window"
 
 [node name="Window_013_Window" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(-10, 1.425, 3.00426)
 rotation = Vector3(0, 1.5708, 0)
+metadata/building_opening_id = "window_b8cmg5"
+metadata/building_opening_label = "Window"
 
 [node name="Window_014_Window" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(-10, 1.425, -1.9938)
 rotation = Vector3(0, 1.5708, 0)
+metadata/building_opening_id = "window_r2xheq"
+metadata/building_opening_label = "Window"
 
 [node name="Window_015_Window" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(10, 1.425, -2.00526)
 rotation = Vector3(0, 1.5708, 0)
+metadata/building_opening_id = "window_g49l45"
+metadata/building_opening_label = "Window"
 
 [node name="Door_016_Door" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(-2, 1.05, 2.98361)
 rotation = Vector3(0, 1.5708, 0)
+metadata/building_opening_id = "door_wd18fz"
+metadata/building_opening_label = "Door"
 
 [node name="Door_017_Door" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(-2, 1.05, -3.00471)
 rotation = Vector3(0, 1.5708, 0)
+metadata/building_opening_id = "door_0h9vpa"
+metadata/building_opening_label = "Door"
 
 [node name="Door_018_Door" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(-2, 1.05, -6.47964)
 rotation = Vector3(0, 1.5708, 0)
+metadata/building_opening_id = "door_ybdcl0"
+metadata/building_opening_label = "Door"
 
 [node name="Door_019_Door" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(6.98387, 1.05, -10)
 rotation = Vector3(0, -3.14159, 0)
+metadata/building_opening_id = "door_6futcd"
+metadata/building_opening_label = "Door"
 
 [node name="Door_020_Door" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(-8.01599, 1.05, -3.5)
 rotation = Vector3(0, -3.14159, 0)
+metadata/building_opening_id = "door_z1it5h"
+metadata/building_opening_label = "Door"
 
 [node name="Roof" type="Node3D" parent="Floor_01/Geometry"]
 

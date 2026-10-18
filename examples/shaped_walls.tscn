@@ -182,6 +182,8 @@ editor_description = "Window/door reveals and wall-thickness faces."
 position = Vector3(2.65, 1.425, 0)
 rotation = Vector3(0, -1.5708, 0)
 mesh = SubResource("F01_WindowMesh_001")
+metadata/building_opening_id = "window"
+metadata/building_opening_label = "Recessed window"
 
 [node name="Window_001_Recessed_window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["sight_transparent"]]
 position = Vector3(2.65, 1.425, 0)
@@ -193,6 +195,8 @@ shape = SubResource("WindowShape_1")
 [node name="Door_001_Entry" parent="Floor_01/Geometry/Doors" instance=ExtResource("F01_DoorScene_001")]
 position = Vector3(0, 0, -3)
 rotation = Vector3(0, 0, 0)
+metadata/building_opening_id = "entry"
+metadata/building_opening_label = "Entry"
 
 [node name="ShapedWallCollision" type="CollisionShape3D" parent="Floor_01/Collision"]
 shape = SubResource("ProfileWallShape_2")
@@ -216,10 +220,14 @@ shape = SubResource("CeilingShape_4")
 [node name="Door_001_Entry" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(0, 1.05, -3)
 rotation = Vector3(0, 0, 0)
+metadata/building_opening_id = "entry"
+metadata/building_opening_label = "Entry"
 
 [node name="Window_002_Recessed_window" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(2.65, 1.425, 0)
 rotation = Vector3(0, -1.5708, 0)
+metadata/building_opening_id = "window"
+metadata/building_opening_label = "Recessed window"
 
 [node name="Roof" type="Node3D" parent="Floor_01/Geometry"]
 

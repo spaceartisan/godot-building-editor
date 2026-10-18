@@ -471,6 +471,8 @@ shape = SubResource("UnderStairShape_12")
 [node name="Door_001_West_passage" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(-2.25, 1.05, 0)
 rotation = Vector3(0, 0, 0)
+metadata/building_opening_id = "openings_9"
+metadata/building_opening_label = "West passage"
 
 [node name="Floor_02" type="Node3D" parent="."]
 position = Vector3(0, 2.98, 0)
@@ -615,3 +617,5 @@ shape = SubResource("FloorShape_32")
 [node name="Door_001_West_passage" type="Marker3D" parent="Floor_02/Openings"]
 position = Vector3(-2.25, 1.05, 0)
 rotation = Vector3(0, 0, 0)
+metadata/building_opening_id = "openings_19"
+metadata/building_opening_label = "West passage"

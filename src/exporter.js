@@ -31,6 +31,9 @@ const nodeClean = s => clean(s).replace(/\s+/g,'_');
 // so an unescaped backslash, quote or newline in a label would corrupt the scene.
 export const tscnText = s => String(s).replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\r\n|\r|\n/g,'\\n').replace(/\t/g,'\\t');
 export const fileBase = name => (name || 'building').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_|_$/g,'').toLowerCase() || 'building';
+// Source opening ID and label on exported openings, so games match by recipe ID
+// instead of reconstructing node numbering.
+const openingMeta = o => `${o?.id?`\nmetadata/building_opening_id = ${JSON.stringify(String(o.id))}`:''}${o?.label?`\nmetadata/building_opening_label = ${JSON.stringify(String(o.label))}`:''}`;
 const fileSlug = name => (name || 'door').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_|_$/g,'').toLowerCase() || 'door';
 
 export function isExteriorWall(building, wall) {
@@ -1480,7 +1483,10 @@ export function exportDoorTscn(building, opening, options={}) {
   let interactionWidth=data.innerWidth+interactionWidthPadding;
   let interactionHeight=data.innerHeight;
   let interactionY=data.innerHeight/2;
-  nodes.push(`[node name="Door" type="Node3D"]\neditor_description = "${styleName} door. Attach your door script manually to this root.${hingeHint}"`);
+  // Opening size and leaf count for game scripts (interaction areas, sounds),
+  // as elevators carry door_width/door_height.
+  const doorLeaves=data.style==='rollup'?1:data.custom?1:isDouble?2:1;
+  nodes.push(`[node name="Door" type="Node3D"]\neditor_description = "${styleName} door. Attach your door script manually to this root.${hingeHint}"\nmetadata/door_width = ${fmt(data.width)}\nmetadata/door_height = ${fmt(data.height)}\nmetadata/door_leaves = ${doorLeaves}\nmetadata/door_style = ${JSON.stringify(data.custom?'custom':data.style)}`);
   if(frameRes) nodes.push(`[node name="Frame" type="MeshInstance3D" parent="."]\nposition = ${v3(0,data.height/2,0)}\nmesh = SubResource("DoorFrameMesh")`);
 
   if(data.style==='rollup'){
@@ -1540,12 +1546,12 @@ export function exportDoorTscn(building, opening, options={}) {
 
     nodes.push(`[node name="Hinge" type="Node3D" parent="."]\nposition = ${v3(leftHingeX,0,0)}`);
     if(leftRes) nodes.push(`[node name="DoorMesh" type="MeshInstance3D" parent="Hinge"]\nposition = ${v3(leftLeafX,leafY,0)}\nmesh = SubResource("DoorLeafLeftMesh")`);
-    nodes.push(`[node name="AnimatableBody3D" type="AnimatableBody3D" parent="Hinge"]\ncollision_layer = ${profile.doorLayer}\ncollision_mask = ${profile.bodyMask}`);
+    nodes.push(`[node name="AnimatableBody3D" type="AnimatableBody3D" parent="Hinge"]\nsync_to_physics = false\ncollision_layer = ${profile.doorLayer}\ncollision_mask = ${profile.bodyMask}`);
     nodes.push(`[node name="CollisionShape3D" type="CollisionShape3D" parent="Hinge/AnimatableBody3D"]\nposition = ${v3(leftLeafX,collisionY,0)}\nshape = SubResource("DoorShapeLeft")`);
 
     nodes.push(`[node name="Hinge2" type="Node3D" parent="."]\nposition = ${v3(rightHingeX,0,0)}`);
     if(rightRes) nodes.push(`[node name="DoorMesh" type="MeshInstance3D" parent="Hinge2"]\nposition = ${v3(rightLeafX,leafY,0)}\nmesh = SubResource("DoorLeafRightMesh")`);
-    nodes.push(`[node name="AnimatableBody3D" type="AnimatableBody3D" parent="Hinge2"]\ncollision_layer = ${profile.doorLayer}\ncollision_mask = ${profile.bodyMask}`);
+    nodes.push(`[node name="AnimatableBody3D" type="AnimatableBody3D" parent="Hinge2"]\nsync_to_physics = false\ncollision_layer = ${profile.doorLayer}\ncollision_mask = ${profile.bodyMask}`);
     nodes.push(`[node name="CollisionShape3D" type="CollisionShape3D" parent="Hinge2/AnimatableBody3D"]\nposition = ${v3(rightLeafX,collisionY,0)}\nshape = SubResource("DoorShapeRight")`);
   }else{
     const leafRes=multiSurfaceArrayMeshResource([
@@ -1560,9 +1566,11 @@ export function exportDoorTscn(building, opening, options={}) {
     const leafY=data.height/2;
     const collisionY=data.height/2+data.panelCenterY;
     interactionY=collisionY;
+    // Leaf bodies follow their rotating Hinge (sync_to_physics off): a synced
+    // AnimatableBody3D only follows its own local transform.
     nodes.push(`[node name="Hinge" type="Node3D" parent="."]\nposition = ${v3(hingeX,0,0)}`);
     if(leafRes) nodes.push(`[node name="DoorMesh" type="MeshInstance3D" parent="Hinge"]\nposition = ${v3(leafX,leafY,0)}\nmesh = SubResource("DoorLeafMesh")`);
-    nodes.push(`[node name="AnimatableBody3D" type="AnimatableBody3D" parent="Hinge"]\ncollision_layer = ${profile.doorLayer}\ncollision_mask = ${profile.bodyMask}`);
+    nodes.push(`[node name="AnimatableBody3D" type="AnimatableBody3D" parent="Hinge"]\nsync_to_physics = false\ncollision_layer = ${profile.doorLayer}\ncollision_mask = ${profile.bodyMask}`);
     nodes.push(`[node name="CollisionShape3D" type="CollisionShape3D" parent="Hinge/AnimatableBody3D"]\nposition = ${v3(leafX,collisionY,0)}\nshape = SubResource("DoorShape")`);
   }
 
@@ -1584,11 +1592,14 @@ export function exportDoorTscn(building, opening, options={}) {
 // named after the region; the rest keeps the plain name. Off: one piece.
 // Labelled solid/label regions of a story, in order, with unique node-name
 // suffixes (shared by the floor, ceiling and wall-face splits).
+// The exact region label and ID on per-room nodes: node names drop characters
+// outside A–Z a–z 0–9 _ - space, so games should match rooms by this metadata.
+const roomMeta=region=>`\nmetadata/building_room = ${JSON.stringify(String(region.label))}\nmetadata/building_region_id = ${JSON.stringify(String(region.id))}`;
 function storyRooms(view){
   const used=new Set();
   return (view.regions||[]).filter(r=>r.effect!=='void'&&typeof r.label==='string'&&r.label.trim()&&rectValid(r)).map(region=>{
     let suffix='_'+nodeClean(region.label),n=2;while(used.has(suffix.toLowerCase()))suffix=`_${nodeClean(region.label)}_${n++}`;used.add(suffix.toLowerCase());
-    return {suffix,room:region.label.replace(/["\\]/g,''),cells:regionAreaCells(region)};
+    return {suffix,room:region.label.replace(/["\\]/g,''),meta:roomMeta(region),cells:regionAreaCells(region)};
   });
 }
 export function slabPiecesByRoom(building,view,areas){
@@ -1600,7 +1611,7 @@ export function slabPiecesByRoom(building,view,areas){
     const inside=intersectPolygonAreas(rest,room.cells).filter(a=>areaSize(a)>1e-6);
     if(!inside.length)continue;
     rest=subtractPolygonAreas(rest,room.cells);
-    out.push({suffix:room.suffix,room:room.room,areas:inside});
+    out.push({suffix:room.suffix,room:room.room,meta:room.meta,areas:inside});
   }
   return rest.some(a=>areaSize(a)>1e-6)?[...out,{suffix:'',room:null,areas:rest.filter(a=>areaSize(a)>1e-6)}]:out;
 }
@@ -1611,7 +1622,7 @@ export function slabPiecesByRoom(building,view,areas){
 export function wallMeshPiecesByRoom(building,view,mesh){
   if(building.slabsByRoom!==true||!mesh?.vertices?.length)return [{suffix:'',room:null,mesh}];
   const rooms=storyRooms(view);if(!rooms.length)return [{suffix:'',room:null,mesh}];
-  const pieces=rooms.map(r=>({suffix:r.suffix,room:r.room,mesh:{vertices:[],normals:[],uvs:[]}})),rest={suffix:'',room:null,mesh:{vertices:[],normals:[],uvs:[]}};
+  const pieces=rooms.map(r=>({suffix:r.suffix,room:r.room,meta:r.meta,mesh:{vertices:[],normals:[],uvs:[]}})),rest={suffix:'',room:null,mesh:{vertices:[],normals:[],uvs:[]}};
   const lerp=(a,b,t)=>({p:{x:a.p.x+(b.p.x-a.p.x)*t,y:a.p.y+(b.p.y-a.p.y)*t,z:a.p.z+(b.p.z-a.p.z)*t},uv:{u:a.uv.u+(b.uv.u-a.uv.u)*t,v:a.uv.v+(b.uv.v-a.uv.v)*t}});
   const clip=(poly,n,d)=>{const out=[];for(let i=0;i<poly.length;i++){const a=poly[i],b=poly[(i+1)%poly.length],da=n.x*a.p.x+n.z*a.p.z-d,db=n.x*b.p.x+n.z*b.p.z-d;if(da<=1e-9)out.push(a);if((da>1e-9)!==(db>1e-9))out.push(lerp(a,b,da/(da-db)));}return out.length>=3?out:[];};
   const emit=(target,poly,normal)=>{for(let i=1;i<poly.length-1;i++)for(const v of [poly[0],poly[i],poly[i+1]]){target.vertices.push({...v.p});target.normals.push({...normal});target.uvs.push({...v.uv});}};
@@ -1896,7 +1907,7 @@ export function exportGodotTscn(building, options={collision:true, markers:true}
         resources.splice(resources.indexOf(exteriorResources.inside.text),1);
         for(const piece of wallMeshPiecesByRoom(building,view,exteriorResources.data.inside)){
           const id=`${exteriorResources.ids.inside}${piece.suffix}`,res=arrayMeshResource(piece.mesh,matExteriorInside,id,'InsideFaces');if(!res)continue;resources.push(res.text);
-          nodes.push(`[node name="InsideFaces${piece.suffix}" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/ExteriorWalls"]\nmesh = SubResource("${id}")\neditor_description = "${piece.room?`Inward-facing exterior faces in ${piece.room}.`:'Inward-facing faces of the exterior shell.'}"`);
+          nodes.push(`[node name="InsideFaces${piece.suffix}" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/ExteriorWalls"]\nmesh = SubResource("${id}")\neditor_description = "${piece.room?`Inward-facing exterior faces in ${piece.room}.`:'Inward-facing faces of the exterior shell.'}"${piece.meta||''}`);
         }
       }else if(exteriorResources.inside)nodes.push(`[node name="InsideFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/ExteriorWalls"]\nmesh = SubResource("${exteriorResources.ids.inside}")\neditor_description = "Inward-facing faces of the exterior shell."`);
       if(exteriorResources.edges)nodes.push(`[node name="EdgeFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/ExteriorWalls"]\nmesh = SubResource("${exteriorResources.ids.edges}")\neditor_description = "Window/door reveals and wall-thickness faces."`);
@@ -1912,7 +1923,7 @@ export function exportGodotTscn(building, options={collision:true, markers:true}
         resources.splice(resources.indexOf(interiorResources[key].text),1);
         for(const piece of wallMeshPiecesByRoom(building,view,interiorResources.data[key])){
           const id=`${interiorResources.ids[key]}${piece.suffix}`,res=arrayMeshResource(piece.mesh,material,id,surface);if(!res)continue;resources.push(res.text);
-          nodes.push(`[node name="${surface}${piece.suffix}" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/InteriorWalls"]\nmesh = SubResource("${id}")\neditor_description = "${piece.room?`Interior wall faces in ${piece.room}.`:description}"`);
+          nodes.push(`[node name="${surface}${piece.suffix}" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/InteriorWalls"]\nmesh = SubResource("${id}")\neditor_description = "${piece.room?`Interior wall faces in ${piece.room}.`:description}"${piece.meta||''}`);
         }
       }
       if(interiorResources.edges)nodes.push(`[node name="EdgeFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/InteriorWalls"]
@@ -1932,7 +1943,7 @@ editor_description = "Interior wall tops, bottoms, jambs, and exposed ends."`);
       const wall=findWall(view,safe.wallId),p=openingAnchor(view,safe),L=wallLength(wall),rotY=L>EPS?-Math.atan2(wall.b.z-wall.a.z,wall.b.x-wall.a.x):0;
       const y=safe.sill+safe.height/2;
       const name=`Window_${String(wi+1).padStart(3,'0')}${safe.label?'_'+nodeClean(safe.label):''}`;
-      nodes.push(`[node name="${name}" type="MeshInstance3D" parent="${floorName}/Geometry/Windows"]\nposition = ${v3(p.x,y,p.z)}\nrotation = ${v3(0,rotY,0)}\nmesh = SubResource("${resourceId}")`);
+      nodes.push(`[node name="${name}" type="MeshInstance3D" parent="${floorName}/Geometry/Windows"]\nposition = ${v3(p.x,y,p.z)}\nrotation = ${v3(0,rotY,0)}\nmesh = SubResource("${resourceId}")${openingMeta(safe)}`);
       if(options.collision){
         const shapeId=resId('WindowShape'),depth=Math.max(.02,Math.min(resource.data.frameDepth,building.wallThickness||resource.data.frameDepth));
         addRes('BoxShape3D',shapeId,[`size = ${v3(resource.data.width,resource.data.height,depth)}`]);
@@ -1946,7 +1957,7 @@ editor_description = "Interior wall tops, bottoms, jambs, and exposed ends."`);
       const safe=constrainedOpening(view,d.opening),wall=findWall(view,safe.wallId);if(!wall)continue;
       const p=openingAnchor(view,safe),L=wallLength(wall),rotY=L>EPS?-Math.atan2(wall.b.z-wall.a.z,wall.b.x-wall.a.x):0;
       const name=`Door_${d.number}${safe.label?'_'+nodeClean(safe.label):''}`;
-      nodes.push(`[node name="${name}" parent="${floorName}/Geometry/Doors" instance=ExtResource("${d.extId}")]\nposition = ${v3(p.x,0,p.z)}\nrotation = ${v3(0,rotY,0)}`);
+      nodes.push(`[node name="${name}" parent="${floorName}/Geometry/Doors" instance=ExtResource("${d.extId}")]\nposition = ${v3(p.x,0,p.z)}\nrotation = ${v3(0,rotY,0)}${openingMeta(safe)}`);
     }
 
     const lights=Array.isArray(floor.lights)?floor.lights:[];
@@ -1992,7 +2003,7 @@ editor_description = "Interior wall tops, bottoms, jambs, and exposed ends."`);
           if(floorRes)resources.push(floorRes.text);
           if(floorRes)nodes.push(`[node name="FloorSlab${piece.suffix}" type="MeshInstance3D" parent="${floorName}/Geometry"]
 mesh = SubResource("${floorMeshId}")
-editor_description = "${piece.room?`Automatic floor of ${piece.room}. `:'Automatic floor mesh after independent manual-floor overrides. '}Surfaces: TopFaces, BottomFaces, EdgeFaces."`);
+editor_description = "${piece.room?`Automatic floor of ${piece.room}. `:'Automatic floor mesh after independent manual-floor overrides. '}Surfaces: TopFaces, BottomFaces, EdgeFaces."${piece.meta||''}`);
         }
         if(options.collision){
           for(let pi=0;pi<floorRects.length;pi++){
@@ -2034,7 +2045,7 @@ shape = SubResource("${shapeId}")`);
           if(ceilingRes)resources.push(ceilingRes.text);
           if(ceilingRes)nodes.push(`[node name="Ceiling${piece.suffix}" type="MeshInstance3D" parent="${floorName}/Geometry"]
 mesh = SubResource("${ceilingMeshId}")
-editor_description = "${piece.room?`Automatic ceiling of ${piece.room}. `:'Automatic ceiling mesh after independent manual-ceiling overrides. '}Surfaces: RoomFaces, RoofSideFaces, EdgeFaces."`);
+editor_description = "${piece.room?`Automatic ceiling of ${piece.room}. `:'Automatic ceiling mesh after independent manual-ceiling overrides. '}Surfaces: RoomFaces, RoofSideFaces, EdgeFaces."${piece.meta||''}`);
         }
         if(options.collision){
           for(let pi=0;pi<ceilingRects.length;pi++){
@@ -2172,7 +2183,7 @@ shape = SubResource("${blockerShapeId}")`);
         const p=openingAnchor(view,safe),L=wallLength(wall),rotY=L>EPS?-Math.atan2(wall.b.z-wall.a.z,wall.b.x-wall.a.x):0;
         const y=safe.type==='door'?safe.height/2:safe.sill+safe.height/2;
         const name=`${safe.type==='door'?'Door':'Window'}_${String(++oi).padStart(3,'0')}${safe.label?'_'+nodeClean(safe.label):''}`;
-        nodes.push(`[node name="${name}" type="Marker3D" parent="${floorName}/Openings"]\nposition = ${v3(p.x,y,p.z)}\nrotation = ${v3(0,rotY,0)}`);
+        nodes.push(`[node name="${name}" type="Marker3D" parent="${floorName}/Openings"]\nposition = ${v3(p.x,y,p.z)}\nrotation = ${v3(0,rotY,0)}${openingMeta(safe)}`);
       }
     }
 
@@ -2384,6 +2395,7 @@ export function downloadGodotPackage(building, options={collision:true,markers:t
   const packageFiles=[{name:f.tscnName,data:f.tscn},...f.doors.map(d=>({name:d.filename,data:d.tscn}))];
   const blob=makeStoredZip(packageFiles);
   downloadBlob(`${f.base}_godot.zip`,blob,1000);
+  return f;
 }
 
 // Backwards-compatible name used by older editor code. The export is now a

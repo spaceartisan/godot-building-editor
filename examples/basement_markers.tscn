@@ -576,6 +576,8 @@ shape = SubResource("UnderStairShape_14")
 [node name="Door_001_Passage" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(-2, 1.05, 1.6)
 rotation = Vector3(0, -1.5708, 0)
+metadata/building_opening_id = "basement_passage"
+metadata/building_opening_label = "Passage"
 
 [node name="Floor_02" type="Node3D" parent="."]
 editor_description = "Ground floor; elevation 0m"
@@ -719,6 +721,8 @@ shape = SubResource("CeilingShape_31")
 [node name="Door_001_Passage" type="Marker3D" parent="Floor_02/Openings"]
 position = Vector3(-2, 1.05, 1.6)
 rotation = Vector3(0, -1.5708, 0)
+metadata/building_opening_id = "ground_passage"
+metadata/building_opening_label = "Passage"
 
 [node name="Roof" type="Node3D" parent="Floor_02/Geometry"]
 

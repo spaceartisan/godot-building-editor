@@ -25,7 +25,7 @@ import { endpointMoveTargets, proposeEndpointMove, proposeWallSplit } from './wa
 import { stairGuardRailings } from './stair-guards.js';
 import { roofPolygonBounds, convexOutline } from './roof-outline.js';
 import { DOOR_LEAF_STYLES, doorLeafCount } from './opening-shapes.js';
-import { parseGameLayer } from './game-layer.js';
+import { parseGameLayer, gameLayerSurfaceGaps } from './game-layer.js';
 import { WebPreview3D as Preview3D, webReviewDescription } from './preview-web.js';
 import { createHistory } from './history.js';
 import { assertValidBuilding, validateBuilding } from './validation.js';
@@ -1108,9 +1108,9 @@ $('#export-btn').addEventListener('click',()=>{
   try{
     const result=showValidation();
     if(result.errors.length){revealValidation();setStatus(`Export blocked: ${result.errors[0].message}`);return;}
-    downloadGodotTscn(building,exportOptionsFromUi());
+    const files=downloadGodotTscn(building,exportOptionsFromUi()),gaps=gameLayerSurfaceGaps(files,gameLayer);
     if(result.warnings.length)revealValidation();
-    setStatus(`Godot package exported. ${result.warnings.length} authoring warnings; see Godot Export.`);
+    setStatus(`Godot package exported. ${result.warnings.length} authoring warnings; see Godot Export.${gaps.length?` Note: the game layer leaves these surfaces without a material: ${gaps.join(', ')}.`:''}`);
   }catch(err){revealValidation();setStatus(`Export blocked: ${err.message}`);}
 });
 document.querySelectorAll('[data-view]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b===btn));cancelDrawing();const plan=btn.dataset.view==='plan';$('#plan-view').classList.toggle('active',plan);$('#preview-view').classList.toggle('active',!plan);if(!plan){preview.resize();preview.rebuild(building,activeFloorIndex);}}));

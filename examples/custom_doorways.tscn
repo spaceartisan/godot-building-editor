@@ -166,6 +166,8 @@ editor_description = "Interior wall tops, bottoms, jambs, and exposed ends."
 [node name="Door_001_Custom_doorway" parent="Floor_01/Geometry/Doors" instance=ExtResource("F01_DoorScene_001")]
 position = Vector3(0, 0, -3)
 rotation = Vector3(0, 0, 0)
+metadata/building_opening_id = "opening"
+metadata/building_opening_label = "Custom doorway"
 
 [node name="ShapedWallCollision" type="CollisionShape3D" parent="Floor_01/Collision"]
 shape = SubResource("ProfileWallShape_1")
@@ -181,11 +183,17 @@ shape = SubResource("FloorShape_2")
 [node name="Door_001_Custom_doorway" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(0, 1.2, -3)
 rotation = Vector3(0, 0, 0)
+metadata/building_opening_id = "opening"
+metadata/building_opening_label = "Custom doorway"
 
 [node name="Door_002_Open_airlock" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(0, 1.25, 0)
 rotation = Vector3(0, 0, 0)
+metadata/building_opening_id = "passage"
+metadata/building_opening_label = "Open airlock"
 
 [node name="Door_003_Arched_exit" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(0, 1.2, 3)
 rotation = Vector3(0, -3.14159, 0)
+metadata/building_opening_id = "archway"
+metadata/building_opening_label = "Arched exit"

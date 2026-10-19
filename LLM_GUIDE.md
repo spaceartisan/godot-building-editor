@@ -155,6 +155,8 @@ Games hook into exported scenes by node name, so these names are a contract. `NN
 
 **Export profile.** `generic` (the default) uses the groups `building_lights` and `sight_transparent` and door collision layer/mask 1. `get_probed` adds GET PROBED's groups (`paranormal_lights`, `scare_sight_transparent`), door layer 4/mask 2 and the door `InteractionArea`. `node cli.mjs new` writes `exportProfile: "generic"`; `--profile` on `export`/`package` overrides the blueprint. Since 1.5.0 a blueprint without the field exports as `generic` (before, `get_probed`).
 
+**Mesh data.** Baked `ArrayMesh` surfaces are non-indexed, flat-shaded triangles with normals, tangents (Godot's octahedral encoding, matching `SurfaceTool.generate_tangents()`) and UV1 in metres. Resource IDs contain only letters, digits and underscores.
+
 **After export.** Materials are empty and doors carry no script by design: the game owns them. Assign materials by surface name, set render layers, attach door scripts and add per-door child scenes in one step with a [game layer](GAME_LAYER.md) file (`--game-layer`). Gameplay nodes such as room `Area3D`s, navigation or shelter zones remain the game's own post-processing.
 
 ## 5. Geometry conventions and common pitfalls

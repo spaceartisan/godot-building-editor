@@ -1029,6 +1029,44 @@ export function encodeOctNormal(n){
   return ((uy<<16)|ux)>>>0;
 }
 
+// Matches Godot Vector3::octahedron_tangent_encode(sign): the tangent's
+// octahedron with Y biased and folded into one half by the binormal sign.
+export function encodeOctTangent(t,sign){
+  const packed=encodeOctNormal(t),ux=packed&0xffff;
+  let oy=((packed>>>16)&0xffff)/65535;
+  oy=Math.max(oy,1/32767);
+  oy=oy*.5+.5;
+  if(sign<0)oy=1-oy;
+  const uy=Math.max(0,Math.min(65535,Math.trunc(oy*65535)));
+  return ((uy<<16)|ux)>>>0;
+}
+export function decodeOctTangent(value){
+  const ux=value&0xffff;let oy=((value>>>16)&0xffff)/65535;
+  const sign=oy<.5?-1:1;oy=sign<0?1-oy:oy;oy=(oy-.5)*2;
+  return {...decodeOctNormal(((Math.round(oy*65535)&0xffff)<<16)|ux),w:sign};
+}
+
+// One tangent per final triangle, like the flat normals: dP/du made
+// perpendicular to the normal, with w the binormal sign in Godot's convention
+// (binormal = cross(N, T) * w points toward decreasing V). Degenerate UVs get
+// any frame perpendicular to the normal.
+function flatTangentsFromFinalTriangles(vertices,uvs,normals){
+  const out=new Array(vertices.length);
+  const sub=(a,b)=>({x:a.x-b.x,y:a.y-b.y,z:a.z-b.z}),scale=(a,k)=>({x:a.x*k,y:a.y*k,z:a.z*k}),dot=(a,b)=>a.x*b.x+a.y*b.y+a.z*b.z;
+  const cross=(a,b)=>({x:a.y*b.z-a.z*b.y,y:a.z*b.x-a.x*b.z,z:a.x*b.y-a.y*b.x}),unit=a=>{const l=Math.hypot(a.x,a.y,a.z);return l>EPS?scale(a,1/l):null;};
+  for(let i=0;i<vertices.length;i+=3){
+    const p0=vertices[i],p1=vertices[i+1],p2=vertices[i+2],q0=uvs[i],q1=uvs[i+1],q2=uvs[i+2],n=normals[i];
+    const e1=sub(p1,p0),e2=sub(p2,p0),du1=q1.u-q0.u,dv1=q1.v-q0.v,du2=q2.u-q0.u,dv2=q2.v-q0.v,det=du1*dv2-du2*dv1;
+    let t=null,b=null;
+    if(Math.abs(det)>1e-12){const r=1/det;t=scale(sub(scale(e1,dv2),scale(e2,dv1)),r);b=scale(sub(scale(e2,du1),scale(e1,du2)),r);}
+    t=t&&unit(sub(t,scale(n,dot(n,t))));
+    if(!t){t=unit(cross(Math.abs(n.y)<.9?{x:0,y:1,z:0}:{x:1,y:0,z:0},n));b=cross(n,t);}
+    const w=dot(cross(n,t),b||cross(n,t))<0?1:-1,tangent={...t,w};
+    out[i]=tangent;out[i+1]=tangent;out[i+2]=tangent;
+  }
+  return out;
+}
+
 export function decodeOctNormal(value){
   const ux=value&0xffff,uy=(value>>>16)&0xffff;
   const fx=ux/65535*2-1,fy=uy/65535*2-1;
@@ -1049,10 +1087,14 @@ export function packExteriorMesh(mesh){
   // one normal per final triangle also preserves the intended flat shading.
   const finalNormals=flatNormalsFromFinalTriangles(mesh.vertices);
 
-  // Godot 4.7's current ArrayMesh surface format stores float32 positions first
-  // in vertex_data, then one octahedron-compressed uint32 normal per vertex.
-  // UV1 remains two float32 values per vertex in attribute_data.
-  const vertexBytes=new Uint8Array(count*16);
+  const finalTangents=flatTangentsFromFinalTriangles(mesh.vertices,mesh.uvs,finalNormals);
+
+  // Godot 4's ArrayMesh surface format (checked against SurfaceTool output in
+  // 4.5.1 and 4.7) stores float32 positions first in vertex_data, then per
+  // vertex an octahedron-compressed uint32 normal and uint32 tangent,
+  // interleaved. UV1 remains two float32 values per vertex in attribute_data.
+  // Tangents let normal-mapped and triplanar materials render without warnings.
+  const vertexBytes=new Uint8Array(count*20);
   const vv=new DataView(vertexBytes.buffer);
   for(let i=0;i<count;i++){
     const p=mesh.vertices[i];
@@ -1060,7 +1102,10 @@ export function packExteriorMesh(mesh){
     vv.setFloat32(o,p.x,true);vv.setFloat32(o+4,p.y,true);vv.setFloat32(o+8,p.z,true);
   }
   const normalBase=count*12;
-  for(let i=0;i<count;i++) vv.setUint32(normalBase+i*4,encodeOctNormal(finalNormals[i]),true);
+  for(let i=0;i<count;i++){
+    vv.setUint32(normalBase+i*8,encodeOctNormal(finalNormals[i]),true);
+    vv.setUint32(normalBase+i*8+4,encodeOctTangent(finalTangents[i],finalTangents[i].w),true);
+  }
 
   const attributeBytes=new Uint8Array(count*8);
   const av=new DataView(attributeBytes.buffer);
@@ -1076,6 +1121,7 @@ export function packExteriorMesh(mesh){
   }
   return {
     count,
+    normalStride:8,
     vertexBytes,
     attributeBytes,
     vertexBase64:bytesToBase64(vertexBytes),
@@ -1087,7 +1133,7 @@ export function packExteriorMesh(mesh){
 function surfaceObject(mesh, materialId, surfaceName){
   const packed=packExteriorMesh(mesh);
   if(!packed) return null;
-  const format=34359738368 + 1 + 2 + 16;
+  const format=34359738368 + 1 + 2 + 4 + 16; // vertex, normal, tangent, UV1
   const a=packed.aabb;
   return {
     packed,
@@ -1596,10 +1642,12 @@ export function exportDoorTscn(building, opening, options={}) {
 // outside A–Z a–z 0–9 _ - space, so games should match rooms by this metadata.
 const roomMeta=region=>`\nmetadata/building_room = ${JSON.stringify(String(region.label))}\nmetadata/building_region_id = ${JSON.stringify(String(region.id))}`;
 function storyRooms(view){
-  const used=new Set();
+  const used=new Set(),usedIds=new Set();
   return (view.regions||[]).filter(r=>r.effect!=='void'&&typeof r.label==='string'&&r.label.trim()&&rectValid(r)).map(region=>{
     let suffix='_'+nodeClean(region.label),n=2;while(used.has(suffix.toLowerCase()))suffix=`_${nodeClean(region.label)}_${n++}`;used.add(suffix.toLowerCase());
-    return {suffix,room:region.label.replace(/["\\]/g,''),meta:roomMeta(region),cells:regionAreaCells(region)};
+    // Godot sub-resource IDs allow only letters, digits and underscores; node names keep the hyphen.
+    let idSuffix=suffix.replace(/[^A-Za-z0-9_]/g,'_');n=2;while(usedIds.has(idSuffix.toLowerCase()))idSuffix=`${suffix.replace(/[^A-Za-z0-9_]/g,'_')}_${n++}`;usedIds.add(idSuffix.toLowerCase());
+    return {suffix,idSuffix,room:region.label.replace(/["\\]/g,''),meta:roomMeta(region),cells:regionAreaCells(region)};
   });
 }
 export function slabPiecesByRoom(building,view,areas){
@@ -1611,7 +1659,7 @@ export function slabPiecesByRoom(building,view,areas){
     const inside=intersectPolygonAreas(rest,room.cells).filter(a=>areaSize(a)>1e-6);
     if(!inside.length)continue;
     rest=subtractPolygonAreas(rest,room.cells);
-    out.push({suffix:room.suffix,room:room.room,meta:room.meta,areas:inside});
+    out.push({suffix:room.suffix,idSuffix:room.idSuffix,room:room.room,meta:room.meta,areas:inside});
   }
   return rest.some(a=>areaSize(a)>1e-6)?[...out,{suffix:'',room:null,areas:rest.filter(a=>areaSize(a)>1e-6)}]:out;
 }
@@ -1622,7 +1670,7 @@ export function slabPiecesByRoom(building,view,areas){
 export function wallMeshPiecesByRoom(building,view,mesh){
   if(building.slabsByRoom!==true||!mesh?.vertices?.length)return [{suffix:'',room:null,mesh}];
   const rooms=storyRooms(view);if(!rooms.length)return [{suffix:'',room:null,mesh}];
-  const pieces=rooms.map(r=>({suffix:r.suffix,room:r.room,meta:r.meta,mesh:{vertices:[],normals:[],uvs:[]}})),rest={suffix:'',room:null,mesh:{vertices:[],normals:[],uvs:[]}};
+  const pieces=rooms.map(r=>({suffix:r.suffix,idSuffix:r.idSuffix,room:r.room,meta:r.meta,mesh:{vertices:[],normals:[],uvs:[]}})),rest={suffix:'',room:null,mesh:{vertices:[],normals:[],uvs:[]}};
   const lerp=(a,b,t)=>({p:{x:a.p.x+(b.p.x-a.p.x)*t,y:a.p.y+(b.p.y-a.p.y)*t,z:a.p.z+(b.p.z-a.p.z)*t},uv:{u:a.uv.u+(b.uv.u-a.uv.u)*t,v:a.uv.v+(b.uv.v-a.uv.v)*t}});
   const clip=(poly,n,d)=>{const out=[];for(let i=0;i<poly.length;i++){const a=poly[i],b=poly[(i+1)%poly.length],da=n.x*a.p.x+n.z*a.p.z-d,db=n.x*b.p.x+n.z*b.p.z-d;if(da<=1e-9)out.push(a);if((da>1e-9)!==(db>1e-9))out.push(lerp(a,b,da/(da-db)));}return out.length>=3?out:[];};
   const emit=(target,poly,normal)=>{for(let i=1;i<poly.length-1;i++)for(const v of [poly[0],poly[i],poly[i+1]]){target.vertices.push({...v.p});target.normals.push({...normal});target.uvs.push({...v.uv});}};
@@ -1906,7 +1954,7 @@ export function exportGodotTscn(building, options={collision:true, markers:true}
         // Room-facing faces per labelled room (slabsByRoom); the rest keeps the plain name.
         resources.splice(resources.indexOf(exteriorResources.inside.text),1);
         for(const piece of wallMeshPiecesByRoom(building,view,exteriorResources.data.inside)){
-          const id=`${exteriorResources.ids.inside}${piece.suffix}`,res=arrayMeshResource(piece.mesh,matExteriorInside,id,'InsideFaces');if(!res)continue;resources.push(res.text);
+          const id=`${exteriorResources.ids.inside}${piece.idSuffix||''}`,res=arrayMeshResource(piece.mesh,matExteriorInside,id,'InsideFaces');if(!res)continue;resources.push(res.text);
           nodes.push(`[node name="InsideFaces${piece.suffix}" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/ExteriorWalls"]\nmesh = SubResource("${id}")\neditor_description = "${piece.room?`Inward-facing exterior faces in ${piece.room}.`:'Inward-facing faces of the exterior shell.'}"${piece.meta||''}`);
         }
       }else if(exteriorResources.inside)nodes.push(`[node name="InsideFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/ExteriorWalls"]\nmesh = SubResource("${exteriorResources.ids.inside}")\neditor_description = "Inward-facing faces of the exterior shell."`);
@@ -1922,7 +1970,7 @@ export function exportGodotTscn(building, options={collision:true, markers:true}
         if(building.slabsByRoom!==true){nodes.push(`[node name="${surface}" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/InteriorWalls"]\nmesh = SubResource("${interiorResources.ids[key]}")\neditor_description = "${description}"`);continue;}
         resources.splice(resources.indexOf(interiorResources[key].text),1);
         for(const piece of wallMeshPiecesByRoom(building,view,interiorResources.data[key])){
-          const id=`${interiorResources.ids[key]}${piece.suffix}`,res=arrayMeshResource(piece.mesh,material,id,surface);if(!res)continue;resources.push(res.text);
+          const id=`${interiorResources.ids[key]}${piece.idSuffix||''}`,res=arrayMeshResource(piece.mesh,material,id,surface);if(!res)continue;resources.push(res.text);
           nodes.push(`[node name="${surface}${piece.suffix}" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/InteriorWalls"]\nmesh = SubResource("${id}")\neditor_description = "${piece.room?`Interior wall faces in ${piece.room}.`:description}"${piece.meta||''}`);
         }
       }
@@ -1994,7 +2042,7 @@ editor_description = "Interior wall tops, bottoms, jambs, and exposed ends."`);
         // fewer lights per mesh); collision below stays whole.
         for(const piece of slabPiecesByRoom(building,view,floorRects)){
           const floorFaces=buildSlabFaceMeshData(piece.areas,view.floorThickness,0);
-          const floorMeshId=`${prefix}FloorMesh${piece.suffix}`;
+          const floorMeshId=`${prefix}FloorMesh${piece.idSuffix||''}`;
           const floorRes=multiSurfaceArrayMeshResource([
             {mesh:floorFaces.top,materialId:matFloorTop,surfaceName:'TopFaces'},
             {mesh:floorFaces.bottom,materialId:matFloorBottom,surfaceName:'BottomFaces'},
@@ -2036,7 +2084,7 @@ shape = SubResource("${shapeId}")`);
         for(const piece of slabPiecesByRoom(building,view,ceilingRects)){
           const ceilingTop=meshWriter(),topWriter=openTop?unionFaceWriter(ceilingTop,Infinity,wallSolids):ceilingTop;
           const ceilingFaces={...buildSlabFaceMeshData(piece.areas,t,view.wallHeight,{top:topWriter}),top:ceilingTop};
-          const ceilingMeshId=`${prefix}CeilingMesh${piece.suffix}`;
+          const ceilingMeshId=`${prefix}CeilingMesh${piece.idSuffix||''}`;
           const ceilingRes=multiSurfaceArrayMeshResource([
             {mesh:ceilingFaces.bottom,materialId:matCeilingBottom,surfaceName:'RoomFaces'},
             {mesh:ceilingFaces.top,materialId:matCeilingTop,surfaceName:'RoofSideFaces'},

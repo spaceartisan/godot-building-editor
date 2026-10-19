@@ -113,7 +113,7 @@ Closet door exports use two hinge pivots (`Hinge` and `Hinge2`). Each hinge owns
 
 ## Materials and gable fills
 
-Exported named surfaces have **empty material slots by default**, including doors. Assign materials in Godot, or let a [game layer](GAME_LAYER.md) file assign materials by surface name, render layers, door scripts and door child scenes on every export. **Include placeholder colors** is optional if you want the earlier simple color resources. Browser preview colors remain editor-only.
+Exported named surfaces have **empty material slots by default**, including doors. Every baked surface carries flat normals, tangents and UV1 (in metres, continuous across walls and story bands), so normal-mapped and triplanar materials work without regenerating tangents in Godot. Assign materials in Godot, or let a [game layer](GAME_LAYER.md) file assign materials by surface name, render layers, door scripts and door child scenes on every export. **Include placeholder colors** is optional if you want the earlier simple color resources. Browser preview colors remain editor-only.
 
 Both automatic and manual gable fills have matching triangular collision when collision export is enabled. Manual gables now expose separate OutsideFaces, InsideFaces and EdgeFaces below their GableFill group, preserving lighting and material separation. No rectangular collision is added across an entrance.
 

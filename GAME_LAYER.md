@@ -7,7 +7,7 @@ Exports keep material slots empty and attach no scripts. That is the default and
 - CLI: `node cli.mjs export FILE --out NEW_DIR --game-layer my-game.layer.json` (also `package`).
 - Web editor: **Godot Export → Game layer…** loads the same file. The editor remembers it in this browser, shows what it contains, and applies it to **Export Godot package**. **Clear game layer** removes it.
 
-Without a game layer, exports are byte-for-byte unchanged.
+Without a game layer, exports are byte-for-byte unchanged. Exported surfaces carry normals, tangents and UV1, so normal-mapped and triplanar materials need no post-processing.
 
 ## File format (version 1)
 

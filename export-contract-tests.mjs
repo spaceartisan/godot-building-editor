@@ -13,19 +13,10 @@ import { prepareDocument } from './src/diagnostics.js';
 import { makeEmptyBuilding } from './src/model.js';
 import { exportGodotFiles } from './src/exporter.js';
 import { parseGameLayer, gameLayerSurfaceGaps } from './src/game-layer.js';
+import { contractRecipe } from './qa/export-contract-fixture.mjs';
 const root=path.dirname(fileURLToPath(import.meta.url));
 const blank=(()=>{const b=makeEmptyBuilding();b.floors[0].id='floor_1';return prepareDocument(b).building;})();
 const tx=(ops,base=blank)=>{const r=applyTransaction(base,{version:1,operations:ops});assert.equal(r.ok,true,JSON.stringify(r.errors));return r.building;};
-export const contractRecipe=[
-  {op:'building.update',value:{slabsByRoom:true}},
-  {op:'room.add',floorId:'floor_1',id:'r',value:{minX:-6,maxX:6,minZ:-4,maxZ:4}},
-  {op:'wall.add',floorId:'floor_1',id:'mid',value:{a:{x:0,z:-4},b:{x:0,z:4}}},
-  {op:'opening.add',floorId:'floor_1',id:'g_arch',value:{type:'door',wallId:'mid',at:{x:0,z:-2},width:1.2,height:2.2,doorStyle:'empty',label:'Arch'}},
-  {op:'opening.add',floorId:'floor_1',id:'g_door_05',value:{type:'door',wallId:'mid',at:{x:0,z:2},width:0.9,height:2.1,label:'Parlor Gallery Door'}},
-  {op:'opening.add',floorId:'floor_1',id:'g_front',value:{type:'door',wallId:'r-south',at:{x:-3,z:4},width:1.6,height:2.2,doorStyle:'exterior',leaves:2,label:'Front'}},
-  {op:'opening.add',floorId:'floor_1',id:'g_win',value:{type:'window',wallId:'r-south',at:{x:3,z:4},width:1.2,height:1.2,label:'South window'}},
-  {op:'region.add',floorId:'floor_1',id:'rg_office',value:{label:'Globo-Dyne Café',minX:-6,maxX:0,minZ:-4,maxZ:4}},
-  {op:'region.add',floorId:'floor_1',id:'rg_parlor',value:{label:'Parlor',minX:0,maxX:6,minZ:-4,maxZ:4}}];
 const building=tx(contractRecipe),files=exportGodotFiles(building);
 {
   const t=files.tscn;
@@ -82,4 +73,27 @@ const building=tx(contractRecipe),files=exportGodotFiles(building);
     r=run(['package','b.json','--out','b.json','--replace']);assert.equal(r.status,3);assert.match(r.stdout+r.stderr,/cannot overwrite an input|only replaces a \.zip/);
     console.log('PASS export/package --replace replace only previous exports; game-layer surface note in CLI output');
   }finally{fs.rmSync(temp,{recursive:true,force:true});}
+}
+{
+  // Every exported surface carries tangents (format bit 4, 20 bytes per vertex), and every
+  // resource ID is a valid Godot scene unique ID, across the example catalog and the contract building.
+  const catalog=fs.readdirSync(path.join(root,'examples')).filter(n=>n.endsWith('.building.json')).map(n=>JSON.parse(fs.readFileSync(path.join(root,'examples',n),'utf8')));
+  let surfaces=0;
+  for(const b of [building,...catalog]){
+    const f=exportGodotFiles(b);
+    for(const text of [f.tscn,...f.doors.map(d=>d.tscn)]){
+      for(const m of text.matchAll(/\bid="([^"]+)"/g))assert.match(m[1],/^[A-Za-z0-9_]+$/,`invalid scene unique ID ${m[1]}`);
+      for(const m of text.matchAll(/"format": (\d+),\n(?:"[a-z_]+": [^\n]*\n)*?"vertex_count": (\d+),\n"vertex_data": PackedByteArray\("([^"]*)"\)/g)){
+        surfaces++;assert.ok((BigInt(m[1])&4n)===4n,'tangent format bit');assert.equal(Buffer.from(m[3],'base64').length,Number(m[2])*20,'20 bytes per vertex: position, normal, tangent');
+      }
+    }
+  }
+  assert.ok(surfaces>500,String(surfaces));
+  const {encodeOctTangent,decodeOctTangent}=await import('./src/exporter.js');
+  assert.equal(encodeOctTangent({x:1,y:0,z:0},1),0xbfffffff,'matches Godot SurfaceTool output for +X, w=+1');
+  for(const t of [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1],[.6,.8,0],[-.5,.5,-.7071]])for(const w of [1,-1]){
+    const d=decodeOctTangent(encodeOctTangent({x:t[0],y:t[1],z:t[2]},w)),l=Math.hypot(...t);
+    assert.ok((d.x*t[0]+d.y*t[1]+d.z*t[2])/l>.999&&d.w===w,`tangent round trip ${t} ${w}`);
+  }
+  console.log(`PASS ${surfaces} exported surfaces carry tangents; every resource ID is a valid scene unique ID; tangent encoding round-trips`);
 }

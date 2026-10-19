@@ -85,7 +85,10 @@ function applyToScene(text,layer,kind){
     const [,name,type,parent]=header;
     if(parent===undefined){
       const script=kind==='door'?layer.scripts.door:kind==='elevator'?layer.scripts.elevator:layer.scripts.building;
-      return script?`${block}\nscript = ExtResource("${resource('Script',script)}")`:block;
+      if(!script)return block;
+      // The exported door description asks for a script to be attached by hand; say which one the layer attached.
+      const described=kind==='door'?block.replace('Attach your door script manually to this root.',`Door script attached by the game layer: ${script.replace(/["\\]/g,'')}.`):block;
+      return `${described}\nscript = ExtResource("${resource('Script',script)}")`;
     }
     if(type==='MeshInstance3D'){
       const path=parent==='.'?name:`${parent}/${name}`,scope=r=>!r.in||r.in===(kind==='door'?'doors':'building');
@@ -121,4 +124,14 @@ function applyToScene(text,layer,kind){
 export function applyGameLayer(files,layer){
   if(!layer)return files;
   return {...files,tscn:applyToScene(files.tscn,layer,'building'),doors:files.doors.map(d=>d.tscn==null?d:{...d,tscn:applyToScene(d.tscn,layer,d.kind==='elevator'?'elevator':'door')}),gameLayer:true};
+}
+
+// Named mesh surfaces in an export that a game layer with a materials map
+// leaves without a material (no materials entry and no nodeMaterials rule
+// naming that surface). Whole-node nodeMaterials rules may still cover them.
+export function gameLayerSurfaceGaps(files,layer){
+  if(!layer||!Object.keys(layer.materials||{}).length)return [];
+  const named=new Set((layer.nodeMaterials||[]).map(r=>r.surface).filter(Boolean)),found=new Set();
+  for(const text of [files.tscn,...(files.doors||[]).map(d=>d.tscn)])for(const m of String(text||'').matchAll(/^"name": "([^"]+)",$/gm))found.add(m[1]);
+  return [...found].filter(name=>!Object.hasOwn(layer.materials,name)&&!named.has(name)).sort();
 }

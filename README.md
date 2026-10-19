@@ -104,7 +104,7 @@ Door (Node3D)
     └── CollisionShape3D
 ```
 
-`DoorMesh` is one baked mesh (with Door and Hardware surfaces), while `Frame` stays outside the hinge so the frame does not rotate. The moving leaf collision path is exactly `Hinge/AnimatableBody3D/CollisionShape3D`. In the GET PROBED profile, each non-empty door also includes a stationary root-level `InteractionArea` (`collision_layer = 4`, `collision_mask = 0`) with its own `CollisionShape3D`. This doorway target does not rotate with the hinge, so it remains interactable when gameplay disables the open door leaf collider. Attach your own door script manually to the `Door` root after import.
+`DoorMesh` is one baked mesh (with Door and Hardware surfaces), while `Frame` stays outside the hinge so the frame does not rotate. Each leaf's `AnimatableBody3D` has `sync_to_physics` off, so rotating `Hinge` carries its collision (a game may keep the leaf solid while it swings, or disable it while moving, as GET PROBED's door script does). The `Door` root carries `door_width`, `door_height`, `door_leaves` and `door_style` metadata, and each door instance in the building scene carries the recipe's `building_opening_id` and `building_opening_label`. The moving leaf collision path is exactly `Hinge/AnimatableBody3D/CollisionShape3D`. In the GET PROBED profile, each non-empty door also includes a stationary root-level `InteractionArea` (`collision_layer = 4`, `collision_mask = 0`) with its own `CollisionShape3D`. This doorway target does not rotate with the hinge, so it remains interactable when gameplay disables the open door leaf collider. Attach your own door script manually to the `Door` root after import.
 
 - Generated door leaf detailing and hardware are present on both sides of every door.
 
@@ -113,7 +113,7 @@ Closet door exports use two hinge pivots (`Hinge` and `Hinge2`). Each hinge owns
 
 ## Materials and gable fills
 
-Exported named surfaces have **empty material slots by default**, including doors. Assign materials in Godot, or let a [game layer](GAME_LAYER.md) file assign materials by surface name, render layers, door scripts and door child scenes on every export. **Include placeholder colors** is optional if you want the earlier simple color resources. Browser preview colors remain editor-only.
+Exported named surfaces have **empty material slots by default**, including doors. Every baked surface carries flat normals, tangents and UV1 (in metres, continuous across walls and story bands), so normal-mapped and triplanar materials work without regenerating tangents in Godot. Assign materials in Godot, or let a [game layer](GAME_LAYER.md) file assign materials by surface name, render layers, door scripts and door child scenes on every export. **Include placeholder colors** is optional if you want the earlier simple color resources. Browser preview colors remain editor-only.
 
 Both automatic and manual gable fills have matching triangular collision when collision export is enabled. Manual gables now expose separate OutsideFaces, InsideFaces and EdgeFaces below their GableFill group, preserving lighting and material separation. No rectangular collision is added across an entrance.
 

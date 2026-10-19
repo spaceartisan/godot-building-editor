@@ -41,7 +41,7 @@ function assertPackedNormalsFollowFinalTriangles(mesh,label){
   for(let i=0;i<packed.count;i+=3){
     const expected=finalClockwiseTriangleNormal(mesh.vertices[i],mesh.vertices[i+1],mesh.vertices[i+2]);
     for(let j=0;j<3;j++){
-      const decoded=decodeOctNormal(view.getUint32(base+(i+j)*4,true));
+      const decoded=decodeOctNormal(view.getUint32(base+(i+j)*packed.normalStride,true));
       const dot=expected.x*decoded.x+expected.y*decoded.y+expected.z*decoded.z;
       assert.ok(dot>.999,`${label} packed normal diverges from final triangle geometry at triangle ${i/3}`);
     }

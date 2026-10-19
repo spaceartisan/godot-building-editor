@@ -1,4 +1,6 @@
-# Building Studio CLI 1.4.0
+# Building Studio CLI 1.5.0
+
+> Start with the [README](README.md) (what the tool makes, and its **Scope**: what stays in Godot) and [LLM_GUIDE.md](LLM_GUIDE.md) (workflow, recipes and the export names table). This page is a reference for one part.
 
 Version 1.2.3 rejects empty or whitespace-only preview numeric arguments with exit code 2 before loading the optional canvas backend. Explicit `--yaw 0` remains valid.
 
@@ -81,6 +83,7 @@ Input/output paths are relative to your current working directory. Calling `/abs
 | `new --out NEW.json [--name TEXT]` | Writes a deterministic blank one-floor building (the web New building, floor ID `floor_1`) to a new file as a transaction starting point. |
 | `new --ops RECIPE --out NEW.json` | Blank building plus a recipe in one step; the result is identical to `new` followed by `edit`. Takes `--dry-run` and `--warnings-as-errors` like `edit`. |
 | `new`/`edit ... --out FILE --replace` | Re-runs a recipe onto an existing output. Only an existing building JSON file can be replaced; inputs (the edited file or the recipe), directories and other files are refused. Without `--replace`, every output path must be new. |
+| `export ... --out DIR --replace`, `package ... --out ZIP --replace` | Re-exports onto a previous output. Only a folder holding nothing but exported scenes (`.tscn`, with `doors/` and `elevators/` subfolders, and an optional building JSON) or a `.zip` package can be replaced; other folders and files, and inputs, are refused. The new export is written beside the old one and swapped in, so a failure leaves the old one intact. |
 | `validate FILE...` | Validates original JSON, applies shared normalization to an in-memory clone, then validates again. Reports errors and warnings without changing input. |
 | `inspect FILE...` | Adds per-floor counts/elevations, footprint source/area, manual roof relationships, exported resource counts and separate shell node paths. |
 | `validate`/`inspect FILE... --reachability` | Opt-in route check from open ground through doors, empty passages, stairs and elevators (0.1 m grid, 0.25 m walker radius). Unreachable floor areas of at least 1 m² and blocked stair ends become warnings, which `--warnings-as-errors` and `validate --out` include; JSON results add a `reachability` object with per-floor walkable/reached areas. Shaped walls block by their profile's reach on each side up to 1.8 m, so a profile leaning into a corridor narrows it. `--from "X,Z[,FLOOR_ID][;...]"` adds interior start points for buildings with no opening to the outside, such as a sealed ship; the floor defaults to the ground floor, and a start that is not on walkable floor becomes a warning. The web **Route start** field under **Include route check** takes the same text. |

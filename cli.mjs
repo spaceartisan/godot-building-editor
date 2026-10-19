@@ -16,7 +16,7 @@ import { renderPreparedScenes, parseViews, RenderError } from './godot-render.mj
 import { EXAMPLE_CATALOG } from './src/examples.js';
 import { checkExampleExpectation } from './src/example-check.js';
 import { applyTransaction } from './src/transactions.js';
-import { parseGameLayer } from './src/game-layer.js';
+import { parseGameLayer, gameLayerSurfaceGaps } from './src/game-layer.js';
 import { makeEmptyBuilding, floorView, floorElevation, boundsOfBuilding } from './src/model.js';
 import { reachabilityWarnings, parseRouteStarts } from './src/reachability.js';
 import { attachmentSummary } from './src/roof-diagnostics.js';
@@ -31,7 +31,7 @@ function profileInward(building,floor){
   const i=building.floors.indexOf(floor),view=floorView(building,i);
   return (view.walls||[]).filter(w=>w.wallTypeId).map(w=>{const n=profileWallState(view,w,exteriorWallOutsideSign,isExteriorWall).n;return {wallId:w.id,inwardSide:w.inwardSide||'auto',inward:{x:Math.round(n.x*1e6)/1e6+0,z:Math.round(n.z*1e6)/1e6+0}};});
 }
-const specs={new:['out','name','ops','dry-run','warnings-as-errors','replace'],edit:['ops','out','dry-run','warnings-as-errors','replace'],validate:['warnings-as-errors','out','reachability','from'],inspect:['warnings-as-errors','entities','reachability','from'],export:['out','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors'],package:['out','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors','include-json'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision','render','views','out','surface-colors'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof','godot']};
+const specs={new:['out','name','ops','dry-run','warnings-as-errors','replace'],edit:['ops','out','dry-run','warnings-as-errors','replace'],validate:['warnings-as-errors','out','reachability','from'],inspect:['warnings-as-errors','entities','reachability','from'],export:['out','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors','replace'],package:['out','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors','include-json','replace'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision','render','views','out','surface-colors'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof','godot']};
 const values=new Set(['from','name','views','ops','out','profile','suite','godot','game-layer','assets','yaw','pitch','distance','floor','view','compare','overlay','roof','canvas','engine','timeout']);
 class CliError extends Error{constructor(message,code=2){super(message);this.code=code;}}
 const help=`Building Studio ${version}
@@ -50,6 +50,7 @@ Usage: node cli.mjs COMMAND [FILES...] [OPTIONS]
     --replace (new/edit) overwrite an existing building JSON output (never an input)
   export FILE... --out DIR   Export TSCNs and doors to a NEW directory
   package FILE... --out ZIP  Package those assets in a NEW ZIP
+    --replace (export/package) replace a previous export folder or .zip (refuses other folders and files)
   preview FILE --out PNG     Software 3D preview (optional canvas dependency;
                         without it, --godot PATH or GODOT_BIN renders in Godot)
   release-check          Check an isolated source copy; optionally --out NEW.json
@@ -59,7 +60,7 @@ Usage: node cli.mjs COMMAND [FILES...] [OPTIONS]
   test [--suite NAME]    core (default), geometry, editor, cli, transactions,
                         preview, preview-render, assets, engine-assets, infrastructure, release
   godot-check [--godot PATH] Run bundled scene/physics checks; or set GODOT_BIN
-    --assets DIR        Check new exported scenes (resource checks, not walking probes)
+    --assets DIR        Check new exported scenes (resource checks, plus elevator probes)
     --allow-materials --require-collision   Optional asset-set expectations
     --render --out NEW_DIR [--views FILE]  Also render the checked scenes in
                         Godot (Linux: DISPLAY or xvfb-run): exterior, aerial and
@@ -167,7 +168,7 @@ const exportOptions=o=>({profile:o.profile,collision:!o['no-collision'],markers:
 
 // Preflight every artifact and input before making any output visible. Batch
 // directories use input names, not authored building names, to prevent collisions.
-function artifacts(loaded,options,includeJson=false){
+function artifacts(loaded,options,includeJson=false,notes=[]){
   const entries=[],names=new Set(),prefixes=new Set();
   for(const doc of loaded){
     const result=exportGodotFiles(doc.building,exportOptions(options));
@@ -182,6 +183,8 @@ function artifacts(loaded,options,includeJson=false){
       names.add((prefix+name).toLowerCase());entries.push({name:prefix+name,data});
     };
     add(result.tscnName,result.tscn);for(const door of result.doors)add(door.filename,door.tscn);
+    const gaps=gameLayerSurfaceGaps(result,options.gameLayer);
+    if(gaps.length)notes.push(`${loaded.length>1?prefix:''}game layer leaves these surfaces without a material: ${gaps.join(', ')} (add them to materials, or cover them with nodeMaterials)`);
     if(includeJson)add(result.base+'.building.json',doc.source);
     for(const match of result.tscn.matchAll(/\[ext_resource type="PackedScene" path="([^"]+)"/g)){
       if(!result.doors.some(d=>d.filename===match[1]))throw new CliError(`Missing door dependency: ${match[1]}`,1);
@@ -216,6 +219,29 @@ function writeNewFile(out,data){
 }
 // --replace (new/edit): overwrite an existing building JSON output, never an
 // input, a directory or a file that is not a building document.
+// export/package --replace: only a previous export (a folder of .tscn scenes,
+// optionally with the building JSON from --include-json) or a .zip package.
+function replaceableExport(value,command,inputs=[]){
+  const out=path.resolve(value);let stat;
+  try{stat=fs.lstatSync(out);}catch(e){if(e.code==='ENOENT')return out;throw e;}
+  if(inputs.some(i=>{try{const real=fs.realpathSync(i);return real===fs.realpathSync(out)||real.startsWith(fs.realpathSync(out)+path.sep);}catch{return false;}}))throw new CliError('--replace cannot overwrite an input file; export to another path',3);
+  if(command==='package'){
+    if(!stat.isFile()||!/\.zip$/i.test(out)||fs.readFileSync(out).subarray(0,2).toString()!=='PK')throw new CliError(`--replace only replaces a .zip package: ${out}`,3);
+    return out;
+  }
+  if(!stat.isDirectory())throw new CliError(`--replace only replaces a previous export folder: ${out}`,3);
+  const files=[],walk=dir=>{for(const e of fs.readdirSync(dir,{withFileTypes:true})){const p=path.join(dir,e.name);if(e.isDirectory())walk(p);else files.push({p,link:e.isSymbolicLink(),name:e.name});}};walk(out);
+  const top=fs.readdirSync(out).filter(n=>n.endsWith('.tscn'));
+  if(!top.length||files.some(f=>f.link||!/\.(tscn|building\.json)$/i.test(f.name)))throw new CliError(`--replace only replaces a previous export folder (only .tscn scenes, door/elevator subfolders and an optional building JSON); this one holds other files: ${out}`,3);
+  return out;
+}
+function replaceDirectory(out,entries){
+  // Write the new export beside the old one, then swap, so a failed write leaves the old export intact.
+  const fresh=out+'.building-new-'+process.pid;writeDirectory(fresh,entries);
+  const old=out+'.building-old-'+process.pid;fs.renameSync(out,old);
+  try{fs.renameSync(fresh,out);}catch(e){fs.renameSync(old,out);throw e;}
+  fs.rmSync(old,{recursive:true,force:true});
+}
 function replaceableOutput(value,inputs=[]){
   const out=path.resolve(value);let stat;
   try{stat=fs.lstatSync(out);}catch(e){if(e.code==='ENOENT')return out;throw e;}
@@ -410,15 +436,16 @@ async function execute({command,options,files}){
     }});return response;
   }
   if(exitCode)return response; // All input documents must pass before any write.
-  const out=destination(options.out);
+  const out=options.replace&&command!=='preview'?replaceableExport(options.out,command,files):destination(options.out);
   if(command==='preview')response.preview=await preview(loaded,options,out);
   else{
-    const entries=artifacts(loaded,options,options['include-json']);
+    const notes=[],entries=artifacts(loaded,options,options['include-json'],notes);
     if(command==='package'){
-      const buffer=Buffer.from(await makeStoredZip(entries,{date:new Date(1980,0,1)}).arrayBuffer());writeNewFile(out,buffer);
+      const buffer=Buffer.from(await makeStoredZip(entries,{date:new Date(1980,0,1)}).arrayBuffer());
+      if(options.replace&&fs.existsSync(out))fs.writeFileSync(out,buffer);else writeNewFile(out,buffer);
       response.bytes=buffer.length;response.sha256=createHash('sha256').update(buffer).digest('hex');
-    }else writeDirectory(out,entries);
-    response.generated=entries.map(e=>e.name);
+    }else if(options.replace&&fs.existsSync(out))replaceDirectory(out,entries);else writeDirectory(out,entries);
+    response.generated=entries.map(e=>e.name);if(notes.length)response.notes=notes;
   }
   response.output=out;return response;
 }
@@ -516,6 +543,7 @@ function human(result,verbose){
   if(result.render)lines.push(`Rendered ${result.render.images} views${result.render.virtualDisplay?' (virtual display)':''}${result.render.renderer?' · '+result.render.renderer:''}: ${result.render.output}`);
   if(result.checks)lines.push(`${result.checks.scenes} scenes · ${result.checks.physicsRays} physics rays · ${result.checks.trimmedMeshComparisons} trimmed mesh comparisons · ${result.checks.failures} failures`);
   if(result.output)lines.push('Output: '+result.output);
+  for(const note of result.notes||[])lines.push('NOTE '+note);
   if(result.generated)lines.push(`${result.generated.length} files`,...(verbose?result.generated:[]));
   if(result.sha256)lines.push('SHA-256: '+result.sha256);
   return lines.join('\n')+'\n';

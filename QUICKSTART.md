@@ -8,7 +8,7 @@ Loading cleanup: wait for file/example loading to complete before editing the im
 
 Automating with an LLM? Read [AGENTS.md](AGENTS.md) and [LLM_GUIDE.md](LLM_GUIDE.md) for a verified CLI workflow and the limits of each authoring route.
 
-Build reusable houses, interiors and other structures in the web editor; use the Linux CLI for repeatable edits and exports. The output is a building `.tscn` and its relative door (and elevator) scenes. It does not include a game project or runtime geometry generator.
+Build reusable houses, interiors and other structures in the web editor; use the CLI (Node 20+; used on Windows and Linux) for repeatable edits and exports. The output is a building `.tscn` and its relative door (and elevator) scenes. It does not include a game project or runtime geometry generator.
 
 ## Web builder
 

@@ -51,7 +51,7 @@ const layerSpec={version:1,materials:{OutsideFaces:'res://m/siding.tres',Glass:'
     // nodeMaterials: per-node surface overrides (rooms split with slabsByRoom).
     const layer=parseGameLayer({version:1,nodeMaterials:[{match:'*FloorSlab',surface:'TopFaces',material:'res://m/checker.tres'},{match:'*',surface:'NoSuchSurface',material:'res://m/x.tres'}]});
     const t=exportGodotFiles(farmhouse,{gameLayer:layer}).tscn;
-    assert.match(t,/\[node name="FloorSlab" type="MeshInstance3D"[^\]]*\]\nmesh = SubResource\("[^"]+"\)\n[^\n]*\nsurface_material_override\/0 = ExtResource\("GL_Material_\d+"\)/);
+    assert.match(t,/\[node name="FloorSlab" type="MeshInstance3D"[^\]]*\]\nmesh = SubResource\("[^"]+"\)\n[^\n]*\nmetadata\/building_part = "floor"\nsurface_material_override\/0 = ExtResource\("GL_Material_\d+"\)/);
     assert.doesNotMatch(t,/res:\/\/m\/x.tres/,'a surface the node does not have adds nothing');
     assert.throws(()=>parseGameLayer({version:1,nodeMaterials:[{match:'*',surface:'Top Faces',material:'res://a.tres'}]}),/surface must be a surface name/);
     // No surface: the whole node, which reaches plain roof boxes (unnamed BoxMesh surfaces).

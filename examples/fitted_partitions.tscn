@@ -122,6 +122,8 @@ size = Vector3(6, 0.18, 6)
 
 [node name="Floor_01" type="Node3D" parent="."]
 editor_description = "Workshop; elevation 0m"
+metadata/building_floor_id = "floor_1"
+metadata/building_floor_label = "Workshop"
 
 [node name="Geometry" type="Node3D" parent="Floor_01"]
 
@@ -136,28 +138,34 @@ editor_description = "Workshop; elevation 0m"
 [node name="OutsideFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F01_ExteriorOutsideMesh")
 editor_description = "Outward-facing exterior faces."
+metadata/building_part = "exterior_wall"
 
 [node name="InsideFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F01_ExteriorInsideMesh")
 editor_description = "Inward-facing faces of the exterior shell."
+metadata/building_part = "exterior_wall"
 
 [node name="EdgeFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F01_ExteriorEdgeMesh")
 editor_description = "Window/door reveals and wall-thickness faces."
+metadata/building_part = "exterior_wall"
 
 [node name="InteriorWalls" type="Node3D" parent="Floor_01/Geometry/Walls"]
 
 [node name="SideAFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/InteriorWalls"]
 mesh = SubResource("F01_InteriorSideAMesh")
 editor_description = "One face direction of the baked interior walls."
+metadata/building_part = "interior_wall"
 
 [node name="SideBFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/InteriorWalls"]
 mesh = SubResource("F01_InteriorSideBMesh")
 editor_description = "Opposite face direction of the baked interior walls."
+metadata/building_part = "interior_wall"
 
 [node name="EdgeFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/InteriorWalls"]
 mesh = SubResource("F01_InteriorEdgeMesh")
 editor_description = "Interior wall tops, bottoms, jambs, and exposed ends."
+metadata/building_part = "interior_wall"
 
 [node name="ShapedWallCollision" type="CollisionShape3D" parent="Floor_01/Collision"]
 shape = SubResource("ProfileWallShape_1")
@@ -165,6 +173,7 @@ shape = SubResource("ProfileWallShape_1")
 [node name="FloorSlab" type="MeshInstance3D" parent="Floor_01/Geometry"]
 mesh = SubResource("F01_FloorMesh")
 editor_description = "Automatic floor mesh after independent manual-floor overrides. Surfaces: TopFaces, BottomFaces, EdgeFaces."
+metadata/building_part = "floor"
 
 [node name="FloorCollision_001" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, -0.09, 0)

@@ -19,6 +19,15 @@ function rotate(v,r={}){
 
 // One source for roof slab dimensions, thickness, ridge caps and transforms.
 // Untouched export boxes retain their names and dimensions.
+// Slab thickness across a sloped roof: at least 0.12 m, and enough that a wall
+// of roof.supportThickness under the eave stays inside the slab (its outer
+// top edge 1 cm below the roof surface).
+// The building's roof settings plus its wall thickness, for roofBoxParts.
+export const roofWithSupport=(building,roof=building?.roof)=>({...(roof||{}),supportThickness:Math.max(0,Number(building?.wallThickness)||0)});
+export function slopedRoofThickness(roof,pitch){
+  const wall=Math.max(0,Number(roof?.supportThickness)||0);
+  return Math.max(.12,wall*Math.sin(pitch)+.01);
+}
 export function roofBoxParts(rs,roof,baseY,index=0,manual=false){
   if(!manual&&((rs.type||roof.type)==='hip'||(rs.polygon&&(rs.type||roof.type)==='flat')))return polygonRoofParts(rs,roof,baseY,index);
   // Manual hip roofs and polygon footprints share the automatic polygon path,
@@ -27,12 +36,16 @@ export function roofBoxParts(rs,roof,baseY,index=0,manual=false){
     const overhang=manualRoofOverhang(rs,roof),name=`ManualRoof_${String(index+1).padStart(3,'0')}`;
     // A concave flat outline is built from convex pieces of its grown outline.
     if(rs.polygon&&!convexOutline(rs.polygon))return roofFootprintAreas(rs,overhang).map((piece,i)=>({name:`${name}_Flat_${String(i+1).padStart(2,'0')}`,solid:polygonPrism(piece,baseY+.12,baseY)}));
-    return polygonRoofParts(rs,{overhang,pitch:Number(rs.pitch)||Number(roof.pitch)||35},baseY,index,name);
+    return polygonRoofParts(rs,{overhang,pitch:Number(rs.pitch)||Number(roof.pitch)||35,supportThickness:roof.supportThickness},baseY,index,name);
   }
-  const type=rs.type||roof.type,dir=rs.direction==='z'?'z':'x',t=.12;
+  const type=rs.type||roof.type,dir=rs.direction==='z'?'z':'x';
   const w=rs.maxX-rs.minX,d=rs.maxZ-rs.minZ,cx=(rs.minX+rs.maxX)/2,cz=(rs.minZ+rs.maxZ)/2;
   if(w<=.05||d<=.05)return [];
   const pitch=(manual?Math.max(5,Math.min(70,Number(rs.pitch)||Number(roof.pitch)||35)):Number(rs.pitch)||roof.pitch||35)*Math.PI/180;
+  // The slab's middle plane passes over the wall centreline at the eave, so a
+  // thick wall's outer top edge would poke through a thin slab on a steep
+  // pitch (Dirtscape: 0.3 m walls at 38 degrees). Thicken the slab to cover it.
+  const t=type==='flat'?.12:slopedRoofThickness(roof,pitch);
   const o=manual?manualRoofOverhang(rs,roof):roof.overhang||0;
   const idx=String(index+1).padStart(3,'0'),out=[];
   const add=(name,size,pos,rot={x:0,y:0,z:0})=>out.push({name,size,pos,rot});
@@ -70,6 +83,9 @@ export function roofInteriorBlockers(building,rs,baseY,originY=0){
   }
   return out;
 }
+
+// Every corner of a roof part (box or polygon solid), for clearance checks.
+export function roofPartPoints(part){return (part.solid||boxSolid(part.size,part.pos,part.rot)).faces.flatMap(f=>f.points);}
 
 function boxSolid(size,pos,rot={}){
   const faces=[],planes=[];
@@ -115,7 +131,7 @@ export function roofAttachmentBlockers(building,rs,originY=0){
   }
   const host=(building.roofSections||[]).find(r=>r.id===rs.hostRoofId);if(!host)return out;
   const hostY=Number.isFinite(Number(host.baseY))?Number(host.baseY):Number(building.wallHeight)||2.8;
-  const parts=roofBoxParts(host,building.roof||{},hostY-originY,0,true).filter(p=>!p.name.endsWith('_Ridge'));
+  const parts=roofBoxParts(host,roofWithSupport(building),hostY-originY,0,true).filter(p=>!p.name.endsWith('_Ridge'));
   if(!parts.length)return out;
   const all=parts.flatMap(p=>boxSolid(p.size,p.pos,p.rot).faces.flatMap(f=>f.points));
   const bounds=Object.fromEntries(['x','y','z'].flatMap(k=>[[`min${k.toUpperCase()}`,Math.min(...all.map(p=>p[k]))],[`max${k.toUpperCase()}`,Math.max(...all.map(p=>p[k]))]]));

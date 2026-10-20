@@ -153,6 +153,8 @@ size = Vector3(6, 0.12, 6)
 
 [node name="Floor_01" type="Node3D" parent="."]
 editor_description = "Workshop; elevation 0m"
+metadata/building_floor_id = "floor_1"
+metadata/building_floor_label = "Workshop"
 
 [node name="Geometry" type="Node3D" parent="Floor_01"]
 
@@ -167,14 +169,17 @@ editor_description = "Workshop; elevation 0m"
 [node name="OutsideFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F01_ExteriorOutsideMesh")
 editor_description = "Outward-facing exterior faces."
+metadata/building_part = "exterior_wall"
 
 [node name="InsideFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F01_ExteriorInsideMesh")
 editor_description = "Inward-facing faces of the exterior shell."
+metadata/building_part = "exterior_wall"
 
 [node name="EdgeFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F01_ExteriorEdgeMesh")
 editor_description = "Window/door reveals and wall-thickness faces."
+metadata/building_part = "exterior_wall"
 
 [node name="Windows" type="Node3D" parent="Floor_01/Geometry"]
 
@@ -184,6 +189,7 @@ rotation = Vector3(0, -1.5708, 0)
 mesh = SubResource("F01_WindowMesh_001")
 metadata/building_opening_id = "window"
 metadata/building_opening_label = "Recessed window"
+metadata/building_part = "window"
 
 [node name="Window_001_Recessed_window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["sight_transparent"]]
 position = Vector3(2.65, 1.425, 0)
@@ -204,6 +210,7 @@ shape = SubResource("ProfileWallShape_2")
 [node name="FloorSlab" type="MeshInstance3D" parent="Floor_01/Geometry"]
 mesh = SubResource("F01_FloorMesh")
 editor_description = "Automatic floor mesh after independent manual-floor overrides. Surfaces: TopFaces, BottomFaces, EdgeFaces."
+metadata/building_part = "floor"
 
 [node name="FloorCollision_001" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, -0.09, 0)
@@ -212,6 +219,7 @@ shape = SubResource("FloorShape_3")
 [node name="Ceiling" type="MeshInstance3D" parent="Floor_01/Geometry"]
 mesh = SubResource("F01_CeilingMesh")
 editor_description = "Automatic ceiling mesh after independent manual-ceiling overrides. Surfaces: RoomFaces, RoofSideFaces, EdgeFaces."
+metadata/building_part = "ceiling"
 
 [node name="CeilingCollision_001" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, 2.74, 0)
@@ -222,6 +230,11 @@ position = Vector3(0, 1.05, -3)
 rotation = Vector3(0, 0, 0)
 metadata/building_opening_id = "entry"
 metadata/building_opening_label = "Entry"
+metadata/outward_normal = Vector3(0, 0, -1)
+
+[node name="Threshold" type="Marker3D" parent="Floor_01/Openings/Door_001_Entry"]
+position = Vector3(0, -1.05, -0.09)
+rotation = Vector3(0, 0, 0)
 
 [node name="Window_002_Recessed_window" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(2.65, 1.425, 0)
@@ -235,6 +248,7 @@ metadata/building_opening_label = "Recessed window"
 position = Vector3(0, 2.86, 0)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_5")
+metadata/building_part = "roof"
 
 [node name="RoofSection_001_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, 2.86, 0)

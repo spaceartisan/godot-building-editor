@@ -29,7 +29,7 @@ Building Studio makes the **building shell** and stops there on purpose. Everyth
 | Building Studio makes | Left to Godot / the game |
 | --- | --- |
 | Walls (exterior and interior, half walls, shaped profiles), with separate inside, outside and edge meshes per story for lighting | **Materials and textures.** Slots are empty by default. A [game layer](GAME_LAYER.md) file can assign them by surface name at export; authoring the materials themselves stays in Godot. |
-| Floors, ceilings, stairs and ramps, elevators (shaft, car, sliding landing doors and stop markers), platforms (porches and decks with posts and steps), railings | **Navigation.** No `NavigationRegion3D` or navmesh is exported. Bake it in Godot from the exported collision; `validate --reachability` is an authoring check, not a navmesh. |
+| Floors, ceilings, stairs and ramps, elevators (shaft, car, sliding landing doors and stop markers), platforms (porches and decks with posts and steps; a porch is covered by the extended main roof or its own lean-to), railings | **Navigation.** No `NavigationRegion3D` or navmesh is exported. Bake it in Godot from the exported collision; `validate --reachability` is an authoring check, not a navmesh. |
 | Roofs (automatic and manual: gable, shed, flat, hip, mansard), gable fills | **Door behaviour.** Doors export hinge pivots (`Hinge`, `Hinge2`), a roll-up `Curtain` and collision, but no script or animation. Attach the game's door script (a game layer can do it on every export). |
 | Openings: doors (single, double, closet, roll-up, custom outline) and windows (frame and glass) as separate door scenes and meshes | **Elevator behaviour.** Elevators export a movable `Car` with its own doors, sliding landing doors, `Stop_NN` markers and `CallButton`/`Indicator`/`CarPanel` anchors, with collision, but no script, working buttons or timing. The game's elevator script moves them (a game layer can attach it on every export). |
 | | **Gameplay nodes:** room `Area3D`s and triggers, spawn points, interaction logic, shelter or hiding zones, AI hints, audio emitters and reverb areas. Markers (`Marker3D`) and labelled regions in the export can serve as anchors. |
@@ -79,7 +79,7 @@ Explicit custom light groups survive profile changes. Empty window openings expo
 
 **Export .tscn ZIP** downloads a ZIP containing:
 
-- `<building>.tscn` — the building scene.
+- `<building>.tscn` — the building scene (named from the building's **Scene name** / `sceneName` when set, else from its name).
 - `doors/*.tscn` — one separate scene for every generated door.
 - `elevators/*.tscn` — one scene per elevator, when the building has any.
 

@@ -619,6 +619,8 @@ blend_shape_mode = 0
 
 [node name="Floor_01" type="Node3D" parent="."]
 editor_description = "Floor 1; elevation 0m"
+metadata/building_floor_id = "floor_hk7xti"
+metadata/building_floor_label = "Floor 1"
 
 [node name="Geometry" type="Node3D" parent="Floor_01"]
 
@@ -633,28 +635,34 @@ editor_description = "Floor 1; elevation 0m"
 [node name="OutsideFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F01_ExteriorOutsideMesh")
 editor_description = "Outward-facing exterior faces."
+metadata/building_part = "exterior_wall"
 
 [node name="InsideFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F01_ExteriorInsideMesh")
 editor_description = "Inward-facing faces of the exterior shell."
+metadata/building_part = "exterior_wall"
 
 [node name="EdgeFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F01_ExteriorEdgeMesh")
 editor_description = "Window/door reveals and wall-thickness faces."
+metadata/building_part = "exterior_wall"
 
 [node name="InteriorWalls" type="Node3D" parent="Floor_01/Geometry/Walls"]
 
 [node name="SideAFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/InteriorWalls"]
 mesh = SubResource("F01_InteriorSideAMesh")
 editor_description = "One face direction of the baked interior walls."
+metadata/building_part = "interior_wall"
 
 [node name="SideBFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/InteriorWalls"]
 mesh = SubResource("F01_InteriorSideBMesh")
 editor_description = "Opposite face direction of the baked interior walls."
+metadata/building_part = "interior_wall"
 
 [node name="EdgeFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/InteriorWalls"]
 mesh = SubResource("F01_InteriorEdgeMesh")
 editor_description = "Interior wall tops, bottoms, jambs, and exposed ends."
+metadata/building_part = "interior_wall"
 
 [node name="Windows" type="Node3D" parent="Floor_01/Geometry"]
 
@@ -664,6 +672,7 @@ rotation = Vector3(0, -1.5708, 0)
 mesh = SubResource("F01_WindowMesh_001")
 metadata/building_opening_id = "window_7u27go"
 metadata/building_opening_label = "Window"
+metadata/building_part = "window"
 
 [node name="Window_001_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(-9, 1.425, 5.99628)
@@ -676,6 +685,7 @@ rotation = Vector3(0, -1.5708, 0)
 mesh = SubResource("F01_WindowMesh_002")
 metadata/building_opening_id = "window_4eevnp"
 metadata/building_opening_label = "Window"
+metadata/building_part = "window"
 
 [node name="Window_002_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(-9, 1.425, -5.99452)
@@ -688,6 +698,7 @@ rotation = Vector3(0, -1.5708, 0)
 mesh = SubResource("F01_WindowMesh_003")
 metadata/building_opening_id = "window_2u4ku6"
 metadata/building_opening_label = "Window"
+metadata/building_part = "window"
 
 [node name="Window_003_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(9, 1.425, -6.006)
@@ -700,6 +711,7 @@ rotation = Vector3(0, -1.5708, 0)
 mesh = SubResource("F01_WindowMesh_004")
 metadata/building_opening_id = "window_gek4mn"
 metadata/building_opening_label = "Window"
+metadata/building_part = "window"
 
 [node name="Window_004_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(9, 1.425, 6.0145)
@@ -712,6 +724,7 @@ rotation = Vector3(0, -1.5708, 0)
 mesh = SubResource("F01_WindowMesh_005")
 metadata/building_opening_id = "window_n8fyup"
 metadata/building_opening_label = "Window"
+metadata/building_part = "window"
 
 [node name="Window_005_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(9, 1.425, 1.99742)
@@ -724,6 +737,7 @@ rotation = Vector3(0, -1.5708, 0)
 mesh = SubResource("F01_WindowMesh_006")
 metadata/building_opening_id = "window_1ocddb"
 metadata/building_opening_label = "Window"
+metadata/building_part = "window"
 
 [node name="Window_006_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(9, 1.425, -1.99351)
@@ -736,6 +750,7 @@ rotation = Vector3(0, -1.5708, 0)
 mesh = SubResource("F01_WindowMesh_007")
 metadata/building_opening_id = "window_e9u9ud"
 metadata/building_opening_label = "Window"
+metadata/building_part = "window"
 
 [node name="Window_007_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(-9, 1.425, 1.99902)
@@ -748,6 +763,7 @@ rotation = Vector3(0, -1.5708, 0)
 mesh = SubResource("F01_WindowMesh_008")
 metadata/building_opening_id = "window_abq8k0"
 metadata/building_opening_label = "Window"
+metadata/building_part = "window"
 
 [node name="Window_008_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(-9, 1.425, -1.99862)
@@ -922,6 +938,7 @@ shape = SubResource("BoxShape_41")
 [node name="FloorSlab" type="MeshInstance3D" parent="Floor_01/Geometry"]
 mesh = SubResource("F01_FloorMesh")
 editor_description = "Automatic floor mesh after independent manual-floor overrides. Surfaces: TopFaces, BottomFaces, EdgeFaces."
+metadata/building_part = "floor"
 
 [node name="FloorCollision_001" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, -0.09, 0)
@@ -936,10 +953,12 @@ rotation = Vector3(0, 0, 0)
 [node name="RampMesh" type="MeshInstance3D" parent="Floor_01/Geometry/Stairs/Staircase_001_Staircase_1"]
 mesh = SubResource("F01_StairMesh_001")
 editor_description = "Thin smooth ramp slab with matching walking collision."
+metadata/building_part = "stair"
 
 [node name="UnderStairBlockerMesh" type="MeshInstance3D" parent="Floor_01/Geometry/Stairs/Staircase_001_Staircase_1"]
 mesh = SubResource("F01_UnderStairMesh_001")
 editor_description = "Visible fill closing the space beneath this ramp."
+metadata/building_part = "stair_blocker"
 
 [node name="WalkableRamp" type="StaticBody3D" parent="Floor_01/Geometry/Stairs/Staircase_001_Staircase_1"]
 collision_layer = 1
@@ -1008,6 +1027,8 @@ metadata/building_opening_label = "Window"
 [node name="Floor_02" type="Node3D" parent="."]
 position = Vector3(0, 2.98, 0)
 editor_description = "Floor 2; elevation 2.98m"
+metadata/building_floor_id = "floor_b6fr9l"
+metadata/building_floor_label = "Floor 2"
 
 [node name="Geometry" type="Node3D" parent="Floor_02"]
 
@@ -1022,14 +1043,17 @@ editor_description = "Floor 2; elevation 2.98m"
 [node name="OutsideFaces" type="MeshInstance3D" parent="Floor_02/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F02_ExteriorOutsideMesh")
 editor_description = "Outward-facing exterior faces."
+metadata/building_part = "exterior_wall"
 
 [node name="InsideFaces" type="MeshInstance3D" parent="Floor_02/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F02_ExteriorInsideMesh")
 editor_description = "Inward-facing faces of the exterior shell."
+metadata/building_part = "exterior_wall"
 
 [node name="EdgeFaces" type="MeshInstance3D" parent="Floor_02/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F02_ExteriorEdgeMesh")
 editor_description = "Window/door reveals and wall-thickness faces."
+metadata/building_part = "exterior_wall"
 
 [node name="ExteriorCollision_001" type="CollisionShape3D" parent="Floor_02/Collision"]
 position = Vector3(0, 1.4, -10)
@@ -1078,6 +1102,7 @@ editor_description = "Independent floor slabs with absolute top heights; not own
 
 [node name="ManualFloor_001_Manual_Floor_1" type="MeshInstance3D" parent="ManualFloors"]
 mesh = SubResource("ManualFloorMesh_001")
+metadata/building_part = "floor"
 
 [node name="ManualFloorCollision_001" type="CollisionShape3D" parent="ManualFloorCollision"]
 position = Vector3(0, 2.89, -8)
@@ -1092,6 +1117,7 @@ editor_description = "Independent roof footprints with absolute base heights; no
 position = Vector3(-4.675, 8.8084, 0)
 rotation = Vector3(0, 0, 0.61087)
 mesh = SubResource("BoxMesh_54")
+metadata/building_part = "roof"
 
 [node name="ManualRoof_001_West_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
 position = Vector3(-4.675, 8.8084, 0)
@@ -1102,6 +1128,7 @@ shape = SubResource("BoxShape_55")
 position = Vector3(4.675, 8.8084, 0)
 rotation = Vector3(0, 0, -0.61087)
 mesh = SubResource("BoxMesh_56")
+metadata/building_part = "roof"
 
 [node name="ManualRoof_001_East_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
 position = Vector3(4.675, 8.8084, 0)
@@ -1112,6 +1139,7 @@ shape = SubResource("BoxShape_57")
 position = Vector3(0, 12.11187, 0)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_58")
+metadata/building_part = "ridge"
 
 [node name="ManualRoof_001_Ridge_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
 position = Vector3(0, 12.11187, 0)
@@ -1132,9 +1160,12 @@ shape = SubResource("ConvexShape_61")
 
 [node name="OutsideFaces" type="MeshInstance3D" parent="ManualRoofs/ManualRoof_001_GableFill"]
 mesh = SubResource("ManualRoofGableMesh_001_OutsideFaces")
+metadata/building_part = "gable"
 
 [node name="InsideFaces" type="MeshInstance3D" parent="ManualRoofs/ManualRoof_001_GableFill"]
 mesh = SubResource("ManualRoofGableMesh_001_InsideFaces")
+metadata/building_part = "gable"
 
 [node name="EdgeFaces" type="MeshInstance3D" parent="ManualRoofs/ManualRoof_001_GableFill"]
 mesh = SubResource("ManualRoofGableMesh_001_EdgeFaces")
+metadata/building_part = "gable"

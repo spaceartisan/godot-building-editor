@@ -43,13 +43,16 @@ export function polygonRoofParts(section,roof,baseY,index=0,name=`Roof_${String(
   let cap=flatTop>0?areaPoints(section):[];
   for(const plane of planes){if(!cap.length)break;cap=clipPolygon(cap,plane.n,plane.d-inset);}
   const capArea=cap.length?polygonArea(cap):null;
+  // Vertical slab thickness: enough to cover the outer top edge of a wall of
+  // roof.supportThickness under the eave (as slopedRoofThickness for gables).
+  const hipT=Math.max(.12,Math.max(0,Number(roof.supportThickness)||0)/2*pitch+.01);
   planes.forEach((edge,i)=>{
     let points=areaPoints(expanded);
     for(const other of planes){points=clipPolygon(points,{x:other.n.x-edge.n.x,z:other.n.z-edge.n.z},other.d-edge.d);if(!points.length)break;}
     if(capArea&&points.length)points=clipPolygon(points,{x:-edge.n.x,z:-edge.n.z},inset-edge.d);
     const area=polygonArea(points);if(!area)return;
     const slope={x:-edge.n.x*pitch,z:-edge.n.z*pitch};
-    out.push({name:name+`_Hip_${String(i+1).padStart(2,'0')}`,solid:polygonPrism(area,baseY+edge.d*pitch+.12,baseY+edge.d*pitch,slope)});
+    out.push({name:name+`_Hip_${String(i+1).padStart(2,'0')}`,solid:polygonPrism(area,baseY+edge.d*pitch+hipT,baseY+edge.d*pitch,slope)});
   });
   if(capArea)out.push({name:name+'_Top',solid:polygonPrism(capArea,baseY+flatTop+.12,baseY+flatTop)});
   return out;

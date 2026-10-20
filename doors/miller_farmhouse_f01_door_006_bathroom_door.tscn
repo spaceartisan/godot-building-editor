@@ -52,6 +52,7 @@ metadata/door_style = "room"
 [node name="Frame" type="MeshInstance3D" parent="."]
 position = Vector3(0, 1.05, 0)
 mesh = SubResource("DoorFrameMesh")
+metadata/building_part = "door_frame"
 
 [node name="Hinge" type="Node3D" parent="."]
 position = Vector3(-0.369, 0, 0)
@@ -59,6 +60,7 @@ position = Vector3(-0.369, 0, 0)
 [node name="DoorMesh" type="MeshInstance3D" parent="Hinge"]
 position = Vector3(0.369, 1.05, 0)
 mesh = SubResource("DoorLeafMesh")
+metadata/building_part = "door_leaf"
 
 [node name="AnimatableBody3D" type="AnimatableBody3D" parent="Hinge"]
 sync_to_physics = false

@@ -1,5 +1,6 @@
 import { polygonSlabFaces } from './polygon-geometry.js';
-import { roofBoxParts, roofInteriorBlockers, roofAttachmentBlockers, trimRoofBox, trimmedGableEnds } from './roof-geometry.js';
+import { coveredPlatformSupports, leanToRoof } from './platform-roof.js';
+import { roofBoxParts, roofWithSupport, roofInteriorBlockers, roofAttachmentBlockers, trimRoofBox, trimmedGableEnds } from './roof-geometry.js';
 import { boundsOfBuilding, boundsOfStructuralFloor, constrainedOpening, floorElevation, floorView, findWall, manualCeilingRectanglesAtLevel, manualFloorRectanglesAtLevel, pointOnWall, rectValid, roofSectionsForFloor, stairFootprint, storyHeight, structuralFloorRectangles, subtractRectAreas, splitWallIntoSolidSegments, wallLength } from './model.js';
 
 import { stairOpeningFootprint, platformStepBoxes } from './model.js';
@@ -69,35 +70,6 @@ function slabRectsForView(view,bounds,stairs=[]){
 }
 
 function unionBounds(building){let minX=Infinity,maxX=-Infinity,minZ=Infinity,maxZ=-Infinity,any=false;for(let i=0;i<building.floors.length;i++){const b=boundsOfBuilding(floorView(building,building.floors[i],i===building.floors.length-1));if(!building.floors[i].walls.length&&!building.floors[i].slabs?.length&&!building.floors[i].regions?.some(r=>r.effect==='solid'))continue;any=true;minX=Math.min(minX,b.minX);maxX=Math.max(maxX,b.maxX);minZ=Math.min(minZ,b.minZ);maxZ=Math.max(maxZ,b.maxZ);}for(const r of building.roofSections||[]){if(!rectValid(r))continue;any=true;const o=Math.max(0,Number(r.overhang)||0);minX=Math.min(minX,r.minX-o);maxX=Math.max(maxX,r.maxX+o);minZ=Math.min(minZ,r.minZ-o);maxZ=Math.max(maxZ,r.maxZ+o);}for(const r of [...(building.manualFloors||[]),...(building.manualCeilings||[])]){if(!rectValid(r))continue;any=true;minX=Math.min(minX,r.minX);maxX=Math.max(maxX,r.maxX);minZ=Math.min(minZ,r.minZ);maxZ=Math.max(maxZ,r.maxZ);}return any?{minX,maxX,minZ,maxZ,width:maxX-minX,depth:maxZ-minZ}:{minX:-2,maxX:2,minZ:-2,maxZ:2,width:4,depth:4};}
-
-function overlap1D(a0,a1,b0,b1){return Math.min(a1,b1)-Math.max(a0,b0)>1e-5;}
-function coveredPlatformSupports(view, plat){
-  if(!rectValid(plat) || plat.covered===false) return [];
-  const rects=structuralFloorRectangles(view);
-  const sides=[];
-  const touching={
-    west: rects.some(r=>Math.abs(r.maxX-plat.minX)<1e-5 && overlap1D(r.minZ,r.maxZ,plat.minZ,plat.maxZ)),
-    east: rects.some(r=>Math.abs(r.minX-plat.maxX)<1e-5 && overlap1D(r.minZ,r.maxZ,plat.minZ,plat.maxZ)),
-    north: rects.some(r=>Math.abs(r.maxZ-plat.minZ)<1e-5 && overlap1D(r.minX,r.maxX,plat.minX,plat.maxX)),
-    south: rects.some(r=>Math.abs(r.minZ-plat.maxZ)<1e-5 && overlap1D(r.minX,r.maxX,plat.minX,plat.maxX)),
-  };
-  if(!touching.west) sides.push({axis:'z',x:plat.minX,z0:plat.minZ,z1:plat.maxZ});
-  if(!touching.east) sides.push({axis:'z',x:plat.maxX,z0:plat.minZ,z1:plat.maxZ});
-  if(!touching.north) sides.push({axis:'x',z:plat.minZ,x0:plat.minX,x1:plat.maxX});
-  if(!touching.south) sides.push({axis:'x',z:plat.maxZ,x0:plat.minX,x1:plat.maxX});
-  const posts=[]; const seen=new Set();
-  const addPost=(x,z)=>{const k=`${x.toFixed(4)},${z.toFixed(4)}`; if(seen.has(k)) return; seen.add(k); posts.push({x,z});};
-  for(const s of sides){
-    if(s.axis==='x'){
-      const len=Math.max(0,s.x1-s.x0); const count=Math.max(2,Math.ceil(len/2.4)+1);
-      for(let i=0;i<count;i++){const t=count===1?0:i/(count-1); addPost(s.x0+(s.x1-s.x0)*t, s.z);}
-    } else {
-      const len=Math.max(0,s.z1-s.z0); const count=Math.max(2,Math.ceil(len/2.4)+1);
-      for(let i=0;i<count;i++){const t=count===1?0:i/(count-1); addPost(s.x, s.z0+(s.z1-s.z0)*t);}
-    }
-  }
-  return {sides, posts};
-}
 
 const addObj=(objs,size,pos,rot,color,extra={})=>objs.push({size,pos,rot,color,...extra});
 function pushPolygonSlab(objs,areas,t,topY,color,category='story'){
@@ -310,11 +282,13 @@ export class Preview3D{
       addObj(objs,{x:w,y:view.floorThickness,z:d},{x:(p.minX+p.maxX)/2,y,z:(p.minZ+p.maxZ)/2},{x:0,y:0,z:0},body,{strokeAlpha:.46});
       addObj(objs,{x:Math.max(.08,w-.05),y:capT,z:Math.max(.08,d-.05)},{x:(p.minX+p.maxX)/2,y:topY-capT/2,z:(p.minZ+p.maxZ)/2},{x:0,y:0,z:0},top,{strokeAlpha:.16,castShadow:false});
       for(const step of platformStepBoxes(p))addObj(objs,step.size,{x:step.pos.x,y:elevation+step.pos.y,z:step.pos.z},{x:0,y:0,z:0},body,{strokeAlpha:.4});
-      const support=coveredPlatformSupports(view,p);
+      const support=coveredPlatformSupports(view,p),leanTo=leanToRoof(this.building,floorIndex,view,p);
+      if(leanTo){const part=leanTo.part;pushRoofPreview(objs,{...part,name:'PorchRoof',pos:{...part.pos,y:elevation+part.pos.y}},[],floorIndex);Object.assign(objs.at(-1),{category:'roof',floorIndex});}
       if(support&&support.posts?.length){
-        const postTop=elevation+view.wallHeight,postH=Math.max(.2,postTop-topY),beamY=postTop-.08;
-        for(const pt of support.posts) addObj(objs,{x:0.12,y:postH,z:0.12},{x:pt.x,y:topY+postH/2,z:pt.z},{x:0,y:0,z:0},'#6a523b',{strokeAlpha:.3});
+        const postTopAt=pt=>elevation+(leanTo?leanTo.postTop(pt):view.wallHeight);
+        for(const pt of support.posts){const postH=Math.max(.2,postTopAt(pt)-topY);addObj(objs,{x:0.12,y:postH,z:0.12},{x:pt.x,y:topY+postH/2,z:pt.z},{x:0,y:0,z:0},'#6a523b',{strokeAlpha:.3});}
         for(const s of support.sides){
+          const beamY=elevation+(leanTo?leanTo.beamTop(s):view.wallHeight)-.08;
           if(s.axis==='x'){
             const len=s.x1-s.x0; if(len>0.05) addObj(objs,{x:len+.12,y:0.16,z:0.12},{x:(s.x0+s.x1)/2,y:beamY,z:s.z},{x:0,y:0,z:0},'#5a4330',{strokeAlpha:.25});
           } else {
@@ -381,7 +355,7 @@ export class Preview3D{
         }
         for(const [rsi,rs] of sections.entries()){
           const baseY=e+view.wallHeight,blockers=roofInteriorBlockers(b,rs,baseY);
-          for(const part of roofBoxParts(rs,b.roof,baseY,rsi))pushRoofPreview(objs,part,blockers,i);
+          for(const part of roofBoxParts(rs,roofWithSupport(b),baseY,rsi))pushRoofPreview(objs,part,blockers,i);
         }
       }
       for(let n=roofStart;n<objs.length;n++){objs[n].category='roof';objs[n].floorIndex=i;}
@@ -416,7 +390,7 @@ export class Preview3D{
       const p=Math.max(5,Math.min(70,Number(rs.pitch)||Number(b.roof?.pitch)||35))*Math.PI/180;
       const cx=(rs.minX+rs.maxX)/2,cz=(rs.minZ+rs.maxZ)/2,w=rs.maxX-rs.minX,d=rs.maxZ-rs.minZ;if(w<=.05||d<=.05)continue;
       const blockers=[...roofInteriorBlockers(b,rs,baseY),...roofAttachmentBlockers(b,rs)];
-      for(const part of roofBoxParts(rs,b.roof||{},baseY,ri,true))pushRoofPreview(objs,part,blockers);
+      for(const part of roofBoxParts(rs,roofWithSupport(b),baseY,ri,true))pushRoofPreview(objs,part,blockers);
       if(type==='gable'){
         const clipped=trimmedGableEnds({...rs,direction:dir,pitch:p*180/Math.PI},baseY,Math.max(.04,Number(b.wallThickness)||.18),blockers);
         if(clipped){for(const part of clipped){const vertices=[],faces=[];for(const f of part.faces){const start=vertices.length;vertices.push(...f.points);faces.push(f.points.map((_,i)=>start+i));}if(vertices.length)objs.push({mesh:{vertices,faces},color:'#93836b',doubleSided:true,castShadow:false,variation:1,uniformFog:true});}}

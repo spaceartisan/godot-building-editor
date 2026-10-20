@@ -1,4 +1,4 @@
-import { roofBoxParts, roofInteriorBlockers, roofAttachmentBlockers, trimRoofBox } from './roof-geometry.js';
+import { roofBoxParts, roofWithSupport, roofInteriorBlockers, roofAttachmentBlockers, trimRoofBox } from './roof-geometry.js';
 
 // Volumes are measured per exported box part, including ridge caps. Overlapping
 // parts are NOT unioned; these numbers are diagnostic contributions, not a bill
@@ -31,7 +31,7 @@ export function roofAttachmentDiagnostics(building){
     if(!validRoof(roof)||!validRoof(host)||roof===host||host.hostRoofId||!Array.isArray(building.floors)||!building.floors.length){
       result.message='Cannot measure this attachment until roof fields and its independent host are valid and normalized.';return [result];
     }
-    const parts=roofBoxParts(roof,building.roof||{},roof.baseY,index,true);
+    const parts=roofBoxParts(roof,roofWithSupport(building),roof.baseY,index,true);
     if(!parts.length){result.status='no-roof-parts';result.message='This roof generates no slab or ridge parts; check its footprint dimensions.';return [result];}
     const attachments=roofAttachmentBlockers(building,roof),hosts=attachments.filter(b=>b.solid);
     const baseline=[...roofInteriorBlockers(building,roof,roof.baseY),...attachments.filter(b=>!b.solid)];

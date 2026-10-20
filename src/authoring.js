@@ -13,6 +13,11 @@ export function proposePlatformUpdate(platform,patch){
     if(typeof next[key]!=='number'||!Number.isFinite(next[key])||Math.abs(next[key])>limit)return {ok:false,reason:`Platform ${key} must be a finite number within ±${limit} m`};
   }
   if(!rectValid(next))return {ok:false,reason:'Platform width and depth must each be at least 0.1 m'};
+  // A lean-to porch roof (platform-roof.js); "extend", the default, is not stored.
+  if(next.roofStyle==null||next.roofStyle==='extend')delete next.roofStyle;
+  else if(next.roofStyle!=='lean-to')return {ok:false,reason:'Platform roofStyle must be extend or lean-to'};
+  if(next.roofPitch==null)delete next.roofPitch;
+  else if(typeof next.roofPitch!=='number'||!Number.isFinite(next.roofPitch)||next.roofPitch<3||next.roofPitch>45)return {ok:false,reason:'Platform roofPitch must be 3 to 45 degrees'};
   if(next.steps==null)delete next.steps;
   {const problem=platformStepsProblem(next);if(problem)return {ok:false,reason:problem};}
   return {ok:true,platform:next};

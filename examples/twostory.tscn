@@ -1347,6 +1347,8 @@ size = Vector3(18.78, 0.102, 0.192)
 
 [node name="Floor_01" type="Node3D" parent="."]
 editor_description = "Floor 1; elevation 0m"
+metadata/building_floor_id = "floor_2obiv6"
+metadata/building_floor_label = "Floor 1"
 
 [node name="Geometry" type="Node3D" parent="Floor_01"]
 
@@ -1361,28 +1363,34 @@ editor_description = "Floor 1; elevation 0m"
 [node name="OutsideFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F01_ExteriorOutsideMesh")
 editor_description = "Outward-facing exterior faces."
+metadata/building_part = "exterior_wall"
 
 [node name="InsideFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F01_ExteriorInsideMesh")
 editor_description = "Inward-facing faces of the exterior shell."
+metadata/building_part = "exterior_wall"
 
 [node name="EdgeFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F01_ExteriorEdgeMesh")
 editor_description = "Window/door reveals and wall-thickness faces."
+metadata/building_part = "exterior_wall"
 
 [node name="InteriorWalls" type="Node3D" parent="Floor_01/Geometry/Walls"]
 
 [node name="SideAFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/InteriorWalls"]
 mesh = SubResource("F01_InteriorSideAMesh")
 editor_description = "One face direction of the baked interior walls."
+metadata/building_part = "interior_wall"
 
 [node name="SideBFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/InteriorWalls"]
 mesh = SubResource("F01_InteriorSideBMesh")
 editor_description = "Opposite face direction of the baked interior walls."
+metadata/building_part = "interior_wall"
 
 [node name="EdgeFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/InteriorWalls"]
 mesh = SubResource("F01_InteriorEdgeMesh")
 editor_description = "Interior wall tops, bottoms, jambs, and exposed ends."
+metadata/building_part = "interior_wall"
 
 [node name="Windows" type="Node3D" parent="Floor_01/Geometry"]
 
@@ -1392,6 +1400,7 @@ rotation = Vector3(0, 0, 0)
 mesh = SubResource("F01_WindowMesh_001")
 metadata/building_opening_id = "window_shcxhh"
 metadata/building_opening_label = "Window"
+metadata/building_part = "window"
 
 [node name="Window_001_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(6.50015, 1.425, 7)
@@ -1404,6 +1413,7 @@ rotation = Vector3(0, 1.5708, 0)
 mesh = SubResource("F01_WindowMesh_002")
 metadata/building_opening_id = "window_7jiwlw"
 metadata/building_opening_label = "Window"
+metadata/building_part = "window"
 
 [node name="Window_002_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(9, 1.425, 4.49352)
@@ -1416,6 +1426,7 @@ rotation = Vector3(0, 0, 0)
 mesh = SubResource("F01_WindowMesh_003")
 metadata/building_opening_id = "window_uws8va"
 metadata/building_opening_label = "Window"
+metadata/building_part = "window"
 
 [node name="Window_003_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(-6.50023, 1.425, 7)
@@ -1428,6 +1439,7 @@ rotation = Vector3(0, -1.5708, 0)
 mesh = SubResource("F01_WindowMesh_004")
 metadata/building_opening_id = "window_c7p5hy"
 metadata/building_opening_label = "Window"
+metadata/building_part = "window"
 
 [node name="Window_004_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(-9, 1.425, 4.50781)
@@ -1440,6 +1452,7 @@ rotation = Vector3(0, -3.14159, 0)
 mesh = SubResource("F01_WindowMesh_005")
 metadata/building_opening_id = "window_19prtn"
 metadata/building_opening_label = "Window"
+metadata/building_part = "window"
 
 [node name="Window_005_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(6.49904, 1.425, -7)
@@ -1452,6 +1465,7 @@ rotation = Vector3(0, 1.5708, 0)
 mesh = SubResource("F01_WindowMesh_006")
 metadata/building_opening_id = "window_m30f38"
 metadata/building_opening_label = "Window"
+metadata/building_part = "window"
 
 [node name="Window_006_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(9, 1.425, -4.48986)
@@ -1464,6 +1478,7 @@ rotation = Vector3(0, -1.5708, 0)
 mesh = SubResource("F01_WindowMesh_007")
 metadata/building_opening_id = "window_krv35q"
 metadata/building_opening_label = "Window"
+metadata/building_part = "window"
 
 [node name="Window_007_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(-9, 1.425, -4.50355)
@@ -1476,6 +1491,7 @@ rotation = Vector3(0, -3.14159, 0)
 mesh = SubResource("F01_WindowMesh_008")
 metadata/building_opening_id = "window_yk9rul"
 metadata/building_opening_label = "Window"
+metadata/building_part = "window"
 
 [node name="Window_008_Window_Collision" type="CollisionShape3D" parent="Floor_01/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(-6.49152, 1.425, -7)
@@ -1774,6 +1790,7 @@ shape = SubResource("BoxShape_57")
 [node name="FloorSlab" type="MeshInstance3D" parent="Floor_01/Geometry"]
 mesh = SubResource("F01_FloorMesh")
 editor_description = "Automatic floor mesh after independent manual-floor overrides. Surfaces: TopFaces, BottomFaces, EdgeFaces."
+metadata/building_part = "floor"
 
 [node name="FloorCollision_001" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, -0.09, 0)
@@ -1782,6 +1799,7 @@ shape = SubResource("FloorShape_58")
 [node name="Ceiling" type="MeshInstance3D" parent="Floor_01/Geometry"]
 mesh = SubResource("F01_CeilingMesh")
 editor_description = "Automatic ceiling mesh after independent manual-ceiling overrides. Surfaces: RoomFaces, RoofSideFaces, EdgeFaces."
+metadata/building_part = "ceiling"
 
 [node name="CeilingCollision_001" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(-3.505, 3.94, 0.78)
@@ -1803,6 +1821,7 @@ shape = SubResource("CeilingShape_62")
 
 [node name="Porch_001_Porch_1" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
 mesh = SubResource("F01_PlatformMesh_001")
+metadata/building_part = "platform"
 
 [node name="Porch_001_Porch_1_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, -0.09, 8)
@@ -1812,6 +1831,7 @@ shape = SubResource("PlatformShape_63")
 position = Vector3(-5, 2, 7)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_64")
+metadata/building_part = "post"
 
 [node name="Porch_001_Porch_1_Post_001_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(-5, 2, 7)
@@ -1822,6 +1842,7 @@ shape = SubResource("BoxShape_65")
 position = Vector3(-5, 2, 9)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_66")
+metadata/building_part = "post"
 
 [node name="Porch_001_Porch_1_Post_002_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(-5, 2, 9)
@@ -1832,6 +1853,7 @@ shape = SubResource("BoxShape_67")
 position = Vector3(5, 2, 7)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_68")
+metadata/building_part = "post"
 
 [node name="Porch_001_Porch_1_Post_003_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(5, 2, 7)
@@ -1842,6 +1864,7 @@ shape = SubResource("BoxShape_69")
 position = Vector3(5, 2, 9)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_70")
+metadata/building_part = "post"
 
 [node name="Porch_001_Porch_1_Post_004_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(5, 2, 9)
@@ -1852,6 +1875,7 @@ shape = SubResource("BoxShape_71")
 position = Vector3(-3, 2, 9)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_72")
+metadata/building_part = "post"
 
 [node name="Porch_001_Porch_1_Post_005_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(-3, 2, 9)
@@ -1862,6 +1886,7 @@ shape = SubResource("BoxShape_73")
 position = Vector3(-1, 2, 9)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_74")
+metadata/building_part = "post"
 
 [node name="Porch_001_Porch_1_Post_006_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(-1, 2, 9)
@@ -1872,6 +1897,7 @@ shape = SubResource("BoxShape_75")
 position = Vector3(1, 2, 9)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_76")
+metadata/building_part = "post"
 
 [node name="Porch_001_Porch_1_Post_007_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(1, 2, 9)
@@ -1882,6 +1908,7 @@ shape = SubResource("BoxShape_77")
 position = Vector3(3, 2, 9)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_78")
+metadata/building_part = "post"
 
 [node name="Porch_001_Porch_1_Post_008_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(3, 2, 9)
@@ -1892,6 +1919,7 @@ shape = SubResource("BoxShape_79")
 position = Vector3(-5, 3.92, 8)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_80")
+metadata/building_part = "beam"
 
 [node name="Porch_001_Porch_1_Beam_001_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(-5, 3.92, 8)
@@ -1902,6 +1930,7 @@ shape = SubResource("BoxShape_81")
 position = Vector3(5, 3.92, 8)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_82")
+metadata/building_part = "beam"
 
 [node name="Porch_001_Porch_1_Beam_002_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(5, 3.92, 8)
@@ -1912,6 +1941,7 @@ shape = SubResource("BoxShape_83")
 position = Vector3(0, 3.92, 9)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_84")
+metadata/building_part = "beam"
 
 [node name="Porch_001_Porch_1_Beam_003_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, 3.92, 9)
@@ -1924,6 +1954,7 @@ shape = SubResource("BoxShape_85")
 position = Vector3(-5, 0, 8)
 rotation = Vector3(0, -1.5708, 0)
 mesh = SubResource("F01_RailingMesh_001")
+metadata/building_part = "railing"
 
 [node name="Railing_001_Railing_1_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(-5, 0.5, 8)
@@ -1934,6 +1965,7 @@ shape = SubResource("RailingShape_86")
 position = Vector3(-3, 0, 9)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("F01_RailingMesh_002")
+metadata/building_part = "railing"
 
 [node name="Railing_002_Railing_2_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(-3, 0.5, 9)
@@ -1944,6 +1976,7 @@ shape = SubResource("RailingShape_87")
 position = Vector3(5, 0, 8)
 rotation = Vector3(0, -1.5708, 0)
 mesh = SubResource("F01_RailingMesh_003")
+metadata/building_part = "railing"
 
 [node name="Railing_003_Railing_3_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(5, 0.5, 8)
@@ -1954,6 +1987,7 @@ shape = SubResource("RailingShape_88")
 position = Vector3(3, 0, 9)
 rotation = Vector3(0, -3.14159, 0)
 mesh = SubResource("F01_RailingMesh_004")
+metadata/building_part = "railing"
 
 [node name="Railing_004_Railing_4_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(3, 0.5, 9)
@@ -1969,10 +2003,12 @@ rotation = Vector3(0, 0, 0)
 [node name="RampMesh" type="MeshInstance3D" parent="Floor_01/Geometry/Stairs/Staircase_001_Staircase_1"]
 mesh = SubResource("F01_StairMesh_001")
 editor_description = "Thin smooth ramp slab with matching walking collision."
+metadata/building_part = "stair"
 
 [node name="UnderStairBlockerMesh" type="MeshInstance3D" parent="Floor_01/Geometry/Stairs/Staircase_001_Staircase_1"]
 mesh = SubResource("F01_UnderStairMesh_001")
 editor_description = "Visible fill closing the space beneath this ramp."
+metadata/building_part = "stair_blocker"
 
 [node name="WalkableRamp" type="StaticBody3D" parent="Floor_01/Geometry/Stairs/Staircase_001_Staircase_1"]
 collision_layer = 1
@@ -1995,6 +2031,11 @@ position = Vector3(-0.00652, 1.05, 7)
 rotation = Vector3(0, 0, 0)
 metadata/building_opening_id = "door_umeslj"
 metadata/building_opening_label = "Door"
+metadata/outward_normal = Vector3(0, 0, 1)
+
+[node name="Threshold" type="Marker3D" parent="Floor_01/Openings/Door_001_Door"]
+position = Vector3(0, -1.05, 0.09)
+rotation = Vector3(0, 3.14159, 0)
 
 [node name="Window_002_Window" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(6.50015, 1.425, 7)
@@ -2049,6 +2090,11 @@ position = Vector3(4.49289, 1.05, -7)
 rotation = Vector3(0, -3.14159, 0)
 metadata/building_opening_id = "door_bub2io"
 metadata/building_opening_label = "Door"
+metadata/outward_normal = Vector3(0, 0, -1)
+
+[node name="Threshold" type="Marker3D" parent="Floor_01/Openings/Door_010_Door"]
+position = Vector3(0, -1.05, 0.09)
+rotation = Vector3(0, 3.14159, 0)
 
 [node name="Door_011_Door" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(2, 1.05, 4.98892)
@@ -2087,6 +2133,7 @@ shape = SubResource("GableShape_92")
 
 [node name="Roof_001_North" type="MeshInstance3D" parent="Floor_01/Geometry/Roof"]
 mesh = SubResource("RoofMesh_93")
+metadata/building_part = "roof"
 
 [node name="Roof_001_North_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 shape = SubResource("RoofShape_94")
@@ -2095,6 +2142,7 @@ shape = SubResource("RoofShape_94")
 position = Vector3(0, 4.22757, 8.675)
 rotation = Vector3(0.61087, 0, 0)
 mesh = SubResource("BoxMesh_95")
+metadata/building_part = "roof"
 
 [node name="Roof_001_South_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, 4.22757, 8.675)
@@ -2105,6 +2153,7 @@ shape = SubResource("BoxShape_96")
 position = Vector3(0, 4.73021, 8)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_97")
+metadata/building_part = "ridge"
 
 [node name="RidgeCap_001_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, 4.73021, 8)
@@ -2114,6 +2163,8 @@ shape = SubResource("BoxShape_98")
 [node name="Floor_02" type="Node3D" parent="."]
 position = Vector3(0, 4.18, 0)
 editor_description = "Floor 2; elevation 4.18m"
+metadata/building_floor_id = "floor_bx8d8g"
+metadata/building_floor_label = "Floor 2"
 
 [node name="Geometry" type="Node3D" parent="Floor_02"]
 
@@ -2128,28 +2179,34 @@ editor_description = "Floor 2; elevation 4.18m"
 [node name="OutsideFaces" type="MeshInstance3D" parent="Floor_02/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F02_ExteriorOutsideMesh")
 editor_description = "Outward-facing exterior faces."
+metadata/building_part = "exterior_wall"
 
 [node name="InsideFaces" type="MeshInstance3D" parent="Floor_02/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F02_ExteriorInsideMesh")
 editor_description = "Inward-facing faces of the exterior shell."
+metadata/building_part = "exterior_wall"
 
 [node name="EdgeFaces" type="MeshInstance3D" parent="Floor_02/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F02_ExteriorEdgeMesh")
 editor_description = "Window/door reveals and wall-thickness faces."
+metadata/building_part = "exterior_wall"
 
 [node name="InteriorWalls" type="Node3D" parent="Floor_02/Geometry/Walls"]
 
 [node name="SideAFaces" type="MeshInstance3D" parent="Floor_02/Geometry/Walls/InteriorWalls"]
 mesh = SubResource("F02_InteriorSideAMesh")
 editor_description = "One face direction of the baked interior walls."
+metadata/building_part = "interior_wall"
 
 [node name="SideBFaces" type="MeshInstance3D" parent="Floor_02/Geometry/Walls/InteriorWalls"]
 mesh = SubResource("F02_InteriorSideBMesh")
 editor_description = "Opposite face direction of the baked interior walls."
+metadata/building_part = "interior_wall"
 
 [node name="EdgeFaces" type="MeshInstance3D" parent="Floor_02/Geometry/Walls/InteriorWalls"]
 mesh = SubResource("F02_InteriorEdgeMesh")
 editor_description = "Interior wall tops, bottoms, jambs, and exposed ends."
+metadata/building_part = "interior_wall"
 
 [node name="Windows" type="Node3D" parent="Floor_02/Geometry"]
 
@@ -2159,6 +2216,7 @@ rotation = Vector3(0, 0, 0)
 mesh = SubResource("F02_WindowMesh_001")
 metadata/building_opening_id = "window_x6eu5w"
 metadata/building_opening_label = "Window"
+metadata/building_part = "window"
 
 [node name="Window_001_Window_Collision" type="CollisionShape3D" parent="Floor_02/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(6.50015, 1.425, 7)
@@ -2171,6 +2229,7 @@ rotation = Vector3(0, 1.5708, 0)
 mesh = SubResource("F02_WindowMesh_002")
 metadata/building_opening_id = "window_86vgvk"
 metadata/building_opening_label = "Window"
+metadata/building_part = "window"
 
 [node name="Window_002_Window_Collision" type="CollisionShape3D" parent="Floor_02/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(9, 1.425, 4.49352)
@@ -2183,6 +2242,7 @@ rotation = Vector3(0, 0, 0)
 mesh = SubResource("F02_WindowMesh_003")
 metadata/building_opening_id = "window_hzfx8b"
 metadata/building_opening_label = "Window"
+metadata/building_part = "window"
 
 [node name="Window_003_Window_Collision" type="CollisionShape3D" parent="Floor_02/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(-6.50023, 1.425, 7)
@@ -2195,6 +2255,7 @@ rotation = Vector3(0, -1.5708, 0)
 mesh = SubResource("F02_WindowMesh_004")
 metadata/building_opening_id = "window_0dfceq"
 metadata/building_opening_label = "Window"
+metadata/building_part = "window"
 
 [node name="Window_004_Window_Collision" type="CollisionShape3D" parent="Floor_02/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(-9, 1.425, 4.50781)
@@ -2207,6 +2268,7 @@ rotation = Vector3(0, -3.14159, 0)
 mesh = SubResource("F02_WindowMesh_005")
 metadata/building_opening_id = "window_96s64m"
 metadata/building_opening_label = "Window"
+metadata/building_part = "window"
 
 [node name="Window_005_Window_Collision" type="CollisionShape3D" parent="Floor_02/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(6.49904, 1.425, -7)
@@ -2219,6 +2281,7 @@ rotation = Vector3(0, 1.5708, 0)
 mesh = SubResource("F02_WindowMesh_006")
 metadata/building_opening_id = "window_tqn1he"
 metadata/building_opening_label = "Window"
+metadata/building_part = "window"
 
 [node name="Window_006_Window_Collision" type="CollisionShape3D" parent="Floor_02/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(9, 1.425, -4.48986)
@@ -2231,6 +2294,7 @@ rotation = Vector3(0, -1.5708, 0)
 mesh = SubResource("F02_WindowMesh_007")
 metadata/building_opening_id = "window_mjcj7x"
 metadata/building_opening_label = "Window"
+metadata/building_part = "window"
 
 [node name="Window_007_Window_Collision" type="CollisionShape3D" parent="Floor_02/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(-9, 1.425, -4.50355)
@@ -2243,6 +2307,7 @@ rotation = Vector3(0, -3.14159, 0)
 mesh = SubResource("F02_WindowMesh_008")
 metadata/building_opening_id = "window_a5zsgz"
 metadata/building_opening_label = "Window"
+metadata/building_part = "window"
 
 [node name="Window_008_Window_Collision" type="CollisionShape3D" parent="Floor_02/Collision" groups=["scare_sight_transparent"]]
 position = Vector3(-6.49152, 1.425, -7)
@@ -2616,6 +2681,7 @@ shape = SubResource("BoxShape_170")
 [node name="FloorSlab" type="MeshInstance3D" parent="Floor_02/Geometry"]
 mesh = SubResource("F02_FloorMesh")
 editor_description = "Automatic floor mesh after independent manual-floor overrides. Surfaces: TopFaces, BottomFaces, EdgeFaces."
+metadata/building_part = "floor"
 
 [node name="FloorCollision_001" type="CollisionShape3D" parent="Floor_02/Collision"]
 position = Vector3(-3.505, -0.09, 0.78)
@@ -2636,6 +2702,7 @@ shape = SubResource("FloorShape_174")
 [node name="Ceiling" type="MeshInstance3D" parent="Floor_02/Geometry"]
 mesh = SubResource("F02_CeilingMesh")
 editor_description = "Automatic ceiling mesh after independent manual-ceiling overrides. Surfaces: RoomFaces, RoofSideFaces, EdgeFaces."
+metadata/building_part = "ceiling"
 
 [node name="CeilingCollision_001" type="CollisionShape3D" parent="Floor_02/Collision"]
 position = Vector3(0, 3.94, 0)
@@ -2747,6 +2814,7 @@ shape = SubResource("ConvexShape_177")
 position = Vector3(0, 6.32819, -3.675)
 rotation = Vector3(-0.61087, 0, 0)
 mesh = SubResource("BoxMesh_178")
+metadata/building_part = "roof"
 
 [node name="Roof_001_North_Collision" type="CollisionShape3D" parent="Floor_02/Collision"]
 position = Vector3(0, 6.32819, -3.675)
@@ -2757,6 +2825,7 @@ shape = SubResource("BoxShape_179")
 position = Vector3(0, 6.32819, 3.675)
 rotation = Vector3(0.61087, 0, 0)
 mesh = SubResource("BoxMesh_180")
+metadata/building_part = "roof"
 
 [node name="Roof_001_South_Collision" type="CollisionShape3D" parent="Floor_02/Collision"]
 position = Vector3(0, 6.32819, 3.675)
@@ -2767,6 +2836,7 @@ shape = SubResource("BoxShape_181")
 position = Vector3(0, 8.93145, 0)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_182")
+metadata/building_part = "ridge"
 
 [node name="RidgeCap_001_Collision" type="CollisionShape3D" parent="Floor_02/Collision"]
 position = Vector3(0, 8.93145, 0)

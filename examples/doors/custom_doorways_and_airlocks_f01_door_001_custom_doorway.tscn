@@ -43,12 +43,14 @@ metadata/door_style = "custom"
 [node name="Frame" type="MeshInstance3D" parent="."]
 position = Vector3(0, 1.2, 0)
 mesh = SubResource("DoorFrameMesh")
+metadata/building_part = "door_frame"
 
 [node name="Panel" type="Node3D" parent="."]
 
 [node name="DoorMesh" type="MeshInstance3D" parent="Panel"]
 position = Vector3(0, 1.2, 0)
 mesh = SubResource("DoorLeafMesh")
+metadata/building_part = "door_leaf"
 
 [node name="AnimatableBody3D" type="AnimatableBody3D" parent="Panel"]
 sync_to_physics = false

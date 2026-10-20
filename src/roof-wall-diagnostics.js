@@ -1,7 +1,7 @@
 import {floorView,floorElevation,roofSectionsForFloor,wallLength} from './model.js';
 import {wallTypeFor,sampleWallType} from './wall-types.js';
 import {profileRoomSolids} from './profile-roof-envelope.js';
-import {roofBoxParts,roofInteriorBlockers,roofAttachmentBlockers,trimRoofBox} from './roof-geometry.js';
+import {roofBoxParts,roofWithSupport,roofInteriorBlockers,roofAttachmentBlockers,trimRoofBox} from './roof-geometry.js';
 const dot=(a,b)=>a.x*b.x+a.z*b.z;
 export function roofWallDiagnostics(building){
   const results=[];if(!Array.isArray(building.floors)||!building.wallTypes?.length||!building.roof||!Number.isFinite(building.wallThickness))return results;
@@ -25,7 +25,7 @@ export function roofWallDiagnostics(building){
         if(Math.min(...projection)>side.d+reach||Math.max(...projection)<side.d-reach)continue;
         const blockers=[...roofInteriorBlockers(building,roof,roof.baseY),...(roof.manual?roofAttachmentBlockers(building,roof):[])];
         let gap=Infinity;
-        for(const part of roofBoxParts(roof,building.roof,roof.baseY,0,roof.manual)){
+        for(const part of roofBoxParts(roof,roofWithSupport(building),roof.baseY,0,roof.manual)){
           const faces=trimRoofBox(part,blockers),points=faces===null?roofPartVertices(part):faces.flatMap(f=>f.points);
           for(const p of points){if(p.y<e-.001||p.y>e+view.wallHeight+.001)continue;const along=dot(tangent,{x:p.x-wall.a.x,z:p.z-wall.a.z});if(along<-.001||along>length+.001)continue;
             const shape=sampleWallType(side.type,(p.y-e)/view.wallHeight,view.wallThickness),distance=dot(side.n,p)-side.d-side.sign*shape.offset-shape.thickness/2;gap=Math.min(gap,distance);

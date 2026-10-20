@@ -2,7 +2,7 @@ import { ELEVATOR_DOOR_SIDES, ELEVATOR_DEFAULTS, elevatorProblem } from './eleva
 import { regionPolygonProblem, regionBounds } from './regions.js';
 import { prepareDocument, resolvedFloorDimensions, inspectStair, inspectPlatform, inspectFloorCoverage } from './diagnostics.js';
 import { validateBuilding } from './validation.js';
-import { makeOmniLight, makeManualSurface, makeRectArea, floorView, makeRegion, makeRoofSection, makeStair, makePlatform, makeRailing, wallLength, rectValid, REGION_KINDS, REGION_EFFECTS, validateOpeningLayout, addRoom } from './model.js';
+import { sceneNameProblem, makeOmniLight, makeManualSurface, makeRectArea, floorView, makeRegion, makeRoofSection, makeStair, makePlatform, makeRailing, wallLength, rectValid, REGION_KINDS, REGION_EFFECTS, validateOpeningLayout, addRoom } from './model.js';
 import { proposeEndpointMove, proposeWallSplit } from './wall-edit.js';
 import { stairGuardRailings } from './stair-guards.js';
 import { wallSegmentProblem, proposePlatformUpdate, proposeCrenellation } from './authoring.js';
@@ -31,9 +31,9 @@ function point(value,where){keys(value,['x','z'],where);number(value.x,`${where}
 const rectKeys=['minX','maxX','minZ','maxZ'];
 const GROUP_TYPES=['wall','opening','light','marker','stair','railing','region','slab','platform','manualFloor','manualCeiling','roofSection','elevator'];
 const fields={
-  building:['name','exportProfile','wallHeight','wallThickness','floorThickness','gridSize','roof','ceiling','doorMesh','windowMesh','slabsByRoom'],
+  building:['name','sceneName','exportProfile','wallHeight','wallThickness','floorThickness','gridSize','roof','ceiling','doorMesh','windowMesh','slabsByRoom'],
   floor:['label','elevation','wallHeight','floorThickness','autoFloor','autoCeiling','boundaryMode'],
-  platform:['label',...rectKeys,'kind','height','covered','steps'],
+  platform:['label',...rectKeys,'kind','height','covered','roofStyle','roofPitch','steps'],
   elevator:['label','x','z','width','depth','doorSide','doorWidth','doorHeight','bottomFloorId','topFloorId','skipFloorIds'],
   stair:['label','x','z','width','run','direction','style','steps','blockBelow'],
   wall:['label','role','height','a','b','wallTypeId','inwardSide','inwardToward'],
@@ -73,6 +73,8 @@ function checkValue(kind,value,action,where){
     else if(kind==='platform'){
       if(key==='kind')choice(v,['porch','deck'],p);
       else if(key==='covered'){if(typeof v!=='boolean')fail('Expected a boolean',p);}
+      else if(key==='roofStyle'){if(v!==null)choice(v,['extend','lean-to'],p);}
+      else if(key==='roofPitch'){if(v!==null)number(v,p,3,45);}
       else if(key==='steps'){if(v!==null){keys(v,['edge','at','width'],p);if(v.edge===undefined)fail('Missing required field: edge',p);choice(v.edge,['minX','maxX','minZ','maxZ'],`${p}/edge`);for(const k of ['at','width'])if(v[k]!==undefined)number(v[k],`${p}/${k}`);}}
       else number(v,p,key==='height'?-10000:-1e6,key==='height'?10000:1e6);
     }
@@ -86,6 +88,7 @@ function checkValue(kind,value,action,where){
     else if(kind==='building'){
       // Ranges match the web building settings and the shared validator.
       if(key==='name')text(v,p);
+      else if(key==='sceneName'){if(v!==null&&sceneNameProblem(v))fail(sceneNameProblem(v),p);}
       else if(key==='exportProfile')choice(v,['generic','get_probed'],p);
       else if(key==='slabsByRoom'){if(typeof v!=='boolean')fail('Expected a boolean',p);}
       else if(key==='roof'){
@@ -315,7 +318,7 @@ function applyOperation(building,op,index){
       else{
         // Profile stations at the old wall thickness follow the new one (shared with the web setting).
         if(key==='wallThickness')followWallThickness(building,building.wallThickness,value);
-        building[key]=value;if(key==='slabsByRoom'&&value===false)delete building.slabsByRoom;
+        building[key]=value;if(key==='slabsByRoom'&&value===false)delete building.slabsByRoom;if(key==='sceneName'&&value===null)delete building.sceneName;
       }
     }
     return;
@@ -508,7 +511,7 @@ function applyFloorStack(building,op,action,p){
     const anchorId=action==='duplicate'?op.sourceFloorId:op.aboveFloorId??op.belowFloorId,anchor=indexOf(anchorId);
     if(anchor<0)fail(`Unknown floor ID: ${anchorId}`,p);
     const stackAction=action==='duplicate'?'duplicate':Object.hasOwn(op,'aboveFloorId')?'above':'below';
-    const result=proposeFloorStackEdit(building,anchor,stackAction,{removeAffectedStairs,validateResult:false});if(!result.ok)fail(cliReason(result.reason),p);
+    const result=proposeFloorStackEdit(building,anchor,stackAction,{removeAffectedStairs,validateResult:false,fields:op.value});if(!result.ok)fail(cliReason(result.reason),p);
     const added=result.building.floors[result.activeIndex];added.id=op.id;
     if(action==='duplicate'){
       // A copy of a copy replaces the source floor's prefix instead of
@@ -615,7 +618,7 @@ export function applyTransaction(source,transaction,{warningsAsErrors=false,sour
         if(JSON.stringify(previous)===JSON.stringify(next))continue;
         // Conservative context inventory, not inferred ownership. These pieces
         // are retained, and may need a separate alignment edit after a change.
-        const geometryChanged=!previous||!next||['minX','maxX','minZ','maxZ','topY','bottomY','kind','covered'].some(k=>previous[k]!==next[k]);
+        const geometryChanged=!previous||!next||['minX','maxX','minZ','maxZ','topY','bottomY','kind','covered','roofStyle','roofPitch'].some(k=>previous[k]!==next[k]);
         const independentPieces=geometryChanged?[
           ...(nextFloor?.railings||[]).map(r=>({kind:'railing',id:r.id,floorId})),
           ...['manualFloors','manualCeilings','roofSections'].flatMap(kind=>building[kind].map(r=>({kind,id:r.id})))

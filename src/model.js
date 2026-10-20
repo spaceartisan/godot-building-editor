@@ -226,6 +226,13 @@ export function makeManualSurface(a, b, kind = 'floor', topY = 0, thickness = 0.
   return r;
 }
 
+// Optional building.sceneName fixes the exported scene file name and root node
+// name, so renaming the building does not move the file (Dirtscape).
+export function sceneNameProblem(value){
+  if(typeof value!=='string'||!/^[A-Za-z0-9_][A-Za-z0-9_-]{0,99}$/.test(value))return 'Scene name must be 1 to 100 letters, digits, _ or - (not starting with -)';
+  return null;
+}
+
 export function rectValid(r) {
   return !!r && Number(r.maxX) - Number(r.minX) >= 0.1 && Number(r.maxZ) - Number(r.minZ) >= 0.1;
 }
@@ -656,7 +663,8 @@ function baseFloorRectangles(building) {
 
 export function automaticRoofRectangles(building) {
   const bases=[...structuralFloorRectangles(building)];
-  for(const p of (building.platforms||[])) if(rectValid(p)&&p.covered!==false) bases.push({minX:p.minX,maxX:p.maxX,minZ:p.minZ,maxZ:p.maxZ});
+  // A lean-to porch has its own roof (platform-roof.js), so it is not a roof base.
+  for(const p of (building.platforms||[])) if(rectValid(p)&&p.covered!==false&&p.roofStyle!=='lean-to') bases.push({minX:p.minX,maxX:p.maxX,minZ:p.minZ,maxZ:p.maxZ});
   return subtractRectAreas(unionRectAreas(bases),regionVoids(building));
 }
 

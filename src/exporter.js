@@ -7,7 +7,8 @@ import { roofFootprintAreas, manualRoofOverhang } from './roof-outline.js';
 import { applyGameLayer } from './game-layer.js';
 import { areaPoints, areaSize, polygonArea, unionPolygonAreas, subtractPolygonAreas, intersectPolygonAreas, edgePlanes } from './polygon-areas.js';
 import { regionAreaCells } from './regions.js';
-import { roofBoxParts, roofInteriorBlockers, roofAttachmentBlockers, trimRoofBox, trimmedGableEnds } from './roof-geometry.js';
+import { coveredPlatformSupports, leanToRoof } from './platform-roof.js';
+import { roofBoxParts, roofWithSupport, roofInteriorBlockers, roofAttachmentBlockers, trimRoofBox, trimmedGableEnds } from './roof-geometry.js';
 import { higherFloorBlockerRectangles, exteriorFootprintRectangles, unionRectAreas, automaticRoofRectangles, automaticRoofSections, boundsOfAutomaticRoof, boundsOfBuilding, boundsOfStructuralFloor, constrainedOpening, floorElevation, floorView, findWall, manualCeilingRectanglesAtLevel, manualFloorRectanglesAtLevel, pointOnWall, rectValid, roofSectionsForFloor, stairFootprint, storyHeight, structuralFloorRectangles, subtractRectAreas, splitWallIntoSolidSegments, validateOpeningLayout, wallLength } from './model.js';
 import { wallSolidPlanes, unionFaceWriter, junctionMiters } from './wall-union.js';
 import { stairOpeningFootprint, platformStepBoxes } from './model.js';
@@ -30,9 +31,15 @@ const nodeClean = s => clean(s).replace(/\s+/g,'_');
 // Free text inside a quoted .tscn string: Godot reads \ \" \n \t as escapes,
 // so an unescaped backslash, quote or newline in a label would corrupt the scene.
 export const tscnText = s => String(s).replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\r\n|\r|\n/g,'\\n').replace(/\t/g,'\\t');
+// Export file base: the building's sceneName if set, else its slugged name.
+export const exportBase = building => building?.sceneName || fileBase(building?.name);
 export const fileBase = name => (name || 'building').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_|_$/g,'').toLowerCase() || 'building';
 // Source opening ID and label on exported openings, so games match by recipe ID
 // instead of reconstructing node numbering.
+// What each mesh node is (metadata/building_part, one of BUILDING_PARTS in
+// game-layer.js): games can style a building by part without matching node
+// names, which contain authored labels.
+const partMeta = part => `\nmetadata/building_part = "${part}"`;
 const openingMeta = o => `${o?.id?`\nmetadata/building_opening_id = ${JSON.stringify(String(o.id))}`:''}${o?.label?`\nmetadata/building_opening_label = ${JSON.stringify(String(o.label))}`:''}`;
 const fileSlug = name => (name || 'door').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_|_$/g,'').toLowerCase() || 'door';
 
@@ -1197,7 +1204,7 @@ function windowArrayMeshResource(building, opening, frameMaterialId, glassMateri
 function doorSceneDescriptors(building) {
   const cfg=building.doorMesh || {enabled:true};
   if(!cfg.enabled) return [];
-  const base=fileBase(building.name);
+  const base=exportBase(building);
   const floors=Array.isArray(building.floors)&&building.floors.length?building.floors:[{walls:building.walls||[],openings:building.openings||[],lights:building.lights||[],stairs:[]}];
   const out=[];
   for(let fi=0;fi<floors.length;fi++){
@@ -1533,12 +1540,12 @@ export function exportDoorTscn(building, opening, options={}) {
   // as elevators carry door_width/door_height.
   const doorLeaves=data.style==='rollup'?1:data.custom?1:isDouble?2:1;
   nodes.push(`[node name="Door" type="Node3D"]\neditor_description = "${styleName} door. Attach your door script manually to this root.${hingeHint}"\nmetadata/door_width = ${fmt(data.width)}\nmetadata/door_height = ${fmt(data.height)}\nmetadata/door_leaves = ${doorLeaves}\nmetadata/door_style = ${JSON.stringify(data.custom?'custom':data.style)}`);
-  if(frameRes) nodes.push(`[node name="Frame" type="MeshInstance3D" parent="."]\nposition = ${v3(0,data.height/2,0)}\nmesh = SubResource("DoorFrameMesh")`);
+  if(frameRes) nodes.push(`[node name="Frame" type="MeshInstance3D" parent="."]\nposition = ${v3(0,data.height/2,0)}\nmesh = SubResource("DoorFrameMesh")${partMeta('door_frame')}`);
 
   if(data.style==='rollup'){
     const curtainRes=arrayMeshResource(data.curtain,matDoor,'DoorCurtainMesh','Door');if(curtainRes)resources.push(curtainRes.text);
     nodes.push(`[node name="Curtain" type="Node3D" parent="."]\nposition = ${v3(0,data.height,0)}`);
-    if(curtainRes)nodes.push(`[node name="CurtainMesh" type="MeshInstance3D" parent="Curtain"]\nmesh = SubResource("DoorCurtainMesh")`);
+    if(curtainRes)nodes.push(`[node name="CurtainMesh" type="MeshInstance3D" parent="Curtain"]\nmesh = SubResource("DoorCurtainMesh")${partMeta('door_leaf')}`);
     if(data.closed>.01){
       addRes('BoxShape3D','CurtainShape',[`size = ${v3(data.innerWidth,data.closed,data.curtainThickness)}`]);
       nodes.push(`[node name="AnimatableBody3D" type="AnimatableBody3D" parent="Curtain"]\nsync_to_physics = false\ncollision_layer = ${profile.doorLayer}\ncollision_mask = ${profile.bodyMask}`);
@@ -1546,14 +1553,14 @@ export function exportDoorTscn(building, opening, options={}) {
     }
     const housingMesh=meshWriter();addLocalBoxToMesh(housingMesh,data.housing,{x:0,y:0,z:0});
     const housingRes=arrayMeshResource(housingMesh,matFrame,'DoorHousingMesh','Frame');if(housingRes)resources.push(housingRes.text);
-    if(housingRes)nodes.push(`[node name="Housing" type="MeshInstance3D" parent="."]\nposition = ${v3(data.housingPos.x,data.housingPos.y,data.housingPos.z)}\nmesh = SubResource("DoorHousingMesh")`);
+    if(housingRes)nodes.push(`[node name="Housing" type="MeshInstance3D" parent="."]\nposition = ${v3(data.housingPos.x,data.housingPos.y,data.housingPos.z)}\nmesh = SubResource("DoorHousingMesh")${partMeta('door_housing')}`);
     addRes('BoxShape3D','HousingShape',[`size = ${v3(data.housing.x,data.housing.y,data.housing.z)}`]);
     nodes.push(`[node name="FrameBody" type="StaticBody3D" parent="."]\ncollision_layer = ${profile.doorLayer}\ncollision_mask = ${profile.bodyMask}`);
     nodes.push(`[node name="CollisionShape3D" type="CollisionShape3D" parent="FrameBody"]\nposition = ${v3(data.housingPos.x,data.housingPos.y,data.housingPos.z)}\nshape = SubResource("HousingShape")`);
   }else if(data.custom){
     const leafRes=arrayMeshResource(data.panel,matDoor,'DoorLeafMesh','Door');if(leafRes)resources.push(leafRes.text);
     nodes.push(`[node name="Panel" type="Node3D" parent="."]`);
-    if(leafRes)nodes.push(`[node name="DoorMesh" type="MeshInstance3D" parent="Panel"]\nposition = ${v3(0,data.height/2,0)}\nmesh = SubResource("DoorLeafMesh")`);
+    if(leafRes)nodes.push(`[node name="DoorMesh" type="MeshInstance3D" parent="Panel"]\nposition = ${v3(0,data.height/2,0)}\nmesh = SubResource("DoorLeafMesh")${partMeta('door_leaf')}`);
     nodes.push(`[node name="AnimatableBody3D" type="AnimatableBody3D" parent="Panel"]\nsync_to_physics = false\ncollision_layer = ${profile.doorLayer}\ncollision_mask = ${profile.bodyMask}`);
     data.panelCells.forEach((cell,i)=>{
       const id=`DoorShape_${i+1}`,points=areaPoints(cell).flatMap(p=>[-1,1].map(side=>({x:p.x,y:p.z,z:side*data.panelThickness/2})));
@@ -1591,12 +1598,12 @@ export function exportDoorTscn(building, opening, options={}) {
     interactionY=collisionY;
 
     nodes.push(`[node name="Hinge" type="Node3D" parent="."]\nposition = ${v3(leftHingeX,0,0)}`);
-    if(leftRes) nodes.push(`[node name="DoorMesh" type="MeshInstance3D" parent="Hinge"]\nposition = ${v3(leftLeafX,leafY,0)}\nmesh = SubResource("DoorLeafLeftMesh")`);
+    if(leftRes) nodes.push(`[node name="DoorMesh" type="MeshInstance3D" parent="Hinge"]\nposition = ${v3(leftLeafX,leafY,0)}\nmesh = SubResource("DoorLeafLeftMesh")${partMeta('door_leaf')}`);
     nodes.push(`[node name="AnimatableBody3D" type="AnimatableBody3D" parent="Hinge"]\nsync_to_physics = false\ncollision_layer = ${profile.doorLayer}\ncollision_mask = ${profile.bodyMask}`);
     nodes.push(`[node name="CollisionShape3D" type="CollisionShape3D" parent="Hinge/AnimatableBody3D"]\nposition = ${v3(leftLeafX,collisionY,0)}\nshape = SubResource("DoorShapeLeft")`);
 
     nodes.push(`[node name="Hinge2" type="Node3D" parent="."]\nposition = ${v3(rightHingeX,0,0)}`);
-    if(rightRes) nodes.push(`[node name="DoorMesh" type="MeshInstance3D" parent="Hinge2"]\nposition = ${v3(rightLeafX,leafY,0)}\nmesh = SubResource("DoorLeafRightMesh")`);
+    if(rightRes) nodes.push(`[node name="DoorMesh" type="MeshInstance3D" parent="Hinge2"]\nposition = ${v3(rightLeafX,leafY,0)}\nmesh = SubResource("DoorLeafRightMesh")${partMeta('door_leaf')}`);
     nodes.push(`[node name="AnimatableBody3D" type="AnimatableBody3D" parent="Hinge2"]\nsync_to_physics = false\ncollision_layer = ${profile.doorLayer}\ncollision_mask = ${profile.bodyMask}`);
     nodes.push(`[node name="CollisionShape3D" type="CollisionShape3D" parent="Hinge2/AnimatableBody3D"]\nposition = ${v3(rightLeafX,collisionY,0)}\nshape = SubResource("DoorShapeRight")`);
   }else{
@@ -1615,7 +1622,7 @@ export function exportDoorTscn(building, opening, options={}) {
     // Leaf bodies follow their rotating Hinge (sync_to_physics off): a synced
     // AnimatableBody3D only follows its own local transform.
     nodes.push(`[node name="Hinge" type="Node3D" parent="."]\nposition = ${v3(hingeX,0,0)}`);
-    if(leafRes) nodes.push(`[node name="DoorMesh" type="MeshInstance3D" parent="Hinge"]\nposition = ${v3(leafX,leafY,0)}\nmesh = SubResource("DoorLeafMesh")`);
+    if(leafRes) nodes.push(`[node name="DoorMesh" type="MeshInstance3D" parent="Hinge"]\nposition = ${v3(leafX,leafY,0)}\nmesh = SubResource("DoorLeafMesh")${partMeta('door_leaf')}`);
     nodes.push(`[node name="AnimatableBody3D" type="AnimatableBody3D" parent="Hinge"]\nsync_to_physics = false\ncollision_layer = ${profile.doorLayer}\ncollision_mask = ${profile.bodyMask}`);
     nodes.push(`[node name="CollisionShape3D" type="CollisionShape3D" parent="Hinge/AnimatableBody3D"]\nposition = ${v3(leafX,collisionY,0)}\nshape = SubResource("DoorShape")`);
   }
@@ -1700,7 +1707,7 @@ export function wallMeshPiecesByRoom(building,view,mesh){
 // Elevator scenes (elevators/<building>_elevator_NNN_<label>.tscn), instanced
 // under the building root's Elevators node like door scenes.
 export function elevatorSceneDescriptors(building){
-  const base=fileBase(building.name);
+  const base=exportBase(building);
   return (building.elevators||[]).map((elevator,i)=>{const n=String(i+1).padStart(3,'0');return {elevator,number:n,extId:`ElevatorScene_${n}`,filename:`elevators/${base}_elevator_${n}_${fileSlug(elevator.label||elevator.id)}.tscn`};});
 }
 // The static elevator assembly; the game moves Car between the Stops markers
@@ -1725,7 +1732,7 @@ export function exportElevatorTscn(building,elevator,options={}){
   const label=String(elevator.label||elevator.id).replace(/["\\]/g,'');
   nodes.push(`[node name="Elevator" type="Node3D"]\neditor_description = "${label}: elevator with ${layout.stops.length} stops. Move Car on Y between the Stops markers (Stop_NN.position.y); open by sliding the car's CarDoorLeft/CarDoorRight and the Landing's DoorLeft/DoorRight outward along X by leaf_travel. CallButton, Indicator and CarPanel markers are anchors for the game's controls. No script is included."\nmetadata/building_elevator_id = ${JSON.stringify(elevator.id)}\nmetadata/shaft_size = ${v3(width,layout.topY,depth)}\nmetadata/door_width = ${fmt(layout.size.doorWidth)}\nmetadata/door_height = ${fmt(layout.size.doorHeight)}`);
   const shaftRes=multiSurfaceArrayMeshResource(Object.entries(shaftSurfaces).map(([surfaceName,mesh])=>({mesh,materialId:matShaft,surfaceName})),'ElevatorShaftMesh');if(shaftRes)resources.push(shaftRes.text);
-  if(shaftRes)nodes.push(`[node name="Shaft" type="MeshInstance3D" parent="."]\nmesh = SubResource("ElevatorShaftMesh")`);
+  if(shaftRes)nodes.push(`[node name="Shaft" type="MeshInstance3D" parent="."]\nmesh = SubResource("ElevatorShaftMesh")${partMeta('elevator_shaft')}`);
   nodes.push(`[node name="ShaftBody" type="StaticBody3D" parent="."]`);
   for(const b of layout.shaft)shape('ShaftBody',b);
   const carRes=multiSurfaceArrayMeshResource(Object.entries(carSurfaces).map(([surfaceName,mesh])=>({mesh,materialId:matCar,surfaceName})),'ElevatorCarMesh');if(carRes)resources.push(carRes.text);
@@ -1733,14 +1740,14 @@ export function exportElevatorTscn(building,elevator,options={}){
   // follows its own transform, so moving Car (or a DoorLeft) moves its collision.
   const moving=options.collision===false?'Node3D':'AnimatableBody3D';
   nodes.push(`[node name="Car" type="${moving}" parent="."]\neditor_description = "Car floor at the bottom stop. Move this node on Y between the Stops markers; its collision and doors move with it."${options.collision===false?'':`\ncollision_layer = 1\ncollision_mask = ${profile.bodyMask}`}\nmetadata/leaf_travel = ${fmt(layout.carDoors.leafTravel)}`);
-  if(carRes)nodes.push(`[node name="CarMesh" type="MeshInstance3D" parent="Car"]\nmesh = SubResource("ElevatorCarMesh")`);
+  if(carRes)nodes.push(`[node name="CarMesh" type="MeshInstance3D" parent="Car"]\nmesh = SubResource("ElevatorCarMesh")${partMeta('elevator_car')}`);
   for(const b of layout.car)shape('Car',b);
   const leafRes=arrayMeshResource(mesh([{size:layout.carDoors.leaves[0].size,pos:{x:0,y:0,z:0}}]),matDoor,'ElevatorDoorLeafMesh','Door');if(leafRes)resources.push(leafRes.text);
   // Door leaves are bodies too. The car's ride with it, so they follow their
   // parent's global transform (sync_to_physics off); landing leaves are moved directly.
   const doorLeaf=(parent,name,l,riding)=>{
     nodes.push(`[node name="${name}" type="${moving}" parent="${parent}"]\nposition = ${v3(l.pos.x,l.pos.y,l.pos.z)}${options.collision===false?'':`\ncollision_layer = ${profile.doorLayer}\ncollision_mask = ${profile.bodyMask}${riding?'\nsync_to_physics = false':''}`}`);
-    nodes.push(`[node name="DoorMesh" type="MeshInstance3D" parent="${parent}/${name}"]\nmesh = SubResource("ElevatorDoorLeafMesh")`);
+    nodes.push(`[node name="DoorMesh" type="MeshInstance3D" parent="${parent}/${name}"]\nmesh = SubResource("ElevatorDoorLeafMesh")${partMeta('elevator_door')}`);
     shape(`${parent}/${name}`,{size:l.size,pos:{x:0,y:0,z:0}});
   };
   for(const l of layout.carDoors.leaves)doorLeaf('Car',`CarDoor${l.side}`,l,true);
@@ -1812,16 +1819,16 @@ export function exportGodotTscn(building, options={collision:true, markers:true}
   const elevatorScenes=elevatorSceneDescriptors(building);
   for(const d of elevatorScenes)extResources.push(`[ext_resource type="PackedScene" path="${d.filename}" id="${d.extId}"]`);
 
-  nodes.push(`[node name="${nodeClean(building.name)}" type="Node3D"]`);
+  nodes.push(`[node name="${building.sceneName||nodeClean(building.name)}" type="Node3D"]`);
   if(elevatorScenes.length){
     nodes.push(`[node name="Elevators" type="Node3D" parent="."]\neditor_description = "Elevator assemblies: shaft, movable car, landing doors and stop markers (no scripts)."`);
     for(const d of elevatorScenes)nodes.push(`[node name="Elevator_${d.number}_${nodeClean(d.elevator.label||d.elevator.id)}" parent="Elevators" instance=ExtResource("${d.extId}")]\nposition = ${v3(d.elevator.x,elevatorLayout(building,d.elevator).base,d.elevator.z)}\nrotation = ${v3(0,elevatorYaw(d.elevator),0)}`);
   }
 
-  const addBoxNode=(parent,name,size,position,rotation,materialId,collisionParent=null)=>{
+  const addBoxNode=(parent,name,size,position,rotation,materialId,collisionParent=null,part='roof')=>{
     const meshId=resId('BoxMesh');
     addRes('BoxMesh',meshId,[`material = SubResource("${materialId}")`,`size = ${v3(size.x,size.y,size.z)}`]);
-    nodes.push(`[node name="${name}" type="MeshInstance3D" parent="${parent}"]\nposition = ${v3(position.x,position.y,position.z)}\nrotation = ${v3(rotation?.x||0,rotation?.y||0,rotation?.z||0)}\nmesh = SubResource("${meshId}")`);
+    nodes.push(`[node name="${name}" type="MeshInstance3D" parent="${parent}"]\nposition = ${v3(position.x,position.y,position.z)}\nrotation = ${v3(rotation?.x||0,rotation?.y||0,rotation?.z||0)}\nmesh = SubResource("${meshId}")${partMeta(`${part}`)}`);
     if(options.collision&&collisionParent){
       const shapeId=resId('BoxShape');
       addRes('BoxShape3D',shapeId,[`size = ${v3(size.x,size.y,size.z)}`]);
@@ -1830,16 +1837,17 @@ export function exportGodotTscn(building, options={collision:true, markers:true}
   };
 
 
-  const addRoofBox=(parent,part,blockers,collisionParent)=>{
+  // Roof part names carry no labels, so the ridge cap is recognisable by name.
+  const addRoofBox=(parent,part,blockers,collisionParent,kind=/^RidgeCap_|_Ridge$/.test(part.name)?'ridge':'roof')=>{
     const faces=trimRoofBox(part,blockers);
-    if(faces===null){addBoxNode(parent,part.name,part.size,part.pos,part.rot,matRoof,collisionParent);return;}
+    if(faces===null){addBoxNode(parent,part.name,part.size,part.pos,part.rot,matRoof,collisionParent,kind);return;}
     const mesh=meshWriter();
     for(const f of faces)mesh.face(f.points,f.uvs,f.normal);
     if(!mesh.vertices.length)return;
     const meshId=resId('RoofMesh'),res=arrayMeshResource(mesh,matRoof,meshId,'RoofFaces');
     if(!res)return;
     resources.push(res.text);
-    nodes.push(`[node name="${part.name}" type="MeshInstance3D" parent="${parent}"]\nmesh = SubResource("${meshId}")`);
+    nodes.push(`[node name="${part.name}" type="MeshInstance3D" parent="${parent}"]\nmesh = SubResource("${meshId}")${partMeta(`${kind}`)}`);
     if(options.collision&&collisionParent){
       const shapeId=resId('RoofShape');
       addRes('ConcavePolygonShape3D',shapeId,[`data = ${packedV3(mesh.vertices)}`,'backface_collision = true']);
@@ -1862,30 +1870,6 @@ export function exportGodotTscn(building, options={collision:true, markers:true}
         y:baseY+h/2,z:dir==='z'?rs[side==='min'?'minZ':'maxZ']:(rs.minZ+rs.maxZ)/2};
       addPrismCollision(parent,name+'_'+side,{x:dir==='x'?d:w,y:h,z:thickness},position,{y:dir==='x'?Math.PI/2:0});
     }
-  };
-
-  const overlap1D=(a0,a1,b0,b1)=>Math.min(a1,b1)-Math.max(a0,b0)>EPS;
-  const coveredPlatformSupportsForView=(view,plat)=>{
-    if(!rectValid(plat) || plat.covered===false) return {sides:[],posts:[]};
-    const rects=structuralFloorRectangles(view);
-    const touching={
-      west: rects.some(r=>Math.abs(r.maxX-plat.minX)<EPS && overlap1D(r.minZ,r.maxZ,plat.minZ,plat.maxZ)),
-      east: rects.some(r=>Math.abs(r.minX-plat.maxX)<EPS && overlap1D(r.minZ,r.maxZ,plat.minZ,plat.maxZ)),
-      north: rects.some(r=>Math.abs(r.maxZ-plat.minZ)<EPS && overlap1D(r.minX,r.maxX,plat.minX,plat.maxX)),
-      south: rects.some(r=>Math.abs(r.minZ-plat.maxZ)<EPS && overlap1D(r.minX,r.maxX,plat.minX,plat.maxX)),
-    };
-    const sides=[];
-    if(!touching.west) sides.push({axis:'z',x:plat.minX,z0:plat.minZ,z1:plat.maxZ});
-    if(!touching.east) sides.push({axis:'z',x:plat.maxX,z0:plat.minZ,z1:plat.maxZ});
-    if(!touching.north) sides.push({axis:'x',z:plat.minZ,x0:plat.minX,x1:plat.maxX});
-    if(!touching.south) sides.push({axis:'x',z:plat.maxZ,x0:plat.minX,x1:plat.maxX});
-    const posts=[];const seen=new Set();
-    const addPost=(x,z)=>{const k=`${x.toFixed(4)},${z.toFixed(4)}`; if(seen.has(k)) return; seen.add(k); posts.push({x,z});};
-    for(const s of sides){
-      if(s.axis==='x'){ const len=Math.max(0,s.x1-s.x0),count=Math.max(2,Math.ceil(len/2.4)+1); for(let i=0;i<count;i++){const t=count===1?0:i/(count-1); addPost(s.x0+(s.x1-s.x0)*t,s.z);} }
-      else { const len=Math.max(0,s.z1-s.z0),count=Math.max(2,Math.ceil(len/2.4)+1); for(let i=0;i<count;i++){const t=count===1?0:i/(count-1); addPost(s.x,s.z0+(s.z1-s.z0)*t);} }
-    }
-    return {sides,posts};
   };
 
   const addPrismCollision=(parent,name,size,position,rotation)=>{
@@ -1924,7 +1908,8 @@ export function exportGodotTscn(building, options={collision:true, markers:true}
     const exteriorWalls=view.walls.filter(w=>isExteriorWall(view,w));
     const interiorWalls=view.walls.filter(w=>!isExteriorWall(view,w));
 
-    nodes.push(`[node name="${floorName}" type="Node3D" parent="."]${elevation?`\nposition = ${v3(0,elevation,0)}`:''}\neditor_description = "${tscnText(floor.label||`Floor ${fi+1}`)}; elevation ${fmt(elevation)}m"`);
+    // Floor_NN follows the stack order; the floor ID stays put when floors are inserted (Dirtscape).
+    nodes.push(`[node name="${floorName}" type="Node3D" parent="."]${elevation?`\nposition = ${v3(0,elevation,0)}`:''}\neditor_description = "${tscnText(floor.label||`Floor ${fi+1}`)}; elevation ${fmt(elevation)}m"${floor.id?`\nmetadata/building_floor_id = ${JSON.stringify(String(floor.id))}`:''}${floor.label?`\nmetadata/building_floor_label = ${JSON.stringify(String(floor.label))}`:''}`);
     // Editor metadata only: no region meshes, scripts, or gameplay markers.
     if(floor.regions?.length) nodes[nodes.length-1]+='\nmetadata/building_regions = '+JSON.stringify(floor.regions.map(r=>({id:r.id,label:r.label||'Region',kind:r.kind||'room',effect:r.effect||'label',minX:r.minX,maxX:r.maxX,minZ:r.minZ,maxZ:r.maxZ,...(r.polygon?{polygon:r.polygon}:{} )})));
 
@@ -1949,16 +1934,16 @@ export function exportGodotTscn(building, options={collision:true, markers:true}
       if(exteriorResources.inside)resources.push(exteriorResources.inside.text);
       if(exteriorResources.edges)resources.push(exteriorResources.edges.text);
       nodes.push(`[node name="ExteriorWalls" type="Node3D" parent="${floorName}/Geometry/Walls"]`);
-      if(exteriorResources.outside)nodes.push(`[node name="OutsideFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/ExteriorWalls"]\nmesh = SubResource("${exteriorResources.ids.outside}")\neditor_description = "Outward-facing exterior faces."`);
+      if(exteriorResources.outside)nodes.push(`[node name="OutsideFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/ExteriorWalls"]\nmesh = SubResource("${exteriorResources.ids.outside}")\neditor_description = "Outward-facing exterior faces."${partMeta('exterior_wall')}`);
       if(exteriorResources.inside&&building.slabsByRoom===true){
         // Room-facing faces per labelled room (slabsByRoom); the rest keeps the plain name.
         resources.splice(resources.indexOf(exteriorResources.inside.text),1);
         for(const piece of wallMeshPiecesByRoom(building,view,exteriorResources.data.inside)){
           const id=`${exteriorResources.ids.inside}${piece.idSuffix||''}`,res=arrayMeshResource(piece.mesh,matExteriorInside,id,'InsideFaces');if(!res)continue;resources.push(res.text);
-          nodes.push(`[node name="InsideFaces${piece.suffix}" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/ExteriorWalls"]\nmesh = SubResource("${id}")\neditor_description = "${piece.room?`Inward-facing exterior faces in ${piece.room}.`:'Inward-facing faces of the exterior shell.'}"${piece.meta||''}`);
+          nodes.push(`[node name="InsideFaces${piece.suffix}" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/ExteriorWalls"]\nmesh = SubResource("${id}")\neditor_description = "${piece.room?`Inward-facing exterior faces in ${piece.room}.`:'Inward-facing faces of the exterior shell.'}"${piece.meta||''}${partMeta('exterior_wall')}`);
         }
-      }else if(exteriorResources.inside)nodes.push(`[node name="InsideFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/ExteriorWalls"]\nmesh = SubResource("${exteriorResources.ids.inside}")\neditor_description = "Inward-facing faces of the exterior shell."`);
-      if(exteriorResources.edges)nodes.push(`[node name="EdgeFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/ExteriorWalls"]\nmesh = SubResource("${exteriorResources.ids.edges}")\neditor_description = "Window/door reveals and wall-thickness faces."`);
+      }else if(exteriorResources.inside)nodes.push(`[node name="InsideFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/ExteriorWalls"]\nmesh = SubResource("${exteriorResources.ids.inside}")\neditor_description = "Inward-facing faces of the exterior shell."${partMeta('exterior_wall')}`);
+      if(exteriorResources.edges)nodes.push(`[node name="EdgeFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/ExteriorWalls"]\nmesh = SubResource("${exteriorResources.ids.edges}")\neditor_description = "Window/door reveals and wall-thickness faces."${partMeta('exterior_wall')}`);
     }
     if(interiorResources){
       if(interiorResources.sideA)resources.push(interiorResources.sideA.text);
@@ -1967,16 +1952,16 @@ export function exportGodotTscn(building, options={collision:true, markers:true}
       nodes.push(`[node name="InteriorWalls" type="Node3D" parent="${floorName}/Geometry/Walls"]`);
       for(const [key,surface,material,description] of [['sideA','SideAFaces',matInteriorA,'One face direction of the baked interior walls.'],['sideB','SideBFaces',matInteriorB,'Opposite face direction of the baked interior walls.']]){
         if(!interiorResources[key])continue;
-        if(building.slabsByRoom!==true){nodes.push(`[node name="${surface}" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/InteriorWalls"]\nmesh = SubResource("${interiorResources.ids[key]}")\neditor_description = "${description}"`);continue;}
+        if(building.slabsByRoom!==true){nodes.push(`[node name="${surface}" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/InteriorWalls"]\nmesh = SubResource("${interiorResources.ids[key]}")\neditor_description = "${description}"${partMeta('interior_wall')}`);continue;}
         resources.splice(resources.indexOf(interiorResources[key].text),1);
         for(const piece of wallMeshPiecesByRoom(building,view,interiorResources.data[key])){
           const id=`${interiorResources.ids[key]}${piece.idSuffix||''}`,res=arrayMeshResource(piece.mesh,material,id,surface);if(!res)continue;resources.push(res.text);
-          nodes.push(`[node name="${surface}${piece.suffix}" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/InteriorWalls"]\nmesh = SubResource("${id}")\neditor_description = "${piece.room?`Interior wall faces in ${piece.room}.`:description}"${piece.meta||''}`);
+          nodes.push(`[node name="${surface}${piece.suffix}" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/InteriorWalls"]\nmesh = SubResource("${id}")\neditor_description = "${piece.room?`Interior wall faces in ${piece.room}.`:description}"${piece.meta||''}${partMeta('interior_wall')}`);
         }
       }
       if(interiorResources.edges)nodes.push(`[node name="EdgeFaces" type="MeshInstance3D" parent="${floorName}/Geometry/Walls/InteriorWalls"]
 mesh = SubResource("${interiorResources.ids.edges}")
-editor_description = "Interior wall tops, bottoms, jambs, and exposed ends."`);
+editor_description = "Interior wall tops, bottoms, jambs, and exposed ends."${partMeta('interior_wall')}`);
     }
 
     const windowCfg=building.windowMesh||{enabled:true};
@@ -1991,7 +1976,7 @@ editor_description = "Interior wall tops, bottoms, jambs, and exposed ends."`);
       const wall=findWall(view,safe.wallId),p=openingAnchor(view,safe),L=wallLength(wall),rotY=L>EPS?-Math.atan2(wall.b.z-wall.a.z,wall.b.x-wall.a.x):0;
       const y=safe.sill+safe.height/2;
       const name=`Window_${String(wi+1).padStart(3,'0')}${safe.label?'_'+nodeClean(safe.label):''}`;
-      nodes.push(`[node name="${name}" type="MeshInstance3D" parent="${floorName}/Geometry/Windows"]\nposition = ${v3(p.x,y,p.z)}\nrotation = ${v3(0,rotY,0)}\nmesh = SubResource("${resourceId}")${openingMeta(safe)}`);
+      nodes.push(`[node name="${name}" type="MeshInstance3D" parent="${floorName}/Geometry/Windows"]\nposition = ${v3(p.x,y,p.z)}\nrotation = ${v3(0,rotY,0)}\nmesh = SubResource("${resourceId}")${openingMeta(safe)}${partMeta('window')}`);
       if(options.collision){
         const shapeId=resId('WindowShape'),depth=Math.max(.02,Math.min(resource.data.frameDepth,building.wallThickness||resource.data.frameDepth));
         addRes('BoxShape3D',shapeId,[`size = ${v3(resource.data.width,resource.data.height,depth)}`]);
@@ -2051,7 +2036,7 @@ editor_description = "Interior wall tops, bottoms, jambs, and exposed ends."`);
           if(floorRes)resources.push(floorRes.text);
           if(floorRes)nodes.push(`[node name="FloorSlab${piece.suffix}" type="MeshInstance3D" parent="${floorName}/Geometry"]
 mesh = SubResource("${floorMeshId}")
-editor_description = "${piece.room?`Automatic floor of ${piece.room}. `:'Automatic floor mesh after independent manual-floor overrides. '}Surfaces: TopFaces, BottomFaces, EdgeFaces."${piece.meta||''}`);
+editor_description = "${piece.room?`Automatic floor of ${piece.room}. `:'Automatic floor mesh after independent manual-floor overrides. '}Surfaces: TopFaces, BottomFaces, EdgeFaces."${piece.meta||''}${partMeta('floor')}`);
         }
         if(options.collision){
           for(let pi=0;pi<floorRects.length;pi++){
@@ -2093,7 +2078,7 @@ shape = SubResource("${shapeId}")`);
           if(ceilingRes)resources.push(ceilingRes.text);
           if(ceilingRes)nodes.push(`[node name="Ceiling${piece.suffix}" type="MeshInstance3D" parent="${floorName}/Geometry"]
 mesh = SubResource("${ceilingMeshId}")
-editor_description = "${piece.room?`Automatic ceiling of ${piece.room}. `:'Automatic ceiling mesh after independent manual-ceiling overrides. '}Surfaces: RoomFaces, RoofSideFaces, EdgeFaces."${piece.meta||''}`);
+editor_description = "${piece.room?`Automatic ceiling of ${piece.room}. `:'Automatic ceiling mesh after independent manual-ceiling overrides. '}Surfaces: RoomFaces, RoofSideFaces, EdgeFaces."${piece.meta||''}${partMeta('ceiling')}`);
         }
         if(options.collision){
           for(let pi=0;pi<ceilingRects.length;pi++){
@@ -2127,7 +2112,7 @@ shape = SubResource("${shapeId}")`);
       if(res) resources.push(res.text);
       const name=`${plat.kind==='deck'?'Deck':'Porch'}_${String(pi+1).padStart(3,'0')}${plat.label?'_'+nodeClean(plat.label):''}`;
       if(res) nodes.push(`[node name="${name}" type="MeshInstance3D" parent="${floorName}/Geometry/Platforms"]
-mesh = SubResource("${meshId}")`);
+mesh = SubResource("${meshId}")${partMeta('platform')}`);
       if(options.collision){
         const shapeId=resId('PlatformShape');
         addRes('BoxShape3D',shapeId,[`size = ${v3(plat.maxX-plat.minX,view.floorThickness,plat.maxZ-plat.minZ)}`]);
@@ -2135,27 +2120,29 @@ mesh = SubResource("${meshId}")`);
 position = ${v3((plat.minX+plat.maxX)/2,(Number(plat.height)||0)-view.floorThickness/2,(plat.minZ+plat.maxZ)/2)}
 shape = SubResource("${shapeId}")`);
       }
-      const support=coveredPlatformSupportsForView(view,plat);
+      const support=coveredPlatformSupports(view,plat),leanTo=leanToRoof(building,fi,view,plat);
+      if(leanTo)addRoofBox(`${floorName}/Geometry/Platforms`,{...leanTo.part,name:`${name}_Roof`},[],options.collision?`${floorName}/Collision`:null,'roof');
       if((support.posts||[]).length || (support.sides||[]).length){
         const supportParent=`${floorName}/Geometry/Platforms`;
-        const topY=Number(plat.height)||0, postTop=view.wallHeight, postH=Math.max(0.2, postTop-topY), beamY=postTop-0.08;
+        // Under the main roof the supports reach the wall top; under a lean-to, its underside.
+        const topY=Number(plat.height)||0, postTopAt=pt=>leanTo?leanTo.postTop(pt):view.wallHeight, beamYAt=side=>(leanTo?leanTo.beamTop(side):view.wallHeight)-0.08;
         for(let si=0;si<support.posts.length;si++){
-          const pt=support.posts[si];
-          addBoxNode(supportParent,`${name}_Post_${String(si+1).padStart(3,'0')}`,{x:0.12,y:postH,z:0.12},{x:pt.x,y:topY+postH/2,z:pt.z},{x:0,y:0,z:0},matPlatformSupport,options.collision?`${floorName}/Collision`:null);
+          const pt=support.posts[si],postH=Math.max(0.2, postTopAt(pt)-topY);
+          addBoxNode(supportParent,`${name}_Post_${String(si+1).padStart(3,'0')}`,{x:0.12,y:postH,z:0.12},{x:pt.x,y:topY+postH/2,z:pt.z},{x:0,y:0,z:0},matPlatformSupport,options.collision?`${floorName}/Collision`:null,'post');
         }
         for(let si=0;si<support.sides.length;si++){
-          const side=support.sides[si];
+          const side=support.sides[si],beamY=beamYAt(side);
           if(side.axis==='x'){
             const len=side.x1-side.x0; if(len<=0.05) continue;
-            addBoxNode(supportParent,`${name}_Beam_${String(si+1).padStart(3,'0')}`,{x:len+0.12,y:0.16,z:0.12},{x:(side.x0+side.x1)/2,y:beamY,z:side.z},{x:0,y:0,z:0},matPlatformSupport,options.collision?`${floorName}/Collision`:null);
+            addBoxNode(supportParent,`${name}_Beam_${String(si+1).padStart(3,'0')}`,{x:len+0.12,y:0.16,z:0.12},{x:(side.x0+side.x1)/2,y:beamY,z:side.z},{x:0,y:0,z:0},matPlatformSupport,options.collision?`${floorName}/Collision`:null,'beam');
           } else {
             const len=side.z1-side.z0; if(len<=0.05) continue;
-            addBoxNode(supportParent,`${name}_Beam_${String(si+1).padStart(3,'0')}`,{x:0.12,y:0.16,z:len+0.12},{x:side.x,y:beamY,z:(side.z0+side.z1)/2},{x:0,y:0,z:0},matPlatformSupport,options.collision?`${floorName}/Collision`:null);
+            addBoxNode(supportParent,`${name}_Beam_${String(si+1).padStart(3,'0')}`,{x:0.12,y:0.16,z:len+0.12},{x:side.x,y:beamY,z:(side.z0+side.z1)/2},{x:0,y:0,z:0},matPlatformSupport,options.collision?`${floorName}/Collision`:null,'beam');
           }
         }
       }
       // Optional steps from the floor up to the deck (platform.steps).
-      platformStepBoxes(plat).forEach((step,si)=>addBoxNode(`${floorName}/Geometry/Platforms`,`${name}_Step_${String(si+1).padStart(2,'0')}`,step.size,step.pos,{x:0,y:0,z:0},matPlatform,options.collision?`${floorName}/Collision`:null));
+      platformStepBoxes(plat).forEach((step,si)=>addBoxNode(`${floorName}/Geometry/Platforms`,`${name}_Step_${String(si+1).padStart(2,'0')}`,step.size,step.pos,{x:0,y:0,z:0},matPlatform,options.collision?`${floorName}/Collision`:null,'step'));
     }
 
     const railings=Array.isArray(floor.railings)?floor.railings:[];
@@ -2171,7 +2158,7 @@ shape = SubResource("${shapeId}")`);
       if(res) nodes.push(`[node name="${name}" type="MeshInstance3D" parent="${floorName}/Geometry/Railings"]
 position = ${v3(cx,railElevation,cz)}
 rotation = ${v3(0,yaw,0)}
-mesh = SubResource("${meshId}")`);
+mesh = SubResource("${meshId}")${partMeta('railing')}`);
       if(options.collision){
         const shapeId=resId('RailingShape');
         addRes('BoxShape3D',shapeId,[`size = ${v3(len, Math.max(0.4, Number(rail.height)||1), 0.12)}`]);
@@ -2195,10 +2182,10 @@ position = ${v3(Number(stair.x)||0,0,Number(stair.z)||0)}
 rotation = ${v3(0,yaw,0)}`);
       if(stairRes)nodes.push(`[node name="${data.style==='steps'?'Steps':'RampMesh'}" type="MeshInstance3D" parent="${floorName}/Geometry/Stairs/${name}"]
 mesh = SubResource("${sid}")
-editor_description = "${data.style==='steps'?`Visible ${data.steps}-step staircase with smooth ramp walking collision.`:'Thin smooth ramp slab with matching walking collision.'}"`);
+editor_description = "${data.style==='steps'?`Visible ${data.steps}-step staircase with smooth ramp walking collision.`:'Thin smooth ramp slab with matching walking collision.'}"${partMeta('stair')}`);
       if(blockerRes)nodes.push(`[node name="UnderStairBlockerMesh" type="MeshInstance3D" parent="${floorName}/Geometry/Stairs/${name}"]
 mesh = SubResource("${blockerId}")
-editor_description = "Visible fill closing the space beneath this ${data.style==='steps'?'staircase':'ramp'}."`);
+editor_description = "Visible fill closing the space beneath this ${data.style==='steps'?'staircase':'ramp'}."${partMeta('stair_blocker')}`);
       if(options.collision){
         const rampShapeId=resId('StairRampShape');
         addRes('BoxShape3D',rampShapeId,[`size = ${v3(data.width,data.rampThickness,data.slope)}`]);
@@ -2231,7 +2218,12 @@ shape = SubResource("${blockerShapeId}")`);
         const p=openingAnchor(view,safe),L=wallLength(wall),rotY=L>EPS?-Math.atan2(wall.b.z-wall.a.z,wall.b.x-wall.a.x):0;
         const y=safe.type==='door'?safe.height/2:safe.sill+safe.height/2;
         const name=`${safe.type==='door'?'Door':'Window'}_${String(++oi).padStart(3,'0')}${safe.label?'_'+nodeClean(safe.label):''}`;
-        nodes.push(`[node name="${name}" type="Marker3D" parent="${floorName}/Openings"]\nposition = ${v3(p.x,y,p.z)}\nrotation = ${v3(0,rotY,0)}${openingMeta(safe)}`);
+        // Exterior doors: the outward normal, and a Threshold marker at the door's
+        // foot on the wall's outer face, its -Z facing out (Dirtscape: terrain steps).
+        const exteriorDoor=safe.type==='door'&&L>EPS&&isExteriorWall(view,wall),out=exteriorDoor?exteriorWallOutsideSign(view,wall):0;
+        const normal=exteriorDoor?{x:-out*(wall.b.z-wall.a.z)/L,z:out*(wall.b.x-wall.a.x)/L}:null;
+        nodes.push(`[node name="${name}" type="Marker3D" parent="${floorName}/Openings"]\nposition = ${v3(p.x,y,p.z)}\nrotation = ${v3(0,rotY,0)}${openingMeta(safe)}${normal?`\nmetadata/outward_normal = ${v3(normal.x,0,normal.z)}`:''}`);
+        if(exteriorDoor)nodes.push(`[node name="Threshold" type="Marker3D" parent="${floorName}/Openings/${name}"]\nposition = ${v3(0,-y,out*(Number(view.wallThickness)||.18)/2)}\nrotation = ${v3(0,out>0?Math.PI:0,0)}`);
       }
     }
 
@@ -2240,7 +2232,7 @@ shape = SubResource("${blockerShapeId}")`);
       const roofSections=floorRoofSections;
       for(let rsi=0;rsi<roofSections.length;rsi++){
         const rs=roofSections[rsi],dir=rs.direction||'x',type=rs.type||building.roof.type;
-        const parts=roofBoxParts(rs,building.roof,view.wallHeight,rsi);
+        const parts=roofBoxParts(rs,roofWithSupport(building),view.wallHeight,rsi);
         if(!parts.length)continue;
         if(type==='gable'&&exteriorWalls.length){
           const rise=(dir==='x'?rs.maxZ-rs.minZ:rs.maxX-rs.minX)/2*Math.tan((Number(rs.pitch)||building.roof.pitch||35)*Math.PI/180);
@@ -2275,7 +2267,7 @@ editor_description = "Independent ${kind} slabs with absolute top heights; not o
         {mesh:faces.edges,materialId:matFloorEdge,surfaceName:'EdgeFaces'}
       ],meshId);
       if(res){resources.push(res.text);nodes.push(`[node name="${isCeiling?'ManualCeiling':'ManualFloor'}_${idx}${s.label?'_'+nodeClean(s.label):''}" type="MeshInstance3D" parent="${nodeName}"]
-mesh = SubResource("${meshId}")`);}
+mesh = SubResource("${meshId}")${partMeta(`${isCeiling?'ceiling':'floor'}`)}`);}
       if(options.collision){const w=s.maxX-s.minX,d=s.maxZ-s.minZ,shapeId=resId(isCeiling?'ManualCeilingShape':'ManualFloorShape');addRes('BoxShape3D',shapeId,[`size = ${v3(w,t,d)}`]);nodes.push(`[node name="${isCeiling?'ManualCeiling':'ManualFloor'}Collision_${idx}" type="CollisionShape3D" parent="${collisionName}"]
 position = ${v3((s.minX+s.maxX)/2,topY-t/2,(s.minZ+s.maxZ)/2)}
 shape = SubResource("${shapeId}")`);}
@@ -2299,13 +2291,13 @@ shape = SubResource("${shapeId}")`);}
       const pitch=Math.max(5,Math.min(70,Number(rs.pitch)||Number(building.roof?.pitch)||35))*Math.PI/180;
       const parent='ManualRoofs',collisionParent=options.collision?'ManualRoofCollision':null;
       const blockers=[...roofInteriorBlockers(building,rs,baseY),...roofAttachmentBlockers(building,rs)];
-      for(const part of roofBoxParts(rs,building.roof||{},baseY,ri,true))addRoofBox(parent,part,blockers,collisionParent);
+      for(const part of roofBoxParts(rs,roofWithSupport(building),baseY,ri,true))addRoofBox(parent,part,blockers,collisionParent);
       if(type==='gable'){
         const clipped=trimmedGableEnds({...rs,direction:dir,pitch:pitch*180/Math.PI},baseY,Math.max(.04,Number(building.wallThickness)||.18),blockers);
         if(clipped){
           const data=buildTrimmedGableMeshData(clipped),group=`ManualRoof_${idx}_GableFill`;
           if(Object.values(data).some(m=>m.vertices.length))nodes.push(`[node name="${group}" type="Node3D" parent="ManualRoofs"]`);
-          for(const [key,face,material] of [['outside','OutsideFaces',matWall],['inside','InsideFaces',matExteriorInside],['edges','EdgeFaces',matExteriorEdge]]){const gid=`ManualRoofGableMesh_${idx}_${face}`,res=arrayMeshResource(data[key],material,gid,face);if(res){resources.push(res.text);nodes.push(`[node name="${face}" type="MeshInstance3D" parent="ManualRoofs/${group}"]\nmesh = SubResource("${gid}")`);}}
+          for(const [key,face,material] of [['outside','OutsideFaces',matWall],['inside','InsideFaces',matExteriorInside],['edges','EdgeFaces',matExteriorEdge]]){const gid=`ManualRoofGableMesh_${idx}_${face}`,res=arrayMeshResource(data[key],material,gid,face);if(res){resources.push(res.text);nodes.push(`[node name="${face}" type="MeshInstance3D" parent="ManualRoofs/${group}"]\nmesh = SubResource("${gid}")${partMeta('gable')}`);}}
           addClippedGableCollision('ManualRoofCollision',`ManualGableCollision_${idx}`,data);continue;
         }
         const ridgeY=baseY+(dir==='x'?d:w)/2*Math.tan(pitch);
@@ -2327,7 +2319,7 @@ shape = SubResource("${shapeId}")`);}
           nodes.push(`[node name="${group}" type="Node3D" parent="ManualRoofs"]`);
           for(const [mesh,face,material] of [[outside,'OutsideFaces',matWall],[inside,'InsideFaces',matExteriorInside],[edges,'EdgeFaces',matExteriorEdge]]){
             const gid=`ManualRoofGableMesh_${idx}_${face}`,res=arrayMeshResource(mesh,material,gid,face);
-            if(res){resources.push(res.text);nodes.push(`[node name="${face}" type="MeshInstance3D" parent="ManualRoofs/${group}"]\nmesh = SubResource("${gid}")`);}
+            if(res){resources.push(res.text);nodes.push(`[node name="${face}" type="MeshInstance3D" parent="ManualRoofs/${group}"]\nmesh = SubResource("${gid}")${partMeta('gable')}`);}
           }
         }
       }
@@ -2353,7 +2345,7 @@ function finalizeScene(text,options){
 export function exportGodotFiles(building, options={collision:true,markers:true}) {
   options={collision:true,markers:true,...options};
   const validation=assertValidBuilding(building);
-  const base=fileBase(building.name),tscnName=`${base}.tscn`;
+  const base=exportBase(building),tscnName=`${base}.tscn`;
   const doorScenes=doorSceneDescriptors(building);
   let doors=doorScenes.map(d=>({filename:d.filename,tscn:exportDoorTscn(d.view,d.opening,options),opening:d.opening,floorIndex:d.floorIndex}));
   if(options.shareDoorScenes===true){

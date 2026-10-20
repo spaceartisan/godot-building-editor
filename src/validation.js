@@ -1,4 +1,5 @@
 import { elevatorProblem } from './elevators.js';
+import { leanToProblem } from './platform-roof.js';
 import {roofWallDiagnostics} from './roof-wall-diagnostics.js';
 import {profileWallState} from './wall-profile-geometry.js';
 import {standardProfileJunction} from './profile-junctions.js';
@@ -7,7 +8,7 @@ import {wallTypeProblem,wallTypeFor,wallTypeOpeningProblem,sampleWallType} from 
 import { regionPolygonProblem, regionBounds } from './regions.js';
 import { containsArea } from './polygon-areas.js';
 import { manualRoofOutlineProblem, roofPolygonBounds } from './roof-outline.js';
-import { REGION_KINDS, REGION_EFFECTS, platformStepsProblem, floorElevation, floorWallHeight, floorSlabThickness, floorView, structuralFloorRectangles, exteriorFootprintIssue, stairFootprint, stairOpeningFootprint, wallLength, wallHeightFor, projectToWall, validateOpeningLayout, rectValid } from './model.js';
+import { REGION_KINDS, REGION_EFFECTS, sceneNameProblem, platformStepsProblem, floorElevation, floorWallHeight, floorSlabThickness, floorView, structuralFloorRectangles, exteriorFootprintIssue, stairFootprint, stairOpeningFootprint, wallLength, wallHeightFor, projectToWall, validateOpeningLayout, rectValid } from './model.js';
 import { roofAttachmentDiagnostics, attachmentWarnings } from './roof-diagnostics.js';
 import {markerProblem} from './markers.js';
 import {openingShapeProblem,shapedOpeningProblem,doorLeavesProblem,rollupDoorProblem} from './opening-shapes.js';
@@ -33,6 +34,7 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
   for(const [k,min,max] of [['wallHeight',.2,1000],['wallThickness',.001,100],['floorThickness',.001,100],['gridSize',.001,1000]])number(building[k],k,min,max);
   if(building.name!=null&&typeof building.name!=='string')error('name','must be text');
   if(building.exportProfile!=null&&!['generic','get_probed'].includes(building.exportProfile))error('exportProfile','unknown profile');
+  if(building.sceneName!==undefined&&sceneNameProblem(building.sceneName))error('sceneName',sceneNameProblem(building.sceneName));
   if(building.slabsByRoom!==undefined&&typeof building.slabsByRoom!=='boolean')error('slabsByRoom','slabsByRoom must be true or false');
   if(building.elevators!==undefined){
     if(!Array.isArray(building.elevators))error('elevators','elevators must be an array');
@@ -90,6 +92,8 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
           {const problem=platformStepsProblem(obj);if(problem)error(p,problem);}
           if(obj.kind!=null&&!['porch','deck'].includes(obj.kind))error(p,'unknown platform kind');
           if(obj.covered!=null&&typeof obj.covered!=='boolean')error(p,'platform roof coverage must be boolean');
+          if(obj.roofStyle!=null&&!['extend','lean-to'].includes(obj.roofStyle))error(p,'platform roofStyle must be extend or lean-to');
+          if(obj.roofPitch!=null&&!(typeof obj.roofPitch==='number'&&obj.roofPitch>=3&&obj.roofPitch<=45))error(p,'platform roofPitch must be 3 to 45 degrees');
         }
         if(name==='regions'){
           if(obj.kind!=null&&!REGION_KINDS.includes(obj.kind))error(p,'unknown region kind');
@@ -239,6 +243,7 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
       if(Math.abs((first.height||0)-(second.height||0))<.001&&Math.min(first.maxX,second.maxX)-Math.max(first.minX,second.minX)>.001&&Math.min(first.maxZ,second.maxZ)-Math.max(first.minZ,second.minZ)>.001)
         warn(p,`platforms ${first.id} / ${second.id} overlap at the same height; review duplicate slabs`,[first,second].map(q=>({type:'platform',id:q.id,floorId:f.id})));
     }
+    for(const plat of platforms){const problem=rectValid(plat)?leanToProblem(building,i,view,plat):null;if(problem)warn(p,`platform ${plat.label||plat.id}: ${problem}`,[{type:'platform',id:plat.id,floorId:f.id}]);}
     // A railing drawn on a raised deck still stands on the floor unless lifted.
     const onPlatform=(q,pt)=>pt.x>=q.minX-1e-6&&pt.x<=q.maxX+1e-6&&pt.z>=q.minZ-1e-6&&pt.z<=q.maxZ+1e-6;
     for(const rail of f.railings||[]){

@@ -40,7 +40,7 @@ export function inspectStair(building,index,stair){
 export function inspectPlatform(building,index,platform){
   const view=floorView(building,index),topY=floorElevation(building,index)+platform.height;
   const {id,label,kind,covered,height,minX,maxX,minZ,maxZ}=platform;
-  return {id,floorId:building.floors[index].id,label,kind,covered,height,minX,maxX,minZ,maxZ,
+  return {id,floorId:building.floors[index].id,label,kind,covered,...(platform.roofStyle?{roofStyle:platform.roofStyle}:{}),...(platform.roofPitch!=null?{roofPitch:platform.roofPitch}:{}),height,minX,maxX,minZ,maxZ,
     width:maxX-minX,depth:maxZ-minZ,area:(maxX-minX)*(maxZ-minZ),topY,bottomY:topY-view.floorThickness};
 }
 

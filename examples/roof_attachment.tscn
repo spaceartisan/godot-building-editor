@@ -337,6 +337,8 @@ backface_collision = true
 
 [node name="Floor_01" type="Node3D" parent="."]
 editor_description = "Floor 1; elevation 0m"
+metadata/building_floor_id = "floor_1"
+metadata/building_floor_label = "Floor 1"
 
 [node name="Geometry" type="Node3D" parent="Floor_01"]
 
@@ -351,14 +353,17 @@ editor_description = "Floor 1; elevation 0m"
 [node name="OutsideFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F01_ExteriorOutsideMesh")
 editor_description = "Outward-facing exterior faces."
+metadata/building_part = "exterior_wall"
 
 [node name="InsideFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F01_ExteriorInsideMesh")
 editor_description = "Inward-facing faces of the exterior shell."
+metadata/building_part = "exterior_wall"
 
 [node name="EdgeFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F01_ExteriorEdgeMesh")
 editor_description = "Window/door reveals and wall-thickness faces."
+metadata/building_part = "exterior_wall"
 
 [node name="ExteriorCollision_001" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, 1.5, -4)
@@ -383,6 +388,7 @@ shape = SubResource("BoxShape_4")
 [node name="FloorSlab" type="MeshInstance3D" parent="Floor_01/Geometry"]
 mesh = SubResource("F01_FloorMesh")
 editor_description = "Automatic floor mesh after independent manual-floor overrides. Surfaces: TopFaces, BottomFaces, EdgeFaces."
+metadata/building_part = "floor"
 
 [node name="FloorCollision_001" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, -0.09, 0)
@@ -391,6 +397,7 @@ shape = SubResource("FloorShape_5")
 [node name="Ceiling" type="MeshInstance3D" parent="Floor_01/Geometry"]
 mesh = SubResource("F01_CeilingMesh")
 editor_description = "Automatic ceiling mesh after independent manual-ceiling overrides. Surfaces: RoomFaces, RoofSideFaces, EdgeFaces."
+metadata/building_part = "ceiling"
 
 [node name="CeilingCollision_001" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, 2.94, 0)
@@ -400,6 +407,7 @@ shape = SubResource("CeilingShape_6")
 
 [node name="Porch_001_Porch" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
 mesh = SubResource("F01_PlatformMesh_001")
+metadata/building_part = "platform"
 
 [node name="Porch_001_Porch_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, -0.09, 5.5)
@@ -409,6 +417,7 @@ shape = SubResource("PlatformShape_7")
 position = Vector3(-2, 1.5, 4)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_8")
+metadata/building_part = "post"
 
 [node name="Porch_001_Porch_Post_001_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(-2, 1.5, 4)
@@ -419,6 +428,7 @@ shape = SubResource("BoxShape_9")
 position = Vector3(-2, 1.5, 5.5)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_10")
+metadata/building_part = "post"
 
 [node name="Porch_001_Porch_Post_002_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(-2, 1.5, 5.5)
@@ -429,6 +439,7 @@ shape = SubResource("BoxShape_11")
 position = Vector3(-2, 1.5, 7)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_12")
+metadata/building_part = "post"
 
 [node name="Porch_001_Porch_Post_003_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(-2, 1.5, 7)
@@ -439,6 +450,7 @@ shape = SubResource("BoxShape_13")
 position = Vector3(2, 1.5, 4)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_14")
+metadata/building_part = "post"
 
 [node name="Porch_001_Porch_Post_004_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(2, 1.5, 4)
@@ -449,6 +461,7 @@ shape = SubResource("BoxShape_15")
 position = Vector3(2, 1.5, 5.5)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_16")
+metadata/building_part = "post"
 
 [node name="Porch_001_Porch_Post_005_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(2, 1.5, 5.5)
@@ -459,6 +472,7 @@ shape = SubResource("BoxShape_17")
 position = Vector3(2, 1.5, 7)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_18")
+metadata/building_part = "post"
 
 [node name="Porch_001_Porch_Post_006_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(2, 1.5, 7)
@@ -469,6 +483,7 @@ shape = SubResource("BoxShape_19")
 position = Vector3(0, 1.5, 7)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_20")
+metadata/building_part = "post"
 
 [node name="Porch_001_Porch_Post_007_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, 1.5, 7)
@@ -479,6 +494,7 @@ shape = SubResource("BoxShape_21")
 position = Vector3(-2, 2.92, 5.5)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_22")
+metadata/building_part = "beam"
 
 [node name="Porch_001_Porch_Beam_001_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(-2, 2.92, 5.5)
@@ -489,6 +505,7 @@ shape = SubResource("BoxShape_23")
 position = Vector3(2, 2.92, 5.5)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_24")
+metadata/building_part = "beam"
 
 [node name="Porch_001_Porch_Beam_002_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(2, 2.92, 5.5)
@@ -499,6 +516,7 @@ shape = SubResource("BoxShape_25")
 position = Vector3(0, 2.92, 7)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_26")
+metadata/building_part = "beam"
 
 [node name="Porch_001_Porch_Beam_003_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, 2.92, 7)
@@ -514,6 +532,7 @@ editor_description = "Independent roof footprints with absolute base heights; no
 position = Vector3(0, 4.29538, -2.15)
 rotation = Vector3(-0.61087, 0, 0)
 mesh = SubResource("BoxMesh_28")
+metadata/building_part = "roof"
 
 [node name="ManualRoof_001_North_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
 position = Vector3(0, 4.29538, -2.15)
@@ -524,6 +543,7 @@ shape = SubResource("BoxShape_29")
 position = Vector3(0, 4.29538, 2.15)
 rotation = Vector3(0.61087, 0, 0)
 mesh = SubResource("BoxMesh_30")
+metadata/building_part = "roof"
 
 [node name="ManualRoof_001_South_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
 position = Vector3(0, 4.29538, 2.15)
@@ -534,6 +554,7 @@ shape = SubResource("BoxShape_31")
 position = Vector3(0, 5.83083, 0)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_32")
+metadata/building_part = "ridge"
 
 [node name="ManualRoof_001_Ridge_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
 position = Vector3(0, 5.83083, 0)
@@ -554,27 +575,33 @@ shape = SubResource("ConvexShape_35")
 
 [node name="OutsideFaces" type="MeshInstance3D" parent="ManualRoofs/ManualRoof_001_GableFill"]
 mesh = SubResource("ManualRoofGableMesh_001_OutsideFaces")
+metadata/building_part = "gable"
 
 [node name="InsideFaces" type="MeshInstance3D" parent="ManualRoofs/ManualRoof_001_GableFill"]
 mesh = SubResource("ManualRoofGableMesh_001_InsideFaces")
+metadata/building_part = "gable"
 
 [node name="EdgeFaces" type="MeshInstance3D" parent="ManualRoofs/ManualRoof_001_GableFill"]
 mesh = SubResource("ManualRoofGableMesh_001_EdgeFaces")
+metadata/building_part = "gable"
 
 [node name="ManualRoof_002_West" type="MeshInstance3D" parent="ManualRoofs"]
 mesh = SubResource("RoofMesh_36")
+metadata/building_part = "roof"
 
 [node name="ManualRoof_002_West_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
 shape = SubResource("RoofShape_37")
 
 [node name="ManualRoof_002_East" type="MeshInstance3D" parent="ManualRoofs"]
 mesh = SubResource("RoofMesh_38")
+metadata/building_part = "roof"
 
 [node name="ManualRoof_002_East_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
 shape = SubResource("RoofShape_39")
 
 [node name="ManualRoof_002_Ridge" type="MeshInstance3D" parent="ManualRoofs"]
 mesh = SubResource("RoofMesh_40")
+metadata/building_part = "ridge"
 
 [node name="ManualRoof_002_Ridge_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
 shape = SubResource("RoofShape_41")

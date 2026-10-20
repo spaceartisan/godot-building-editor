@@ -5,6 +5,8 @@
 // material slots stay empty. Shared by the CLI (--game-layer) and the web
 // Godot Export panel.
 export const GAME_LAYER_VERSION=1;
+// Values of metadata/building_part on exported mesh nodes; rules can select by part.
+export const BUILDING_PARTS=['exterior_wall','interior_wall','window','floor','ceiling','roof','ridge','gable','platform','post','beam','step','railing','stair','stair_blocker','door_frame','door_leaf','door_housing','elevator_shaft','elevator_car','elevator_door'];
 const NAME=/^[A-Za-z_][A-Za-z0-9_]{0,63}$/;
 const fail=(message,where)=>{throw new Error(`${where?`${where}: `:''}${message}`);};
 const isObject=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
@@ -14,6 +16,13 @@ function resourcePath(value,where){
   if(value.includes(':')&&!value.startsWith('res://'))fail('use a res:// path or a path relative to the scene',where);
   if(!value.startsWith('res://')&&(value.startsWith('/')||value.split('/').includes('..')))fail('relative paths must stay below the scene folder',where);
   return value;
+}
+// A rule selects mesh nodes by path pattern (match), by part, or both.
+function selector(rule,where){
+  if(rule.match===undefined&&rule.part===undefined)fail('give match (a node path pattern), part, or both',where);
+  if(rule.match!==undefined&&(typeof rule.match!=='string'||!rule.match||rule.match.length>256||/["\n]/.test(rule.match)))fail('match must be a node path pattern (* matches anything)',`${where}/match`);
+  if(rule.part!==undefined&&!BUILDING_PARTS.includes(rule.part))fail(`part must be one of ${BUILDING_PARTS.join(', ')}`,`${where}/part`);
+  return {...(rule.match!==undefined?{match:rule.match,pattern:glob(rule.match)}:{}),...(rule.part!==undefined?{part:rule.part}:{})};
 }
 function glob(pattern){return new RegExp('^'+pattern.replace(/[.+?^${}()|[\]\\]/g,'\\$&').replace(/\*/g,'.*')+'$');}
 
@@ -29,27 +38,27 @@ export function parseGameLayer(value){
   }
   const nodeMaterials=[];
   if(data.nodeMaterials!==undefined){
-    if(!Array.isArray(data.nodeMaterials)||data.nodeMaterials.length>256)fail('expected up to 256 {match, surface, material, in} rules','nodeMaterials');
+    if(!Array.isArray(data.nodeMaterials)||data.nodeMaterials.length>256)fail('expected up to 256 {match and/or part, surface, material, in} rules','nodeMaterials');
     data.nodeMaterials.forEach((rule,i)=>{
       const where=`nodeMaterials/${i}`;if(!isObject(rule))fail('expected an object',where);
-      for(const key of Object.keys(rule))if(!['match','surface','material','in'].includes(key))fail(`unknown field ${key}`,where);
-      if(typeof rule.match!=='string'||!rule.match||rule.match.length>256||/["\n]/.test(rule.match))fail('match must be a node path pattern (* matches anything)',`${where}/match`);
+      for(const key of Object.keys(rule))if(!['match','part','surface','material','in'].includes(key))fail(`unknown field ${key}`,where);
+      const select=selector(rule,where);
       // No surface: the whole node (material_override), e.g. plain roof boxes with unnamed surfaces.
       if(rule.surface!==undefined&&(typeof rule.surface!=='string'||!NAME.test(rule.surface)))fail('surface must be a surface name such as TopFaces, or omitted for the whole node',`${where}/surface`);
       if(rule.in!==undefined&&!['building','doors'].includes(rule.in))fail('in must be building or doors',`${where}/in`);
-      nodeMaterials.push({match:rule.match,pattern:glob(rule.match),surface:rule.surface??null,material:resourcePath(rule.material,`${where}/material`),in:rule.in||null});
+      nodeMaterials.push({...select,surface:rule.surface??null,material:resourcePath(rule.material,`${where}/material`),in:rule.in||null});
     });
   }
   const layers=[];
   if(data.layers!==undefined){
-    if(!Array.isArray(data.layers)||data.layers.length>256)fail('expected up to 256 {match, layers, in} rules','layers');
+    if(!Array.isArray(data.layers)||data.layers.length>256)fail('expected up to 256 {match and/or part, layers, in} rules','layers');
     data.layers.forEach((rule,i)=>{
       const where=`layers/${i}`;if(!isObject(rule))fail('expected an object',where);
-      for(const key of Object.keys(rule))if(!['match','layers','in'].includes(key))fail(`unknown field ${key}`,where);
-      if(typeof rule.match!=='string'||!rule.match||rule.match.length>256||/["\n]/.test(rule.match))fail('match must be a node path pattern (* matches anything)',`${where}/match`);
+      for(const key of Object.keys(rule))if(!['match','part','layers','in'].includes(key))fail(`unknown field ${key}`,where);
+      const select=selector(rule,where);
       if(!Number.isInteger(rule.layers)||rule.layers<1||rule.layers>0xFFFFF)fail('layers must be a render layer bitmask from 1 to 1048575',`${where}/layers`);
       if(rule.in!==undefined&&!['building','doors'].includes(rule.in))fail('in must be building or doors',`${where}/in`);
-      layers.push({match:rule.match,pattern:glob(rule.match),layers:rule.layers,in:rule.in||null});
+      layers.push({...select,layers:rule.layers,in:rule.in||null});
     });
   }
   const scripts={};
@@ -91,15 +100,16 @@ function applyToScene(text,layer,kind){
       return `${described}\nscript = ExtResource("${resource('Script',script)}")`;
     }
     if(type==='MeshInstance3D'){
-      const path=parent==='.'?name:`${parent}/${name}`,scope=r=>!r.in||r.in===(kind==='door'?'doors':'building');
+      const path=parent==='.'?name:`${parent}/${name}`,part=/^metadata\/building_part = "([^"]+)"$/m.exec(block)?.[1];
+      const scope=r=>(!r.in||r.in===(kind==='door'?'doors':'building'))&&(!r.pattern||r.pattern.test(path))&&(!r.part||r.part===part);
       let result=block;
       const names=surfaces.get(/^mesh = SubResource\("([^"]+)"\)$/m.exec(block)?.[1])||[],done=new Set();
-      for(const rule of (layer.nodeMaterials||[]).filter(r=>scope(r)&&r.pattern.test(path))){
+      for(const rule of (layer.nodeMaterials||[]).filter(scope)){
         if(rule.surface===null){if(!done.has('node')){done.add('node');result+=`\nmaterial_override = ExtResource("${resource('Material',rule.material)}")`;}continue;}
         const index=names.indexOf(rule.surface);if(index<0||done.has(index))continue;done.add(index);
         result+=`\nsurface_material_override/${index} = ExtResource("${resource('Material',rule.material)}")`;
       }
-      const rule=layer.layers.find(r=>scope(r)&&r.pattern.test(path));
+      const rule=layer.layers.find(scope);
       if(rule)result+=`\nlayers = ${rule.layers}`;
       return result;
     }

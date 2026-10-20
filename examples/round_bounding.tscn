@@ -363,6 +363,8 @@ backface_collision = true
 
 [node name="Floor_01" type="Node3D" parent="."]
 editor_description = "Floor 1; elevation 0m"
+metadata/building_floor_id = "floor_5mhckc"
+metadata/building_floor_label = "Floor 1"
 
 [node name="Geometry" type="Node3D" parent="Floor_01"]
 
@@ -377,14 +379,17 @@ editor_description = "Floor 1; elevation 0m"
 [node name="OutsideFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F01_ExteriorOutsideMesh")
 editor_description = "Outward-facing exterior faces."
+metadata/building_part = "exterior_wall"
 
 [node name="InsideFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F01_ExteriorInsideMesh")
 editor_description = "Inward-facing faces of the exterior shell."
+metadata/building_part = "exterior_wall"
 
 [node name="EdgeFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F01_ExteriorEdgeMesh")
 editor_description = "Window/door reveals and wall-thickness faces."
+metadata/building_part = "exterior_wall"
 
 [node name="Doors" type="Node3D" parent="Floor_01/Geometry"]
 
@@ -467,6 +472,7 @@ shape = SubResource("BoxShape_14")
 [node name="FloorSlab" type="MeshInstance3D" parent="Floor_01/Geometry"]
 mesh = SubResource("F01_FloorMesh")
 editor_description = "Automatic floor mesh after independent manual-floor overrides. Surfaces: TopFaces, BottomFaces, EdgeFaces."
+metadata/building_part = "floor"
 
 [node name="FloorCollision_001" type="CollisionShape3D" parent="Floor_01/Collision"]
 shape = SubResource("FloorShape_15")
@@ -474,6 +480,7 @@ shape = SubResource("FloorShape_15")
 [node name="Ceiling" type="MeshInstance3D" parent="Floor_01/Geometry"]
 mesh = SubResource("F01_CeilingMesh")
 editor_description = "Automatic ceiling mesh after independent manual-ceiling overrides. Surfaces: RoomFaces, RoofSideFaces, EdgeFaces."
+metadata/building_part = "ceiling"
 
 [node name="CeilingCollision_001" type="CollisionShape3D" parent="Floor_01/Collision"]
 shape = SubResource("CeilingShape_16")
@@ -483,77 +490,94 @@ position = Vector3(-3.4941, 1.05, -2.0118)
 rotation = Vector3(0, 1.10715, 0)
 metadata/building_opening_id = "door_hh3e3c"
 metadata/building_opening_label = "Door"
+metadata/outward_normal = Vector3(-0.89443, 0, -0.44721)
+
+[node name="Threshold" type="Marker3D" parent="Floor_01/Openings/Door_001_Door"]
+position = Vector3(0, -1.05, -0.09)
+rotation = Vector3(0, 0, 0)
 
 [node name="Roof" type="Node3D" parent="Floor_01/Geometry"]
 
 [node name="Roof_001_Hip_01" type="MeshInstance3D" parent="Floor_01/Geometry/Roof"]
 mesh = SubResource("RoofMesh_17")
+metadata/building_part = "roof"
 
 [node name="Roof_001_Hip_01_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 shape = SubResource("RoofShape_18")
 
 [node name="Roof_001_Hip_02" type="MeshInstance3D" parent="Floor_01/Geometry/Roof"]
 mesh = SubResource("RoofMesh_19")
+metadata/building_part = "roof"
 
 [node name="Roof_001_Hip_02_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 shape = SubResource("RoofShape_20")
 
 [node name="Roof_001_Hip_03" type="MeshInstance3D" parent="Floor_01/Geometry/Roof"]
 mesh = SubResource("RoofMesh_21")
+metadata/building_part = "roof"
 
 [node name="Roof_001_Hip_03_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 shape = SubResource("RoofShape_22")
 
 [node name="Roof_001_Hip_04" type="MeshInstance3D" parent="Floor_01/Geometry/Roof"]
 mesh = SubResource("RoofMesh_23")
+metadata/building_part = "roof"
 
 [node name="Roof_001_Hip_04_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 shape = SubResource("RoofShape_24")
 
 [node name="Roof_001_Hip_05" type="MeshInstance3D" parent="Floor_01/Geometry/Roof"]
 mesh = SubResource("RoofMesh_25")
+metadata/building_part = "roof"
 
 [node name="Roof_001_Hip_05_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 shape = SubResource("RoofShape_26")
 
 [node name="Roof_001_Hip_06" type="MeshInstance3D" parent="Floor_01/Geometry/Roof"]
 mesh = SubResource("RoofMesh_27")
+metadata/building_part = "roof"
 
 [node name="Roof_001_Hip_06_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 shape = SubResource("RoofShape_28")
 
 [node name="Roof_001_Hip_07" type="MeshInstance3D" parent="Floor_01/Geometry/Roof"]
 mesh = SubResource("RoofMesh_29")
+metadata/building_part = "roof"
 
 [node name="Roof_001_Hip_07_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 shape = SubResource("RoofShape_30")
 
 [node name="Roof_001_Hip_08" type="MeshInstance3D" parent="Floor_01/Geometry/Roof"]
 mesh = SubResource("RoofMesh_31")
+metadata/building_part = "roof"
 
 [node name="Roof_001_Hip_08_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 shape = SubResource("RoofShape_32")
 
 [node name="Roof_001_Hip_09" type="MeshInstance3D" parent="Floor_01/Geometry/Roof"]
 mesh = SubResource("RoofMesh_33")
+metadata/building_part = "roof"
 
 [node name="Roof_001_Hip_09_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 shape = SubResource("RoofShape_34")
 
 [node name="Roof_001_Hip_10" type="MeshInstance3D" parent="Floor_01/Geometry/Roof"]
 mesh = SubResource("RoofMesh_35")
+metadata/building_part = "roof"
 
 [node name="Roof_001_Hip_10_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 shape = SubResource("RoofShape_36")
 
 [node name="Roof_001_Hip_11" type="MeshInstance3D" parent="Floor_01/Geometry/Roof"]
 mesh = SubResource("RoofMesh_37")
+metadata/building_part = "roof"
 
 [node name="Roof_001_Hip_11_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 shape = SubResource("RoofShape_38")
 
 [node name="Roof_001_Hip_12" type="MeshInstance3D" parent="Floor_01/Geometry/Roof"]
 mesh = SubResource("RoofMesh_39")
+metadata/building_part = "roof"
 
 [node name="Roof_001_Hip_12_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 shape = SubResource("RoofShape_40")

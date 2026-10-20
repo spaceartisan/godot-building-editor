@@ -181,6 +181,8 @@ size = Vector3(5, 0.12, 4)
 
 [node name="Floor_01" type="Node3D" parent="."]
 editor_description = "Courtyard level; elevation 0m"
+metadata/building_floor_id = "floor_1"
+metadata/building_floor_label = "Courtyard level"
 metadata/building_regions = [{"id":"regions_10","label":"Building envelope","kind":"wing","effect":"solid","minX":-7,"maxX":7,"minZ":-6,"maxZ":6},{"id":"regions_11","label":"Open courtyard","kind":"courtyard","effect":"void","minX":-2,"maxX":2,"minZ":-2,"maxZ":2},{"id":"regions_12","label":"West workshop","kind":"bay","effect":"label","minX":-7,"maxX":-2,"minZ":-6,"maxZ":6},{"id":"regions_13","label":"East rooms","kind":"wing","effect":"label","minX":2,"maxX":7,"minZ":-6,"maxZ":6}]
 
 [node name="Geometry" type="Node3D" parent="Floor_01"]
@@ -196,14 +198,17 @@ metadata/building_regions = [{"id":"regions_10","label":"Building envelope","kin
 [node name="OutsideFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F01_ExteriorOutsideMesh")
 editor_description = "Outward-facing exterior faces."
+metadata/building_part = "exterior_wall"
 
 [node name="InsideFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F01_ExteriorInsideMesh")
 editor_description = "Inward-facing faces of the exterior shell."
+metadata/building_part = "exterior_wall"
 
 [node name="EdgeFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F01_ExteriorEdgeMesh")
 editor_description = "Window/door reveals and wall-thickness faces."
+metadata/building_part = "exterior_wall"
 
 [node name="ExteriorCollision_001" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, 1.4, -6)
@@ -248,6 +253,7 @@ shape = SubResource("BoxShape_8")
 [node name="FloorSlab" type="MeshInstance3D" parent="Floor_01/Geometry"]
 mesh = SubResource("F01_FloorMesh")
 editor_description = "Automatic floor mesh after independent manual-floor overrides. Surfaces: TopFaces, BottomFaces, EdgeFaces."
+metadata/building_part = "floor"
 
 [node name="FloorCollision_001" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(-4.5, -0.09, 0)
@@ -268,6 +274,7 @@ shape = SubResource("FloorShape_12")
 [node name="Ceiling" type="MeshInstance3D" parent="Floor_01/Geometry"]
 mesh = SubResource("F01_CeilingMesh")
 editor_description = "Automatic ceiling mesh after independent manual-ceiling overrides. Surfaces: RoomFaces, RoofSideFaces, EdgeFaces."
+metadata/building_part = "ceiling"
 
 [node name="CeilingCollision_001" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(-4.5, 2.74, 0)
@@ -291,6 +298,7 @@ shape = SubResource("CeilingShape_16")
 position = Vector3(-4.5, 2.86, 0)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_17")
+metadata/building_part = "roof"
 
 [node name="RoofSection_001_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(-4.5, 2.86, 0)
@@ -301,6 +309,7 @@ shape = SubResource("BoxShape_18")
 position = Vector3(0, 2.86, -4)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_19")
+metadata/building_part = "roof"
 
 [node name="RoofSection_002_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, 2.86, -4)
@@ -311,6 +320,7 @@ shape = SubResource("BoxShape_20")
 position = Vector3(0, 2.86, 4)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_21")
+metadata/building_part = "roof"
 
 [node name="RoofSection_003_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, 2.86, 4)
@@ -321,6 +331,7 @@ shape = SubResource("BoxShape_22")
 position = Vector3(4.5, 2.86, 0)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_23")
+metadata/building_part = "roof"
 
 [node name="RoofSection_004_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(4.5, 2.86, 0)

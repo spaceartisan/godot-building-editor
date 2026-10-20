@@ -11,7 +11,9 @@ function duplicateFloor(source,label){
 
 // Floors carry their authored contents and dimensions. Independent surfaces do
 // not have inferred floor ownership. Candidate edits never mutate the source.
-export function proposeFloorStackEdit(source,index,action,{removeAffectedStairs=false,validateResult=true}={}){
+// fields: initial settings for an added floor (the CLI's floor.insert value),
+// applied before the stack is spaced so its wall height and slab count.
+export function proposeFloorStackEdit(source,index,action,{removeAffectedStairs=false,validateResult=true,fields={}}={}){
   const reject=reason=>({ok:false,reason});
   if(!Number.isInteger(index)||!source.floors?.[index])return reject('Choose an existing floor');
   if(!['above','below','duplicate','up','down','remove'].includes(action))return reject('Unknown floor operation');
@@ -24,6 +26,7 @@ export function proposeFloorStackEdit(source,index,action,{removeAffectedStairs=
   if(['above','below','duplicate'].includes(action)){
     const at=index+(action==='below'?0:1),label=action==='duplicate'?`${floors[index].label} copy`:at===0?'Basement':`New floor ${n+1}`;
     const added=action==='duplicate'?duplicateFloor(floors[index],label):makeFloor(label);
+    for(const [key,value] of Object.entries(fields||{}))if(value!==null&&key!=='elevation')added[key]=value;
     const height=added.wallHeight??building.wallHeight,slab=added.floorThickness??building.floorThickness;
     if(at===0){added.elevation=heights[0]-height-floorSlabThickness(source,0);floors[0].elevation=heights[0];}
     else for(let i=at;i<n;i++)if(Number.isFinite(floors[i].elevation))floors[i].elevation+=height+slab;

@@ -288,6 +288,8 @@ backface_collision = true
 
 [node name="Floor_01" type="Node3D" parent="."]
 editor_description = "Workshop; elevation 0m"
+metadata/building_floor_id = "floor_1"
+metadata/building_floor_label = "Workshop"
 
 [node name="Geometry" type="Node3D" parent="Floor_01"]
 
@@ -302,14 +304,17 @@ editor_description = "Workshop; elevation 0m"
 [node name="OutsideFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F01_ExteriorOutsideMesh")
 editor_description = "Outward-facing exterior faces."
+metadata/building_part = "exterior_wall"
 
 [node name="InsideFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F01_ExteriorInsideMesh")
 editor_description = "Inward-facing faces of the exterior shell."
+metadata/building_part = "exterior_wall"
 
 [node name="EdgeFaces" type="MeshInstance3D" parent="Floor_01/Geometry/Walls/ExteriorWalls"]
 mesh = SubResource("F01_ExteriorEdgeMesh")
 editor_description = "Window/door reveals and wall-thickness faces."
+metadata/building_part = "exterior_wall"
 
 [node name="ShapedWallCollision" type="CollisionShape3D" parent="Floor_01/Collision"]
 shape = SubResource("ProfileWallShape_1")
@@ -317,6 +322,7 @@ shape = SubResource("ProfileWallShape_1")
 [node name="FloorSlab" type="MeshInstance3D" parent="Floor_01/Geometry"]
 mesh = SubResource("F01_FloorMesh")
 editor_description = "Automatic floor mesh after independent manual-floor overrides. Surfaces: TopFaces, BottomFaces, EdgeFaces."
+metadata/building_part = "floor"
 
 [node name="FloorCollision_001" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, -0.09, 0)
@@ -329,24 +335,28 @@ editor_description = "Independent roof footprints with absolute base heights; no
 
 [node name="ManualRoof_001_Flat" type="MeshInstance3D" parent="ManualRoofs"]
 mesh = SubResource("RoofMesh_3")
+metadata/building_part = "roof"
 
 [node name="ManualRoof_001_Flat_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
 shape = SubResource("RoofShape_4")
 
 [node name="ManualRoof_002_North" type="MeshInstance3D" parent="ManualRoofs"]
 mesh = SubResource("RoofMesh_5")
+metadata/building_part = "roof"
 
 [node name="ManualRoof_002_North_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
 shape = SubResource("RoofShape_6")
 
 [node name="ManualRoof_002_South" type="MeshInstance3D" parent="ManualRoofs"]
 mesh = SubResource("RoofMesh_7")
+metadata/building_part = "roof"
 
 [node name="ManualRoof_002_South_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
 shape = SubResource("RoofShape_8")
 
 [node name="ManualRoof_002_Ridge" type="MeshInstance3D" parent="ManualRoofs"]
 mesh = SubResource("RoofMesh_9")
+metadata/building_part = "ridge"
 
 [node name="ManualRoof_002_Ridge_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
 shape = SubResource("RoofShape_10")
@@ -355,30 +365,36 @@ shape = SubResource("RoofShape_10")
 
 [node name="OutsideFaces" type="MeshInstance3D" parent="ManualRoofs/ManualRoof_002_GableFill"]
 mesh = SubResource("ManualRoofGableMesh_002_OutsideFaces")
+metadata/building_part = "gable"
 
 [node name="InsideFaces" type="MeshInstance3D" parent="ManualRoofs/ManualRoof_002_GableFill"]
 mesh = SubResource("ManualRoofGableMesh_002_InsideFaces")
+metadata/building_part = "gable"
 
 [node name="EdgeFaces" type="MeshInstance3D" parent="ManualRoofs/ManualRoof_002_GableFill"]
 mesh = SubResource("ManualRoofGableMesh_002_EdgeFaces")
+metadata/building_part = "gable"
 
 [node name="ManualGableCollision_002_Trimmed" type="CollisionShape3D" parent="ManualRoofCollision"]
 shape = SubResource("GableShape_11")
 
 [node name="ManualRoof_003_West" type="MeshInstance3D" parent="ManualRoofs"]
 mesh = SubResource("RoofMesh_12")
+metadata/building_part = "roof"
 
 [node name="ManualRoof_003_West_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
 shape = SubResource("RoofShape_13")
 
 [node name="ManualRoof_003_East" type="MeshInstance3D" parent="ManualRoofs"]
 mesh = SubResource("RoofMesh_14")
+metadata/building_part = "roof"
 
 [node name="ManualRoof_003_East_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
 shape = SubResource("RoofShape_15")
 
 [node name="ManualRoof_003_Ridge" type="MeshInstance3D" parent="ManualRoofs"]
 mesh = SubResource("RoofMesh_16")
+metadata/building_part = "ridge"
 
 [node name="ManualRoof_003_Ridge_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
 shape = SubResource("RoofShape_17")
@@ -387,12 +403,15 @@ shape = SubResource("RoofShape_17")
 
 [node name="OutsideFaces" type="MeshInstance3D" parent="ManualRoofs/ManualRoof_003_GableFill"]
 mesh = SubResource("ManualRoofGableMesh_003_OutsideFaces")
+metadata/building_part = "gable"
 
 [node name="InsideFaces" type="MeshInstance3D" parent="ManualRoofs/ManualRoof_003_GableFill"]
 mesh = SubResource("ManualRoofGableMesh_003_InsideFaces")
+metadata/building_part = "gable"
 
 [node name="EdgeFaces" type="MeshInstance3D" parent="ManualRoofs/ManualRoof_003_GableFill"]
 mesh = SubResource("ManualRoofGableMesh_003_EdgeFaces")
+metadata/building_part = "gable"
 
 [node name="ManualGableCollision_003_Trimmed" type="CollisionShape3D" parent="ManualRoofCollision"]
 shape = SubResource("GableShape_18")

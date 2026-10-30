@@ -39,7 +39,7 @@ Know the scope before planning. The tool makes the building shell; materials, na
 
 Transactions support `building.update`, `floor.update/add-top/remove-top`, `wall.add/update/move-endpoint/crenellate/split/remove`, `room.add` (a rectangle of four walls, like the web Room tool), `stair.guard`, `floor.insert/duplicate/move/remove`, `group.move`, and `railing`, `light`, `marker`, `opening`, `roof`, `region`, `slab`, `stair`, `platform`, `manualFloor`, `manualCeiling`, `wallType`, `openingShape` add/update/remove. A recipe's top-level `points` names coordinates once for reuse in `a`/`b`/`at`/`point`/`polygon` (see TRANSACTIONS.md). Do not extrapolate new operation names from this pattern. Read the operation table for supported `value` fields and removal flags.
 
-Core CLI and web serving need Node 20+ and no npm install. Linux is the tested platform. `CANVAS_MODULE` can name an installed canvas module; `GODOT_BIN` or `--godot` supplies an existing Godot executable. Browser tests additionally need Playwright and its Chromium binary. Do not infer availability from the module alone.
+Core CLI and web serving need Node 20+ and no npm install. Linux and Windows are tested (macOS is not). `CANVAS_MODULE` can name an installed canvas module; `GODOT_BIN` or `--godot` supplies an existing Godot executable. Browser tests additionally need Playwright and its Chromium binary. Do not infer availability from the module alone.
 
 ## 3. A complete, repeatable workflow
 
@@ -223,6 +223,7 @@ Save JSON reports a download request or a synchronous failure without changing t
 | `godot-check --assets --render` | How the exported scene renders in Godot with default materials and a neutral sun/sky | Game lighting, materials or post-processing; physics |
 | DOM editor suites | Actual handler behavior, history, modeled focus intent | Real CSS, responsive sizing, browser focus behavior |
 | Playwright browser suite | The executed live interactions and viewport checks | Engine physics |
+| `export --format glb` and its tests | The `.glb` holds the `.tscn` geometry, collision, metadata and lights (`gltf-tests.mjs`), Godot's importer reads it back (`gltf-engine-tests.mjs`) | How a particular Unreal or other engine project imports it; run `qa/unreal-import-check.py` there ([GLTF.md](GLTF.md)) |
 | `godot-check --assets` | Supported scene loading/resources and configured checks; for exported elevators, physics probes of the car at every stop and the landing and car doors | Character traversal; its only physics rays are the elevator probes |
 | Bundled Godot/engine suites | Their specific generated scenes and authored probes | Arbitrary building or character clearance |
 | `release-check` | Reported gates on an isolated source snapshot | Skipped dependencies or untested target engines/platforms |
@@ -231,7 +232,7 @@ For ordinary building authoring, validate and inspect the candidate, then review
 
 `release-check --canvas required --engine required --godot PATH --out ../NEW.json --json` requires both optional backends. The report path must be outside the installation. Read `complete`, every gate status and dependency version; exit 0 with skipped optional checks is not complete coverage. Avoid writing reports or screenshots into the source snapshot during the run.
 
-The shipped runtime baseline was tested on Linux/Node 24.19.0/Godot 4.5.1 Compatibility. Godot 4.7, other OS/runtime combinations and live Chromium layout were not verified there. Check the current environment before repeating that limitation as fact. State what actually ran and attach relevant genuine captures for visual changes.
+Release gates were run on Linux (Node 22.22.2, Godot 4.5.1) and on Windows 10 (Node 22.19.0, Godot 4.7 stable), and both browser suites in Chromium 141; macOS is unverified. Other OS/runtime combinations and engine versions are not verified. Check the current environment before repeating that limitation as fact. State what actually ran and attach relevant genuine captures for visual changes.
 
 ## 8. Source map for cleanup work
 
@@ -244,6 +245,7 @@ The shipped runtime baseline was tested on Linux/Node 24.19.0/Godot 4.5.1 Compat
 | Web controls, picking and history | `src/main.js`, `src/selection.js`, `src/history.js`, `index.html`, `src/style.css` |
 | Shapes and junctions | `src/wall-types.js`, `src/wall-profile-geometry.js`, `src/profile-junctions.js`, `src/opening-shapes.js` |
 | Roofs/footprints | `src/roof-geometry.js`, `src/roof-diagnostics.js`, `src/roof-wall-diagnostics.js`, `src/polygon-areas.js`, `src/regions.js` |
+| glTF export (reads the exporter's scenes) | `src/gltf-export.js`, `gltf-tests.mjs`, `qa/validate-gltf.gd`, `qa/unreal-import-check.py` |
 | Scene/preview generation | `src/exporter.js`, `src/preview-web.js`, `src/preview-review.js`, `src/preview-overlays.js` |
 | Elevators (rules, layout shared by export, preview, routes and web) | `src/elevators.js`, `qa/validate-scenes.gd` (`godot-check --assets` probe), `qa/validate-elevators.gd` |
 | Tests and packaging evidence | `test-suites.mjs`, `release-check.mjs`, `qa/editor-harness.mjs`, `qa/recipe-workflows.mjs`, `browser-tests.mjs` |

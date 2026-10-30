@@ -84,7 +84,7 @@ All recipes are in `examples/transactions/`. Removal recipes must use the output
 
 The v1 audit exercises every recipe through CLI authoring, web reload and exact scene export comparison. Fresh engine exports cover 27 scenes and 524 collision shapes; this resource check is separate from the fixture-specific physics-ray suites in the release report. It does not certify your character's headroom, slope handling or gameplay movement.
 
-The tested environment is Linux, Node 24.19.0 and Godot 4.5.1 Compatibility. Godot 4.7, live browser CSS/layout and other OS/runtime combinations remain unverified here. Playwright is available but its Chromium executable is missing. The included software previews are not browser or Godot screenshots. Run `npm run test:browser` on a machine with Playwright/Chromium and test the exported building with your game's character and lights.
+Tested environments: release gates on Linux (Node 22.22.2, Godot 4.5.1) and Windows 10 (Node 22.19.0, Godot 4.7 stable), and both browser suites in Chromium 141; macOS is unverified. The included software previews are not browser or Godot screenshots. Test the exported building with your game's character and lights.
 
 The v1 scope is complete for the available checks. Remaining expansion includes CLI middle/basement stack edits, continuous concave hip-roof valleys, additional shaped-wall junctions and shaped paired doors/windows. See [ROADMAP.md](ROADMAP.md); these are not implied by the v1 label.
 

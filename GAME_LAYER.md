@@ -52,6 +52,8 @@ All sections are optional.
 
 Paths are `res://` project paths, or paths relative to the exported scene (no `..`). Unknown fields, a wrong version, invalid names or paths, and out-of-range layer masks are errors. The CLI exits with code 2 before writing anything, and the web editor refuses the file with the same message.
 
+A game layer applies to Godot exports only: `--format glb` ([GLTF.md](GLTF.md)) refuses it and names a material after each surface instead.
+
 ## Checking
 
 `godot-check --assets` checks the tool's own output and deliberately rejects scripts and project resources. Run it on a plain export (without `--game-layer`). **Render in Godot** in the web editor likewise renders the plain export. A game-layer export is meant to be opened inside the game project, where the referenced files exist. `game-layer-engine-tests.mjs` (engine suite) loads one in a small Godot project and checks the materials, layers, scripts and door children.

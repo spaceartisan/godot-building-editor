@@ -11,7 +11,7 @@ Focus on cleanup of the web builder and Linux CLI: reproducible bugs, usability,
 - Before delivering an AI-authored building, follow [AUTHORING_REVIEW.md](AUTHORING_REVIEW.md). Review each occupied level, actual floor coverage, access routes and the architectural brief; zero validation warnings are not evidence of completion.
 
 - Preserve the editable building JSON and authored IDs/references. Use supported CLI transactions, inspect their dry runs, and save to new paths.
-- Export building `.tscn` assets and relative door scenes. Keep the web editor as the visual authoring interface.
+- Export building `.tscn` assets and relative door scenes; the optional `.glb` ([GLTF.md](GLTF.md)) is written from those scenes, never from separate geometry. Keep the web editor as the visual authoring interface.
 - Preserve exterior OutsideFaces/InsideFaces/EdgeFaces, interior SideAFaces/SideBFaces/EdgeFaces, and per-story separation for lighting.
 - Keep materials empty by default. Preserve geometry/collision parity, stair and multi-story seam behavior, supplied examples and intentional openings.
 - Keep the barn's large ground-floor entrance and closed upper gable.

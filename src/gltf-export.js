@@ -392,6 +392,8 @@ export function buildGlb(sceneFiles,rootFile,options={}){
       node.extensions={KHR_lights_punctual:{light:lights.length-1}};stats.lights++;
       extras.shadow_enabled=n.props.shadow_enabled??false;
     }
+    // Marks a carrier: replacing or deleting this mesh in an engine removes these collision pieces.
+    if(collision)extras.collision_pieces=collision.length;
     if(Object.keys(extras).length)node.extras=extras;
     const children=n.children.map(emit).filter(i=>i!=null);
     if(collision){

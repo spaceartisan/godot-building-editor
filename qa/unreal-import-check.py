@@ -10,7 +10,8 @@
 # "Import Into Level" does) under /Game/BuildingStudioCheck/<name> and writes a
 # JSON report: each static mesh's material slots, simple collision (boxes and
 # convex hulls from UBX_/UCX_ meshes) and Interchange metadata (glTF extras),
-# the actor tree with locations, and light actors.
+# the actor tree with locations, rotations and mobility, and light actors
+# (intensity and units).
 import json, os, unreal
 
 FILE = os.environ["GLB_CHECK_FILE"]
@@ -45,14 +46,19 @@ for path in unreal.EditorAssetLibrary.list_assets(dest, recursive=True):
 for actor in unreal.get_editor_subsystem(unreal.EditorActorSubsystem).get_all_level_actors():
     parent = actor.get_attach_parent_actor()
     loc = actor.get_actor_location()
+    rot = actor.get_actor_rotation()
+    root = actor.get_editor_property("root_component")
     row = {"name": actor.get_actor_label(), "class": actor.get_class().get_name(), "parent": parent.get_actor_label() if parent else None,
-           "location_cm": [round(loc.x, 1), round(loc.y, 1), round(loc.z, 1)]}
+           "location_cm": [round(loc.x, 1), round(loc.y, 1), round(loc.z, 1)],
+           "rotation_deg": {"pitch": round(rot.pitch, 2), "yaw": round(rot.yaw, 2), "roll": round(rot.roll, 2)},
+           "mobility": str(root.get_editor_property("mobility")).split(".")[-1].rstrip(">").split(":")[0] if root else None}
     for comp in actor.get_components_by_class(unreal.StaticMeshComponent):
         mesh = comp.get_editor_property("static_mesh")
         if mesh:
             row["mesh"] = mesh.get_name()
     for comp in actor.get_components_by_class(unreal.LightComponent):
         report["lights"].append({"actor": row["name"], "class": comp.get_class().get_name(), "intensity": comp.get_editor_property("intensity"),
+                                 "units": str(comp.get_editor_property("intensity_units")).split(".")[-1].split(":")[0] if isinstance(comp, unreal.LocalLightComponent) else None,
                                  "radius_cm": comp.get_editor_property("attenuation_radius") if isinstance(comp, unreal.PointLightComponent) else None})
     report["actors"].append(row)
 

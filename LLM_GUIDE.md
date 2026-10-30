@@ -245,7 +245,7 @@ Release gates were run on Linux (Node 22.22.2, Godot 4.5.1) and on Windows 10 (N
 | Web controls, picking and history | `src/main.js`, `src/selection.js`, `src/history.js`, `index.html`, `src/style.css` |
 | Shapes and junctions | `src/wall-types.js`, `src/wall-profile-geometry.js`, `src/profile-junctions.js`, `src/opening-shapes.js` |
 | Roofs/footprints | `src/roof-geometry.js`, `src/roof-diagnostics.js`, `src/roof-wall-diagnostics.js`, `src/polygon-areas.js`, `src/regions.js` |
-| glTF export (reads the exporter's scenes) | `src/gltf-export.js`, `gltf-tests.mjs`, `qa/validate-gltf.gd`, `qa/unreal-import-check.py` |
+| glTF export (reads the exporter's scenes) | `src/gltf-export.js`, `gltf-tests.mjs`, `qa/validate-gltf.gd`, `qa/unreal-import-check.py`, `unreal/building_studio_setup.py` |
 | Scene/preview generation | `src/exporter.js`, `src/preview-web.js`, `src/preview-review.js`, `src/preview-overlays.js` |
 | Elevators (rules, layout shared by export, preview, routes and web) | `src/elevators.js`, `qa/validate-scenes.gd` (`godot-check --assets` probe), `qa/validate-elevators.gd` |
 | Tests and packaging evidence | `test-suites.mjs`, `release-check.mjs`, `qa/editor-harness.mjs`, `qa/recipe-workflows.mjs`, `browser-tests.mjs` |

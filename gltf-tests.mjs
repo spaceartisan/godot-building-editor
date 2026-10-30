@@ -89,6 +89,11 @@ function check(label,building){
     assert.match(n.name,new RegExp(`^U(BX|CX)_${p.name.replace(/[^A-Za-z0-9_]/g,'\\$&')}_\\d{2,}$`),`${label}: ${n.name} is named after its carrier`);
     assert.ok(!n.translation&&!n.rotation&&!n.scale,`${label}: ${n.name} at identity in its carrier's space`);
   }
+  // Carriers say how many collision pieces they hold; other meshes carry no such extra.
+  for(const [n,i] of nodes.map((n,i)=>[n,i]).filter(([n])=>n.mesh!=null&&!COLLISION.test(n.name))){
+    const pieces=(n.children||[]).filter(c=>COLLISION.test(nodes[c].name)).length;
+    assert.equal(n.extras?.collision_pieces,pieces||undefined,`${label}: ${n.name} collision_pieces`);
+  }
   const ubx=collision.filter(([n])=>n.name.startsWith('UBX_')).map(([n,i])=>{const pos=r.accessor(json.meshes[n.mesh].primitives[0].attributes.POSITION),c=[0,0,0];for(let k=0;k<pos.length;k++)c[k%3]+=pos[k]/8;return r.apply(r.world(i),c);});
   assert.equal(ubx.length,expect.boxes.length,`${label}: one UBX_ per box shape`);
   const remaining=[...expect.boxes];

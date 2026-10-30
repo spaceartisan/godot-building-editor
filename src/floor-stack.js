@@ -9,6 +9,32 @@ function duplicateFloor(source,label){
   copy.stairs=[];copy.roofSections=[];return copy;
 }
 
+// After a wall-height or slab change (floor or building defaults; not an
+// elevation edit), floors that touched before keep touching. Touching floors
+// form a chain; its highest floor with an explicit elevation stays put (a
+// basement insertion pins the old ground floor), floors below it move to keep
+// meeting the floor above, and floors above follow. A chain with no explicit
+// elevation keeps its bottom in place, as automatic spacing always did.
+// Edits `after` in place; `before` is the building before the change.
+export function keepFloorContacts(before,after){
+  const n=after.floors.length;if(n!==before.floors.length||n<2)return after;
+  const old=before.floors.map((_,i)=>floorElevation(before,i)),spacing=(b,j)=>floorWallHeight(b,j-1)+floorSlabThickness(b,j);
+  const touching=j=>Math.abs(old[j]-old[j-1]-spacing(before,j))<1e-6;
+  const pinned=j=>Number.isFinite(after.floors[j].elevation),target=old.slice();
+  for(let start=0;start<n;){
+    let end=start;while(end+1<n&&touching(end+1))end++;
+    let anchor=start;for(let j=start;j<=end;j++)if(pinned(j))anchor=j;
+    for(let j=anchor-1;j>=start;j--)target[j]=target[j+1]-spacing(after,j+1);
+    for(let j=anchor+1;j<=end;j++)target[j]=target[j-1]+spacing(after,j);
+    start=end+1;
+  }
+  // Explicit elevations take their new level; an automatic ground floor that
+  // has to move gets one. Other automatic floors already follow the floor below.
+  const round=v=>Math.round(v*1e9)/1e9;
+  after.floors.forEach((f,j)=>{if(pinned(j)||(j===0&&Math.abs(target[0]-old[0])>1e-9))f.elevation=round(target[j]);});
+  return after;
+}
+
 // Floors carry their authored contents and dimensions. Independent surfaces do
 // not have inferred floor ownership. Candidate edits never mutate the source.
 // fields: initial settings for an added floor (the CLI's floor.insert value),

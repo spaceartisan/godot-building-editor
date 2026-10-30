@@ -52,6 +52,34 @@ try{
   assert.match(floors,/\[node name="Floor_02" type="Node3D" parent="\."\]\neditor_description = "[^"]*"\nmetadata\/building_floor_id = "floor_1"/);
   console.log('PASS floor.insert spacing from its own value; Floor_NN floor ID metadata');
 
+  // Insertion pins the old ground floor; later wall-height or slab changes keep touching floors touching.
+  {
+    const basement=[...ground,{op:'floor.insert',id:'cellar',belowFloorId:'floor_1'},room('cellar','vault'),{op:'floor.add-top',id:'upper',aboveFloorId:'floor_1'},room('upper','loft')];
+    const levels=b=>b.floors.map((_,i)=>Math.round(floorElevation(b,i)*1e6)/1e6);
+    let b=build([...basement,{op:'floor.update',id:'cellar',value:{wallHeight:2.4}}]);
+    assert.deepEqual(levels(b),[-2.58,0,3.38],'cellar wall height: the cellar moves, the ground floor stays');assert.deepEqual(validateBuilding(b).warnings,[]);
+    b=build([...basement,{op:'floor.update',id:'floor_1',value:{floorThickness:.3}}]);
+    assert.deepEqual(levels(b),[-3.1,0,3.38],'ground slab: the cellar moves down to meet it');assert.deepEqual(validateBuilding(b).warnings,[]);
+    b=build([...basement,{op:'building.update',value:{wallHeight:3}}]);
+    assert.deepEqual(levels(b),[-3.18,0,3.38],'default wall height reaches the cellar; it keeps touching the ground floor');assert.deepEqual(validateBuilding(b).warnings,[]);
+    b=applyTransaction(blank(),{version:1,operations:[...basement,{op:'floor.update',id:'cellar',value:{wallHeight:2.4,elevation:-3}}]},{}).building;
+    assert.equal(b.floors[0].elevation,-3,'an explicit elevation in the same operation wins');
+    // Without explicit elevations the bottom stays and the floors above follow, as before.
+    b=build([...ground,{op:'floor.add-top',id:'upper',aboveFloorId:'floor_1'},{op:'floor.update',id:'floor_1',value:{wallHeight:4}}]);
+    assert.deepEqual(levels(b),[0,4.18]);assert.equal('elevation' in b.floors[0],false);
+    // The web route (Add below, then the Floors panel) gives the same levels.
+    const e=await createEditorHarness(),{$}=e;await e.loadBuildingData(structuredClone(build([...ground,{op:'floor.add-top',id:'upper',aboveFloorId:'floor_1'},room('upper','loft')])));
+    $('#floor-select').value='0';await $('#floor-select').dispatch('change');await $('#add-floor-below-btn').click();
+    const field=async(id,value)=>{$(id).value=String(value);await $(id).dispatch('change');};
+    await field('#floor-wall-height',2.4);assert.deepEqual(levels(e.snapshot()),[-2.58,0,3.38],'web Wall height');
+    $('#floor-select').value='1';await $('#floor-select').dispatch('change');await field('#floor-slab-thickness',.3);assert.deepEqual(levels(e.snapshot()),[-2.7,0,3.38],'web Slab thickness');
+    await field('#wall-height',3);assert.deepEqual(levels(e.snapshot())[1],0);assert.deepEqual(validateBuilding(e.snapshot()).warnings.filter(w=>/vertical/.test(w.message)),[],'web default wall height leaves no gap');
+    assert.deepEqual(e.errors,[]);
+    fs.writeFileSync(path.join(temp,'basement.edit.json'),JSON.stringify({version:1,operations:[...basement,{op:'floor.update',id:'cellar',value:{wallHeight:2.4}}]}));
+    run(['new','--ops','basement.edit.json','--out','basement.json','--warnings-as-errors']);
+    console.log('PASS basement then wall height or slab (CLI floor.update/building.update and web Floors panel): touching floors stay touching');
+  }
+
   // 3. sceneName fixes the scene file and root node; renaming the building no longer moves it.
   const named=build([...smithy,{op:'building.update',value:{sceneName:'dirtscape_smithy'}}]),files=exportGodotFiles(named);
   assert.equal(files.tscnName,'dirtscape_smithy.tscn');assert.match(files.tscn,/\n\[node name="dirtscape_smithy" type="Node3D"\]\n/);

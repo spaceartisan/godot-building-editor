@@ -2,6 +2,7 @@
 
 ## Current direction: cleanup
 
+- [x] Dirtscape round (a keep and a five-building village built through the CLI): roof slabs thicken with thick walls, lean-to porch roofs (`roofStyle`, `roofPitch`), `floor.insert` spaced by its own value, `building_floor_id` on `Floor_NN`, `sceneName`, `building_part` metadata with game-layer `part` rules, exterior door `Threshold` markers; afterwards a basement keeps touching the ground floor when its wall height or a slab changes. Deferred wishes are listed under **Deferred from the Dirtscape round**.
 - [x] glTF export for Unreal Engine and other engines (`--format glb`, web **Export .glb**): one `.glb` from the same scenes, materials named after surfaces, Unreal `UBX_`/`UCX_` collision, metadata as extras, and an Unreal setup script (Movable moving parts, materials by slot); checked in Godot 4.7 and Unreal Engine 5.8 ([GLTF.md](GLTF.md)). Windows test fixes; release gates pass on Windows with Godot 4.7.
 - [x] 1.5.0: game-build feedback: floors/ceilings split by room (`slabsByRoom`, game-layer `nodeMaterials`), roll-up doors, porch steps and raised railings, `new --ops`/`--replace`, Windows/macOS Godot rendering without DISPLAY, double-leaf doors, mansard roofs (`flatTopHeight`), `room.add` and named recipe points, optional game layer (`--game-layer`), preview Godot fallback, narrower independent-surface warning, parapet and terrain recipes.
 - [x] 1.4.0: Kestrel starship stress test (wall-type, doorway-shape and light transactions; route starts and profile-aware route check; uniform ceilings; junction miters) and a code audit (scene-text escaping, route check in reports, wall-loop closing, render guard, malformed-light errors, browser suite repaired).
@@ -21,6 +22,16 @@
 
 - [x] 1.2.1: prevent stale file/example loads from overwriting newer work or status; recover picker state.
 - [x] 1.2.1: accept a leading UTF-8 BOM in blueprint/transaction JSON while preserving source bytes for hashing and packaging.
+
+## Deferred from the Dirtscape round
+
+Requested by the Dirtscape build and agreed to wait; architectural additions, so they need an explicit go-ahead.
+
+- [ ] `RevealFaces`: window and door reveals as their own surface, split from wall tops and free ends in `EdgeFaces`, so reveals can take a trim material.
+- [ ] Mirrored plan variants: export a building mirrored on X or Z (with door hinges and stairs kept correct) instead of authoring a second blueprint.
+- [ ] A simple roof-collision option: one box or convex hull per roof plane instead of trimmed triangle collision, for cheaper physics.
+- [ ] The route graph as data: export the `--reachability` rooms, doors, stairs and lift links as JSON for game AI and level tools.
+- [ ] Multi-building site validation: check several buildings placed on one site together (overlaps, clearances between buildings, shared access).
 
 Focus on web/CLI usability, reproducible defects, consistency, maintainability and documentation. Architectural additions below are deferred until explicitly requested. [AGENTS.md](AGENTS.md) and [LLM_GUIDE.md](LLM_GUIDE.md) guide automated use of existing capabilities. Reproduce historical findings against current source: openings/walls already precede filled-area picking, and overlapping stairs already use distance ranking.
 

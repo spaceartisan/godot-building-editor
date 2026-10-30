@@ -6,7 +6,7 @@ import { sceneNameProblem, makeOmniLight, makeManualSurface, makeRectArea, floor
 import { proposeEndpointMove, proposeWallSplit } from './wall-edit.js';
 import { stairGuardRailings } from './stair-guards.js';
 import { wallSegmentProblem, proposePlatformUpdate, proposeCrenellation } from './authoring.js';
-import {proposeFloorStackEdit} from './floor-stack.js';
+import {proposeFloorStackEdit,keepFloorContacts} from './floor-stack.js';
 import {markerProblem} from './markers.js';
 import {proposeGroupMove} from './group-edit.js';
 import {wallTypeProblem,followWallThickness} from './wall-types.js';
@@ -313,6 +313,7 @@ function applyOperation(building,op,index){
   if(kind==='building'){
     // Nested settings merge field by field; numeric changes are checked by
     // final validation (opening fit, stair rise, junction clearance).
+    const before=structuredClone(building);
     for(const [key,value] of Object.entries(op.value)){
       if(['roof','ceiling','doorMesh','windowMesh'].includes(key)){building[key]={...(building[key]||{}),...value};if(key==='roof'&&!building.roof.flatTopHeight)delete building.roof.flatTopHeight;}
       else{
@@ -321,6 +322,8 @@ function applyOperation(building,op,index){
         building[key]=value;if(key==='slabsByRoom'&&value===false)delete building.slabsByRoom;if(key==='sceneName'&&value===null)delete building.sceneName;
       }
     }
+    // Default heights and slabs reach floors without their own; touching floors stay touching.
+    if('wallHeight' in op.value||'floorThickness' in op.value)keepFloorContacts(before,building);
     return;
   }
   if(kind==='floor'){
@@ -349,10 +352,16 @@ function applyOperation(building,op,index){
     if(['insert','duplicate','move','remove'].includes(action))return applyFloorStack(building,op,action,p);
     const floor=building.floors.find(f=>f.id===op.id);
     if(!floor)fail(`Unknown floor ID: ${op.id}`,p);
+    // Height and slab changes keep touching floors touching (as in the web
+    // Floors panel); an explicit elevation in the same operation applies last.
+    const before=structuredClone(building);
     for(const [key,value] of Object.entries(op.value)){
       if(['autoFloor','autoCeiling','boundaryMode'].includes(key)&&value===null)fail(`${key} does not accept null`,`${p}/value/${key}`);
+      if(key==='elevation')continue;
       if(value===null||(key==='boundaryMode'&&value==='closed'))delete floor[key];else floor[key]=value;
     }
+    if('wallHeight' in op.value||'floorThickness' in op.value)keepFloorContacts(before,building);
+    if('elevation' in op.value){if(op.value.elevation===null)delete floor.elevation;else floor.elevation=op.value.elevation;}
     return;
   }
   if(kind==='wallType'||kind==='openingShape')return applySharedDefinition(building,op,kind,action,p);

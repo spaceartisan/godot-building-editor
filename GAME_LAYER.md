@@ -25,7 +25,8 @@ Without a game layer, exports are byte-for-byte unchanged. Exported surfaces car
   },
   "layers": [
     {"match": "*ExteriorWalls/OutsideFaces", "layers": 2},
-    {"match": "*Roof*", "layers": 2},
+    {"part": "roof", "layers": 2},
+    {"part": "ridge", "layers": 2},
     {"match": "*", "layers": 4, "in": "building"},
     {"match": "*", "layers": 6, "in": "doors"}
   ],

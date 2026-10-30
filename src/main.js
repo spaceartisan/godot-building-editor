@@ -7,7 +7,7 @@ import { polygonRegion, regionPolygonProblem, regionBounds, regionLabelPoint, re
 import { areaPoints, areaSize } from './polygon-areas.js';
 import { areaSelectionCandidates, stairPickDistance } from './selection.js';
 import {selectionKey,groupEntity,selectionBounds,selectionInBox,selectableItems,proposeGroupMove,removeGroupSelection} from './group-edit.js';
-import {proposeFloorStackEdit} from './floor-stack.js';
+import {proposeFloorStackEdit,keepFloorContacts} from './floor-stack.js';
 import {markerProblem} from './markers.js';
 import { ELEVATOR_DOOR_SIDES, ELEVATOR_DEFAULTS, elevatorFootprint, elevatorFloorRange, elevatorProblem } from './elevators.js';
 import { normalizeBuilding, normalizeFloor, parseJsonText } from './document.js';
@@ -875,7 +875,9 @@ function bindPlacementNumber(id,get,set,min,max,integer=false){
 function bindNum(id,set){$(id).addEventListener('change',e=>{
   if(e.target.value.trim()===''||!Number.isFinite(e.target.valueAsNumber)){syncControls();setStatus('Enter a finite number');return;}
   const v=e.target.valueAsNumber;
-  if(['#wall-height','#floor-thickness','#door-frame-width','#door-frame-depth','#door-panel-thickness'].includes(id))editStructure(()=>set(v));
+  // Default wall height and slab reach floors without their own; touching floors stay touching (CLI building.update).
+  if(['#wall-height','#floor-thickness'].includes(id))editStructure(()=>{const before=structuredClone(building);set(v);keepFloorContacts(before,building);});
+  else if(['#door-frame-width','#door-frame-depth','#door-panel-thickness'].includes(id))editStructure(()=>set(v));
   else{
     const before=structuredClone(building);set(v);
     const result=validateBuilding(building);
@@ -920,7 +922,8 @@ for(const [id,key] of [['floor-elevation','elevation'],['floor-wall-height','wal
   $('#'+id).addEventListener('change',e=>{
     if(e.target.value!==''&&!Number.isFinite(e.target.valueAsNumber)){syncFloorControls();return;}
     const value=e.target.value===''?null:e.target.valueAsNumber;
-    editStructure(()=>{if(value==null)delete floor()[key];else floor()[key]=value;},'Floor dimensions updated');
+    // Wall height and slab keep touching floors touching (CLI floor.update); an elevation is taken as given.
+    editStructure(()=>{const before=structuredClone(building);if(value==null)delete floor()[key];else floor()[key]=value;if(key!=='elevation')keepFloorContacts(before,building);},'Floor dimensions updated');
   });
 }
 $('#intentional-open-toggle').addEventListener('change',e=>{floor().boundaryMode=e.target.checked?'intentional_open':'closed';commit('Exterior boundary intent updated');});

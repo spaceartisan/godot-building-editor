@@ -18,6 +18,7 @@ import {
   pointOnWall, projectToWall, rectValid, roofSectionsForFloor, stairFootprint, structuralFloorRectangles, splitWallIntoSolidSegments, uid, validateOpeningLayout, wallHeightFor, wallLength
 } from './model.js';
 import { downloadGodotTscn, downloadText, downloadBinary, makeStoredZip, exportGodotFiles, isExteriorWall, exteriorWallOutsideSign } from './exporter.js';
+import { exportGltfFiles } from './gltf-export.js';
 import { createCheckReport, checkReportFilename } from './check-report.js';
 import { reachabilityWarnings, parseRouteStarts } from './reachability.js';
 import { leanToRoof } from './platform-roof.js';
@@ -1124,6 +1125,19 @@ $('#export-btn').addEventListener('click',()=>{
     const files=downloadGodotTscn(building,exportOptionsFromUi()),gaps=gameLayerSurfaceGaps(files,gameLayer);
     if(result.warnings.length)revealValidation();
     setStatus(`Godot package exported. ${result.warnings.length} authoring warnings; see Godot Export.${gaps.length?` Note: the game layer leaves these surfaces without a material: ${gaps.join(', ')}.`:''}`);
+  }catch(err){revealValidation();setStatus(`Export blocked: ${err.message}`);}
+});
+// glTF for Unreal and other engines (CLI export --format glb): the same scenes,
+// so collision and marker settings apply; game layers and placeholder colours
+// are Godot-side and are left out.
+$('#export-glb-btn').addEventListener('click',()=>{
+  try{
+    const result=showValidation();
+    if(result.errors.length){revealValidation();setStatus(`Export blocked: ${result.errors[0].message}`);return;}
+    const {gameLayer:_,placeholderMaterials:__,...options}=exportOptionsFromUi(),f=exportGltfFiles(building,options);
+    downloadBinary(f.glbName,new Blob([f.glb],{type:'model/gltf-binary'}));
+    if(result.warnings.length)revealValidation();
+    setStatus(`glTF exported (${f.glbName}): ${f.stats.meshes} meshes, ${f.stats.boxCollision+f.stats.convexCollision+f.stats.concaveCollision} collision pieces, ${f.stats.lights} lights. ${result.warnings.length} authoring warnings; see Godot Export.${gameLayer?' The game layer applies to Godot exports only.':''}`);
   }catch(err){revealValidation();setStatus(`Export blocked: ${err.message}`);}
 });
 document.querySelectorAll('[data-view]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b===btn));cancelDrawing();const plan=btn.dataset.view==='plan';$('#plan-view').classList.toggle('active',plan);$('#preview-view').classList.toggle('active',!plan);if(!plan){preview.resize();preview.rebuild(building,activeFloorIndex);}}));

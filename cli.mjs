@@ -10,6 +10,7 @@ import { prepareDocument, inspectBuilding } from './src/diagnostics.js';
 import { createCheckReport } from './src/check-report.js';
 import { parseJsonText } from './src/document.js';
 import { exportGodotFiles, makeStoredZip, exteriorWallOutsideSign, isExteriorWall } from './src/exporter.js';
+import { exportGltfFiles } from './src/gltf-export.js';
 import { profileWallState } from './src/wall-profile-geometry.js';
 import { prepareAssetDirectory, AssetCheckError } from './asset-check.mjs';
 import { renderPreparedScenes, parseViews, RenderError } from './godot-render.mjs';
@@ -31,8 +32,8 @@ function profileInward(building,floor){
   const i=building.floors.indexOf(floor),view=floorView(building,i);
   return (view.walls||[]).filter(w=>w.wallTypeId).map(w=>{const n=profileWallState(view,w,exteriorWallOutsideSign,isExteriorWall).n;return {wallId:w.id,inwardSide:w.inwardSide||'auto',inward:{x:Math.round(n.x*1e6)/1e6+0,z:Math.round(n.z*1e6)/1e6+0}};});
 }
-const specs={new:['out','name','ops','dry-run','warnings-as-errors','replace'],edit:['ops','out','dry-run','warnings-as-errors','replace'],validate:['warnings-as-errors','out','reachability','from'],inspect:['warnings-as-errors','entities','reachability','from'],export:['out','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors','replace'],package:['out','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors','include-json','replace'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision','render','views','out','surface-colors'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof','godot']};
-const values=new Set(['from','name','views','ops','out','profile','suite','godot','game-layer','assets','yaw','pitch','distance','floor','view','compare','overlay','roof','canvas','engine','timeout']);
+const specs={new:['out','name','ops','dry-run','warnings-as-errors','replace'],edit:['ops','out','dry-run','warnings-as-errors','replace'],validate:['warnings-as-errors','out','reachability','from'],inspect:['warnings-as-errors','entities','reachability','from'],export:['out','format','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors','replace'],package:['out','format','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors','include-json','replace'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision','render','views','out','surface-colors'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof','godot']};
+const values=new Set(['format','from','name','views','ops','out','profile','suite','godot','game-layer','assets','yaw','pitch','distance','floor','view','compare','overlay','roof','canvas','engine','timeout']);
 class CliError extends Error{constructor(message,code=2){super(message);this.code=code;}}
 const help=`Building Studio ${version}
 Usage: node cli.mjs COMMAND [FILES...] [OPTIONS]
@@ -72,7 +73,8 @@ Usage: node cli.mjs COMMAND [FILES...] [OPTIONS]
 
 Global: --json (one result on stdout), --quiet, --verbose, --help, --version
 Validate/inspect/export/package/edit: --warnings-as-errors
-Export/package: --profile generic|get_probed --no-collision --no-markers --placeholders --share-door-scenes
+Export/package: --format tscn|glb (default tscn; glb is glTF for Unreal and other engines, see GLTF.md)
+         --profile generic|get_probed --no-collision --no-markers --placeholders --share-door-scenes
          --game-layer FILE (materials, render layers, scripts, door children; see GAME_LAYER.md)
 Package: --include-json (original input; never normalized silently)
 Preview: --view building|floor|roofs --compare AFTER.json
@@ -118,6 +120,9 @@ function parse(args){
   }
   if(options.replace&&options['dry-run'])throw new CliError('--replace writes a file; it cannot be combined with --dry-run');
   if(command==='preview'&&files.length!==1)throw new CliError('preview accepts exactly one input');
+  if(options.format&&!['tscn','glb'].includes(options.format))throw new CliError('Unknown --format; use tscn or glb');
+  if(options.format==='glb'&&options['game-layer'])throw new CliError('--game-layer applies to Godot scenes; it cannot be combined with --format glb');
+  if(options.format==='glb'&&options.placeholders)throw new CliError('--placeholders applies to Godot scenes; --format glb names one material per surface instead');
   if(options['game-layer']){
     let text;try{text=fs.readFileSync(path.resolve(options['game-layer']),'utf8');}catch(e){throw new CliError(`--game-layer: ${e.message}`,2);}
     try{options.gameLayer=parseGameLayer(text);}catch(e){throw new CliError(`--game-layer: ${e.message}`,2);}
@@ -171,7 +176,8 @@ const exportOptions=o=>({profile:o.profile,collision:!o['no-collision'],markers:
 function artifacts(loaded,options,includeJson=false,notes=[]){
   const entries=[],names=new Set(),prefixes=new Set();
   for(const doc of loaded){
-    const result=exportGodotFiles(doc.building,exportOptions(options));
+    const glb=options.format==='glb';
+    const result=glb?exportGltfFiles(doc.building,exportOptions(options)):exportGodotFiles(doc.building,exportOptions(options));
     let prefix='';
     if(loaded.length>1){
       const stem=path.basename(doc.file).replace(/(?:\.building)?\.json$/i,'').replace(/[^a-zA-Z0-9_-]/g,'_')||'building';
@@ -182,6 +188,7 @@ function artifacts(loaded,options,includeJson=false,notes=[]){
       if(path.posix.isAbsolute(name)||name.split('/').some(s=>s==='..'||s===''||s==='.')||name.includes('\\')||names.has((prefix+name).toLowerCase()))throw new CliError(`Unsafe or duplicate output path: ${prefix+name}`,1);
       names.add((prefix+name).toLowerCase());entries.push({name:prefix+name,data});
     };
+    if(glb){add(result.glbName,result.glb);if(includeJson)add(result.base+'.building.json',doc.source);continue;}
     add(result.tscnName,result.tscn);for(const door of result.doors)add(door.filename,door.tscn);
     const gaps=gameLayerSurfaceGaps(result,options.gameLayer);
     if(gaps.length)notes.push(`${loaded.length>1?prefix:''}game layer leaves these surfaces without a material: ${gaps.join(', ')} (add them to materials, or cover them with nodeMaterials)`);
@@ -231,8 +238,8 @@ function replaceableExport(value,command,inputs=[]){
   }
   if(!stat.isDirectory())throw new CliError(`--replace only replaces a previous export folder: ${out}`,3);
   const files=[],walk=dir=>{for(const e of fs.readdirSync(dir,{withFileTypes:true})){const p=path.join(dir,e.name);if(e.isDirectory())walk(p);else files.push({p,link:e.isSymbolicLink(),name:e.name});}};walk(out);
-  const top=fs.readdirSync(out).filter(n=>n.endsWith('.tscn'));
-  if(!top.length||files.some(f=>f.link||!/\.(tscn|building\.json)$/i.test(f.name)))throw new CliError(`--replace only replaces a previous export folder (only .tscn scenes, door/elevator subfolders and an optional building JSON); this one holds other files: ${out}`,3);
+  const top=fs.readdirSync(out).filter(n=>/\.(tscn|glb)$/i.test(n));
+  if(!top.length||files.some(f=>f.link||!/\.(tscn|glb|building\.json)$/i.test(f.name)))throw new CliError(`--replace only replaces a previous export folder (only .tscn scenes, door/elevator subfolders, .glb files and an optional building JSON); this one holds other files: ${out}`,3);
   return out;
 }
 function replaceDirectory(out,entries){

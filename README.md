@@ -53,6 +53,7 @@ Two consequences worth knowing:
 | [CLI.md](CLI.md) | Every command and flag |
 | [QUICKSTART.md](QUICKSTART.md) | Web workflow, Godot import, CLI recipes |
 | [GAME_LAYER.md](GAME_LAYER.md) | Per-game materials, render layers, door scripts and door children applied at export |
+| [GLTF.md](GLTF.md) | The same building as one `.glb` for Unreal Engine and other engines (`--format glb`, web **Export .glb**) |
 | [AUTHORING_REVIEW.md](AUTHORING_REVIEW.md) | How to review an AI-authored building before delivering it |
 | [VALIDATION.md](VALIDATION.md), [PREVIEWS.md](PREVIEWS.md), [RELEASE_CHECKS.md](RELEASE_CHECKS.md) | Checks, previews and release gates |
 | [CHANGELOG.md](CHANGELOG.md), [ROADMAP.md](ROADMAP.md) | History and future work |
@@ -76,6 +77,8 @@ Choose an **Export profile** in the Godot Export panel. **New** buildings use Ge
 
 Explicit custom light groups survive profile changes. Empty window openings export no fixture collision. Neither profile attaches gameplay scripts. Both profiles preserve door hinge paths. Generic doors use layer/mask 1 and omit the game-specific interaction area. GET PROBED retains door layer 4/mask 2 and the stationary interaction area. Collision nodes remain editable in Godot.
 
+
+For Unreal Engine and other engines, **Export .glb** (CLI `export --format glb`) writes the same building as one glTF binary: named material slots, Unreal `UBX_`/`UCX_` collision, door hinge pivots, lights and the `building_*` metadata as extras. See [GLTF.md](GLTF.md).
 
 **Export .tscn ZIP** downloads a ZIP containing:
 

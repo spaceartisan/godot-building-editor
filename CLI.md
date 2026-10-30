@@ -92,6 +92,7 @@ Input/output paths are relative to your current working directory. Calling `/abs
 | `edit FILE --ops JSON --out FILE` | Writes a validated, normalized building copy to a new file. See [TRANSACTIONS.md](TRANSACTIONS.md). |
 | `export FILE... --out DIR` | Writes baked building and relative door TSCNs to a new directory. Every input must pass before output is written. |
 | `package FILE... --out ZIP` | Creates a reproducible stored ZIP of those same assets and reports its SHA-256. No full Godot project. |
+| `export`/`package ... --format glb` | Writes each building as one glTF binary (`<scene name>.glb`) instead of `.tscn` scenes, for Unreal Engine and other engines: the same nodes and meshes, a material per surface name, Unreal `UBX_`/`UCX_` collision, lights and metadata as extras. `--game-layer` and `--placeholders` are refused with it. See [GLTF.md](GLTF.md). `--format tscn` is the default. |
 | `examples [--check]` | Lists the shared 33-example catalog with titles, purpose, expected warnings and absolute paths. `--check` verifies exact warning messages, door counts, attachment counts and specified footprint areas; it does not regenerate files. |
 | `test [--suite NAME]` | Runs the selected JavaScript checks from the installation directory and reports each script separately. |
 | `godot-check [--godot PATH]` | Runs the bundled Godot scene/physics regressions, using an explicit executable or `GODOT_BIN`. Reports engine version and check counts. |

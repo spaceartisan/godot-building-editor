@@ -1,5 +1,7 @@
 # Release checks
 
+Since 1.5.0, `release-check --canvas required --engine required` also passes all 7 gates on Windows 10 with Node 22.19.0 and Godot 4.7 stable (after the Windows test fixes; see the changelog). The `engine-assets` gate now includes the glTF read-back suite.
+
 For 1.5.0, `release-check --canvas required --engine required` passed all 7 gates on Linux with Node 22.22.2 and Godot 4.5.1. `npm run test:browser` and `npm run test:browser-parity` also passed in Chromium 141 (Playwright 1.56). That report was not packaged with the source either.
 
 Used in practice beyond the release gates: the buildings of GET PROBED (about 15, one to three storeys) were authored with the CLI on Windows 10 with Node 20+ and used in Godot 4.7 with the Compatibility renderer. The gates themselves run on Linux with Godot 4.5.1.

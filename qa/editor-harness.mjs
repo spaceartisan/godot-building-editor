@@ -12,6 +12,7 @@ import * as regions from '../src/regions.js';
 import * as polygonAreas from '../src/polygon-areas.js';
 import * as model from '../src/model.js';
 import * as exporter from '../src/exporter.js';
+import * as gltfExport from '../src/gltf-export.js';
 import * as authoring from '../src/authoring.js';
 import * as reachability from '../src/reachability.js';
 import * as wallEdit from '../src/wall-edit.js';
@@ -112,7 +113,7 @@ export async function createEditorHarness(options={}){
     draw(){if(createCanvas)super.draw();}
     resize(){}
   }
-  const imported={...checkReport,...diagnosticTargets,...openingShapeEditor,...profileGeometry,...wallTypeEditor,...wallTypes,...regions,...polygonAreas,...model,...exporter,...authoring,...reachability,...wallEdit,...stairGuards,...roofOutline,...openingShapes,...gameLayerModule,...selection,...groupEdit,...floorStack,...markers,...elevators,...platformRoof,...validation,...buildingDocument,...examples,fetch:options.fetch??((...args)=>globalThis.fetch(...args)),createHistory,Preview3D,webReviewDescription,document,window,localStorage,ResizeObserver,devicePixelRatio:1,console:consoleProxy};
+  const imported={...checkReport,...diagnosticTargets,...openingShapeEditor,...profileGeometry,...wallTypeEditor,...wallTypes,...regions,...polygonAreas,...model,...exporter,...gltfExport,...authoring,...reachability,...wallEdit,...stairGuards,...roofOutline,...openingShapes,...gameLayerModule,...selection,...groupEdit,...floorStack,...markers,...elevators,...platformRoof,...validation,...buildingDocument,...examples,fetch:options.fetch??((...args)=>globalThis.fetch(...args)),createHistory,Preview3D,webReviewDescription,document,window,localStorage,ResizeObserver,devicePixelRatio:1,console:consoleProxy};
   const source=fs.readFileSync(new URL('../src/main.js',import.meta.url),'utf8').replace(/^import\s+[\s\S]*?from\s+['"][^'"]+['"];\s*/gm,'');
   const api=new Function(...Object.keys(imported),'"use strict";\n'+source+'\nreturn {snapshot:()=>structuredClone(building),coordinates:worldToScreen,loadBuildingData,chooseSelection,selection:()=>structuredClone(selected),selections:()=>structuredClone(selectionItems()),pending:()=>({regionPoints:structuredClone(regionPoints),wallStart,wallOrigin,regionStart,endpointDrag,groupDrag,selectionBox}),drawPlan,preview,visitDiagnosticTarget,activeFloor:()=>activeFloorIndex};')(...Object.values(imported));
   return {...api,document,window,errors,$:s=>document.querySelector(s)};

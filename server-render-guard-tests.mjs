@@ -11,7 +11,12 @@ import { fileURLToPath } from 'node:url';
 const root=path.dirname(fileURLToPath(import.meta.url));
 const temp=fs.mkdtempSync(path.join(os.tmpdir(),'render-guard-'));
 // Stand-in executable: reports a Godot 4 version; any render attempt fails fast.
-const fake=path.join(temp,'godot');fs.writeFileSync(fake,'#!/bin/sh\nif [ "$2" = "--version" ]; then echo 4.5.1.stable.fake; exit 0; fi\nexit 1\n',{mode:0o755});
+// Windows cannot launch a #! script, so there the real GODOT_BIN stands in (the requests carry no files to render).
+let fake=path.join(temp,'godot');
+if(process.platform==='win32'){
+  fake=process.env.GODOT_BIN&&fs.existsSync(process.env.GODOT_BIN)?process.env.GODOT_BIN:null;
+  if(!fake){console.log('PASS server render guard (SKIP on Windows: set GODOT_BIN to a Godot 4 executable)');fs.rmSync(temp,{recursive:true,force:true});process.exit(0);}
+}else fs.writeFileSync(fake,'#!/bin/sh\nif [ "$2" = "--version" ]; then echo 4.5.1.stable.fake; exit 0; fi\nexit 1\n',{mode:0o755});
 const env={...process.env,PORT:'0',GODOT_BIN:fake,DISPLAY:process.env.DISPLAY||':99'};
 const child=spawn(process.execPath,[path.join(root,'server.mjs')],{env,stdio:['ignore','pipe','pipe']});
 try{

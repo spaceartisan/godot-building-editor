@@ -20,6 +20,10 @@ Build reusable houses, interiors and other structures in the web editor; use the
 6. The **Checks** button near Export shows errors or authoring warnings. Click it or **Check building** to focus the results in Godot Export. Errors block export; warnings allow export and remain visible for review. Use an issue’s **Show…** buttons to select and center its object, or open the affected floor. These inspection actions cancel unfinished drawing without adding undo steps. Ordinary background updates do not move keyboard focus. Invalid numeric building settings roll back without adding an undo step.
 7. Save **Project files → Save JSON** to keep your editable source. Then use **Export .tscn ZIP**. The exported scene is not a replacement for your editable blueprint; this tool does not reimport edited TSCNs.
 
+## Unreal Engine and other engines
+
+**Export .glb** (CLI `export --format glb`) writes the building as one glTF file with named material slots, Unreal collision, door hinges and building metadata. Import it into Unreal with **Import Into Level**; see [GLTF.md](GLTF.md).
+
 ## Bring the asset into Godot
 
 Extract the asset ZIP inside a folder in your Godot project, keeping the building scene, `doors/` and (when the building has lifts) `elevators/` in their relative locations. Open or instance the main `.tscn`. Geometry and collision are baked and visible in the editor. Assign your materials to the named mesh surfaces.

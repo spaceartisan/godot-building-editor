@@ -7,6 +7,7 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 import { spawn } from 'node:child_process';
 import { makeEmptyBuilding } from './src/model.js';
+import { readGlb } from './qa/glb-reader.mjs';
 const require=createRequire(import.meta.url);
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const browser=await chromium.launch({headless:true});
@@ -55,6 +56,12 @@ try{
   await page.locator('#export-profile').selectOption('generic');
   const downloading=page.waitForEvent('download');await page.locator('#export-btn').click();
   const download=await downloading;assert.equal(await download.failure(),null);
+  // Export .glb: a real browser download of a valid glTF binary with named materials and Unreal collision.
+  const glbDownloading=page.waitForEvent('download');await page.locator('#export-glb-btn').click();
+  const glbDownload=await glbDownloading;assert.equal(await glbDownload.failure(),null);assert.match(glbDownload.suggestedFilename(),/\.glb$/);
+  const glb=readGlb(fs.readFileSync(await glbDownload.path()));
+  assert.ok(glb.json.materials.some(m=>m.name==='OutsideFaces')&&glb.json.nodes.some(n=>n.name.startsWith('UBX_')),'glb has surface materials and UBX_ collision');
+  assert.match(await page.locator('#status-text').textContent(),/glTF exported/);
   await page.locator('#new-btn').click();
   await page.locator('[data-tool="wall"]').click();
   const box=await page.locator('#plan-canvas').boundingBox();
@@ -193,6 +200,6 @@ try{
     await page.screenshot({path:path.join(screenshots,`diagnostic_actions_${width}.png`),fullPage:true});
   }
   assert.deepEqual(errors,[]);
-  console.log('PASS browser load, examples, level edits, invalid rollback, diagnostic navigation, undo, deletion, ZIP export and responsive layout');
+  console.log('PASS browser load, examples, level edits, invalid rollback, diagnostic navigation, undo, deletion, ZIP and glb export and responsive layout');
   console.log('Screenshots: '+screenshots);
 }finally{server.kill();await browser.close();}

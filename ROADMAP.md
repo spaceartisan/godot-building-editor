@@ -2,6 +2,7 @@
 
 ## Current direction: cleanup
 
+- [x] glTF export for Unreal Engine and other engines (`--format glb`, web **Export .glb**): one `.glb` from the same scenes, materials named after surfaces, Unreal `UBX_`/`UCX_` collision, metadata as extras; checked in Godot 4.7 and Unreal Engine 5.8 ([GLTF.md](GLTF.md)). Windows test fixes; release gates pass on Windows with Godot 4.7.
 - [x] 1.5.0: game-build feedback: floors/ceilings split by room (`slabsByRoom`, game-layer `nodeMaterials`), roll-up doors, porch steps and raised railings, `new --ops`/`--replace`, Windows/macOS Godot rendering without DISPLAY, double-leaf doors, mansard roofs (`flatTopHeight`), `room.add` and named recipe points, optional game layer (`--game-layer`), preview Godot fallback, narrower independent-surface warning, parapet and terrain recipes.
 - [x] 1.4.0: Kestrel starship stress test (wall-type, doorway-shape and light transactions; route starts and profile-aware route check; uniform ceilings; junction miters) and a code audit (scene-text escaping, route check in reports, wall-loop closing, render guard, malformed-light errors, browser suite repaired).
 - [x] Halcyon limit test ([findings](authoring/halcyon/FINDINGS.md)): up to 15× faster export and 4.5× faster edits (byte-identical output); open-sky ceilings with roof `none`; a miter limit for sharp corners; `wall.split` and `stair.guard` (web: **Split wall**, **Guard opening above**); clearer outline, near-miss and far-coordinate warnings; flatter duplicate IDs; summarised dry-run values.

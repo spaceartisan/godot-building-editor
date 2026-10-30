@@ -1,0 +1,6 @@
+# The exporter, example generator and release fingerprints work on exact bytes
+# (LF). Keep LF in working copies on every platform, including Windows with
+# core.autocrlf=true, so checked-in scenes match fresh exports.
+* text=auto eol=lf
+*.png binary
+*.zip binary

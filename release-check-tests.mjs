@@ -30,10 +30,16 @@ try{
   r=await runReleaseCheck({...options,root:brokenRoot,canvas:'auto'});assert.equal(r.dependencies.canvas.status,'failed','a broken discovered installation must not be called missing');
   fs.rmSync(brokenRoot,{recursive:true,force:true});
   const backend=path.join(temp,'canvas.cjs');fs.writeFileSync(backend,'exports.createCanvas=()=>({toBuffer:()=>Buffer.from("fixture")});');
-  const engine=path.join(temp,'godot-fixture');fs.writeFileSync(engine,`#!${process.execPath}\nconsole.log('4.0.fixture');\n`,{mode:0o755});
-  r=await runReleaseCheck({...options,canvas:'required',engine:'required',env:{...cleanEnv,CANVAS_MODULE:backend,GODOT_BIN:engine}});
-  assert.equal(r.status,'passed');assert.equal(r.complete,true);assert.equal(r.counts.passed,7);
-  console.log('PASS release orchestration: explicit skips, automatic missing tools, required/configured failures and all-gate success (controlled fixture tools)');
+  // Windows cannot launch a #! script (and Node refuses .cmd without a shell), so there the
+  // version probe uses the real GODOT_BIN; the fixture gates still run the fixture cli.mjs.
+  let engine=path.join(temp,'godot-fixture');
+  if(process.platform==='win32')engine=process.env.GODOT_BIN&&fs.existsSync(process.env.GODOT_BIN)?process.env.GODOT_BIN:null;
+  else fs.writeFileSync(engine,`#!${process.execPath}\nconsole.log('4.0.fixture');\n`,{mode:0o755});
+  if(engine){
+    r=await runReleaseCheck({...options,canvas:'required',engine:'required',env:{...cleanEnv,CANVAS_MODULE:backend,GODOT_BIN:engine}});
+    assert.equal(r.status,'passed');assert.equal(r.complete,true);assert.equal(r.counts.passed,7);
+    console.log('PASS release orchestration: explicit skips, automatic missing tools, required/configured failures and all-gate success (controlled fixture tools)');
+  }else console.log('PASS release orchestration: explicit skips, automatic missing tools and required/configured failures (SKIP all-gate success on Windows: set GODOT_BIN to a Godot 4 executable)');
 
   write('infrastructure-tests.mjs','console.error("intentional failure");process.exit(7);');
   r=await runReleaseCheck(options);assert.equal(r.exitCode,1);assert.equal(r.gates.find(g=>g.id==='infrastructure').exitCode,7);assert.equal(r.gates.find(g=>g.id==='catalog').status,'passed');

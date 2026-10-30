@@ -2,6 +2,11 @@
 
 Release history for Building Studio, newest first. The [README](README.md) describes what the tool is today; this file records how it got there, including fixes for problems that no longer exist.
 
+## Unreleased: glTF for Unreal Engine, and Windows test fixes
+
+- **glTF export** (`export`/`package --format glb`, web **Export .glb**; [GLTF.md](GLTF.md)). One `.glb` per building, written from the exporter's own `.tscn` scenes, so the geometry is identical and `.tscn` output is unchanged. Each surface gets a material of its name (`OutsideFaces`, `TopFaces`, `Door`, …) so engines can bind materials by slot; `building_*` and door metadata become glTF extras; door and elevator scenes are inlined with their hinge, curtain and car nodes. Collision uses Unreal's naming, which Unreal reads from glTF: boxes as `UBX_`, convex shapes as `UCX_`, and concave shapes as `UCX_` prisms of merged coplanar triangles, attached to the nearest mesh so door leaves and elevator cars carry their own. Point lights use `KHR_lights_punctual`. Checked against every catalog example (`gltf-tests.mjs`), read back by Godot 4.7's importer (`gltf-engine-tests.mjs`), and imported into Unreal Engine 5.8.4 with `qa/unreal-import-check.py`.
+- **Tests run on Windows.** Fake Godot executables in two tests were `#!` scripts, which Windows cannot start; they now use the real `GODOT_BIN` there (or report a skip). A CLI path built from `URL.pathname`, a case-collision fixture on case-insensitive filesystems and symlink creation without rights are handled. A `.gitattributes` keeps LF line endings in Windows checkouts, so the regeneration check sees current scenes. `release-check --canvas required --engine required` passes all 7 gates on Windows 10 with Node 22.19 and Godot 4.7.
+
 ## Added in 1.5.0: feedback from a real game build
 
 An AI rebuilt a fast-food restaurant, a log cabin and a diner with a service garage for GET PROBED and reported what got in the way. Each item is either fixed, added, or turned out to be possible already and is now documented. Every new capability works in both the CLI and the web editor, through the same shared code.

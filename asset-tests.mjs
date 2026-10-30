@@ -35,8 +35,16 @@ try{
     [{'a.tscn':header+node+'\n[connection signal="x" from="." to="." method="x"]\n'},/unsupported scene section/],
     [{'a.tscn':header+node+'\nmetadata/test = Object(GDScript)\n'},/constructors/],
     [{'a.tscn':header+node,'A.tscn':header+node},/collision/]
-  ])assert.throws(()=>prepareAssetDirectory(sceneSet(files)),message);
-  const symlink=sceneSet({'a.tscn':header+node});fs.symlinkSync(path.join(symlink,'a.tscn'),path.join(symlink,'linked.tscn'));assert.throws(()=>prepareAssetDirectory(symlink),/Symbolic/);
+  ]){
+    const dir=sceneSet(files);
+    // A case-insensitive filesystem (Windows, default macOS) keeps one file, so there is no collision to detect.
+    if(message.source==='collision'&&fs.readdirSync(dir).length<2)continue;
+    assert.throws(()=>prepareAssetDirectory(dir),message);
+  }
+  const symlink=sceneSet({'a.tscn':header+node});let linkedOk=true;
+  // Windows needs Developer Mode or admin rights to create symlinks.
+  try{fs.symlinkSync(path.join(symlink,'a.tscn'),path.join(symlink,'linked.tscn'));}catch(e){if(process.platform!=='win32'||e.code!=='EPERM')throw e;linkedOk=false;}
+  if(linkedOk)assert.throws(()=>prepareAssetDirectory(symlink),/Symbolic/);
   console.log('PASS asset preflight: snapshots, relative closure, dangling/cyclic resources, scripts, unsupported headers/types and symlinks');
 
   const ids=new Set(EXAMPLE_CATALOG.map(e=>e.id));assert.equal(ids.size,33);

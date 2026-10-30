@@ -34,7 +34,7 @@ console.log('PASS export caches: in-place edits re-export exactly like a fresh c
   // Halcyon H9: --share-door-scenes (web: Share identical door scenes). Off by
   // default and byte-identical to before; on, identical door scenes collapse
   // to one file each and every door instance still points at a declared scene.
-  const fs=await import('node:fs'),os=await import('node:os'),path=await import('node:path'),{spawnSync}=await import('node:child_process');
+  const fs=await import('node:fs'),os=await import('node:os'),path=await import('node:path'),{spawnSync}=await import('node:child_process'),{fileURLToPath}=await import('node:url');
   const halcyon=JSON.parse(fs.readFileSync(new URL('authoring/halcyon/output/halcyon.building.json',import.meta.url),'utf8'));
   const plain=exportGodotFiles(halcyon),off=exportGodotFiles(halcyon,{shareDoorScenes:false}),on=exportGodotFiles(halcyon,{shareDoorScenes:true});
   assert.equal(off.tscn,plain.tscn);assert.deepEqual(off.doors.map(d=>d.filename),plain.doors.map(d=>d.filename));
@@ -50,7 +50,7 @@ console.log('PASS export caches: in-place edits re-export exactly like a fresh c
   // CLI route writes the same files.
   const temp=fs.mkdtempSync(path.join(os.tmpdir(),'shared-doors-'));
   try{
-    const out=path.join(temp,'assets'),r=spawnSync(process.execPath,[new URL('cli.mjs',import.meta.url).pathname,'export',new URL('authoring/halcyon/output/halcyon.building.json',import.meta.url).pathname,'--out',out,'--share-door-scenes','--quiet'],{encoding:'utf8'});
+    const out=path.join(temp,'assets'),r=spawnSync(process.execPath,[fileURLToPath(new URL('cli.mjs',import.meta.url)),'export',fileURLToPath(new URL('authoring/halcyon/output/halcyon.building.json',import.meta.url)),'--out',out,'--share-door-scenes','--quiet'],{encoding:'utf8'});
     assert.equal(r.status,0,r.stdout+r.stderr);
     assert.deepEqual(fs.readdirSync(path.join(out,'doors')).sort(),on.doors.map(d=>d.filename.slice(6)).sort());
     assert.equal(fs.readFileSync(path.join(out,on.tscnName),'utf8'),on.tscn);

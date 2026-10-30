@@ -34,7 +34,7 @@ Focus on web/CLI usability, reproducible defects, consistency, maintainability a
 - [x] Dialog draft history, independent copies, live frame/panel inset preview and input/pointer refinements (0.32).
 - [ ] Shaped double/closet panels and nonrectangular windows.
 - [ ] Frames/panels following wall bends and independently shaped frame cross-sections.
-- [ ] Live browser layout/focus checks and target Godot 4.7 verification.
+- [x] Live browser layout/focus checks (Chromium 141) and Godot 4.7 verification (Windows).
 
 ## Fitted partitions (0.28)
 
@@ -56,7 +56,7 @@ Focus on web/CLI usability, reproducible defects, consistency, maintainability a
 - [ ] Continuous concave hip roofs with valleys (distinct from trimming existing roofs).
 - [ ] Automatic floor/ceiling transitions for profiles with displaced endpoints.
 - [ ] Differing thickness at adjoining shaped wall corners.
-- [ ] Interactive browser layout verification and Godot 4.7 verification on the target setup.
+- [x] Interactive browser layout verification and Godot 4.7 verification on the target setup (Windows).
 
 ## Polygon regions (0.24)
 
@@ -100,7 +100,7 @@ The broader backlog below is not a prerequisite for v1. The scoped v1 finish lin
 - [x] Human/JSON/quiet/verbose output and documented exit codes.
 - [x] Caller-relative paths and installation-relative built-in resources.
 - [x] Non-mutating inputs and non-overwriting destinations.
-- [ ] Test Windows and macOS launch/path behavior.
+- [x] Test Windows launch/path behavior (release gates on Windows 10). macOS remains untested.
 - [ ] Add installed-package smoke tests on Node 20 and current supported Node releases.
 - [ ] Add more actionable error codes/paths for programmatic consumers.
 
@@ -179,7 +179,7 @@ The broader backlog below is not a prerequisite for v1. The scoped v1 finish lin
 - [x] Add generic supported-export checking separately from fixture-specific ray probes, with isolated input handling.
 - [x] Test missing shapes, material/collision options, roof data/transform mismatches and repeated building instances.
 - [ ] Parameterize character clearance, slopes and headroom checks.
-- [ ] Add Godot 4.7 execution when a working binary is provided.
+- [x] Add Godot 4.7 execution when a working binary is provided (Windows, all engine gates).
 
 ## 9. Packaging
 
@@ -277,7 +277,7 @@ The broader backlog below is not a prerequisite for v1. The scoped v1 finish lin
 
 ## 18. Browser validation
 
-- [ ] Run Playwright/Chromium when available at 1440, 768 and 390 widths.
+- [x] Run Playwright/Chromium when available at 1440, 768 and 390 widths (Chromium 141).
 - [ ] Exercise loading, selection, attachment edits, undo, deletion, export and keyboard cancellation.
 - [ ] Capture pertinent UI screenshots and check overflow/focus behavior.
 - [ ] Maintain browser checks separately from Node DOM-adapter tests.

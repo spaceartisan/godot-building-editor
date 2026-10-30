@@ -15,7 +15,8 @@
 // - Collision uses Unreal's naming convention, which UE reads from glTF:
 //   UBX_<node>_NN boxes and UCX_<node>_NN convex hulls, as children at
 //   identity of a "carrier" mesh node, in the carrier's local space. Concave
-//   (triangle) shapes become one thin convex prism per triangle. A body's
+//   (triangle) shapes are first merged into convex polygons of coplanar
+//   neighbouring triangles, each becoming one thin convex prism. A body's
 //   carrier is the nearest mesh in its subtree, else in its parent's, so a
 //   door leaf's collision swings with its hinge. UE matches collision to the
 //   carrier by node name, so glTF node names are made unique (_2, _3, ...;

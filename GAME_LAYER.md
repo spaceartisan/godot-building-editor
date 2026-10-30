@@ -49,11 +49,38 @@ All sections are optional.
 | `nodeMaterials` | Ordered rules `{match, part, surface, material, in}` that set materials on matching `MeshInstance3D` nodes. A rule selects nodes by `match` (node path pattern), by `part` (the node's `metadata/building_part`: `roof`, `ridge`, `post`, `beam`, `step`, `floor`, `exterior_wall`, … listed in [LLM_GUIDE.md](LLM_GUIDE.md#exported-node-and-file-names)), or both. `{"part": "post", "material": "res://materials/oak.tres"}` colours every porch post whatever its label. With `surface`, one surface is overridden (`surface_material_override`); a node without that surface is skipped. Per-room floors and walls with `slabsByRoom`: `{"match": "*FloorSlab_Kitchen", "surface": "TopFaces", "material": "res://materials/quarry_tile.tres"}`, `{"match": "*Faces_Bathroom", "material": "res://materials/wall_tile.tres"}`. **Without `surface`**, the whole node (`material_override`): this is how to colour parts whose surfaces have no name, such as plain gable/shed roof slabs, ridge caps, porch posts and steps (`{"part": "roof", "material": "res://materials/shingles.tres"}`). `match` works as in `layers`. These take precedence over `materials`. |
 | `layers` | Ordered rules `{match, part, layers, in}` that set `layers` (the render layer bitmask, 1–1048575) on `MeshInstance3D` nodes. `part` selects by `metadata/building_part`, as in `nodeMaterials`. `match` is a node path pattern relative to the scene root (`*` matches anything, including `/`), for example `Floor_01/Geometry/Walls/ExteriorWalls/OutsideFaces` in the building scene or `Hinge/DoorMesh` in a door scene. The first matching rule wins. `in` limits a rule to the `building` scene or to `doors`. Nodes matched by no rule keep Godot's default layer. |
 | `scripts` | `building` is attached to the building scene's root node, `door` to each door scene's root, so every door instance has it (the door's description then names the attached script), and `elevator` to each elevator scene's root. Door children are not added to elevator scenes. |
+| `groups` | Ordered rules `{match, part, groups, in}` that add Godot groups to matching nodes (any node, not only meshes), keeping the groups the export already gives them. `{"part": "roof", "groups": ["roofs"]}`. The Unreal counterpart is the `unreal` block's `tags`. |
+| `unreal` | The same setup for Unreal Engine, below. Ignored by the Godot export. |
 | `doorChildren` | Scenes instanced as children of every door scene's root, with the given node names. A child such as an interaction area can size itself from the root's `door_width`/`door_height` metadata. A name that collides with an exported door node (`Frame`, `Hinge`, `Hinge2`, `Panel`, `InteractionArea`, …) is an error. |
 
 Paths are `res://` project paths, or paths relative to the exported scene (no `..`). Unknown fields, a wrong version, invalid names or paths, and out-of-range layer masks are errors. The CLI exits with code 2 before writing anything, and the web editor refuses the file with the same message.
 
-A game layer applies to Godot exports only: `--format glb` ([GLTF.md](GLTF.md)) refuses it and names a material after each surface instead.
+## Unreal Engine: the `unreal` block
+
+One game layer file can carry both engines' setup. Its optional `unreal` block is validated with the rest of the file (CLI `--game-layer`, web **Game layer…**) and applied in Unreal after importing the `.glb` export, by `unreal/building_studio_setup.py --glb FILE --game-layer FILE` ([GLTF.md](GLTF.md)). Paths are Unreal object paths (`/Game/…`, `/Engine/…`, `/Script/Module.Class`; Blueprint classes end in `_C`).
+
+```json
+"unreal": {
+  "materials": {"OutsideFaces": "/Game/Materials/M_Siding", "Glass": "/Game/Materials/M_Glass"},
+  "nodeMaterials": [{"part": "roof", "material": "/Game/Materials/M_Shingles"}],
+  "tags": [{"part": "door_leaf", "tags": ["door"]}],
+  "collisionProfiles": [{"layer": 4, "profile": "Door"}, {"part": "roof", "profile": "BlockAll"}],
+  "scripts": {"door": "/Game/Blueprints/BC_Door.BC_Door_C", "elevator": "/Game/Blueprints/BC_Lift.BC_Lift_C"},
+  "doorChildren": [{"name": "Use", "actor": "/Game/Blueprints/BP_Use.BP_Use_C"}]
+}
+```
+
+| Godot field | Unreal field | In Unreal |
+| --- | --- | --- |
+| `materials` | `materials` | Every imported mesh slot of that name (on the actor's mesh component) |
+| `nodeMaterials` | `nodeMaterials` | Same rules (`match` on the Godot node path, `part`, `surface` = slot name, `in`); without `surface`, every slot of the node |
+| `groups` | `tags` | Actor tags. Groups the export gives (`building_lights`, `sight_transparent`, …) always become tags too |
+| collision layers from the export profile | `collisionProfiles` | Collision profile on carrier meshes, by node rule or by the Godot collision `layer` bitmask they carry |
+| `scripts` | `scripts` | A component of that class added to the building, door and elevator root actors |
+| `doorChildren` | `doorChildren` | An actor of that class attached to each door root, labelled `<door>_<name>` |
+| `layers` | (none) | Unreal has no render-layer bitmask on meshes; use `tags` |
+
+A game layer is not applied at glTF export: `export --format glb --game-layer` is refused and points here.
 
 ## Checking
 

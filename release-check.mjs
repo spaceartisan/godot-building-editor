@@ -4,6 +4,7 @@ import os from 'node:os';
 import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { spawn } from 'node:child_process';
+import { resolveUnreal } from './unreal-check.mjs';
 
 export function sourceSnapshot(root){
   const files={};let bytes=0,count=0;
@@ -64,8 +65,8 @@ for(const file of files){const r=spawnSync(process.execPath,['--check',file],{en
  if(r.error||r.status!==0){console.error(file+'\\n'+(r.error?.message||r.stderr));process.exit(1);}checked++;}
 console.log(JSON.stringify({ok:true,modules:checked}));`;
 
-export async function runReleaseCheck({root,canvas='auto',engine='auto',godot,timeoutSeconds=180,env=process.env,signal}={}){
-  if(!['auto','required','skip'].includes(canvas)||!['auto','required','skip'].includes(engine)||!Number.isInteger(timeoutSeconds)||timeoutSeconds<1||timeoutSeconds>600)throw new Error('Invalid release-check policy or timeout');
+export async function runReleaseCheck({root,canvas='auto',engine='auto',godot,unrealEngine='auto',unreal,timeoutSeconds=180,env=process.env,signal}={}){
+  if(!['auto','required','skip'].includes(canvas)||!['auto','required','skip'].includes(engine)||!['auto','required','skip'].includes(unrealEngine)||!Number.isInteger(timeoutSeconds)||timeoutSeconds<1||timeoutSeconds>600)throw new Error('Invalid release-check policy or timeout');
   root=fs.realpathSync(root);
   const started=performance.now(),before=sourceSnapshot(root),version=JSON.parse(fs.readFileSync(path.join(root,'package.json'))).version;
   const report={command:'release-check',formatVersion:1,version,node:process.version,platform:process.platform,timeoutSeconds,
@@ -126,6 +127,15 @@ export async function runReleaseCheck({root,canvas='auto',engine='auto',godot,ti
       if(gd.status==='available')await gate(id,args,{json:true,extraEnv:{GODOT_BIN:executable}});
       else if(gd.status==='failed')dependencyFailure(id,gd);else skipped(id,gd.detail);
     }
+    // Unreal Engine: the engine-unreal suite (unreal-check, the setup script, rendering),
+    // with its own policy, as the Godot gates have one.
+    const unrealBin=unreal||env.UNREAL_BIN;
+    if(unrealEngine==='skip'||signal?.aborted)report.dependencies.unreal={status:'disabled',detail:signal?.aborted?'cancelled':'explicitly skipped'};
+    else if(!unrealBin)report.dependencies.unreal={status:unrealEngine==='required'?'failed':'missing',detail:'Set UNREAL_BIN or pass --unreal to run the Unreal checks'};
+    else{try{const u=resolveUnreal(unrealBin);report.dependencies.unreal={status:'available',executable:u.cmd,version:u.version};}catch(e){report.dependencies.unreal={status:'failed',detail:e.message};}}
+    const ud=report.dependencies.unreal;
+    if(ud.status==='available')await gate('engine-unreal',['cli.mjs','test','--suite','engine-unreal','--json'],{json:true,extraEnv:{UNREAL_BIN:ud.executable}});
+    else if(ud.status==='failed')dependencyFailure('engine-unreal',ud);else skipped('engine-unreal',ud.detail);
     let copyUnchanged=false;
     try{copyUnchanged=sourceSnapshot(work).sha256===before.sha256;report.source.unchanged=sourceSnapshot(root).sha256===before.sha256;}
     catch(e){report.source.integrityError=e.message;}

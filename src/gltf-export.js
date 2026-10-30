@@ -230,7 +230,7 @@ function arrayMeshPrimitives(res,material){
       tan.set([tt.x,tt.y,tt.z,tt.w],i*4);
       uv[i*2]=av.getFloat32(i*8,true);uv[i*2+1]=av.getFloat32(i*8+4,true);
     }
-    return {name:s.name,positions:pos,normals:nor,tangents:tan,uvs:uv,material:material(s.name)};
+    return {name:s.name,positions:pos,normals:nor,tangents:tan,uvs:uv,material:material(s.name,s.material)};
   });
 }
 
@@ -291,10 +291,16 @@ export function buildGlb(sceneFiles,rootFile,options={}){
   const w=new GlbWriter(),json=w.json,usedNames=new Map(),materials=new Map(),meshCache=new Map(),lights=[];
   const stats={nodes:0,meshes:0,boxCollision:0,convexCollision:0,concaveCollision:0,lights:0,collisionBodies:0};
   const uniqueName=name=>{const n=usedNames.get(name)||0;usedNames.set(name,n+1);if(!n)return name;let k=n+1,candidate=`${name}_${k}`;while(usedNames.has(candidate))candidate=`${name}_${++k}`;usedNames.set(candidate,1);return candidate;};
-  const material=name=>{
+  // look: a placeholder StandardMaterial3D (--placeholders) whose colour the material
+  // takes; the first one met for a name wins, so each surface name stays one material.
+  const material=(name,look)=>{
     if(!materials.has(name)){
       const m={name,pbrMetallicRoughness:{baseColorFactor:[.8,.8,.8,1],metallicFactor:0,roughnessFactor:1}};
       if(name==='Glass'){m.pbrMetallicRoughness.baseColorFactor=[.85,.92,1,.25];m.alphaMode='BLEND';}
+      if(look?.albedo_color)m.pbrMetallicRoughness.baseColorFactor=nums(look.albedo_color).slice(0,4);
+      if(look?.metallic!=null)m.pbrMetallicRoughness.metallicFactor=look.metallic;
+      if(look?.roughness!=null)m.pbrMetallicRoughness.roughnessFactor=look.roughness;
+      if(m.pbrMetallicRoughness.baseColorFactor[3]<1)m.alphaMode='BLEND';
       json.materials.push(m);materials.set(name,json.materials.length-1);
     }
     return materials.get(name);
@@ -306,7 +312,7 @@ export function buildGlb(sceneFiles,rootFile,options={}){
       if(p.tangents)attributes.TANGENT=w.accessor(p.tangents,'VEC4',5126,34962);
       if(p.uvs)attributes.TEXCOORD_0=w.accessor(p.uvs,'VEC2',5126,34962);
       const prim={attributes,indices:p.indices!=null?p.indices:w.indices(n,!p.ccw),mode:4};
-      if(p.material!=null)prim.material=typeof p.material==='number'?p.material:material(p.material);
+      if(p.material!=null)prim.material=typeof p.material==='number'?p.material:material(p.material,p.look);
       return prim;
     })};
     json.meshes.push(mesh);stats.meshes++;return json.meshes.length-1;
@@ -314,8 +320,9 @@ export function buildGlb(sceneFiles,rootFile,options={}){
   const meshPrimitives=node=>{
     const ref=node.props.mesh;if(!ref)return null;
     const res=node.sub[ref.args[0]];if(!res)throw new Error(`Unknown mesh resource in ${node.file}`);
-    if(res.type==='ArrayMesh')return arrayMeshPrimitives(res,name=>name||'Default');
-    if(res.type==='BoxMesh')return [boxMeshPrimitive(res.size?nums(res.size):[1,1,1],String(node.props['metadata/building_part']||'Default'))];
+    const look=ref=>ref?.type==='SubResource'?node.sub[ref.args[0]]:null;
+    if(res.type==='ArrayMesh')return arrayMeshPrimitives(res,(name,ref)=>material(name||'Default',look(ref)));
+    if(res.type==='BoxMesh')return [{...boxMeshPrimitive(res.size?nums(res.size):[1,1,1],String(node.props['metadata/building_part']||'Default')),look:look(res.material)}];
     throw new Error(`Unsupported mesh resource ${res.type} in ${node.file}`);
   };
 
@@ -335,16 +342,28 @@ export function buildGlb(sceneFiles,rootFile,options={}){
     let found=search(body,null);for(let child=body,p=parentOf.get(body);!found&&p;child=p,p=parentOf.get(p))found=search(p,child);
     return found;
   };
-  const collisionByCarrier=new Map(),dropped=new Set();
+  const namedCarrier=shape=>{
+    const want=/^(.+)_Collision$/.exec(shape.name)?.[1];if(!want)return null;
+    // Nearest first: search each ancestor's subtree, so a floor's shape finds that floor's mesh.
+    for(let p=parentOf.get(shape);p;p=parentOf.get(p)){const queue=[p];while(queue.length){const n=queue.shift();if(isMesh(n)&&n.name===want)return n;queue.push(...n.children);}}
+    return null;
+  };
+  const collisionByCarrier=new Map(),layersByCarrier=new Map(),dropped=new Set();
   if(options.collision!==false){
     const bodies=[];const find=n=>{if(BODY_TYPES.has(n.type))bodies.push(n);n.children.forEach(find);};find(root);
     for(const body of bodies){
       const shapes=[];const gather=n=>{for(const c of n.children){if(BODY_TYPES.has(c.type))continue;if(c.type==='CollisionShape3D')shapes.push(c);gather(c);}};gather(body);
       if(!shapes.length)continue;stats.collisionBodies++;
-      const carrier=carrierFor(body);if(!carrier)throw new Error(`No mesh to carry the collision of ${body.name}`);
-      const inv=minv(world.get(carrier)),list=collisionByCarrier.get(carrier)||[];
+      const bodyCarrier=carrierFor(body);if(!bodyCarrier)throw new Error(`No mesh to carry the collision of ${body.name}`);
       for(const shape of shapes){
         const res=shape.sub[shape.props.shape?.args[0]];if(!res)continue;
+        // A shape named "<mesh>_Collision" (windows, posts, roof slabs, ...) rides on that mesh,
+        // so its collision, groups and lifetime follow it; other shapes ride on the body's carrier.
+        const carrier=namedCarrier(shape)||bodyCarrier;
+        if(!collisionByCarrier.has(carrier))collisionByCarrier.set(carrier,[]);
+        const list=collisionByCarrier.get(carrier),inv=minv(world.get(carrier));
+        if(!layersByCarrier.has(carrier))layersByCarrier.set(carrier,{layer:body.props.collision_layer??1,mask:body.props.collision_mask??1,groups:new Set()});
+        for(const g of shape.groups||[])layersByCarrier.get(carrier).groups.add(g);
         const m=mmul(inv,world.get(shape));
         if(res.type==='BoxShape3D'){const [x,y,z]=nums(res.size).map(v=>v/2);list.push({kind:'UBX',points:[[-x,-y,-z],[x,-y,-z],[-x,y,-z],[x,y,-z],[-x,-y,z],[x,-y,z],[-x,y,z],[x,y,z]].map(p=>xform(m,p))});stats.boxCollision++;}
         else if(res.type==='ConvexPolygonShape3D'){const a=nums(res.points);const pts=[];for(let i=0;i<a.length;i+=3)pts.push(xform(m,[a[i],a[i+1],a[i+2]]));list.push({kind:'UCX',points:pts});stats.convexCollision++;}
@@ -357,7 +376,6 @@ export function buildGlb(sceneFiles,rootFile,options={}){
           }
         }else throw new Error(`Unsupported collision shape ${res.type}`);
       }
-      collisionByCarrier.set(carrier,list);
     }
   }
   // Collision shapes, and bodies left empty without them, are not written as nodes.
@@ -393,7 +411,12 @@ export function buildGlb(sceneFiles,rootFile,options={}){
       extras.shadow_enabled=n.props.shadow_enabled??false;
     }
     // Marks a carrier: replacing or deleting this mesh in an engine removes these collision pieces.
-    if(collision)extras.collision_pieces=collision.length;
+    if(collision){const lm=layersByCarrier.get(n);extras.collision_pieces=collision.length;extras.collision_layer=lm.layer;extras.collision_mask=lm.mask;if(lm.groups.size)extras.collision_groups=[...lm.groups];}
+    // A trigger volume (GET PROBED door InteractionArea): its box, in this node's space, for engines to recreate.
+    if(n.type==='Area3D'&&options.collision!==false){
+      const box=n.children.find(c=>c.type==='CollisionShape3D'&&c.sub[c.props.shape?.args[0]]?.type==='BoxShape3D');
+      if(box){extras.trigger_center=local.get(box).t;extras.trigger_size=nums(box.sub[box.props.shape.args[0]].size);extras.collision_layer=n.props.collision_layer??1;extras.collision_mask=n.props.collision_mask??1;}
+    }
     if(Object.keys(extras).length)node.extras=extras;
     const children=n.children.map(emit).filter(i=>i!=null);
     if(collision){
@@ -414,12 +437,12 @@ export function buildGlb(sceneFiles,rootFile,options={}){
   return {bytes:w.finish(),stats};
 }
 
-// Same inputs and options as exportGodotFiles (game layers and placeholder
-// colours are Godot-side and rejected); returns {base, glbName, glb, stats, warnings}.
+// Same inputs and options as exportGodotFiles. A game layer is applied in the
+// engine instead (Godot at export; Unreal by unreal/building_studio_setup.py),
+// so it is refused here. Returns {base, glbName, glb, stats, warnings}.
 export function exportGltfFiles(building,options={}){
-  if(options.gameLayer)throw new Error('A game layer applies to Godot scenes; glTF export does not take one.');
-  if(options.placeholderMaterials)throw new Error('Placeholder colours apply to Godot scenes; glTF export names one material per surface instead.');
-  const f=exportGodotFiles(building,{...options,placeholderMaterials:false,gameLayer:undefined});
+  if(options.gameLayer)throw new Error('A game layer is applied in Unreal by unreal/building_studio_setup.py, not at glTF export.');
+  const f=exportGodotFiles(building,{...options,placeholderMaterials:!!options.placeholderMaterials,gameLayer:undefined});
   const sceneFiles=[{name:f.tscnName,text:f.tscn},...f.doors.map(d=>({name:d.filename,text:d.tscn}))];
   const {bytes,stats}=buildGlb(sceneFiles,f.tscnName,options);
   return {base:f.base,glbName:`${f.base}.glb`,glb:bytes,stats,warnings:f.warnings};

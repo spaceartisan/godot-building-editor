@@ -6,18 +6,18 @@ import { fileURLToPath } from 'node:url';
 import { runReleaseCheck, runBounded, sourceSnapshot, assertExternalReport } from './release-check.mjs';
 
 const temp=fs.mkdtempSync(path.join(os.tmpdir(),'release-runner-tests-')),root=path.join(temp,'fixture');fs.mkdirSync(root);
-const cleanEnv={...process.env};delete cleanEnv.CANVAS_MODULE;delete cleanEnv.GODOT_BIN;delete cleanEnv.NODE_PATH;
+const cleanEnv={...process.env};delete cleanEnv.CANVAS_MODULE;delete cleanEnv.GODOT_BIN;delete cleanEnv.UNREAL_BIN;delete cleanEnv.NODE_PATH;
 const write=(name,text)=>fs.writeFileSync(path.join(root,name),text);
 const cli=fileURLToPath(new URL('./cli.mjs',import.meta.url));
 const fixtureCli="console.log(JSON.stringify({ok:true}));";
-const options={root,canvas:'skip',engine:'skip',env:cleanEnv,timeoutSeconds:3};
+const options={root,canvas:'skip',engine:'skip',unrealEngine:'skip',env:cleanEnv,timeoutSeconds:3};
 const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 try{
   write('package.json',JSON.stringify({version:'fixture',type:'module'}));write('cli.mjs',fixtureCli);write('infrastructure-tests.mjs','console.log("fixture passed");');
   const before=sourceSnapshot(root);
   let r=await runReleaseCheck(options);
   assert.equal(r.status,'passed-with-skips');assert.equal(r.complete,false);assert.equal(r.exitCode,0);
-  assert.equal(r.counts.passed,4);assert.equal(r.counts.skipped,3);assert.equal(r.source.unchanged,true);
+  assert.equal(r.counts.passed,4);assert.equal(r.counts.skipped,4);assert.equal(r.source.unchanged,true);
   assert.deepEqual(sourceSnapshot(root),before);
   r=await runReleaseCheck({...options,canvas:'auto',engine:'auto'});assert.ok(['available','missing'].includes(r.dependencies.canvas.status));assert.equal(r.dependencies.godot.status,'missing');
   r=await runReleaseCheck({...options,canvas:'required',engine:'required',env:{...cleanEnv,CANVAS_MODULE:path.join(temp,'missing-canvas')}});assert.equal(r.exitCode,3);assert.equal(r.counts.failed,3);
@@ -29,6 +29,15 @@ try{
   fs.writeFileSync(path.join(brokenPackage,'package.json'),'{invalid JSON');
   r=await runReleaseCheck({...options,root:brokenRoot,canvas:'auto'});assert.equal(r.dependencies.canvas.status,'failed','a broken discovered installation must not be called missing');
   fs.rmSync(brokenRoot,{recursive:true,force:true});
+  // Unreal: missing is a skip under auto and a failure under required; a fixture install (the two
+  // editor binaries and Engine/Build/Build.version, never started here) runs the engine-unreal gate.
+  r=await runReleaseCheck({...options,unrealEngine:'auto'});assert.equal(r.dependencies.unreal.status,'missing');assert.equal(r.gates.find(g=>g.id==='engine-unreal').status,'skipped');assert.equal(r.complete,false);
+  r=await runReleaseCheck({...options,unrealEngine:'required'});assert.equal(r.gates.find(g=>g.id==='engine-unreal').status,'failed');assert.equal(r.exitCode,3);
+  const ue=path.join(temp,'UE','Engine'),ueBin=path.join(ue,'Binaries','Win64'),ext=process.platform==='win32'?'.exe':'';fs.mkdirSync(ueBin,{recursive:true});fs.mkdirSync(path.join(ue,'Build'));
+  for(const exe of ['UnrealEditor-Cmd','UnrealEditor'])fs.writeFileSync(path.join(ueBin,exe+ext),'');
+  fs.writeFileSync(path.join(ue,'Build','Build.version'),JSON.stringify({MajorVersion:5,MinorVersion:8,PatchVersion:0}));
+  r=await runReleaseCheck({...options,unrealEngine:'required',env:{...cleanEnv,UNREAL_BIN:path.join(ueBin,'UnrealEditor-Cmd'+ext)}});
+  assert.equal(r.dependencies.unreal.version,'5.8.0');assert.equal(r.gates.find(g=>g.id==='engine-unreal').status,'passed');
   const backend=path.join(temp,'canvas.cjs');fs.writeFileSync(backend,'exports.createCanvas=()=>({toBuffer:()=>Buffer.from("fixture")});');
   // Windows cannot launch a #! script (and Node refuses .cmd without a shell), so there the
   // version probe uses the real GODOT_BIN; the fixture gates still run the fixture cli.mjs.
@@ -36,8 +45,8 @@ try{
   if(process.platform==='win32')engine=process.env.GODOT_BIN&&fs.existsSync(process.env.GODOT_BIN)?process.env.GODOT_BIN:null;
   else fs.writeFileSync(engine,`#!${process.execPath}\nconsole.log('4.0.fixture');\n`,{mode:0o755});
   if(engine){
-    r=await runReleaseCheck({...options,canvas:'required',engine:'required',env:{...cleanEnv,CANVAS_MODULE:backend,GODOT_BIN:engine}});
-    assert.equal(r.status,'passed');assert.equal(r.complete,true);assert.equal(r.counts.passed,7);
+    r=await runReleaseCheck({...options,canvas:'required',engine:'required',unrealEngine:'required',env:{...cleanEnv,CANVAS_MODULE:backend,GODOT_BIN:engine,UNREAL_BIN:path.join(ueBin,'UnrealEditor-Cmd'+ext)}});
+    assert.equal(r.status,'passed');assert.equal(r.complete,true);assert.equal(r.counts.passed,8);
     console.log('PASS release orchestration: explicit skips, automatic missing tools, required/configured failures and all-gate success (controlled fixture tools)');
   }else console.log('PASS release orchestration: explicit skips, automatic missing tools and required/configured failures (SKIP all-gate success on Windows: set GODOT_BIN to a Godot 4 executable)');
 

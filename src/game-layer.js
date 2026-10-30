@@ -1,9 +1,11 @@
 // Optional game layer (feedback: per-game setup redone after every export).
 // A small JSON file maps exported surface names to materials, mesh nodes to
-// render layers, and attaches scripts and extra child scenes to the building
-// root and every door. Without a game layer, exports are unchanged and
-// material slots stay empty. Shared by the CLI (--game-layer) and the web
-// Godot Export panel.
+// render layers, nodes to groups, and attaches scripts and extra child scenes
+// to the building root and every door. Without a game layer, exports are
+// unchanged and material slots stay empty. Shared by the CLI (--game-layer)
+// and the web Godot Export panel. Its optional "unreal" block is the same
+// setup for Unreal Engine, validated here and applied after import by
+// unreal/building_studio_setup.py (render layers have no Unreal counterpart).
 export const GAME_LAYER_VERSION=1;
 // Values of metadata/building_part on exported mesh nodes; rules can select by part.
 export const BUILDING_PARTS=['exterior_wall','interior_wall','window','floor','ceiling','roof','ridge','gable','platform','post','beam','step','railing','stair','stair_blocker','door_frame','door_leaf','door_housing','elevator_shaft','elevator_car','elevator_door'];
@@ -24,12 +26,48 @@ function selector(rule,where){
   if(rule.part!==undefined&&!BUILDING_PARTS.includes(rule.part))fail(`part must be one of ${BUILDING_PARTS.join(', ')}`,`${where}/part`);
   return {...(rule.match!==undefined?{match:rule.match,pattern:glob(rule.match)}:{}),...(rule.part!==undefined?{part:rule.part}:{})};
 }
+// Unreal object or class paths: /Game/..., /Engine/... or /Script/Module.Class.
+function unrealPath(value,where){
+  if(typeof value!=='string'||!/^\/(Game|Engine|Script)\/[A-Za-z0-9_./-]{1,500}$/.test(value)||value.split('/').includes('..'))fail('expected an Unreal path such as /Game/Materials/M_Siding or /Game/Blueprints/BP_Door.BP_Door_C',where);
+  return value;
+}
+const GROUP=/^[A-Za-z_][A-Za-z0-9_-]{0,63}$/;
+function nameList(value,where,what){
+  if(!Array.isArray(value)||!value.length||value.length>32||value.some(v=>typeof v!=='string'||!GROUP.test(v)))fail(`${what} must be a list of up to 32 names (letters, digits, _ and -)`,where);
+  return [...new Set(value)];
+}
+function inScope(rule,where){if(rule.in!==undefined&&!['building','doors'].includes(rule.in))fail('in must be building or doors',`${where}/in`);return rule.in||null;}
+function ruleList(list,where,fields,build){
+  if(list===undefined)return [];
+  if(!Array.isArray(list)||list.length>256)fail(`expected up to 256 {${fields.join(', ')}} rules`,where);
+  return list.map((rule,i)=>{const at=`${where}/${i}`;if(!isObject(rule))fail('expected an object',at);for(const key of Object.keys(rule))if(!fields.includes(key))fail(`unknown field ${key}`,at);return build(rule,at);});
+}
+function parseUnreal(data){
+  if(!isObject(data))fail('expected an object','unreal');
+  for(const key of Object.keys(data))if(!['materials','nodeMaterials','tags','collisionProfiles','scripts','doorChildren'].includes(key))fail(`unknown field ${key}`,'unreal');
+  const materials={};
+  if(data.materials!==undefined){if(!isObject(data.materials))fail('expected {slot name: Unreal material path}','unreal/materials');for(const [slot,path] of Object.entries(data.materials)){if(!NAME.test(slot))fail('slot names are letters, digits and _',`unreal/materials/${slot}`);materials[slot]=unrealPath(path,`unreal/materials/${slot}`);}}
+  const surface=(rule,at)=>{if(rule.surface!==undefined&&(typeof rule.surface!=='string'||!NAME.test(rule.surface)))fail('surface must be a slot name such as TopFaces, or omitted for every slot',`${at}/surface`);return rule.surface??null;};
+  const nodeMaterials=ruleList(data.nodeMaterials,'unreal/nodeMaterials',['match','part','surface','material','in'],(r,at)=>({...selector(r,at),surface:surface(r,at),material:unrealPath(r.material,`${at}/material`),in:inScope(r,at)}));
+  const tags=ruleList(data.tags,'unreal/tags',['match','part','tags','in'],(r,at)=>({...selector(r,at),tags:nameList(r.tags,`${at}/tags`,'tags'),in:inScope(r,at)}));
+  // Collision profiles by node (match/part) or by the exported Godot collision layer bitmask.
+  const collisionProfiles=ruleList(data.collisionProfiles,'unreal/collisionProfiles',['match','part','layer','profile','in'],(r,at)=>{
+    if(r.layer!==undefined&&(!Number.isInteger(r.layer)||r.layer<1||r.layer>0xFFFFFFFF))fail('layer must be a collision layer bitmask',`${at}/layer`);
+    if(typeof r.profile!=='string'||!NAME.test(r.profile))fail('profile must be an Unreal collision profile name such as BlockAll',`${at}/profile`);
+    return {...(r.layer!==undefined&&r.match===undefined&&r.part===undefined?{}:selector(r,at)),...(r.layer!==undefined?{layer:r.layer}:{}),profile:r.profile,in:inScope(r,at)};
+  });
+  const scripts={};
+  if(data.scripts!==undefined){if(!isObject(data.scripts))fail('expected {building, door, elevator}: component class paths','unreal/scripts');for(const [key,path] of Object.entries(data.scripts)){if(!['building','door','elevator'].includes(key))fail(`unknown script target ${key}`,'unreal/scripts');scripts[key]=unrealPath(path,`unreal/scripts/${key}`);}}
+  const names=new Set();
+  const doorChildren=ruleList(data.doorChildren,'unreal/doorChildren',['name','actor'],(c,at)=>{if(typeof c.name!=='string'||!NAME.test(c.name)||names.has(c.name))fail('name must be a unique actor name (letters, digits, _)',`${at}/name`);names.add(c.name);return {name:c.name,actor:unrealPath(c.actor,`${at}/actor`)};});
+  return {materials,nodeMaterials,tags,collisionProfiles,scripts,doorChildren};
+}
 function glob(pattern){return new RegExp('^'+pattern.replace(/[.+?^${}()|[\]\\]/g,'\\$&').replace(/\*/g,'.*')+'$');}
 
 export function parseGameLayer(value){
   const data=typeof value==='string'?(()=>{try{return JSON.parse(value);}catch(e){fail(`invalid JSON: ${e.message}`,'game layer');}})():value;
   if(!isObject(data))fail('expected an object','game layer');
-  for(const key of Object.keys(data))if(!['version','materials','nodeMaterials','layers','scripts','doorChildren'].includes(key))fail(`unknown field ${key}`,'game layer');
+  for(const key of Object.keys(data))if(!['version','materials','nodeMaterials','layers','groups','scripts','doorChildren','unreal'].includes(key))fail(`unknown field ${key}`,'game layer');
   if(data.version!==GAME_LAYER_VERSION)fail(`version must be ${GAME_LAYER_VERSION}`,'game layer');
   const materials={};
   if(data.materials!==undefined){
@@ -77,7 +115,18 @@ export function parseGameLayer(value){
       names.add(child.name);doorChildren.push({name:child.name,scene:resourcePath(child.scene,`${where}/scene`)});
     });
   }
-  return {version:GAME_LAYER_VERSION,materials,nodeMaterials,layers,scripts,doorChildren};
+  // Godot groups: the counterpart of the unreal block's tags.
+  const groups=ruleList(data.groups,'groups',['match','part','groups','in'],(r,at)=>({...selector(r,at),groups:nameList(r.groups,`${at}/groups`,'groups'),in:inScope(r,at)}));
+  return {version:GAME_LAYER_VERSION,materials,nodeMaterials,layers,groups,scripts,doorChildren,...(data.unreal!==undefined?{unreal:parseUnreal(data.unreal)}:{})};
+}
+
+// groups rules add Godot groups to matching nodes' headers (merged with exported groups).
+function addGroups(block,path,part,layer,kind){
+  const add=[...new Set((layer.groups||[]).filter(r=>(!r.in||r.in===(kind==='door'?'doors':'building'))&&(!r.pattern||r.pattern.test(path))&&(!r.part||r.part===part)).flatMap(r=>r.groups))];
+  if(!add.length)return block;
+  const line=block.split('\n')[0],existing=/ groups=\[([^\]]*)\]/.exec(line),have=existing?[...existing[1].matchAll(/"([^"]+)"/g)].map(m=>m[1]):[];
+  const all=[...have,...add.filter(g=>!have.includes(g))],text=` groups=[${all.map(g=>JSON.stringify(g)).join(', ')}]`;
+  return (existing?line.replace(existing[0],text):line.replace(/\]$/,`${text}]`))+block.slice(line.length);
 }
 
 // Applies a parsed game layer to one exported scene's text.
@@ -86,12 +135,14 @@ function applyToScene(text,layer,kind){
   // Surface names of each ArrayMesh, in order (for per-node material overrides).
   const surfaces=new Map(blocks.filter(b=>b.startsWith('[sub_resource type="ArrayMesh"')).map(b=>[/id="([^"]+)"/.exec(b)[1],[...b.matchAll(/^"name": "([^"]+)",$/gm)].map(m=>m[1])]));
   const resource=(type,path)=>{const found=ext.find(e=>e.type===type&&e.path===path);if(found)return found.id;const id=`GL_${type}_${++n}`;ext.push({type,path,id});return id;};
-  const out=blocks.map(block=>{
+  const out=blocks.map(original=>{
+    let block=original;
     if(block.startsWith('[sub_resource type="ArrayMesh"'))
       return block.replace(/^"name": "([^"]+)",$/gm,(line,surface)=>layer.materials[surface]?`"material": ExtResource("${resource('Material',layer.materials[surface])}"),\n${line}`:line);
     const header=/^\[node name="([^"]+)"(?: type="([^"]+)")?(?: parent="([^"]+)")?/.exec(block);
     if(!header)return block;
     const [,name,type,parent]=header;
+    block=addGroups(block,parent===undefined?'.':parent==='.'?name:`${parent}/${name}`,/^metadata\/building_part = "([^"]+)"$/m.exec(block)?.[1],layer,kind);
     if(parent===undefined){
       const script=kind==='door'?layer.scripts.door:kind==='elevator'?layer.scripts.elevator:layer.scripts.building;
       if(!script)return block;
@@ -122,7 +173,8 @@ function applyToScene(text,layer,kind){
       out.push(`[node name="${child.name}" parent="." instance=ExtResource("${resource('PackedScene',child.scene)}")]`);
     }
   }
-  if(!ext.length)return text;
+  // Groups need no resources; return the edited blocks unless nothing changed at all.
+  if(!ext.length)return out.every((b,i)=>b===blocks[i])?text:out.join('\n\n')+'\n';
   const lines=ext.map(e=>`[ext_resource type="${e.type}" path="${e.path}" id="${e.id}"]`).join('\n');
   const existing=out.findIndex(b=>b.startsWith('[ext_resource'));
   if(existing>=0)out[existing]+='\n'+lines;else out.splice(1,0,lines);

@@ -1,31 +1,45 @@
-# glTF export for Unreal Engine and other engines
+# Unreal Engine: glTF export, setup and checks
 
 > Start with the [README](README.md) (what the tool makes, and its **Scope**) and [LLM_GUIDE.md](LLM_GUIDE.md). This page is a reference for one part.
 
-The `.tscn` export stays the main output. `--format glb` writes the same building as one glTF 2.0 binary (`.glb`) for engines other than Godot, Unreal Engine 5 first:
+Building Studio serves Godot and Unreal Engine 5 alike. Godot gets `.tscn` scenes; Unreal gets the same building as one glTF 2.0 binary (`.glb`), a setup script that does in Unreal what the export and a [game layer](GAME_LAYER.md) do in Godot, and the same checks and renders:
 
-- CLI: `node cli.mjs export FILE --format glb --out NEW_DIR` writes `NEW_DIR/<name>.glb`, where `<name>` is the building's `sceneName` (`building.update`), else its name with every run of characters other than letters and digits turned into `_` and lower-cased (as for `.tscn` files). `package --format glb` zips one per input. `--no-collision`, `--no-markers`, `--profile`, `--replace`, `--include-json` and batches work as for `.tscn`.
-- Web editor: **Export .glb** beside **Export .tscn ZIP**, with the Godot Export panel's **Include collision** and **Opening Marker3D helpers** settings.
+| Godot | Unreal Engine 5 |
+| --- | --- |
+| `export` (`.tscn` scenes) | `export --format glb` (web **Export .glb**) |
+| `--game-layer FILE`, applied at export | the same file's `unreal` block, applied after import by `unreal/building_studio_setup.py` |
+| `godot-check --assets DIR` | `unreal-check --assets DIR` |
+| `godot-check --render`, web **Render in Godot** | `unreal-check --render`, web **Render in Unreal** |
+| `engine-assets` test suite, `GODOT_BIN` | `engine-unreal` test suite, `UNREAL_BIN` |
 
-Both call the same code (`src/gltf-export.js`). It reads the exporter's own building, door and elevator scenes, so the `.glb` holds exactly the geometry the `.tscn` holds, and `.tscn` output is unaffected. `--game-layer` and `--placeholders` are Godot features and are refused with `--format glb`.
+Godot render layers (`layers` rules) have no Unreal counterpart: Unreal has no render-layer bitmask on meshes. Use `tags` rules there instead.
 
-**Which file for which engine.** Use the `.tscn` export in Godot: Godot imports the `UBX_`/`UCX_` collision meshes below as ordinary visible meshes. For Blender or engines that don't read Unreal's collision naming, export with `--no-collision` (web: untick **Include collision**), or the collision pieces show up as visible boxes.
+**Which file for which engine.** Use the `.tscn` export in Godot: Godot imports the `UBX_`/`UCX_` collision meshes below as ordinary visible meshes. For Blender or engines that don't read Unreal's collision naming, export with `--no-collision` (web: untick **Include collision**).
 
-## What is in the file
+## Export
+
+- CLI: `node cli.mjs export FILE --format glb --out NEW_DIR` writes `NEW_DIR/<name>.glb`, where `<name>` is the building's `sceneName` (`building.update`), else its name with every run of characters other than letters and digits turned into `_` and lower-cased (as for `.tscn` files). `package --format glb` zips one per input. `--no-collision`, `--no-markers`, `--placeholders`, `--profile`, `--replace`, `--include-json` and batches work as for `.tscn`. `--game-layer` is refused: apply the game layer in Unreal (below).
+- Web editor: **Export .glb** beside **Export .tscn ZIP**, with the Godot Export panel's **Include collision**, **Include placeholder colors** and **Opening Marker3D helpers** settings.
+
+Both call the same code (`src/gltf-export.js`). It reads the exporter's own building, door and elevator scenes, so the `.glb` holds exactly the geometry the `.tscn` holds, and `.tscn` output is unaffected.
 
 | Godot export | In the .glb |
 | --- | --- |
 | Node tree (`Floor_NN/Geometry/Walls/ExteriorWalls/OutsideFaces`, …) | The same tree and transforms, in metres, Y-up. Door and elevator scenes are inlined at their instances; hinge pivots (`Hinge`, `Hinge2`), `Panel`, `Curtain`, elevator `Car` and landing door nodes stay separate nodes, so they can be animated. |
 | Node names | Unique within the file (a repeat gets `_2`, `_3`, … in traversal order; the original is in `extras.godot_name`), because Unreal matches collision to meshes by node name. See **Re-exporting**: these suffixes are not stable. |
-| ArrayMesh surfaces (`OutsideFaces`, `TopFaces`, `Door`, …) | One primitive each, with normals, tangents and UV0 in metres. Each gets a material **named after the surface**, so slots can be bound by name. `Glass` is translucent; the rest are plain grey. Untrimmed box parts (roof slabs, ridge caps, posts, beams, steps) get a material named after their `building_part` (`roof`, `post`, …). |
+| ArrayMesh surfaces (`OutsideFaces`, `TopFaces`, `Door`, …) | One primitive each, with normals, tangents and UV0 in metres. Each gets a material **named after the surface**, so slots can be bound by name. `Glass` is translucent; the rest are plain grey, or the Godot placeholder colours with `--placeholders`. Untrimmed box parts (roof slabs, ridge caps, posts, beams, steps) get a material named after their `building_part` (`roof`, `post`, …). |
 | `metadata/*` (`building_part`, `building_opening_id`, `building_floor_id`, `building_regions`, `outward_normal`, `door_width`, `leaf_travel`, …) | glTF `extras` on the same node, **with their Godot values unchanged** (metres, Godot axes; see **Units and axes**). Groups are `extras.godot_groups`; non-plain node types are `extras.godot_type` (for example `AnimatableBody3D` on an elevator car). |
-| Collision bodies and shapes | Unreal collision meshes (below). Collision nodes themselves are not written. A mesh carrying collision has `extras.collision_pieces` (the number of pieces). |
+| Collision bodies and shapes | Unreal collision meshes (below); collision nodes themselves are not written. A mesh carrying collision has `extras.collision_pieces`, `collision_layer` and `collision_mask` (the body's Godot layers) and `collision_groups` (groups of the shapes it carries, such as a window's `sight_transparent`). |
+| GET PROBED door `InteractionArea` (`Area3D`) | An empty node with `extras.trigger_center` and `trigger_size` (its box, metres) and its collision layers; the setup script makes it a `TriggerBox`. |
 | `OmniLight3D` | A `KHR_lights_punctual` point light with the colour, range and energy, and `extras.shadow_enabled`. |
 | `Marker3D` (openings, `Threshold`, elevator stops and anchors) | Empty nodes with their metadata. |
 
 ## Collision for Unreal
 
-Unreal does not read glTF physics extensions, but it does read its own collision naming from glTF: a mesh named `UBX_<node>_NN` becomes a box and `UCX_<node>_NN` a convex hull on the static mesh of node `<node>`. Each collision body is attached to a **carrier**: the nearest mesh in its own subtree, else in its parent's, so a door leaf's collision swings with its `Hinge` and an elevator car's collision rides on `CarMesh`.
+Unreal does not read glTF physics extensions, but it does read its own collision naming from glTF: a mesh named `UBX_<node>_NN` becomes a box and `UCX_<node>_NN` a convex hull on the static mesh of node `<node>`. Each collision shape rides on a **carrier** mesh:
+
+- A shape named after a mesh (`Window_001_Window_Collision`, `Porch_001_…_Post_002_Collision`, `Roof_001_North_Collision`, …) rides on that mesh, so a window, post or roof slab carries its own collision and groups.
+- Other shapes ride on the nearest mesh to their body: a door leaf's collision swings with its `Hinge`, an elevator car's rides on `CarMesh`, and a storey's remaining wall, floor and ceiling boxes ride on one of that storey's meshes, often its floor slab.
 
 | Godot shape | Unreal collision |
 | --- | --- |
@@ -33,7 +47,7 @@ Unreal does not read glTF physics extensions, but it does read its own collision
 | `ConvexPolygonShape3D` | `UCX_` hull of its points |
 | `ConcavePolygonShape3D` (trimmed roofs, gables, shaped walls, custom door frames) | `UCX_` hulls: coplanar neighbouring triangles are joined into convex polygons and each becomes a 2 cm thick prism on the surface |
 
-A storey's static collision (walls, floor, ceiling, roof, stairs) rides on **one** of that storey's meshes, often its floor slab or `OutsideFaces`. That mesh has `collision_pieces` in its extras, which Unreal keeps as asset metadata (`INTERCHANGE.<node>.collision_pieces`). Replacing or deleting that actor or static mesh in Unreal removes the storey's collision with it; keep it, or move the collision to your replacement.
+Every carrier has `collision_pieces` in its extras, which Unreal keeps as asset metadata (`INTERCHANGE.<node>.collision_pieces`). Replacing or deleting a carrier actor or static mesh in Unreal removes that collision with it; keep it, or move the collision to your replacement.
 
 ## Units and axes in Unreal
 
@@ -54,33 +68,53 @@ So, in Unreal terms:
 - The `Threshold` marker faces outward along its own local **−Y** (Godot's local −Z).
 - Door and elevator door leaves slide along their own local **X** by `leaf_travel` (metres × 100 in Unreal).
 - The elevator `Car` moves along Unreal **Z** between the `Stop_NN` actors.
-- `building_regions` bounds `minX/maxX` are Unreal X and `minZ/maxZ` are Unreal Y, in metres; `shaft_size` `[width, height, depth]` is local X, Z, Y in metres.
+- `building_regions` bounds `minX/maxX` are Unreal X and `minZ/maxZ` are Unreal Y, in metres; `shaft_size` `[width, height, depth]` is local X, Z, Y in metres; `trigger_center` and `trigger_size` follow the same swap.
 - `door_width`, `door_height` and other lengths in `extras` are metres.
 
-## Importing into Unreal Engine 5
+## Importing and setting up in Unreal Engine 5
 
-Use **Import Into Level** (Interchange glTF) to get the node tree as actors, or a plain content import for static meshes only. Scale needs no change. Each mesh imports as a static mesh with named material slots, its `UBX_`/`UCX_` simple collision and its `extras` as asset metadata (`INTERCHANGE.<node>.building_part`, …). Unreal rebuilds normals and tangents (MikkTSpace) and keeps the flat shading.
+Use **Import Into Level** (Interchange glTF) to get the node tree as actors. Scale needs no change. Each mesh imports as a static mesh with named material slots, its `UBX_`/`UCX_` simple collision and its `extras` as asset metadata (`INTERCHANGE.<node>.building_part`, …). Unreal rebuilds normals and tangents (MikkTSpace) and keeps the flat shading. **Every imported actor is Static**, and Unreal keeps no extras on actors.
 
-**Every imported actor is Static.** Doors and elevators need their moving parts set to **Movable**, with everything attached below them, before a game script can rotate a `Hinge` or move `Car`. They carry no logic, as in Godot.
-
-`unreal/building_studio_setup.py` does that, and binds materials by slot name: the Unreal counterpart of a [game layer](GAME_LAYER.md)'s `materials`. Run it from the editor's Output Log with the imported building in the level:
+Then run `unreal/building_studio_setup.py` from the editor's Output Log. It reads the `.glb` for each node's data (actors are matched by label, the unique node names) and applies the game layer's `unreal` block:
 
 ```text
-py "C:/path/to/godot-building-editor/unreal/building_studio_setup.py" --content /Game/Buildings/smithy --materials C:/path/to/materials.json --light-scale 8
+py "C:/path/to/godot-building-editor/unreal/building_studio_setup.py" --glb C:/path/to/smithy.glb --game-layer C:/path/to/game.layer.json --light-scale 8
 ```
 
-- Moving parts (`Hinge`, `Hinge2`, `Panel`, `Curtain`, `Car`, `CarDoorLeft/Right`, `DoorLeft/Right`, with `_2`, `_3` suffixes) and all actors under them become Movable. `--root LABEL` limits it to one imported building.
-- `--materials` takes JSON such as `{"OutsideFaces": "/Game/Materials/M_Siding", "TopFaces": "/Game/Materials/M_Planks", "roof": "/Game/Materials/M_Shingles"}` and sets every matching slot of the static meshes under `--content`. Each import otherwise creates its own grey placeholder materials.
-- `--light-scale K` multiplies point-light intensities. Unreal reads Godot's light energy as candelas; its own default point light is 8 cd, so `--light-scale 8` maps Godot's default energy to Unreal's default as a starting point. The lights are placeholders either way.
+Always, as the Godot export does:
 
-`qa/unreal-import-check.py` runs an import headless and writes a JSON report (material slots, box and convex collision per mesh, metadata, the actor tree with locations, rotations and mobility, lights); see the comment at its top.
+- moving parts (`Hinge`, `Hinge2`, `Panel`, `Curtain`, `Car`, `CarDoorLeft/Right`, `DoorLeft/Right`) and everything attached below them become **Movable**, so a game script can rotate a `Hinge` or move `Car` (they carry no logic, as in Godot);
+- Godot groups (`building_lights`, `sight_transparent`, profile groups, groups of carried collision shapes) become **actor tags**;
+- each GET PROBED door `InteractionArea` becomes a **`TriggerBox`** child actor of its size.
+
+From the game layer's `unreal` block ([GAME_LAYER.md](GAME_LAYER.md)): slot materials, `nodeMaterials` rules, `tags` rules, `collisionProfiles` rules (by node or by Godot collision layer), `scripts` (a component class added to the building, door and elevator roots) and `doorChildren` (actors attached to each door root). Each import otherwise creates its own grey placeholder materials. `--root LABEL` picks the imported root actor when the name is ambiguous; `--materials FILE` is a shorthand for `{"slot": "/Game/…"}`. `--light-scale K` multiplies point-light intensities: Unreal reads Godot's light energy as candelas and its own default point light is 8 cd, so `--light-scale 8` maps Godot's default energy to Unreal's default as a starting point. Running it again adds nothing twice. Validate the game layer with the CLI first (`node cli.mjs export FILE --out DIR --game-layer FILE`).
+
+## Checking and rendering in Unreal
+
+`unreal-check` is the Unreal counterpart of `godot-check --assets`. It needs Unreal Engine 5 (`--unreal PATH` or `UNREAL_BIN`, either editor binary; nothing is downloaded) and imports each `.glb` of a folder into a disposable project, runs the setup script without a game layer, and checks:
+
+- every mesh node became a static mesh actor with the same named slots, and `building_part` reached the mesh assets;
+- every `UBX_`/`UCX_` piece became simple collision on its carrier, with none left as an actor;
+- lights became point lights, moving parts are Movable, door trigger boxes exist;
+- elevator probes, as `godot-check` runs them: with the car moved to each stop a downward trace finds the car floor at the stop height; closed landing doors block the opening; with the landing and car doors slid open by `leaf_travel`, no door leaf blocks the way into the car.
+
+```text
+node cli.mjs unreal-check --assets NEW_DIR --require-collision
+node cli.mjs unreal-check --assets NEW_DIR --render --out RENDERS [--views FILE] [--surface-colors]
+```
+
+`--render` writes 1280 × 800 PNGs and `renders.json` with the same views as `godot-check --render` (four exterior diagonals, an aerial view and one eye-level view per labelled region, its eye moved out of collision; `--views` takes the same Godot-space file). It opens the Unreal editor (it needs a display) and adds only a sun, sky light, atmosphere, a light height fog and a camera headlamp; the template level's ground, sky and lights are removed, so buildings render on a plain sky as in Godot. `--surface-colors` uses Godot's diagnostic surface colours. In the web editor, **Render in Unreal** renders the current `.glb` export the same way through `server.mjs` started with `UNREAL_BIN`. The first run on a machine compiles shaders and takes longer.
+
+`qa/unreal-import-check.py` remains as a manual report script (slots, collision, metadata, the actor tree with locations, rotations and mobility, lights).
 
 ## Re-exporting
 
-Re-exporting replaces the whole file, and the `_2`, `_3` suffixes follow traversal order: adding a door can turn one door's `DoorMesh_3` into `DoorMesh_4`. Bind materials by slot name and find objects by `building_*` extras (`building_opening_id`, `building_floor_id`, `building_part`), never by imported mesh or actor names. Set the building's `sceneName` so the `.glb` file name, and so Unreal's import folder, stay put when the building is renamed. Re-run the setup script after each re-import.
+Re-exporting replaces the whole file, and the `_2`, `_3` suffixes follow traversal order: adding a door can turn one door's `DoorMesh_3` into `DoorMesh_4`. Bind materials by slot name and find objects by `building_*` extras (`building_opening_id`, `building_floor_id`, `building_part`) or tags, never by imported mesh or actor names. Set the building's `sceneName` so the `.glb` file name, and so Unreal's import folder, stay put when the building is renamed. Re-run the setup script after each re-import.
 
-## Checks
+## Checks of this route
 
-- `gltf-tests.mjs` (core and cli suites): every catalog example and an elevator building against its own `.tscn`: each mesh node and `building_part`, a material per surface name, every box shape's world centre reproduced by its `UBX_` piece, every concave triangle inside a `UCX_` hull, `collision_pieces` on carriers, unique names, counter-clockwise winding matching the normals, lights, deterministic bytes, and CLI/web parity.
-- `gltf-engine-tests.mjs` (engine-assets suite): Godot's own glTF importer reads nine exports back and compares them with the `.tscn` (meshes, world bounds, triangles per surface name, front faces, lights, metadata).
-- Unreal Engine 5.8.4 (Windows), checked with `qa/unreal-import-check.py` on the Dirtscape smithy, the farmhouse, `shaped_walls`, `stair_ramp_north` and an elevator building: every `UBX_`/`UCX_` piece became simple collision with no stray actors, every slot was named, every mesh had `building_part`, lights became point lights, door hinges and the elevator car kept their own collision, and the axis table above was read off the actor transforms. `unreal/building_studio_setup.py` was run on the elevator building and `stair_ramp_north`: all 23 moving-part actors became Movable and nothing else, 16 slots were bound, lights were scaled. A render of the smithy shows flat shading. Unreal is not a test dependency; other engines and versions are unverified.
+- `gltf-tests.mjs` (core and cli suites): every catalog example and an elevator building against its own `.tscn`: each mesh node and `building_part`, a material per surface name, every box shape's world centre reproduced by its `UBX_` piece, every concave triangle inside a `UCX_` hull, `collision_pieces` on carriers, placeholder colours, collision layers and trigger boxes, unique names, counter-clockwise winding matching the normals, lights, deterministic bytes, and CLI/web parity.
+- `unreal-cli-tests.mjs` (core and cli suites, no Unreal needed): `unreal-check` usage and dependency errors, its default views, the game layer's `unreal` block and `groups` rules, the server's Unreal endpoints and the web **Render in Unreal** request.
+- `gltf-engine-tests.mjs` (engine-assets suite): Godot's own glTF importer reads nine exports back and compares them with the `.tscn`.
+- `unreal-engine-tests.mjs` (engine-unreal suite, `UNREAL_BIN`): `unreal-check` passes four buildings (including the elevator probes) and fails a collision-less one; the setup script applies a full `unreal` block and adds nothing on a second run; `unreal-check --render` writes every view. `release-check` runs it as the `engine-unreal` gate (`--unreal-engine auto|required|skip`, `--unreal PATH`).
+- Checked on Unreal Engine 5.8.4 on Windows; other engines and Unreal versions are unverified.

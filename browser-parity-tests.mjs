@@ -1,6 +1,6 @@
-// Optional real-browser check of web controls (route check, Godot render,
+// Optional real-browser check of web controls (route check, Godot and Unreal render,
 // crenellation, split wall, stair guard). Needs Playwright with Chromium; Godot rendering also
-// needs GODOT_BIN and a display route (DISPLAY or xvfb-run) for the server.
+// needs GODOT_BIN and a display route (DISPLAY or xvfb-run) for the server, Unreal rendering UNREAL_BIN.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -41,6 +41,19 @@ try{
       await page.screenshot({path:path.join(shots,`godot-render-panel-${width}.png`)});
       console.log(`PASS browser Godot render: ${count} images in the gallery`);
     }else if(width===1440)console.log(`SKIP browser Godot render: ${cap.godotRender.reason}`);
+    // Unreal render (if the server has UNREAL_BIN): the same views from the .glb export.
+    if(cap.unrealRender?.available&&width===1440){
+      const before=await page.locator('#godot-render-results img').count();
+      await page.locator('#unreal-render-btn').scrollIntoViewIfNeeded();
+      await page.locator('#unreal-render-btn').click();
+      await page.waitForFunction(()=>/rendered by Unreal Engine|Unreal render failed/.test(document.querySelector('#godot-render-status').textContent),null,{timeout:1500000});
+      assert.match(await page.locator('#godot-render-status').textContent(),/views rendered by Unreal Engine/);
+      const count=await page.locator('#godot-render-results img').count();
+      assert.ok(count>0&&(before===0||count===before),`${count} Unreal images (Godot gave ${before} for the same views)`);
+      assert.ok(await page.locator('#godot-render-results img').first().evaluate(img=>img.complete&&img.naturalWidth===1280),'Unreal images decode at 1280 px');
+      await page.screenshot({path:path.join(shots,`unreal-render-panel-${width}.png`)});
+      console.log(`PASS browser Unreal render: ${count} images in the gallery`);
+    }else if(width===1440)console.log(`SKIP browser Unreal render: ${cap.unrealRender?.reason}`);
     assert.deepEqual(errors,[]);
     const noHorizontalScroll=await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+1);
     console.log(`PASS browser ${width}px: route warnings with Show floor, plan overlay screenshot, no page errors${noHorizontalScroll?'':' (page scrolls horizontally)'}`);

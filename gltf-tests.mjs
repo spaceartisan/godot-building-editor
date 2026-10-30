@@ -140,8 +140,19 @@ console.log(`PASS glTF export: ${totals.buildings} buildings (${totals.doors} do
   for(const [a,b,c] of h.triangles){const p=[a,b,c].map(i=>h.points[i]),n=[0,1,2].map(k=>{const e1=p[1].map((v,j)=>v-p[0][j]),e2=p[2].map((v,j)=>v-p[0][j]);return [e1[1]*e2[2]-e1[2]*e2[1],e1[2]*e2[0]-e1[0]*e2[2],e1[0]*e2[1]-e1[1]*e2[0]][k];});
     const toCentre=[.5-p[0][0],.5-p[0][1],.5-p[0][2]];assert.ok(n[0]*toCentre[0]+n[1]*toCentre[1]+n[2]*toCentre[2]<0,'hull faces point outward');}
   assert.ok(!h.triangles.flat().includes(8),'an interior point is not a hull vertex');
-  assert.throws(()=>exportGltfFiles(prepareDocument(JSON.parse(fs.readFileSync(path.join(root,'examples/farmhouse.building.json'),'utf8'))).building,{placeholderMaterials:true}),/Placeholder colours/);
-  console.log('PASS convex hulls point outward and skip interior points; Godot-only options are refused');
+  // --placeholders: the Godot placeholder colours become the glTF material colours.
+  const farm=prepareDocument(JSON.parse(fs.readFileSync(path.join(root,'examples/farmhouse.building.json'),'utf8'))).building;
+  const plain=readGlb(exportGltfFiles(farm,{}).glb).json,coloured=readGlb(exportGltfFiles(farm,{placeholderMaterials:true}).glb).json;
+  const colour=(j,name)=>j.materials.find(m=>m.name===name).pbrMetallicRoughness.baseColorFactor;
+  assert.deepEqual(colour(plain,'OutsideFaces'),[.8,.8,.8,1]);assert.deepEqual(colour(coloured,'OutsideFaces').map(v=>+v.toFixed(2)),[.55,.5,.4,1],'placeholder colour of exterior walls');
+  assert.deepEqual(coloured.materials.map(m=>m.name),plain.materials.map(m=>m.name),'same slots with or without colours');
+  // Collision layer and mask on carriers; GET PROBED door trigger boxes on their Area3D nodes.
+  const gp=readGlb(exportGltfFiles(farm,{profile:'get_probed'}).glb).json,godot=exportGodotFiles(farm,{profile:'get_probed'});
+  const leaf=gp.nodes.find(n=>n.name==='DoorMesh');assert.deepEqual([leaf.extras.collision_layer,leaf.extras.collision_mask],[4,2],'door leaf keeps the profile door layer and mask');
+  const triggers=gp.nodes.filter(n=>n.extras?.godot_type==='Area3D');assert.equal(triggers.length,godot.doors.filter(d=>/InteractionArea/.test(d.tscn)).length);
+  for(const n of triggers){assert.equal(n.extras.trigger_size.length,3);assert.equal(n.extras.collision_layer,4);}
+  assert.equal(readGlb(exportGltfFiles(farm,{profile:'get_probed',collision:false}).glb).json.nodes.some(n=>n.extras?.trigger_size),false,'no trigger boxes without collision');
+  console.log('PASS convex hulls point outward and skip interior points; placeholder colours, collision layers and GET PROBED trigger boxes carry over');
 }
 
 // CLI and web editor produce the same bytes as the shared exporter.
@@ -160,8 +171,8 @@ try{
   out=run(['package',input,path.join(root,'examples/barn_v2.building.json'),'--format','glb','--include-json','--out','p.zip']);
   assert.deepEqual(out.generated,['farmhouse/farmhouse.glb','farmhouse/farmhouse.building.json','barn_v2/barn_v2.glb','barn_v2/barn_v2.building.json']);
   assert.ok(fs.readFileSync(path.join(temp,'p.zip')).includes(Buffer.from(expected)),'package carries the same glb');
-  assert.match(run(['export',input,'--format','glb','--game-layer','x.json','--out','c'],2).error,/cannot be combined with --format glb/);
-  assert.match(run(['export',input,'--format','glb','--placeholders','--out','c'],2).error,/--placeholders applies to Godot scenes/);
+  assert.match(run(['export',input,'--format','glb','--game-layer','x.json','--out','c'],2).error,/building_studio_setup.py/);
+  run(['export',input,'--format','glb','--placeholders','--out','e']);assert.deepEqual(new Uint8Array(fs.readFileSync(path.join(temp,'e','farmhouse.glb'))),exportGltfFiles(building,{collision:true,markers:true,placeholderMaterials:true}).glb,'--placeholders with glb');
   assert.match(run(['export',input,'--format','fbx','--out','c'],2).error,/Unknown --format/);
   assert.equal(fs.existsSync(path.join(temp,'c')),false,'refused exports write nothing');
   const tscn=exportGodotFiles(building,{collision:true,markers:true});
@@ -174,5 +185,5 @@ try{
   assert.equal(blobs.length,1);assert.equal(names[0],'farmhouse.glb');assert.equal(blobs[0].type,'model/gltf-binary');
   assert.deepEqual(new Uint8Array(await blobs[0].arrayBuffer()),exportGltfFiles(e.snapshot(),{collision:true,markers:true,shareDoorScenes:false}).glb,'web Export .glb equals the CLI');
   assert.match($('#status-text').textContent,/glTF exported \(farmhouse\.glb\)/);
-  console.log('PASS CLI export/package --format glb (replace, batch, include-json, refused Godot-only options) and web Export .glb write the same bytes');
+  console.log('PASS CLI export/package --format glb (replace, batch, include-json, placeholders, game layer pointed to Unreal) and web Export .glb write the same bytes');
 }finally{fs.rmSync(temp,{recursive:true,force:true});}

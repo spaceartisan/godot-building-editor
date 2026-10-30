@@ -25,7 +25,9 @@ try{
     nodeMaterials:[{match:'*FloorSlab_Kitchen',surface:'TopFaces',material:'res://materials/quarry.tres'},{match:'*SideAFaces_Kitchen',surface:'SideAFaces',material:'res://materials/quarry.tres'},{match:'*SideBFaces_Kitchen',surface:'SideBFaces',material:'res://materials/quarry.tres'},{match:'*Roof/*',material:'res://materials/door.tres'}],
     layers:[{match:'*ExteriorWalls/OutsideFaces',layers:2},{match:'*',layers:4,in:'building'},{match:'*',layers:6,in:'doors'}],
     scripts:{building:'res://scripts/building.gd',door:'res://scripts/door.gd'},
-    doorChildren:[{name:'UVResidue',scene:'res://scenes/receiver.tscn'}]}));
+    doorChildren:[{name:'UVResidue',scene:'res://scenes/receiver.tscn'}],
+    groups:[{part:'roof',groups:['roofs','weather']},{match:'Floor_01/Collision/Window_*',groups:['breakable']}],
+    unreal:{materials:{OutsideFaces:'/Game/M/M_Siding'},tags:[{part:'roof',tags:['roofs']}]}}));
   run(['export',path.join(root,'examples/farmhouse.building.json'),'--out',path.join(temp,'project','building'),'--game-layer',path.join(temp,'layer.json')]);
   const scene=fs.readdirSync(path.join(temp,'project','building')).find(n=>n.endsWith('.tscn'));
   // A diner split by room (slabsByRoom): only the kitchen floor gets quarry tile.
@@ -63,6 +65,13 @@ func _initialize() -> void:
 	var roofs := building.find_children("*", "MeshInstance3D", true, false).filter(func(n): return str(n.get_parent().name) == "Roof")
 	report["roof_nodes"] = roofs.size()
 	report["roof_nodes_with_material"] = roofs.filter(func(n): return n.material_override != null and n.material_override.resource_path == "res://materials/door.tres").size()
+	var roof_parts := roofs.filter(func(n): return n.get_meta("building_part", "") == "roof")
+	report["roof_parts"] = roof_parts.size()
+	report["roofs_in_group"] = roof_parts.filter(func(n): return n.is_in_group("roofs") and n.is_in_group("weather")).size()
+	report["ridges_in_group"] = roofs.filter(func(n): return n.get_meta("building_part", "") == "ridge" and n.is_in_group("roofs")).size()
+	var windows := building.find_children("Window_*_Collision", "CollisionShape3D", true, false)
+	report["windows"] = windows.size()
+	report["windows_breakable_and_exported_group"] = windows.filter(func(n): return n.is_in_group("breakable") and n.get_groups().size() >= 2).size()
 	diner.free()
 	print("GAME_LAYER " + JSON.stringify(report))
 	building.free()
@@ -83,5 +92,7 @@ func _initialize() -> void:
   assert.equal(report.kitchen_floor,'res://materials/quarry.tres','per-room material via nodeMaterials');assert.equal(report.dining_floor_empty,true);
   assert.ok(report.kitchen_walls>=1);assert.equal(report.kitchen_walls_tiled,report.kitchen_walls,'kitchen wall faces take their own finish');
   assert.ok(report.roof_nodes>=4);assert.equal(report.roof_nodes_with_material,report.roof_nodes,'whole-node rules reach every roof part, including plain boxes');
-  console.log(`PASS game layer in Godot: materials by surface, render layers, building/door scripts and door children on ${report.doors_with_script} doors`);
+  assert.ok(report.roof_parts>0);assert.equal(report.roofs_in_group,report.roof_parts,'groups rules add Godot groups by part');assert.equal(report.ridges_in_group,0,'other parts are untouched');
+  assert.ok(report.windows>0);assert.equal(report.windows_breakable_and_exported_group,report.windows,'groups rules by path keep the exported groups');
+  console.log(`PASS game layer in Godot: materials by surface, render layers, groups, building/door scripts and door children on ${report.doors_with_script} doors (its unreal block is ignored by the Godot export)`);
 }finally{fs.rmSync(temp,{recursive:true,force:true});}

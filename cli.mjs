@@ -11,6 +11,7 @@ import { createCheckReport } from './src/check-report.js';
 import { parseJsonText } from './src/document.js';
 import { exportGodotFiles, makeStoredZip, exteriorWallOutsideSign, isExteriorWall } from './src/exporter.js';
 import { exportGltfFiles } from './src/gltf-export.js';
+import { resolveUnreal, prepareGlbDirectory, runUnrealChecks, renderUnrealScenes, UnrealError } from './unreal-check.mjs';
 import { profileWallState } from './src/wall-profile-geometry.js';
 import { prepareAssetDirectory, AssetCheckError } from './asset-check.mjs';
 import { renderPreparedScenes, parseViews, RenderError } from './godot-render.mjs';
@@ -32,8 +33,8 @@ function profileInward(building,floor){
   const i=building.floors.indexOf(floor),view=floorView(building,i);
   return (view.walls||[]).filter(w=>w.wallTypeId).map(w=>{const n=profileWallState(view,w,exteriorWallOutsideSign,isExteriorWall).n;return {wallId:w.id,inwardSide:w.inwardSide||'auto',inward:{x:Math.round(n.x*1e6)/1e6+0,z:Math.round(n.z*1e6)/1e6+0}};});
 }
-const specs={new:['out','name','ops','dry-run','warnings-as-errors','replace'],edit:['ops','out','dry-run','warnings-as-errors','replace'],validate:['warnings-as-errors','out','reachability','from'],inspect:['warnings-as-errors','entities','reachability','from'],export:['out','format','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors','replace'],package:['out','format','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors','include-json','replace'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision','render','views','out','surface-colors'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof','godot']};
-const values=new Set(['format','from','name','views','ops','out','profile','suite','godot','game-layer','assets','yaw','pitch','distance','floor','view','compare','overlay','roof','canvas','engine','timeout']);
+const specs={new:['out','name','ops','dry-run','warnings-as-errors','replace'],edit:['ops','out','dry-run','warnings-as-errors','replace'],validate:['warnings-as-errors','out','reachability','from'],inspect:['warnings-as-errors','entities','reachability','from'],export:['out','format','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors','replace'],package:['out','format','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors','include-json','replace'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','unreal','unreal-engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision','render','views','out','surface-colors'],'unreal-check':['unreal','assets','require-collision','render','views','out','surface-colors'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof','godot']};
+const values=new Set(['unreal-engine','unreal','format','from','name','views','ops','out','profile','suite','godot','game-layer','assets','yaw','pitch','distance','floor','view','compare','overlay','roof','canvas','engine','timeout']);
 class CliError extends Error{constructor(message,code=2){super(message);this.code=code;}}
 const help=`Building Studio ${version}
 Usage: node cli.mjs COMMAND [FILES...] [OPTIONS]
@@ -60,6 +61,10 @@ Usage: node cli.mjs COMMAND [FILES...] [OPTIONS]
   examples [--check]    List catalog; optionally verify its expected diagnostics
   test [--suite NAME]    core (default), geometry, editor, cli, transactions,
                         preview, preview-render, assets, engine-assets, infrastructure, release
+  unreal-check --assets DIR [--unreal PATH]  Check exported .glb files in Unreal
+                        Engine 5 (or set UNREAL_BIN): import, setup, slots,
+                        collision, metadata, lights, elevator probes
+    --require-collision --render --out NEW_DIR [--views FILE] [--surface-colors]
   godot-check [--godot PATH] Run bundled scene/physics checks; or set GODOT_BIN
     --assets DIR        Check new exported scenes (resource checks, plus elevator probes)
     --allow-materials --require-collision   Optional asset-set expectations
@@ -121,8 +126,7 @@ function parse(args){
   if(options.replace&&options['dry-run'])throw new CliError('--replace writes a file; it cannot be combined with --dry-run');
   if(command==='preview'&&files.length!==1)throw new CliError('preview accepts exactly one input');
   if(options.format&&!['tscn','glb'].includes(options.format))throw new CliError('Unknown --format; use tscn or glb');
-  if(options.format==='glb'&&options['game-layer'])throw new CliError('--game-layer applies to Godot scenes; it cannot be combined with --format glb');
-  if(options.format==='glb'&&options.placeholders)throw new CliError('--placeholders applies to Godot scenes; --format glb names one material per surface instead');
+  if(options.format==='glb'&&options['game-layer'])throw new CliError('--game-layer is applied in Godot at export; for Unreal, run unreal/building_studio_setup.py with it after import (see GLTF.md)');
   if(options['game-layer']){
     let text;try{text=fs.readFileSync(path.resolve(options['game-layer']),'utf8');}catch(e){throw new CliError(`--game-layer: ${e.message}`,2);}
     try{options.gameLayer=parseGameLayer(text);}catch(e){throw new CliError(`--game-layer: ${e.message}`,2);}
@@ -136,13 +140,19 @@ function parse(args){
     if(!!options.out===!!options['dry-run'])throw new CliError('edit requires exactly one of --dry-run or --out');
   }
   if(command==='release-check'){
-    for(const key of ['canvas','engine'])if(options[key]&&!['auto','required','skip'].includes(options[key]))throw new CliError(`--${key} must be auto, required or skip`);
+    for(const key of ['canvas','engine','unreal-engine'])if(options[key]&&!['auto','required','skip'].includes(options[key]))throw new CliError(`--${key} must be auto, required or skip`);
+    if(options.unreal&&options['unreal-engine']==='skip')throw new CliError('--unreal cannot be combined with --unreal-engine skip');
     if(options.timeout!==undefined&&(!/^\d+$/.test(options.timeout)||Number(options.timeout)<1||Number(options.timeout)>600))throw new CliError('--timeout must be an integer from 1 through 600 seconds');
     if(options.godot&&options.engine==='skip')throw new CliError('--godot cannot be combined with --engine skip');
   }
   if(options.profile&&!['generic','get_probed'].includes(options.profile))throw new CliError('Unknown export profile');
   if(options.suite&&!Object.hasOwn(suites,options.suite))throw new CliError(`Unknown test suite: ${options.suite}`);
   if(command==='godot-check'&&(options['allow-materials']||options['require-collision'])&&!options.assets)throw new CliError('--allow-materials and --require-collision require --assets');
+  if(command==='unreal-check'){
+    if(!options.assets)throw new CliError('unreal-check requires --assets DIR (a folder of .glb files from export --format glb)');
+    if((options.views||options.out||options['surface-colors'])&&!options.render)throw new CliError('--views, --out and --surface-colors require --render');
+    if(options.render&&!options.out)throw new CliError('--render requires --out');
+  }
   if(command==='godot-check'&&(options.render||options.views||options.out||options['surface-colors'])){
     if(!options.render)throw new CliError('--views, --out and --surface-colors require --render');
     if(!options.assets||!options.out)throw new CliError('--render requires --assets and --out');
@@ -328,7 +338,7 @@ async function execute({command,options,files}){
     const interrupt=()=>controller.abort(),terminate=()=>{interruptCode=143;controller.abort();};
     process.on('SIGINT',interrupt);process.on('SIGTERM',terminate);
     try{
-      const result=await runReleaseCheck({root,canvas:options.canvas,engine:options.engine,godot:options.godot,timeoutSeconds:options.timeout===undefined?180:Number(options.timeout),signal:controller.signal});
+      const result=await runReleaseCheck({root,canvas:options.canvas,engine:options.engine,godot:options.godot,unrealEngine:options['unreal-engine'],unreal:options.unreal,timeoutSeconds:options.timeout===undefined?180:Number(options.timeout),signal:controller.signal});
       if(controller.signal.aborted)result.exitCode=interruptCode;
       if(out){result.output=out;writeNewFile(out,JSON.stringify(result,null,2)+'\n');}
       return result;
@@ -382,6 +392,26 @@ async function execute({command,options,files}){
   if(command==='test'){
     const results=suites[options.suite||'core'].map(script=>runScript(script));
     return {command,ok:results.every(r=>r.ok),suite:options.suite||'core',results,exitCode:results.every(r=>r.ok)?0:1};
+  }
+  if(command==='unreal-check'){
+    // The Unreal counterpart of godot-check --assets (and --render): see unreal-check.mjs.
+    try{
+      const prepared=prepareGlbDirectory(options.assets),renderOut=options.render?destination(options.out):null;
+      const views=options.views?parseViews(load(path.resolve(options.views)).source):null;
+      const unreal=resolveUnreal(options.unreal||process.env.UNREAL_BIN);
+      const report=runUnrealChecks({unreal,prepared});
+      const sum=k=>report.files.reduce((n,f)=>n+(f[k]||0),0);
+      const checks={files:report.files.length,meshes:sum('meshes'),collisionPieces:sum('collisionPieces'),lights:sum('lights'),elevators:sum('elevators'),elevatorStops:sum('stops'),physicsRays:sum('rays'),failures:sum('failures')||report.files.reduce((n,f)=>n+(f.failures?.length||0),0)};
+      const failures=report.files.flatMap(f=>(f.failures||[]).map(m=>`${f.file}: ${m}`));checks.failures=failures.length;
+      if(options['require-collision']&&!checks.collisionPieces)failures.push('No collision pieces in the asset set (--require-collision)');
+      const ok=failures.length===0;let render=null;
+      if(renderOut&&ok){
+        const rendered=renderUnrealScenes({unreal,prepared,views,colorMode:options['surface-colors']?'surfaces':'materials'});
+        writeDirectory(renderOut,[...rendered.entries,{name:'renders.json',data:JSON.stringify({engine:`Unreal Engine ${unreal.version}`,colorMode:rendered.colorMode,views:rendered.manifest,note:'Buildings imported with Interchange and set up with building_studio_setup.py, no game layer; only a sun, sky light, atmosphere and a camera headlamp were added.'},null,2)+'\n'}]);
+        render={output:renderOut,images:rendered.entries.length,files:rendered.manifest.map(v=>v.file)};
+      }
+      return {command,ok,unrealVersion:unreal.version,unrealEngine:report.engine,unrealChecks:checks,failures,...(render?{render}:{}),preflight:{root:prepared.root,files:prepared.files.length,bytes:prepared.bytes},exitCode:ok?0:1};
+    }catch(e){if(e instanceof UnrealError)throw new CliError(e.message,e.code);throw e;}
   }
   if(command==='godot-check'){
     const prepared=options.assets?prepareAssetDirectory(options.assets):null;
@@ -533,6 +563,8 @@ function human(result,verbose){
     if(verbose||!r.ok){if(r.stdout)lines.push(r.stdout.trimEnd());if(r.stderr)lines.push(r.stderr.trimEnd());if(r.error)lines.push(r.error);}
   }
   if(result.engineVersion)lines.push('Godot '+result.engineVersion);
+  if(result.unrealVersion)lines.push(`Unreal Engine ${result.unrealVersion}`);
+  if(result.unrealChecks){const c=result.unrealChecks;lines.push(`${c.files} buildings · ${c.meshes} meshes · ${c.collisionPieces} collision pieces · ${c.lights} lights · ${c.elevators} elevators / ${c.elevatorStops} stops · ${c.physicsRays} physics rays · ${c.failures} failures`);for(const f of result.failures||[])lines.push('FAIL '+f);}
   if(result.preview?.renderer==='godot'){
     const p=result.preview;lines.push(`Preview: Godot aerial render · ${p.engineRenderer||'renderer unknown'}${p.virtualDisplay?' · virtual display':''}`,p.note);
   }else if(result.preview){

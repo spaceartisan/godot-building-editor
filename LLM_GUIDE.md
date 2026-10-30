@@ -34,7 +34,7 @@ Know the scope before planning. The tool makes the building shell; materials, na
 | Move a selection | `group.move` (`items`, `delta`, `connected`) | Same guards as the web Move selection |
 | Inspect appearance | Web 3D preview; CLI `preview` with floor/roof views, comparisons and overlays | Optional canvas dependency for PNGs; no CLI plan/collision-overlay mode |
 | Generate Godot assets | `export FILE --out NEW_DIR`, `package FILE --out NEW.zip`; optional `--game-layer FILE` ([GAME_LAYER.md](GAME_LAYER.md)) | Retain relative door dependencies; materials empty unless a game layer assigns them |
-| Assets for Unreal and other engines | `export FILE --format glb --out NEW_DIR` (web **Export .glb**; [GLTF.md](GLTF.md)) | One `.glb` per building from the same scenes: materials named after surfaces, Unreal `UBX_`/`UCX_` collision, metadata as extras; no game layer |
+| Assets for Unreal Engine 5 | `export FILE --format glb --out NEW_DIR` (web **Export .glb**), then `unreal/building_studio_setup.py` in Unreal; check with `unreal-check --assets DIR` ([GLTF.md](GLTF.md)) | One `.glb` per building from the same scenes; the game layer's `unreal` block is applied in Unreal, not at export |
 | Verify exported assets | `godot-check --assets DIR --godot PATH`; add `--render --out NEW_DIR` for Godot screenshots | Resource checks, not character traversal certification; rendering needs a display or xvfb-run |
 
 Transactions support `building.update`, `floor.update/add-top/remove-top`, `wall.add/update/move-endpoint/crenellate/split/remove`, `room.add` (a rectangle of four walls, like the web Room tool), `stair.guard`, `floor.insert/duplicate/move/remove`, `group.move`, and `railing`, `light`, `marker`, `opening`, `roof`, `region`, `slab`, `stair`, `platform`, `manualFloor`, `manualCeiling`, `wallType`, `openingShape` add/update/remove. A recipe's top-level `points` names coordinates once for reuse in `a`/`b`/`at`/`point`/`polygon` (see TRANSACTIONS.md). Do not extrapolate new operation names from this pattern. Read the operation table for supported `value` fields and removal flags.
@@ -224,6 +224,7 @@ Save JSON reports a download request or a synchronous failure without changing t
 | DOM editor suites | Actual handler behavior, history, modeled focus intent | Real CSS, responsive sizing, browser focus behavior |
 | Playwright browser suite | The executed live interactions and viewport checks | Engine physics |
 | `export --format glb` and its tests | The `.glb` holds the `.tscn` geometry, collision, metadata and lights (`gltf-tests.mjs`), Godot's importer reads it back (`gltf-engine-tests.mjs`) | How a particular Unreal or other engine project imports it; run `qa/unreal-import-check.py` there ([GLTF.md](GLTF.md)) |
+| `unreal-check --assets` (`--render`) | The `.glb` imported into Unreal Engine 5 with named slots, metadata, carrier collision, lights, Movable moving parts, triggers and elevator probes (and renders) | Character traversal; game-specific Unreal settings beyond the game layer's `unreal` block |
 | `godot-check --assets` | Supported scene loading/resources and configured checks; for exported elevators, physics probes of the car at every stop and the landing and car doors | Character traversal; its only physics rays are the elevator probes |
 | Bundled Godot/engine suites | Their specific generated scenes and authored probes | Arbitrary building or character clearance |
 | `release-check` | Reported gates on an isolated source snapshot | Skipped dependencies or untested target engines/platforms |
@@ -245,7 +246,7 @@ Release gates were run on Linux (Node 22.22.2, Godot 4.5.1) and on Windows 10 (N
 | Web controls, picking and history | `src/main.js`, `src/selection.js`, `src/history.js`, `index.html`, `src/style.css` |
 | Shapes and junctions | `src/wall-types.js`, `src/wall-profile-geometry.js`, `src/profile-junctions.js`, `src/opening-shapes.js` |
 | Roofs/footprints | `src/roof-geometry.js`, `src/roof-diagnostics.js`, `src/roof-wall-diagnostics.js`, `src/polygon-areas.js`, `src/regions.js` |
-| glTF export (reads the exporter's scenes) | `src/gltf-export.js`, `gltf-tests.mjs`, `qa/validate-gltf.gd`, `qa/unreal-import-check.py`, `unreal/building_studio_setup.py` |
+| glTF export (reads the exporter's scenes) | `src/gltf-export.js`, `gltf-tests.mjs`, `qa/validate-gltf.gd`, `unreal/building_studio_setup.py`, `unreal-check.mjs`, `qa/validate-unreal.py`, `qa/render-unreal.py`, `unreal-cli-tests.mjs`, `unreal-engine-tests.mjs` |
 | Scene/preview generation | `src/exporter.js`, `src/preview-web.js`, `src/preview-review.js`, `src/preview-overlays.js` |
 | Elevators (rules, layout shared by export, preview, routes and web) | `src/elevators.js`, `qa/validate-scenes.gd` (`godot-check --assets` probe), `qa/validate-elevators.gd` |
 | Tests and packaging evidence | `test-suites.mjs`, `release-check.mjs`, `qa/editor-harness.mjs`, `qa/recipe-workflows.mjs`, `browser-tests.mjs` |

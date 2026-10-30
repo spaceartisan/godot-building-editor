@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { renderSceneFiles, godotRenderAvailability, RenderError } from './godot-render.mjs';
+import { renderGlbBytes, unrealRenderAvailability, resolveUnreal, UnrealError } from './unreal-check.mjs';
 const root=path.dirname(fileURLToPath(import.meta.url));
 const portText=process.env.PORT??'5173';
 if(!/^\d+$/.test(portText)||Number(portText)>65535){
@@ -12,7 +13,7 @@ if(!/^\d+$/.test(portText)||Number(portText)>65535){
 const port=Number(portText);
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.tscn':'text/plain; charset=utf-8'};
 const MAX_BODY=64*1024*1024;
-let availability=null,rendering=false;
+let availability=null,rendering=false,unrealAvailability=null,unrealRendering=false;
 const json=(res,status,body)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify(body));};
 
 // Godot rendering spawns a process, so API calls must come from this editor:
@@ -26,7 +27,25 @@ async function api(req,res,rel){
   if(!trusted(req))return json(res,403,{ok:false,error:'Forbidden: editor API requests must come from the local editor page.'});
   if(rel==='/api/capabilities'&&req.method==='GET'){
     availability??=godotRenderAvailability(process.env.GODOT_BIN);
-    return json(res,200,{ok:true,godotRender:availability});
+    unrealAvailability??=unrealRenderAvailability(process.env.UNREAL_BIN);
+    return json(res,200,{ok:true,godotRender:availability,unrealRender:unrealAvailability});
+  }
+  // Render in Unreal: the web editor's .glb, imported and rendered as unreal-check --render does.
+  if(rel==='/api/unreal-render'&&req.method==='POST'){
+    unrealAvailability??=unrealRenderAvailability(process.env.UNREAL_BIN);
+    if(!unrealAvailability.available)return json(res,503,{ok:false,error:unrealAvailability.reason});
+    if(unrealRendering)return json(res,409,{ok:false,error:'An Unreal render is already running; try again when it finishes.'});
+    if(!/^application\/json\b/.test(req.headers['content-type']||''))return json(res,415,{ok:false,error:'Expected application/json'});
+    unrealRendering=true;
+    try{
+      const chunks=[];let size=0;
+      for await(const chunk of req){size+=chunk.length;if(size>MAX_BODY)return json(res,413,{ok:false,error:'Request too large (64 MiB limit)'});chunks.push(chunk);}
+      let body;try{body=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{return json(res,400,{ok:false,error:'Invalid JSON'});}
+      if(typeof body?.glb!=='string'||!body.glb)return json(res,400,{ok:false,error:'Expected a base64 glb'});
+      const result=renderGlbBytes({unreal:resolveUnreal(process.env.UNREAL_BIN),glb:Buffer.from(body.glb,'base64'),name:body.name,extraViews:body.extraViews??[],colorMode:body.colorMode??'materials'});
+      return json(res,200,{ok:true,engineVersion:unrealAvailability.engineVersion,colorMode:result.colorMode,views:result.manifest,images:result.entries.map(e=>({file:e.name,png:e.data.toString('base64')}))});
+    }catch(e){return json(res,e instanceof UnrealError&&e.code===2?400:500,{ok:false,error:e.message});}
+    finally{unrealRendering=false;}
   }
   if(rel==='/api/godot-render'&&req.method==='POST'){
     availability??=godotRenderAvailability(process.env.GODOT_BIN);

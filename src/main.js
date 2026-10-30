@@ -1112,6 +1112,36 @@ async function renderInGodot(){
   report(`${body.images.length} views rendered by Godot ${body.engineVersion}. Scenes are unmodified: empty materials render grey; only camera, sky, sun, ambient light and a camera headlamp were added (window glass renders clear).`);
 }
 $('#godot-render-btn').addEventListener('click',()=>renderInGodot());
+// Render in Unreal: the .glb export (as Export .glb writes it), rendered by
+// the local server as unreal-check --render does, with the same views.
+async function renderInUnreal(){
+  const button=$('#unreal-render-btn'),status=$('#godot-render-status'),report=text=>{status.textContent=text;setStatus(text);};
+  const result=showValidation();
+  if(result.errors.length){revealValidation();report(`Render blocked: ${result.errors[0].message}`);return;}
+  const {gameLayer:_,...options}=exportOptionsFromUi(),f=exportGltfFiles(building,options);
+  const extraViews=[];
+  if($('#render-current-view-toggle').checked){const cam=preview.camera();extraViews.push({name:'current-view',eye:[cam.pos.x,cam.pos.y,cam.pos.z],look:[cam.pos.x+cam.forward.x*10,cam.pos.y+cam.forward.y*10,cam.pos.z+cam.forward.z*10],fov:65});}
+  let binary='';for(let i=0;i<f.glb.length;i+=0x8000)binary+=String.fromCharCode(...f.glb.subarray(i,i+0x8000));
+  button.disabled=true;report('Rendering the current .glb export in Unreal… (the first render compiles shaders and can take several minutes)');
+  let response,body;
+  try{
+    response=await fetch('/api/unreal-render',{method:'POST',headers:{'Content-Type':'application/json','X-Building-Editor':'1'},body:JSON.stringify({glb:btoa(binary),name:f.base,extraViews,colorMode:$('#render-surface-colors-toggle').checked?'surfaces':'materials'})});
+    body=await response.json();
+  }catch{
+    report('Unreal rendering needs the local editor server: start it with UNREAL_BIN=/path/to/UnrealEditor-Cmd node server.mjs and open the editor from that address.');return;
+  }finally{button.disabled=false;}
+  if(!response.ok||!body?.ok){report(`Unreal render failed: ${body?.error||`HTTP ${response.status}`}`);return;}
+  lastRenders={base:`${f.base}_unreal`,colorMode:body.colorMode,engineVersion:`Unreal Engine ${body.engineVersion}`,renderer:'Unreal Engine',views:body.views,images:body.images};
+  const gallery=$('#godot-render-results');gallery.replaceChildren();
+  for(const image of body.images){
+    const figure=document.createElement('figure'),img=document.createElement('img'),caption=document.createElement('figcaption');
+    img.src=`data:image/png;base64,${image.png}`;img.alt=`Unreal render: ${image.file}`;caption.textContent=image.file.replace(/.png$/,'');
+    figure.append(img,caption);gallery.append(figure);
+  }
+  $('#download-renders-btn').hidden=false;
+  report(`${body.images.length} views rendered by Unreal Engine ${body.engineVersion} from the .glb export, imported and set up with building_studio_setup.py (no game layer); only a sun, sky light, atmosphere and a camera headlamp were added.`);
+}
+$('#unreal-render-btn').addEventListener('click',()=>renderInUnreal());
 $('#download-renders-btn').addEventListener('click',()=>{
   if(!lastRenders)return;
   try{
@@ -1137,10 +1167,10 @@ $('#export-glb-btn').addEventListener('click',()=>{
   try{
     const result=showValidation();
     if(result.errors.length){revealValidation();setStatus(`Export blocked: ${result.errors[0].message}`);return;}
-    const {gameLayer:_,placeholderMaterials:__,...options}=exportOptionsFromUi(),f=exportGltfFiles(building,options);
+    const {gameLayer:_,...options}=exportOptionsFromUi(),f=exportGltfFiles(building,options);
     downloadBinary(f.glbName,new Blob([f.glb],{type:'model/gltf-binary'}));
     if(result.warnings.length)revealValidation();
-    setStatus(`glTF exported (${f.glbName}): ${f.stats.meshes} meshes, ${f.stats.boxCollision+f.stats.convexCollision+f.stats.concaveCollision} collision pieces, ${f.stats.lights} lights. ${result.warnings.length} authoring warnings; see Godot Export.${gameLayer?' The game layer applies to Godot exports only.':''}`);
+    setStatus(`glTF exported (${f.glbName}): ${f.stats.meshes} meshes, ${f.stats.boxCollision+f.stats.convexCollision+f.stats.concaveCollision} collision pieces, ${f.stats.lights} lights. ${result.warnings.length} authoring warnings; see Godot Export.${gameLayer?' Apply the game layer in Unreal with unreal/building_studio_setup.py (GLTF.md).':''}`);
   }catch(err){revealValidation();setStatus(`Export blocked: ${err.message}`);}
 });
 document.querySelectorAll('[data-view]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b===btn));cancelDrawing();const plan=btn.dataset.view==='plan';$('#plan-view').classList.toggle('active',plan);$('#preview-view').classList.toggle('active',!plan);if(!plan){preview.resize();preview.rebuild(building,activeFloorIndex);}}));

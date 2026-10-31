@@ -33,7 +33,7 @@ function profileInward(building,floor){
   const i=building.floors.indexOf(floor),view=floorView(building,i);
   return (view.walls||[]).filter(w=>w.wallTypeId).map(w=>{const n=profileWallState(view,w,exteriorWallOutsideSign,isExteriorWall).n;return {wallId:w.id,inwardSide:w.inwardSide||'auto',inward:{x:Math.round(n.x*1e6)/1e6+0,z:Math.round(n.z*1e6)/1e6+0}};});
 }
-const specs={new:['out','name','ops','dry-run','warnings-as-errors','replace'],edit:['ops','out','dry-run','warnings-as-errors','replace'],validate:['warnings-as-errors','out','reachability','from'],inspect:['warnings-as-errors','entities','reachability','from'],export:['out','format','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors','replace'],package:['out','format','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors','include-json','replace'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','unreal','unreal-engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision','render','views','out','surface-colors'],'unreal-check':['unreal','assets','require-collision','render','views','out','surface-colors'],'unreal-import':['unreal','project','content','level','location','yaw','replace','game-layer','light-scale'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof','godot']};
+const specs={new:['out','name','ops','dry-run','warnings-as-errors','replace'],edit:['ops','out','dry-run','warnings-as-errors','replace'],validate:['warnings-as-errors','out','reachability','from'],inspect:['warnings-as-errors','entities','reachability','from'],export:['out','format','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors','replace'],package:['out','format','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors','include-json','replace'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','unreal','unreal-engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision','render','views','out','surface-colors','replace'],'unreal-check':['unreal','assets','require-collision','render','views','out','surface-colors','replace'],'unreal-import':['unreal','project','content','level','location','yaw','replace','game-layer','light-scale'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof','godot']};
 const values=new Set(['project','content','level','location','yaw','light-scale','unreal-engine','unreal','format','from','name','views','ops','out','profile','suite','godot','game-layer','assets','yaw','pitch','distance','floor','view','compare','overlay','roof','canvas','engine','timeout']);
 class CliError extends Error{constructor(message,code=2){super(message);this.code=code;}}
 const help=`Building Studio ${version}
@@ -70,10 +70,11 @@ Usage: node cli.mjs COMMAND [FILES...] [OPTIONS]
                         Engine 5 (or set UNREAL_BIN): import, setup, slots,
                         collision, metadata, lights, elevator probes
     --require-collision --render --out NEW_DIR [--views FILE] [--surface-colors]
+                        [--replace: re-render into a previous render folder]
   godot-check [--godot PATH] Run bundled scene/physics checks; or set GODOT_BIN
     --assets DIR        Check new exported scenes (resource checks, plus elevator probes)
     --allow-materials --require-collision   Optional asset-set expectations
-    --render --out NEW_DIR [--views FILE]  Also render the checked scenes in
+    --render --out NEW_DIR [--views FILE] [--replace]  Also render the checked scenes in
                         Godot (Linux: DISPLAY or xvfb-run): exterior, aerial and
                         eye-level region views unless FILE lists views
     --surface-colors    With --render: colour surfaces by type (OutsideFaces
@@ -161,11 +162,11 @@ function parse(args){
   }
   if(command==='unreal-check'){
     if(!options.assets)throw new CliError('unreal-check requires --assets DIR (a folder of .glb files from export --format glb)');
-    if((options.views||options.out||options['surface-colors'])&&!options.render)throw new CliError('--views, --out and --surface-colors require --render');
+    if((options.views||options.out||options['surface-colors']||options.replace)&&!options.render)throw new CliError('--views, --out, --surface-colors and --replace require --render');
     if(options.render&&!options.out)throw new CliError('--render requires --out');
   }
-  if(command==='godot-check'&&(options.render||options.views||options.out||options['surface-colors'])){
-    if(!options.render)throw new CliError('--views, --out and --surface-colors require --render');
+  if(command==='godot-check'&&(options.render||options.views||options.out||options['surface-colors']||options.replace)){
+    if(!options.render)throw new CliError('--views, --out, --surface-colors and --replace require --render');
     if(!options.assets||!options.out)throw new CliError('--render requires --assets and --out');
   }
   return {command,options,files:[...new Set(files)]};
@@ -270,6 +271,17 @@ function replaceDirectory(out,entries){
   try{fs.renameSync(fresh,out);}catch(e){fs.renameSync(old,out);throw e;}
   fs.rmSync(old,{recursive:true,force:true});
 }
+// godot-check/unreal-check --render --out DIR --replace: only a previous render
+// folder (PNG images and renders.json, nothing else) can be replaced.
+function renderDestination(value,replace){
+  if(!replace)return destination(value);
+  const out=path.resolve(value);let stat;
+  try{stat=fs.lstatSync(out);}catch(e){if(e.code==='ENOENT')return out;throw e;}
+  const names=stat.isDirectory()?fs.readdirSync(out,{withFileTypes:true}):null;
+  if(!names||!names.some(e=>e.name==='renders.json')||names.some(e=>!e.isFile()||!/^(renders\.json|.+\.png)$/i.test(e.name)))throw new CliError(`--replace only replaces a previous render folder (PNG images and renders.json only): ${out}`,3);
+  return out;
+}
+function writeRenders(out,entries){if(fs.existsSync(out))replaceDirectory(out,entries);else writeDirectory(out,entries);}
 function replaceableOutput(value,inputs=[]){
   const out=path.resolve(value);let stat;
   try{stat=fs.lstatSync(out);}catch(e){if(e.code==='ENOENT')return out;throw e;}
@@ -416,7 +428,7 @@ async function execute({command,options,files}){
   if(command==='unreal-check'){
     // The Unreal counterpart of godot-check --assets (and --render): see unreal-check.mjs.
     try{
-      const prepared=prepareGlbDirectory(options.assets),renderOut=options.render?destination(options.out):null;
+      const prepared=prepareGlbDirectory(options.assets),renderOut=options.render?renderDestination(options.out,options.replace):null;
       const views=options.views?parseViews(load(path.resolve(options.views)).source):null;
       const unreal=resolveUnreal(options.unreal||process.env.UNREAL_BIN);
       const report=runUnrealChecks({unreal,prepared});
@@ -427,7 +439,7 @@ async function execute({command,options,files}){
       const ok=failures.length===0;let render=null;
       if(renderOut&&ok){
         const rendered=renderUnrealScenes({unreal,prepared,views,colorMode:options['surface-colors']?'surfaces':'materials'});
-        writeDirectory(renderOut,[...rendered.entries,{name:'renders.json',data:JSON.stringify({engine:`Unreal Engine ${unreal.version}`,colorMode:rendered.colorMode,views:rendered.manifest,note:'Buildings imported with Interchange and set up with building_studio_setup.py, no game layer; only a sun, sky light, atmosphere and a camera headlamp were added.'},null,2)+'\n'}]);
+        writeRenders(renderOut,[...rendered.entries,{name:'renders.json',data:JSON.stringify({engine:`Unreal Engine ${unreal.version}`,colorMode:rendered.colorMode,views:rendered.manifest,note:'Buildings imported with Interchange and set up with building_studio_setup.py, no game layer; only a sun, sky light, atmosphere and a camera headlamp were added.'},null,2)+'\n'}]);
         render={output:renderOut,images:rendered.entries.length,files:rendered.manifest.map(v=>v.file)};
       }
       return {command,ok,unrealVersion:unreal.version,unrealEngine:report.engine,unrealChecks:checks,failures,...(render?{render}:{}),preflight:{root:prepared.root,files:prepared.files.length,bytes:prepared.bytes},exitCode:ok?0:1};
@@ -435,7 +447,7 @@ async function execute({command,options,files}){
   }
   if(command==='godot-check'){
     const prepared=options.assets?prepareAssetDirectory(options.assets):null;
-    const renderOut=options.render?destination(options.out):null;
+    const renderOut=options.render?renderDestination(options.out,options.replace):null;
     const views=options.views?parseViews(load(path.resolve(options.views)).source):null;
     const executable=options.godot||process.env.GODOT_BIN;
     if(!executable)throw new CliError('Set GODOT_BIN or pass --godot /path/to/godot. No executable is downloaded automatically.',3);
@@ -453,7 +465,7 @@ async function execute({command,options,files}){
         const rendered=renderPreparedScenes({executable:executable.includes('/')||executable.includes('\\')?path.resolve(executable):executable,prepared,views,colorMode:options['surface-colors']?'surfaces':'materials'});
         const manifest={engineVersion,colorMode:rendered.colorMode,renderer:rendered.renderer,virtualDisplay:rendered.virtualDisplay,scenes:rendered.roots,views:rendered.manifest,
           note:'Scenes loaded unmodified (empty materials render as default grey); only camera, sky, sun, ambient light and a camera headlamp were added; exported Glass surfaces render with a clear material. Lighting in a game scene will differ.'};
-        writeDirectory(renderOut,[...rendered.entries,{name:'renders.json',data:JSON.stringify(manifest,null,2)+'\n'}]);
+        writeRenders(renderOut,[...rendered.entries,{name:'renders.json',data:JSON.stringify(manifest,null,2)+'\n'}]);
         render={output:renderOut,images:rendered.entries.length,renderer:rendered.renderer,virtualDisplay:rendered.virtualDisplay,files:rendered.manifest.map(v=>v.file)};
       }
       return {command,ok,engineVersion,checks,...(render?{render}:{}),mode:'assets',scope:'Exported asset resource checks only; no building-specific walking/headroom probes',preflight:{root:prepared.root,scenes:prepared.sceneCount,dependencies:prepared.dependencyCount,bytes:prepared.bytes},results:[result],exitCode:ok?0:1};

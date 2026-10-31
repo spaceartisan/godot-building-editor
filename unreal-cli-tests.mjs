@@ -26,6 +26,10 @@ try{
   assert.match(run(['unreal-check'],2).error,/requires --assets/);
   assert.match(run(['unreal-check','--assets','glb','--render'],2).error,/--render requires --out/);
   assert.match(run(['unreal-check','--assets','glb','--views','v.json'],2).error,/require --render/);
+  assert.match(run(['unreal-check','--assets','glb','--replace'],2).error,/require --render/);
+  assert.match(run(['unreal-check','--assets','glb','--render','--out','glb','--replace'],3).error,/only replaces a previous render folder/,'an export folder is not a render folder');
+  fs.mkdirSync(path.join(temp,'old-renders'));fs.writeFileSync(path.join(temp,'old-renders','renders.json'),'{}');
+  assert.match(run(['unreal-check','--assets','glb','--render','--out','old-renders','--replace'],3).error,/Set UNREAL_BIN/,'a render folder passes the destination check');
   assert.match(run(['unreal-check','--assets','empty'],2).error,/No \.glb files/);
   assert.match(run(['unreal-check','--assets','glb'],3).error,/Set UNREAL_BIN/);
   assert.match(run(['unreal-check','--assets','glb','--unreal',path.join(temp,'nope')],3).error,/not found/);

@@ -28,10 +28,17 @@ try{
   fs.mkdirSync(path.join(temp,'exists'));
   run(['export',path.join(root,'examples/twostory.building.json'),'--out','assets'],0);
   assert.match(run(['godot-check','--assets','assets','--render','--out','exists','--godot','/nonexistent/godot'],3).error,/Destination already exists/,'destination is checked before Godot runs');
+  // --replace: only a previous render folder (PNGs and renders.json) is replaced, checked before the engine runs.
+  fs.mkdirSync(path.join(temp,'renders'));fs.writeFileSync(path.join(temp,'renders','renders.json'),'{}');fs.writeFileSync(path.join(temp,'renders','a.png'),'');
+  fs.writeFileSync(path.join(temp,'exists','notes.txt'),'mine');
+  assert.match(run(['godot-check','--assets','x','--replace'],2).error,/require --render/);
+  assert.match(run(['godot-check','--assets','assets','--render','--out','exists','--replace','--godot','/nonexistent/godot'],3).error,/only replaces a previous render folder/);
+  assert.match(run(['godot-check','--assets','assets','--render','--out','renders','--replace','--godot','/nonexistent/godot'],3).error,/Cannot run Godot/,'a render folder passes the destination check');
+  assert.equal(fs.readFileSync(path.join(temp,'exists','notes.txt'),'utf8'),'mine');
   fs.writeFileSync(path.join(temp,'bad-views.json'),'{"views":[]}');
   assert.match(run(['godot-check','--assets','assets','--render','--out','new','--views','bad-views.json','--godot','/nonexistent/godot'],2).error,/1–200/,'views are validated before Godot runs');
   assert.equal(fs.existsSync(path.join(temp,'new')),false);
-  console.log('PASS render views/usage: view validation, required --assets/--out, protected destination');
+  console.log('PASS render views/usage: view validation, required --assets/--out, protected destination, --replace only for render folders');
 }finally{fs.rmSync(temp,{recursive:true,force:true});}
 {
   // Display route (feedback: Windows was refused without DISPLAY). Shared by the

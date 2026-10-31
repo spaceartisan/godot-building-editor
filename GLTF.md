@@ -129,7 +129,7 @@ The Godot counterpart: `export --out PROJECT/buildings/NAME --replace` writes th
 
 ```text
 node cli.mjs unreal-check --assets NEW_DIR --require-collision
-node cli.mjs unreal-check --assets NEW_DIR --render --out RENDERS [--views FILE] [--surface-colors]
+node cli.mjs unreal-check --assets NEW_DIR --render --out RENDERS [--views FILE] [--surface-colors] [--replace]
 ```
 
 `--render` writes 1280 × 800 PNGs and `renders.json` with the same views as `godot-check --render` (four exterior diagonals, an aerial view and one eye-level view per labelled region, its eye moved out of collision; `--views` takes the same Godot-space file). It opens the Unreal editor (it needs a display) and adds only a sun, sky light, atmosphere, a light height fog and a camera headlamp; the template level's ground, sky and lights are removed, so buildings render on a plain sky as in Godot. `--surface-colors` uses Godot's diagnostic surface colours. In the web editor, **Render in Unreal** renders the current `.glb` export the same way through `server.mjs` started with `UNREAL_BIN`. The first run on a machine compiles shaders and takes longer.

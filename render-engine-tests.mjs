@@ -46,7 +46,11 @@ try{
     assert.notDeepEqual(fs.readFileSync(path.join(temp,'lone-colored/top.png')),fs.readFileSync(path.join(temp,'lone-plain/top.png')),'a BoxMesh manual roof gets the roof colour');
   }
   run(['godot-check','--assets','assets','--render','--out','custom'],3);
-  console.log(`PASS render engine: ${names.length} automatic views and 1 custom view rendered by ${auto.engineVersion}`);
+  // --replace re-renders into the previous render folder.
+  const before=fs.readdirSync(path.join(temp,'custom')).sort();
+  const again=run(['godot-check','--assets','assets','--render','--out','custom','--views','views.json','--replace']);
+  assert.equal(again.render.images,custom.render.images);assert.deepEqual(fs.readdirSync(path.join(temp,'custom')).sort(),before);
+  console.log(`PASS render engine: ${names.length} automatic views and 1 custom view rendered by ${auto.engineVersion}; --replace re-renders a render folder`);
   // Web editor route: the local server renders the web export with the same views.
   const { spawn } = await import('node:child_process');
   const { createEditorHarness } = await import('./qa/editor-harness.mjs');

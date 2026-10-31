@@ -88,7 +88,10 @@ try{
   // unreal-check --render: every default view of a building with labelled rooms.
   cli(['export',path.join(root,'examples/courtyard_regions.building.json'),'--format','glb','--out','render-in']);
   const expected=autoViews(readGlb(fs.readFileSync(path.join(temp,'render-in','courtyard_regions.glb'))).json).length;
+  fs.writeFileSync(path.join(temp,'one-view.json'),JSON.stringify({views:[{name:'aerial',eye:[20,25,20],look:[0,0,0]}]}));
   const rendered=cli(['unreal-check','--assets','render-in','--render','--out','render-out']);
   assert.equal(rendered.render.images,expected);assert.ok(fs.readdirSync(path.join(temp,'render-out')).filter(f=>f.endsWith('.png')).length===expected);
-  console.log(`PASS unreal-check --render: ${expected} views (exterior diagonals, aerial, labelled regions)`);
+  const rerun=cli(['unreal-check','--assets','render-in','--render','--out','render-out','--replace','--views',path.join(temp,'one-view.json')]);
+  assert.equal(rerun.render.images,1);assert.equal(fs.readdirSync(path.join(temp,'render-out')).filter(f=>f.endsWith('.png')).length,1,'--replace swaps the whole folder');
+  console.log(`PASS unreal-check --render: ${expected} views (exterior diagonals, aerial, labelled regions); --replace re-renders into the folder`);
 }finally{fs.rmSync(temp,{recursive:true,force:true});}

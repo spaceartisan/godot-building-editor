@@ -78,11 +78,16 @@ def selects(rule, node):
         return False
     return True
 
-def actors_under(root_label):
-    actors = unreal.get_editor_subsystem(unreal.EditorActorSubsystem).get_all_level_actors()
-    roots = [a for a in actors if a.get_actor_label() == root_label]
+def actors_under(root):
+    # root: the imported root actor itself (two copies of one building share a
+    # label), or its label.
+    if isinstance(root, unreal.Actor):
+        roots = [root]
+    else:
+        actors = unreal.get_editor_subsystem(unreal.EditorActorSubsystem).get_all_level_actors()
+        roots = [a for a in actors if a.get_actor_label() == root]
     if not roots:
-        raise ValueError("No actor labelled %s in the level; pass --root" % root_label)
+        raise ValueError("No actor labelled %s in the level; pass --root" % root)
     by_label = {}
     def walk(actor):
         by_label.setdefault(actor.get_actor_label(), actor)

@@ -2,7 +2,9 @@
 // counterpart of the Godot engine suites. unreal-check passes on good exports
 // (import, slots, collision, metadata, lights, elevator probes) and fails on a
 // broken one; building_studio_setup.py applies a full game-layer unreal block
-// (qa/validate-unreal-setup.py); unreal-check --render writes every view.
+// (qa/validate-unreal-setup.py); unreal-import places a building in a saved
+// level and --replace swaps it (qa/unreal-import-level.py); unreal-check
+// --render writes every view.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -60,6 +62,26 @@ try{
   assert.ok(farm.group_nodes>=10&&farm.trigger_nodes>0&&farm.layer4_carriers>0&&farm.door_roots>0,'GET PROBED farmhouse: window groups, door triggers, door-layer carriers');
   assert.ok(ramp.first.lights>0&&lift.elevator_roots===1&&lift.moving>10);
   console.log(`PASS building_studio_setup.py: tags, Movable parts, ${farm.triggers} trigger boxes, slot/part materials, collision profiles, ${farm.door_components} door components and children, elevator component; idempotent`);
+
+  // unreal-import into an existing project and saved level, then again with --replace.
+  const town=path.join(temp,'town');fs.mkdirSync(town);
+  const townProject=path.join(town,'Town.uproject');fs.copyFileSync(uproject,townProject);
+  const levelScript=path.join(root,'qa','unreal-import-level.py').split(path.sep).join('/');
+  const glbFile=path.join(temp,'good','farmhouse','farmhouse.glb'),gltf=readGlb(fs.readFileSync(glbFile)).json,rootName=gltf.nodes[gltf.scenes[0].nodes[0]].name;
+  const levelStep=(mode,report)=>{const s=spawnSync(unreal.cmd,[townProject,'-run=pythonscript',`-script=${levelScript}`,'-unattended','-nop4','-nosplash','-stdout'],{env:{...process.env,BUILDING_UNREAL_LEVEL_MODE:mode,BUILDING_UNREAL_LEVEL:'/Game/Maps/Town',BUILDING_UNREAL_ROOT:rootName,BUILDING_UNREAL_CONTENT:'/Game/Buildings/farmhouse',BUILDING_UNREAL_REPORT:report||''},encoding:'utf8',timeout:1800000,maxBuffer:256*1024*1024});
+    if(report)assert.ok(fs.existsSync(report),(s.stdout||'').split('\n').filter(l=>/LogPython: Error/.test(l)).join('\n'));};
+  levelStep('make');
+  const importArgs=['unreal-import',glbFile,'--project',townProject,'--content','/Game/Buildings/farmhouse','--level','/Game/Maps/Town','--location','5000,2000,0','--yaw','90'];
+  const first=cli(importArgs).unrealImport;
+  assert.equal(first.removed,0);assert.ok(first.actors>20&&first.saved);
+  const again=cli([...importArgs,'--replace','--game-layer',path.join(temp,'layer.json')]).unrealImport;
+  assert.ok(again.removed>=first.actors-1,'--replace removes the earlier copy');
+  const levelReport=path.join(town,'level.json');levelStep('inspect',levelReport);
+  const placed=JSON.parse(fs.readFileSync(levelReport,'utf8'));
+  assert.equal(placed.roots.length,1,'one copy after --replace');assert.equal(placed.scene_actors,1);assert.equal(placed.existing,true,'the level keeps its own actors');
+  assert.deepEqual(placed.roots[0].location.map(Math.round),[5000,2000,0]);assert.ok(Math.abs(placed.roots[0].yaw-90)<1e-3);
+  assert.ok(placed.assets>0&&placed.hinges>0&&placed.hinges_movable,'saved meshes and Movable door hinges');
+  console.log(`PASS unreal-import: into a saved level at (5000, 2000, 0) cm, yaw 90; --replace leaves one copy (${again.removed} actors removed), keeps the level's actors, ${placed.assets} assets saved`);
 
   // unreal-check --render: every default view of a building with labelled rooms.
   cli(['export',path.join(root,'examples/courtyard_regions.building.json'),'--format','glb','--out','render-in']);

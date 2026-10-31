@@ -634,7 +634,8 @@ function syncToolOptionVisibility(){const groups=[...document.querySelectorAll('
 function setTool(next){tool=next;cancelDrawing();if(next!=='select'&&selected){selected=null;refreshSelection();}syncRegionList();syncMarkerList();document.querySelectorAll('#tool-grid button').forEach(b=>(b.classList.toggle('active',b.dataset.tool===tool),b.setAttribute('aria-pressed',String(b.dataset.tool===tool))));syncToolOptionVisibility();setStatus(next==='select'?'Select tool — click an object to edit it':`${next.replace(/-/g,' ').replace(/^./,c=>c.toUpperCase())} tool`);drawPlan();}
 document.querySelectorAll('#tool-grid button').forEach(b=>b.addEventListener('click',()=>setTool(b.dataset.tool)));
 
-function numInput(label,value,onChange,step='.1'){const d=document.createElement('label');d.className='selection-row';d.textContent=label;const i=document.createElement('input');i.type='number';i.step=step;i.value=Number(value?.toFixed?.(4)??value);i.addEventListener('change',()=>{if(i.value.trim()!==''&&Number.isFinite(i.valueAsNumber))onChange(i.valueAsNumber);else{i.value=value;setStatus('Enter a finite number');}});d.appendChild(i);return d;}
+// allowBlank: an empty field means automatic (onChange(null)), like null in the CLI.
+function numInput(label,value,onChange,step='.1',allowBlank=false){const d=document.createElement('label');d.className='selection-row';d.textContent=label;const i=document.createElement('input');i.type='number';i.step=step;i.value=Number(value?.toFixed?.(4)??value);i.addEventListener('change',()=>{if(allowBlank&&i.value.trim()==='')onChange(null);else if(i.value.trim()!==''&&Number.isFinite(i.valueAsNumber))onChange(i.valueAsNumber);else{i.value=value;setStatus('Enter a finite number');}});d.appendChild(i);return d;}
 function textInput(label,value,onChange){const d=document.createElement('label');d.className='selection-row';d.textContent=label;const i=document.createElement('input');i.value=value||'';i.addEventListener('change',()=>onChange(i.value));d.appendChild(i);return d;}
 function selectInput(label,value,options,onChange){const d=document.createElement('label');d.className='selection-row';d.textContent=label;const i=document.createElement('select');for(const[v,t]of options){const o=document.createElement('option');o.value=v;o.textContent=t;o.selected=v===value;i.appendChild(o);}i.addEventListener('change',()=>onChange(i.value));d.appendChild(i);return d;}
 function checkboxInput(label,value,onChange){const d=document.createElement('label');d.className='selection-row checkbox';const i=document.createElement('input');i.type='checkbox';i.checked=!!value;i.addEventListener('change',()=>onChange(i.checked));d.append(i,document.createTextNode(label));return d;}
@@ -650,12 +651,14 @@ function addDrawnPlatform(platform){
 // Covered porch roof: the main roof extends over it, or a lean-to (platform-roof.js).
 function platformRoofInputs(r){
   if(!r.covered)return [];
-  const rows=[selectInput('Porch roof',r.roofStyle||'extend',[['extend','Main roof extends over it'],['lean-to','Lean-to roof against the wall']],v=>updatePlatformSettings(r,{roofStyle:v==='extend'?null:v,...(v==='extend'?{roofPitch:null}:{})}))];
+  const rows=[selectInput('Porch roof',r.roofStyle||'extend',[['extend','Main roof extends over it'],['lean-to','Lean-to roof against the wall']],v=>updatePlatformSettings(r,{roofStyle:v==='extend'?null:v,...(v==='extend'?{roofPitch:null,roofHeight:null}:{})}))];
   const lean=leanToRoof(building,activeFloorIndex,floorView(building,activeFloorIndex),r);
   if(!lean)return rows;
   const note=document.createElement('div');note.className='selection-row';
-  note.textContent=`Headroom at the posts: ${lean.headroom.toFixed(2)} m${r.roofPitch==null?' (pitch chosen automatically)':''}`;
-  rows.push(numInput('Lean-to pitch (°)',r.roofPitch??Number(lean.pitch.toFixed(1)),v=>updatePlatformSettings(r,{roofPitch:v}),'1'),note);
+  note.textContent=`Headroom at the posts: ${lean.headroom.toFixed(2)} m${r.roofPitch==null?' (pitch chosen automatically)':''}${lean.capped?`; held at the main eave (${lean.eaveY.toFixed(2)} m)`:''}`;
+  // Lean-to height: the high edge above the floor (blank: just below the main eave), e.g. just above a door.
+  const height=numInput('Lean-to height (m)',r.roofHeight??Number(lean.highY.toFixed(2)),v=>updatePlatformSettings(r,{roofHeight:v}),'0.05',true);
+  rows.push(numInput('Lean-to pitch (°)',r.roofPitch??Number(lean.pitch.toFixed(1)),v=>updatePlatformSettings(r,{roofPitch:v}),'1',true),height,note);
   return rows;
 }
 function updatePlatformSettings(platform,patch){

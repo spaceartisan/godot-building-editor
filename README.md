@@ -53,7 +53,7 @@ Two consequences worth knowing:
 | [CLI.md](CLI.md) | Every command and flag |
 | [QUICKSTART.md](QUICKSTART.md) | Web workflow, Godot import, CLI recipes |
 | [GAME_LAYER.md](GAME_LAYER.md) | Per-game materials, render layers, door scripts and door children applied at export |
-| [GLTF.md](GLTF.md) | Unreal Engine 5: the `.glb` export, the Unreal setup script, `unreal-check` and **Render in Unreal** |
+| [GLTF.md](GLTF.md) | Unreal Engine 5: the `.glb` export, the Unreal setup script, scripted import into an existing level (`unreal-import`), `unreal-check` and **Render in Unreal** |
 | [AUTHORING_REVIEW.md](AUTHORING_REVIEW.md) | How to review an AI-authored building before delivering it |
 | [VALIDATION.md](VALIDATION.md), [PREVIEWS.md](PREVIEWS.md), [RELEASE_CHECKS.md](RELEASE_CHECKS.md) | Checks, previews and release gates |
 | [CHANGELOG.md](CHANGELOG.md), [ROADMAP.md](ROADMAP.md) | History and future work |
@@ -78,7 +78,7 @@ Choose an **Export profile** in the Godot Export panel. **New** buildings use Ge
 Explicit custom light groups survive profile changes. Empty window openings export no fixture collision. Neither profile attaches gameplay scripts. Both profiles preserve door hinge paths. Generic doors use layer/mask 1 and omit the game-specific interaction area. GET PROBED retains door layer 4/mask 2 and the stationary interaction area. Collision nodes remain editable in Godot.
 
 
-For Unreal Engine 5, **Export .glb** (CLI `export --format glb`) writes the same building as one glTF binary: named material slots, Unreal `UBX_`/`UCX_` collision, door hinge pivots, lights and the `building_*` metadata as extras. `unreal/building_studio_setup.py` does in Unreal what the export and a game layer do in Godot (Movable doors and lifts, tags, triggers, materials, collision profiles, components), `unreal-check` checks the import as `godot-check` does, and **Render in Unreal** renders it. See [GLTF.md](GLTF.md).
+For Unreal Engine 5, **Export .glb** (CLI `export --format glb`) writes the same building as one glTF binary: named material slots, Unreal `UBX_`/`UCX_` collision, door hinge pivots, lights and the `building_*` metadata as extras. `unreal/building_studio_setup.py` does in Unreal what the export and a game layer do in Godot (Movable doors and lifts, tags, triggers, materials, collision profiles, components), `unreal-import` imports, places and sets up a building in an existing project's level from a script, `unreal-check` checks the import as `godot-check` does, and **Render in Unreal** renders it. See [GLTF.md](GLTF.md).
 
 **Export .tscn ZIP** downloads a ZIP containing:
 

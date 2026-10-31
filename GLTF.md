@@ -8,6 +8,7 @@ Building Studio serves Godot and Unreal Engine 5 alike. Godot gets `.tscn` scene
 | --- | --- |
 | `export` (`.tscn` scenes) | `export --format glb` (web **Export .glb**) |
 | `--game-layer FILE`, applied at export | the same file's `unreal` block, applied after import by `unreal/building_studio_setup.py` |
+| `export --out PROJECT/buildings/NAME --replace` (Godot imports the scenes it finds) | `unreal-import FILE.glb --project P.uproject --content /Game/… --level /Game/… --replace` |
 | `godot-check --assets DIR` | `unreal-check --assets DIR` |
 | `godot-check --render`, web **Render in Godot** | `unreal-check --render`, web **Render in Unreal** |
 | `engine-assets` test suite, `GODOT_BIN` | `engine-unreal` test suite, `UNREAL_BIN` |
@@ -89,6 +90,32 @@ Always, as the Godot export does:
 
 From the game layer's `unreal` block ([GAME_LAYER.md](GAME_LAYER.md)): slot materials, `nodeMaterials` rules, `tags` rules, `collisionProfiles` rules (by node or by Godot collision layer), `scripts` (a component class added to the building, door and elevator roots) and `doorChildren` (actors attached to each door root). Each import otherwise creates its own grey placeholder materials. `--root LABEL` picks the imported root actor when the name is ambiguous; `--materials FILE` is a shorthand for `{"slot": "/Game/…"}`. `--light-scale K` multiplies point-light intensities: Unreal reads Godot's light energy as candelas and its own default point light is 8 cd, so `--light-scale 8` maps Godot's default energy to Unreal's default as a starting point. Running it again adds nothing twice. Validate the game layer with the CLI first (`node cli.mjs export FILE --out DIR --game-layer FILE`).
 
+## Importing into an existing project from a script
+
+`unreal-import` does the import and setup above headless, for an existing project and level: it opens the level, imports the `.glb` into a content folder (Interchange **Import Into Level**), places the building, runs the setup script and saves the level and assets. Close the project in the editor first (Unreal cannot open a project twice).
+
+```text
+node cli.mjs unreal-import party_palace.glb --project C:/Games/Town/Town.uproject --content /Game/Buildings/party_palace --level /Game/Maps/Town --location 5000,2000,0 --yaw 90 --replace [--game-layer game.layer.json] [--light-scale 8]
+```
+
+- `--location X,Y,Z` places the building root in Unreal centimetres (Unreal axes: X forward, Y right, Z up; see above); `--yaw` turns it about Z in degrees. Both default to 0.
+- `--level` is the level to import into (a saved `/Game/…` level; required).
+- `--replace` first removes earlier copies of this building from the level (the actors under each root with its name, from Interchange's `<file>_scene_0` actor down) and deletes the `--content` folder, so re-running after a re-export leaves one copy. Without it a second import adds a second copy. Other actors in the level are kept.
+- `--game-layer` is validated by the CLI before Unreal starts and applied as by the setup script.
+- It needs `--unreal PATH` or `UNREAL_BIN`, as `unreal-check`. The JSON result (`--json`) has the root actor, actor count, removed count and the setup report; exit 1 if the setup reports missing materials or classes.
+
+The same script runs from the editor's Output Log on the open project, where it imports into the level that is open unless `--level` is given:
+
+```text
+py "C:/path/to/godot-building-editor/unreal/building_studio_import.py" --glb C:/path/party_palace.glb --content /Game/Buildings/party_palace --location 5000,2000,0 --yaw 90 --replace
+```
+
+Use forward slashes in paths given to `py`: Unreal's Python command line reads backslashes as escapes. In Git Bash, set `MSYS_NO_PATHCONV=1` before commands with `/Game/…` arguments, or Git Bash rewrites them into Windows paths (`cmd`, PowerShell and Linux shells pass them as they are).
+
+In the web editor, **Export .glb** and run the same script from the Output Log; a browser cannot open a local Unreal project, just as the web Godot export downloads scenes rather than writing into a Godot project.
+
+The Godot counterpart: `export --out PROJECT/buildings/NAME --replace` writes the scenes inside the Godot project, which imports them when the editor next has focus; instance the building scene in a level as usual.
+
 ## Checking and rendering in Unreal
 
 `unreal-check` is the Unreal counterpart of `godot-check --assets`. It needs Unreal Engine 5 (`--unreal PATH` or `UNREAL_BIN`, either editor binary; nothing is downloaded) and imports each `.glb` of a folder into a disposable project, runs the setup script without a game layer, and checks:
@@ -109,12 +136,12 @@ node cli.mjs unreal-check --assets NEW_DIR --render --out RENDERS [--views FILE]
 
 ## Re-exporting
 
-Re-exporting replaces the whole file, and the `_2`, `_3` suffixes follow traversal order: adding a door can turn one door's `DoorMesh_3` into `DoorMesh_4`. Bind materials by slot name and find objects by `building_*` extras (`building_opening_id`, `building_floor_id`, `building_part`) or tags, never by imported mesh or actor names. Set the building's `sceneName` so the `.glb` file name, and so Unreal's import folder, stay put when the building is renamed. Re-run the setup script after each re-import.
+Re-exporting replaces the whole file, and the `_2`, `_3` suffixes follow traversal order: adding a door can turn one door's `DoorMesh_3` into `DoorMesh_4`. Bind materials by slot name and find objects by `building_*` extras (`building_opening_id`, `building_floor_id`, `building_part`) or tags, never by imported mesh or actor names. Set the building's `sceneName` so the `.glb` file name, and so Unreal's import folder, stay put when the building is renamed. Re-run the setup script after each re-import, or use `unreal-import --replace`, which re-imports and sets up in one step.
 
 ## Checks of this route
 
 - `gltf-tests.mjs` (core and cli suites): every catalog example and an elevator building against its own `.tscn`: each mesh node and `building_part`, a material per surface name, every box shape's world centre reproduced by its `UBX_` piece, every concave triangle inside a `UCX_` hull, `collision_pieces` on carriers, placeholder colours, collision layers and trigger boxes, unique names, counter-clockwise winding matching the normals, lights, deterministic bytes, and CLI/web parity.
-- `unreal-cli-tests.mjs` (core and cli suites, no Unreal needed): `unreal-check` usage and dependency errors, its default views, the game layer's `unreal` block and `groups` rules, the server's Unreal endpoints and the web **Render in Unreal** request.
+- `unreal-cli-tests.mjs` (core and cli suites, no Unreal needed): `unreal-check` and `unreal-import` usage and dependency errors, its default views, the game layer's `unreal` block and `groups` rules, the server's Unreal endpoints and the web **Render in Unreal** request.
 - `gltf-engine-tests.mjs` (engine-assets suite): Godot's own glTF importer reads nine exports back and compares them with the `.tscn`.
-- `unreal-engine-tests.mjs` (engine-unreal suite, `UNREAL_BIN`): `unreal-check` passes four buildings (including the elevator probes) and fails a collision-less one; the setup script applies a full `unreal` block and adds nothing on a second run; `unreal-check --render` writes every view. `release-check` runs it as the `engine-unreal` gate (`--unreal-engine auto|required|skip`, `--unreal PATH`).
+- `unreal-engine-tests.mjs` (engine-unreal suite, `UNREAL_BIN`): `unreal-check` passes four buildings (including the elevator probes) and fails a collision-less one; the setup script applies a full `unreal` block and adds nothing on a second run; `unreal-import` places a building in a saved level at a location and yaw, and `--replace` leaves one copy and the level's own actors; `unreal-check --render` writes every view. `release-check` runs it as the `engine-unreal` gate (`--unreal-engine auto|required|skip`, `--unreal PATH`).
 - Checked on Unreal Engine 5.8.4 on Windows; other engines and Unreal versions are unverified.

@@ -1,4 +1,4 @@
-[gd_scene load_steps=51 format=3]
+[gd_scene load_steps=47 format=3]
 
 [sub_resource type="ArrayMesh" id="F01_ExteriorOutsideMesh"]
 _surfaces = [{
@@ -190,57 +190,45 @@ size = Vector3(0.12, 3, 0.12)
 size = Vector3(0.12, 3, 0.12)
 
 [sub_resource type="BoxMesh" id="BoxMesh_18"]
-size = Vector3(0.12, 3, 0.12)
+size = Vector3(0.12, 0.16, 3.03)
 
 [sub_resource type="BoxShape3D" id="BoxShape_19"]
-size = Vector3(0.12, 3, 0.12)
+size = Vector3(0.12, 0.16, 3.03)
 
 [sub_resource type="BoxMesh" id="BoxMesh_20"]
-size = Vector3(0.12, 3, 0.12)
+size = Vector3(0.12, 0.16, 3.03)
 
 [sub_resource type="BoxShape3D" id="BoxShape_21"]
-size = Vector3(0.12, 3, 0.12)
+size = Vector3(0.12, 0.16, 3.03)
 
 [sub_resource type="BoxMesh" id="BoxMesh_22"]
-size = Vector3(0.12, 0.16, 3.12)
+size = Vector3(4.12, 0.16, 0.12)
 
 [sub_resource type="BoxShape3D" id="BoxShape_23"]
-size = Vector3(0.12, 0.16, 3.12)
+size = Vector3(4.12, 0.16, 0.12)
 
 [sub_resource type="BoxMesh" id="BoxMesh_24"]
-size = Vector3(0.12, 0.16, 3.12)
+size = Vector3(12.6, 0.12, 5.33933)
 
 [sub_resource type="BoxShape3D" id="BoxShape_25"]
-size = Vector3(0.12, 0.16, 3.12)
+size = Vector3(12.6, 0.12, 5.33933)
 
 [sub_resource type="BoxMesh" id="BoxMesh_26"]
-size = Vector3(4.12, 0.16, 0.12)
+size = Vector3(12.6, 0.12, 5.33933)
 
 [sub_resource type="BoxShape3D" id="BoxShape_27"]
-size = Vector3(4.12, 0.16, 0.12)
+size = Vector3(12.6, 0.12, 5.33933)
 
 [sub_resource type="BoxMesh" id="BoxMesh_28"]
-size = Vector3(12.6, 0.12, 5.33933)
+size = Vector3(12.68, 0.102, 0.192)
 
 [sub_resource type="BoxShape3D" id="BoxShape_29"]
-size = Vector3(12.6, 0.12, 5.33933)
-
-[sub_resource type="BoxMesh" id="BoxMesh_30"]
-size = Vector3(12.6, 0.12, 5.33933)
-
-[sub_resource type="BoxShape3D" id="BoxShape_31"]
-size = Vector3(12.6, 0.12, 5.33933)
-
-[sub_resource type="BoxMesh" id="BoxMesh_32"]
 size = Vector3(12.68, 0.102, 0.192)
 
-[sub_resource type="BoxShape3D" id="BoxShape_33"]
-size = Vector3(12.68, 0.102, 0.192)
-
-[sub_resource type="ConvexPolygonShape3D" id="ConvexShape_34"]
+[sub_resource type="ConvexPolygonShape3D" id="ConvexShape_30"]
 points = PackedVector3Array(-4, -1.40042, -0.09, 4, -1.40042, -0.09, 0, 1.40042, -0.09, -4, -1.40042, 0.09, 4, -1.40042, 0.09, 0, 1.40042, 0.09)
 
-[sub_resource type="ConvexPolygonShape3D" id="ConvexShape_35"]
+[sub_resource type="ConvexPolygonShape3D" id="ConvexShape_31"]
 points = PackedVector3Array(-4, -1.40042, -0.09, 4, -1.40042, -0.09, 0, 1.40042, -0.09, -4, -1.40042, 0.09, 4, -1.40042, 0.09, 0, 1.40042, 0.09)
 
 [sub_resource type="ArrayMesh" id="ManualRoofGableMesh_001_OutsideFaces"]
@@ -282,7 +270,7 @@ _surfaces = [{
 } ]
 blend_shape_mode = 0
 
-[sub_resource type="ArrayMesh" id="RoofMesh_36"]
+[sub_resource type="ArrayMesh" id="RoofMesh_32"]
 _surfaces = [{
 "aabb": AABB(-2.37128, 2.71498, 1.99755, 2.44255, 1.7604, 5.00245),
 "attribute_data": PackedByteArray("j8J1PQAAgECPwnW9/IWvP4/CdT38ha8/j8J1PQAAgECPwnW9AACAQI/Cdb38ha8/j8J1PfyFrz+PwnW9AACAQI/CdT0AAIBAj8J1PfyFrz+PwnW9/IWvP4/Cdb0AAIBAj8J1PTFQgL+PwnW9/IWvP4/CdT38ha8/j8J1PTFQgL+PwnW9JrBcv4/Cdb38ha8//IWvP0F1uT8AAIBARrRzvwAAgEBBdbk//IWvP0F1uT/8ha8/RrRzvwAAgEBGtHO/JrBcv0F1uT/8ha8/RrRzv/yFrz9Bdbk/JrBcv0F1uT/CY40/RrRzv/yFrz9GtHO/AACAQObkeL/8ha8/RrRzv/yFrz/m5Hi/AACAQObkeL8AAIBARrRzv/yFrz9GtHO//IWvP+bkeL/CY40/RrRzv+6Djz/m5Hi//IWvP+bkeL/8ha8/RrRzv8JjjT9GtHO/AACAQEF1ub/8ha8/5uR4v/yFrz9Bdbm/AACAQEF1ub8AAIBA5uR4v/yFrz/m5Hi/7oOPP+bkeL/8ha8/jIWjv/yFrz/m5Hi/AACAQEF1uT/8ha8/PmJjv/yFrz9Bdbk/AACAQEF1uT8AAIBAPmJjv/yFrz8+YmO//IWvP0F1uT/VeGk/PmJjvzFQgL9Bdbk//IWvP0F1uT/8ha8/PmJjv9V4aT8+YmO/AACAQD5iY7/8ha8/2MmPv/yFrz8+YmO/AACAQD5iY78AAIBA2MmPv/yFrz/YyY+//IWvPz5iY7/CY40/2MmPv9V4aT8+YmO//IWvPz5iY7/8ha8/2MmPv8JjjT/YyY+//IWvP0F1ub8AAIBA2MmPvwAAgEBBdbm//IWvP0F1ub/8ha8/2MmPvwAAgEDYyY+//IWvP0F1ub/CY40/2MmPv/yFrz/YyY+/YPmRPQQRjED+whfAtgw0QCViIDtGNo9AYPmRPQQRjEBMWxPAMsItQP7CF8C2DDRA/sIXwH/hi0BMWxPAf+GLQD1fCsB/4YtAarz0vzVeekBg+ZE99tMIQCRiIDvPr/8/arz0vzVeekBqvPS/++CDQGD5kT320whA4bEGwPBYg0BqvPS/8FiDQGq89L81XnpA/sIXwH/hi0BqvPS/8FiDQOGxBsDwWINA/sIXwH/hi0BqvPS/++CDQGq89L/wWINA/sIXwH/hi0A9XwrAf+GLQGq89L/74INA"),
@@ -295,11 +283,11 @@ _surfaces = [{
 } ]
 blend_shape_mode = 0
 
-[sub_resource type="ConcavePolygonShape3D" id="RoofShape_37"]
+[sub_resource type="ConcavePolygonShape3D" id="RoofShape_33"]
 data = PackedVector3Array(-2.37128, 2.81328, 7, -2.30245, 2.71498, 4.37128, -2.37128, 2.81328, 4.37128, -2.37128, 2.81328, 7, -2.30245, 2.71498, 7, -2.30245, 2.71498, 4.37128, 0.00245, 4.47538, 4.37128, 0.07128, 4.37708, 7, 0.00245, 4.47538, 7, 0.00245, 4.47538, 4.37128, 0.07128, 4.37708, 4.37128, 0.07128, 4.37708, 7, 0.00245, 4.47538, 1.99755, 0.07128, 4.37708, 4.37128, 0.00245, 4.47538, 4.37128, 0.00245, 4.47538, 1.99755, 0.07128, 4.37708, 2.13794, 0.07128, 4.37708, 4.37128, 0.07128, 4.37708, 4.37128, -1.89539, 3, 7, 0.07128, 4.37708, 7, 0.07128, 4.37708, 4.37128, -1.89539, 3, 4.37128, -1.89539, 3, 7, 0.07128, 4.37708, 2.13794, -1.89539, 3, 4.37128, 0.07128, 4.37708, 4.37128, 0.07128, 4.37708, 2.13794, -1.89539, 3, 4.10461, -1.89539, 3, 4.37128, -1.912, 2.98837, 7, -1.89539, 3, 4.37128, -1.912, 2.98837, 4.37128, -1.912, 2.98837, 7, -1.89539, 3, 7, -1.89539, 3, 4.37128, -1.912, 2.98837, 4.37128, -1.89539, 3, 4.10461, -1.912, 2.98837, 4.12121, -1.912, 2.98837, 4.37128, -1.89539, 3, 4.37128, -1.89539, 3, 4.10461, -2.30245, 2.71498, 7, -1.912, 2.98837, 4.37128, -2.30245, 2.71498, 4.37128, -2.30245, 2.71498, 7, -1.912, 2.98837, 7, -1.912, 2.98837, 4.37128, -1.912, 2.98837, 4.12121, -2.16206, 2.81328, 4.37128, -1.912, 2.98837, 4.37128, 0.00245, 4.47538, 7, -1.912, 3.13486, 4.37128, 0.00245, 4.47538, 4.37128, 0.00245, 4.47538, 7, -1.912, 3.13486, 7, -1.912, 3.13486, 4.37128, 0.00245, 4.47538, 4.37128, -1.912, 3.13486, 3.912, 0.00245, 4.47538, 1.99755, 0.00245, 4.47538, 4.37128, -1.912, 3.13486, 4.37128, -1.912, 3.13486, 3.912, -1.912, 3.13486, 7, -2.10461, 3, 4.37128, -1.912, 3.13486, 4.37128, -1.912, 3.13486, 7, -2.10461, 3, 7, -2.10461, 3, 4.37128, -1.912, 3.13486, 4.37128, -2.10461, 3, 4.10461, -1.912, 3.13486, 3.912, -1.912, 3.13486, 4.37128, -2.10461, 3, 4.37128, -2.10461, 3, 4.10461, -2.37128, 2.81328, 4.37128, -2.10461, 3, 7, -2.37128, 2.81328, 7, -2.37128, 2.81328, 4.37128, -2.10461, 3, 4.37128, -2.10461, 3, 7, -2.37128, 2.81328, 4.37128, -2.10461, 3, 4.10461, -2.10461, 3, 4.37128, 0.07128, 4.37708, 7, -2.37128, 2.81328, 7, 0.00245, 4.47538, 7, 0.07128, 4.37708, 7, -2.30245, 2.71498, 7, -2.37128, 2.81328, 7, -2.37128, 2.81328, 4.37128, -2.30245, 2.71498, 4.37128, -2.16206, 2.81328, 4.37128, -1.912, 3.13486, 3.912, 0.07128, 4.37708, 2.13794, 0.00245, 4.47538, 1.99755, -1.912, 3.13486, 3.912, -1.912, 2.98837, 4.12121, 0.07128, 4.37708, 2.13794, -2.10461, 3, 4.10461, -1.912, 3, 4.10461, -1.912, 3.13486, 3.912, -2.37128, 2.81328, 4.37128, -1.912, 3, 4.10461, -2.10461, 3, 4.10461, -2.37128, 2.81328, 4.37128, -1.912, 2.98837, 4.12121, -1.912, 3, 4.10461, -2.37128, 2.81328, 4.37128, -2.16206, 2.81328, 4.37128, -1.912, 2.98837, 4.12121)
 backface_collision = true
 
-[sub_resource type="ArrayMesh" id="RoofMesh_38"]
+[sub_resource type="ArrayMesh" id="RoofMesh_34"]
 _surfaces = [{
 "aabb": AABB(-0.07128, 2.71498, 1.99755, 2.44255, 1.7604, 5.00245),
 "attribute_data": PackedByteArray("j8J1PQAAgECPwnW9/IWvP4/CdT38ha8/j8J1PQAAgECPwnW9AACAQI/Cdb38ha8/j8J1PfyFrz+PwnW9JrBcv4/CdT0xUIC/j8J1PfyFrz+PwnW9/IWvP4/Cdb0msFy/j8J1PfyFrz+PwnW9AACAQI/CdT0AAIBAj8J1PfyFrz+PwnW9/IWvP4/Cdb0AAIBAAACAQEF1ub/8ha8/RrRzP/yFrz9Bdbm/AACAQEF1ub8AAIBARrRzP/yFrz9GtHM//IWvP0F1ub/CY40/RrRzPyawXL9Bdbm//IWvP0F1ub/8ha8/RrRzP8JjjT9GtHM/AACAQEa0cz/8ha8/5uR4P/yFrz9GtHM/AACAQEa0cz8AAIBA5uR4P/yFrz/m5Hg//IWvP0a0cz/ug48/5uR4P8JjjT9GtHM//IWvP0a0cz/8ha8/5uR4P+6Djz/m5Hg//IWvP0F1uT8AAIBA5uR4PwAAgEBBdbk//IWvP0F1uT/8ha8/5uR4PwAAgEDm5Hg//IWvP4yFoz/ug48/5uR4P/yFrz/m5Hg//IWvP0F1ub8AAIBAPmJjPwAAgEBBdbm//IWvP0F1ub/8ha8/PmJjPwAAgEA+YmM/MVCAv0F1ub/8ha8/PmJjP/yFrz9Bdbm/MVCAv0F1ub/VeGk/PmJjP/yFrz8+YmM/AACAQNjJjz/8ha8/PmJjP/yFrz/YyY8/AACAQNjJjz8AAIBAPmJjP/yFrz8+YmM//IWvP9jJjz/VeGk/PmJjP8JjjT/YyY8//IWvP9jJjz/8ha8/PmJjP9V4aT8+YmM/AACAQEF1uT/8ha8/2MmPP/yFrz9Bdbk/AACAQEF1uT8AAIBA2MmPP/yFrz/YyY8/wmONP9jJjz/8ha8/QXW5P/yFrz/YyY8/JGIgu0Y2j0BMWxNAMsItQGD5kb0EEYxAJGIgu0Y2j0D+whdAtgw0QExbE0Aywi1APV8KQH/hi0BMWxNAf+GLQP7CF0B/4YtAarz0P/vgg0AkYiC7z6//P2D5kb320whAarz0P/vgg0BqvPQ/NV56QCRiILvPr/8/arz0P/BYg0DhsQZA8FiDQGq89D81XnpAarz0P/vgg0DhsQZA8FiDQGq89D/wWINAarz0P/vgg0D+whdAf+GLQOGxBkDwWINAarz0P/vgg0A9XwpAf+GLQP7CF0B/4YtA"),
@@ -312,11 +300,11 @@ _surfaces = [{
 } ]
 blend_shape_mode = 0
 
-[sub_resource type="ConcavePolygonShape3D" id="RoofShape_39"]
+[sub_resource type="ConcavePolygonShape3D" id="RoofShape_35"]
 data = PackedVector3Array(-0.00245, 4.47538, 7, -0.07128, 4.37708, 4.37128, -0.00245, 4.47538, 4.37128, -0.00245, 4.47538, 7, -0.07128, 4.37708, 7, -0.07128, 4.37708, 4.37128, -0.00245, 4.47538, 4.37128, -0.07128, 4.37708, 2.13794, -0.00245, 4.47538, 1.99755, -0.00245, 4.47538, 4.37128, -0.07128, 4.37708, 4.37128, -0.07128, 4.37708, 2.13794, 2.37128, 2.81328, 4.37128, 2.30245, 2.71498, 7, 2.37128, 2.81328, 7, 2.37128, 2.81328, 4.37128, 2.30245, 2.71498, 4.37128, 2.30245, 2.71498, 7, -0.07128, 4.37708, 7, 1.89539, 3, 4.37128, -0.07128, 4.37708, 4.37128, -0.07128, 4.37708, 7, 1.89539, 3, 7, 1.89539, 3, 4.37128, -0.07128, 4.37708, 4.37128, 1.89539, 3, 4.10461, -0.07128, 4.37708, 2.13794, -0.07128, 4.37708, 4.37128, 1.89539, 3, 4.37128, 1.89539, 3, 4.10461, 1.89539, 3, 7, 1.912, 2.98837, 4.37128, 1.89539, 3, 4.37128, 1.89539, 3, 7, 1.912, 2.98837, 7, 1.912, 2.98837, 4.37128, 1.89539, 3, 4.37128, 1.912, 2.98837, 4.12121, 1.89539, 3, 4.10461, 1.89539, 3, 4.37128, 1.912, 2.98837, 4.37128, 1.912, 2.98837, 4.12121, 2.30245, 2.71498, 4.37128, 1.912, 2.98837, 7, 2.30245, 2.71498, 7, 2.30245, 2.71498, 4.37128, 1.912, 2.98837, 4.37128, 1.912, 2.98837, 7, 2.16206, 2.81328, 4.37128, 1.912, 2.98837, 4.12121, 1.912, 2.98837, 4.37128, -0.00245, 4.47538, 4.37128, 1.912, 3.13486, 7, -0.00245, 4.47538, 7, -0.00245, 4.47538, 4.37128, 1.912, 3.13486, 4.37128, 1.912, 3.13486, 7, -0.00245, 4.47538, 1.99755, 1.912, 3.13486, 4.37128, -0.00245, 4.47538, 4.37128, -0.00245, 4.47538, 1.99755, 1.912, 3.13486, 3.912, 1.912, 3.13486, 4.37128, 2.10461, 3, 7, 1.912, 3.13486, 4.37128, 2.10461, 3, 4.37128, 2.10461, 3, 7, 1.912, 3.13486, 7, 1.912, 3.13486, 4.37128, 2.10461, 3, 4.37128, 1.912, 3.13486, 3.912, 2.10461, 3, 4.10461, 2.10461, 3, 4.37128, 1.912, 3.13486, 4.37128, 1.912, 3.13486, 3.912, 2.37128, 2.81328, 7, 2.10461, 3, 4.37128, 2.37128, 2.81328, 4.37128, 2.37128, 2.81328, 7, 2.10461, 3, 7, 2.10461, 3, 4.37128, 2.10461, 3, 4.10461, 2.37128, 2.81328, 4.37128, 2.10461, 3, 4.37128, -0.00245, 4.47538, 7, 2.30245, 2.71498, 7, -0.07128, 4.37708, 7, -0.00245, 4.47538, 7, 2.37128, 2.81328, 7, 2.30245, 2.71498, 7, 2.16206, 2.81328, 4.37128, 2.30245, 2.71498, 4.37128, 2.37128, 2.81328, 4.37128, 1.912, 2.98837, 4.12121, -0.00245, 4.47538, 1.99755, -0.07128, 4.37708, 2.13794, 1.912, 2.98837, 4.12121, 1.912, 3.13486, 3.912, -0.00245, 4.47538, 1.99755, 1.912, 3, 4.10461, 2.10461, 3, 4.10461, 1.912, 3.13486, 3.912, 1.912, 2.98837, 4.12121, 2.10461, 3, 4.10461, 1.912, 3, 4.10461, 1.912, 2.98837, 4.12121, 2.37128, 2.81328, 4.37128, 2.10461, 3, 4.10461, 1.912, 2.98837, 4.12121, 2.16206, 2.81328, 4.37128, 2.37128, 2.81328, 4.37128)
 backface_collision = true
 
-[sub_resource type="ArrayMesh" id="RoofMesh_40"]
+[sub_resource type="ArrayMesh" id="RoofMesh_36"]
 _surfaces = [{
 "aabb": AABB(-0.096, 4.37942, 1.98893, 0.192, 0.102, 5.01107),
 "attribute_data": PackedByteArray("YOVQPQAAgEBg5VC9/IWvP2DlUD38ha8/YOVQPQAAgEBg5VC9AACAQGDlUL38ha8/YOVQPfyFrz9g5VC9/opdv2DlUD3ZaoG/YOVQPfyFrz9g5VC9/IWvP2DlUL3+il2/YOVQPfyFrz9g5VC9AACAQGDlUD0AAIBAYOVQPfyFrz9g5VC9/IWvP2DlUL0AAIBAYOVQPdlqgb9g5VC9/IWvP2DlUD38ha8/YOVQPdlqgb9g5VC9/opdv2DlUL38ha8//IWvP6abxD0AAIBAppvEvQAAgECmm8Q9/IWvP6abxD38ha8/ppvEvQAAgECmm8S9/opdv6abxD38ha8/ppvEvfyFrz+mm8Q9/opdv6abxD3+il2/ppvEvfyFrz+mm8S9/IWvP6abxL0AAIBAppvEPQAAgECmm8S9/IWvP6abxL38ha8/ppvEPQAAgECmm8Q92WqBv6abxL38ha8/ppvEPfyFrz+mm8S92WqBv6abxL3ZaoG/ppvEPfyFrz+mm8Q9ppvEvcFnj0Cmm8Q9KySMQKabxL0rJIxAppvEvcFnj0Cmm8Q9wWePQKabxD0rJIxAppvEvUGdCECmm8Q9J5X+P6abxL0nlf4/ppvEvUGdCECmm8Q9QZ0IQKabxD0nlf4/"),
@@ -329,7 +317,7 @@ _surfaces = [{
 } ]
 blend_shape_mode = 0
 
-[sub_resource type="ConcavePolygonShape3D" id="RoofShape_41"]
+[sub_resource type="ConcavePolygonShape3D" id="RoofShape_37"]
 data = PackedVector3Array(-0.096, 4.48142, 7, -0.096, 4.37942, 4.37128, -0.096, 4.48142, 4.37128, -0.096, 4.48142, 7, -0.096, 4.37942, 7, -0.096, 4.37942, 4.37128, -0.096, 4.48142, 4.37128, -0.096, 4.37942, 2.1346, -0.096, 4.48142, 1.98893, -0.096, 4.48142, 4.37128, -0.096, 4.37942, 4.37128, -0.096, 4.37942, 2.1346, 0.096, 4.48142, 4.37128, 0.096, 4.37942, 7, 0.096, 4.48142, 7, 0.096, 4.48142, 4.37128, 0.096, 4.37942, 4.37128, 0.096, 4.37942, 7, 0.096, 4.48142, 1.98893, 0.096, 4.37942, 4.37128, 0.096, 4.48142, 4.37128, 0.096, 4.48142, 1.98893, 0.096, 4.37942, 2.1346, 0.096, 4.37942, 4.37128, 0.096, 4.37942, 4.37128, -0.096, 4.37942, 7, 0.096, 4.37942, 7, 0.096, 4.37942, 4.37128, -0.096, 4.37942, 4.37128, -0.096, 4.37942, 7, 0.096, 4.37942, 2.1346, -0.096, 4.37942, 4.37128, 0.096, 4.37942, 4.37128, 0.096, 4.37942, 2.1346, -0.096, 4.37942, 2.1346, -0.096, 4.37942, 4.37128, -0.096, 4.48142, 4.37128, 0.096, 4.48142, 7, -0.096, 4.48142, 7, -0.096, 4.48142, 4.37128, 0.096, 4.48142, 4.37128, 0.096, 4.48142, 7, -0.096, 4.48142, 1.98893, 0.096, 4.48142, 4.37128, -0.096, 4.48142, 4.37128, -0.096, 4.48142, 1.98893, 0.096, 4.48142, 1.98893, 0.096, 4.48142, 4.37128, -0.096, 4.48142, 7, 0.096, 4.37942, 7, -0.096, 4.37942, 7, -0.096, 4.48142, 7, 0.096, 4.48142, 7, 0.096, 4.37942, 7, -0.096, 4.37942, 2.1346, 0.096, 4.48142, 1.98893, -0.096, 4.48142, 1.98893, -0.096, 4.37942, 2.1346, 0.096, 4.37942, 2.1346, 0.096, 4.48142, 1.98893)
 backface_collision = true
 
@@ -414,114 +402,92 @@ position = Vector3(0, -0.09, 5.5)
 shape = SubResource("PlatformShape_7")
 
 [node name="Porch_001_Porch_Post_001" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
-position = Vector3(-2, 1.5, 4)
+position = Vector3(-2, 1.5, 5.545)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_8")
 metadata/building_part = "post"
 
 [node name="Porch_001_Porch_Post_001_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(-2, 1.5, 4)
+position = Vector3(-2, 1.5, 5.545)
 rotation = Vector3(0, 0, 0)
 shape = SubResource("BoxShape_9")
 
 [node name="Porch_001_Porch_Post_002" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
-position = Vector3(-2, 1.5, 5.5)
+position = Vector3(-2, 1.5, 7)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_10")
 metadata/building_part = "post"
 
 [node name="Porch_001_Porch_Post_002_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(-2, 1.5, 5.5)
+position = Vector3(-2, 1.5, 7)
 rotation = Vector3(0, 0, 0)
 shape = SubResource("BoxShape_11")
 
 [node name="Porch_001_Porch_Post_003" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
-position = Vector3(-2, 1.5, 7)
+position = Vector3(2, 1.5, 5.545)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_12")
 metadata/building_part = "post"
 
 [node name="Porch_001_Porch_Post_003_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(-2, 1.5, 7)
+position = Vector3(2, 1.5, 5.545)
 rotation = Vector3(0, 0, 0)
 shape = SubResource("BoxShape_13")
 
 [node name="Porch_001_Porch_Post_004" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
-position = Vector3(2, 1.5, 4)
+position = Vector3(2, 1.5, 7)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_14")
 metadata/building_part = "post"
 
 [node name="Porch_001_Porch_Post_004_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(2, 1.5, 4)
+position = Vector3(2, 1.5, 7)
 rotation = Vector3(0, 0, 0)
 shape = SubResource("BoxShape_15")
 
 [node name="Porch_001_Porch_Post_005" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
-position = Vector3(2, 1.5, 5.5)
+position = Vector3(0, 1.5, 7)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_16")
 metadata/building_part = "post"
 
 [node name="Porch_001_Porch_Post_005_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(2, 1.5, 5.5)
+position = Vector3(0, 1.5, 7)
 rotation = Vector3(0, 0, 0)
 shape = SubResource("BoxShape_17")
 
-[node name="Porch_001_Porch_Post_006" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
-position = Vector3(2, 1.5, 7)
+[node name="Porch_001_Porch_Beam_001" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
+position = Vector3(-2, 2.92, 5.545)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_18")
-metadata/building_part = "post"
-
-[node name="Porch_001_Porch_Post_006_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(2, 1.5, 7)
-rotation = Vector3(0, 0, 0)
-shape = SubResource("BoxShape_19")
-
-[node name="Porch_001_Porch_Post_007" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
-position = Vector3(0, 1.5, 7)
-rotation = Vector3(0, 0, 0)
-mesh = SubResource("BoxMesh_20")
-metadata/building_part = "post"
-
-[node name="Porch_001_Porch_Post_007_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(0, 1.5, 7)
-rotation = Vector3(0, 0, 0)
-shape = SubResource("BoxShape_21")
-
-[node name="Porch_001_Porch_Beam_001" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
-position = Vector3(-2, 2.92, 5.5)
-rotation = Vector3(0, 0, 0)
-mesh = SubResource("BoxMesh_22")
 metadata/building_part = "beam"
 
 [node name="Porch_001_Porch_Beam_001_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(-2, 2.92, 5.5)
+position = Vector3(-2, 2.92, 5.545)
 rotation = Vector3(0, 0, 0)
-shape = SubResource("BoxShape_23")
+shape = SubResource("BoxShape_19")
 
 [node name="Porch_001_Porch_Beam_002" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
-position = Vector3(2, 2.92, 5.5)
+position = Vector3(2, 2.92, 5.545)
 rotation = Vector3(0, 0, 0)
-mesh = SubResource("BoxMesh_24")
+mesh = SubResource("BoxMesh_20")
 metadata/building_part = "beam"
 
 [node name="Porch_001_Porch_Beam_002_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(2, 2.92, 5.5)
+position = Vector3(2, 2.92, 5.545)
 rotation = Vector3(0, 0, 0)
-shape = SubResource("BoxShape_25")
+shape = SubResource("BoxShape_21")
 
 [node name="Porch_001_Porch_Beam_003" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
 position = Vector3(0, 2.92, 7)
 rotation = Vector3(0, 0, 0)
-mesh = SubResource("BoxMesh_26")
+mesh = SubResource("BoxMesh_22")
 metadata/building_part = "beam"
 
 [node name="Porch_001_Porch_Beam_003_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, 2.92, 7)
 rotation = Vector3(0, 0, 0)
-shape = SubResource("BoxShape_27")
+shape = SubResource("BoxShape_23")
 
 [node name="ManualRoofs" type="Node3D" parent="."]
 editor_description = "Independent roof footprints with absolute base heights; not owned by floors."
@@ -531,45 +497,45 @@ editor_description = "Independent roof footprints with absolute base heights; no
 [node name="ManualRoof_001_North" type="MeshInstance3D" parent="ManualRoofs"]
 position = Vector3(0, 4.29538, -2.15)
 rotation = Vector3(-0.61087, 0, 0)
-mesh = SubResource("BoxMesh_28")
+mesh = SubResource("BoxMesh_24")
 metadata/building_part = "roof"
 
 [node name="ManualRoof_001_North_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
 position = Vector3(0, 4.29538, -2.15)
 rotation = Vector3(-0.61087, 0, 0)
-shape = SubResource("BoxShape_29")
+shape = SubResource("BoxShape_25")
 
 [node name="ManualRoof_001_South" type="MeshInstance3D" parent="ManualRoofs"]
 position = Vector3(0, 4.29538, 2.15)
 rotation = Vector3(0.61087, 0, 0)
-mesh = SubResource("BoxMesh_30")
+mesh = SubResource("BoxMesh_26")
 metadata/building_part = "roof"
 
 [node name="ManualRoof_001_South_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
 position = Vector3(0, 4.29538, 2.15)
 rotation = Vector3(0.61087, 0, 0)
-shape = SubResource("BoxShape_31")
+shape = SubResource("BoxShape_27")
 
 [node name="ManualRoof_001_Ridge" type="MeshInstance3D" parent="ManualRoofs"]
 position = Vector3(0, 5.83083, 0)
 rotation = Vector3(0, 0, 0)
-mesh = SubResource("BoxMesh_32")
+mesh = SubResource("BoxMesh_28")
 metadata/building_part = "ridge"
 
 [node name="ManualRoof_001_Ridge_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
 position = Vector3(0, 5.83083, 0)
 rotation = Vector3(0, 0, 0)
-shape = SubResource("BoxShape_33")
+shape = SubResource("BoxShape_29")
 
 [node name="ManualGableCollision_001_min" type="CollisionShape3D" parent="ManualRoofCollision"]
 position = Vector3(-6, 4.40042, 0)
 rotation = Vector3(0, 1.5708, 0)
-shape = SubResource("ConvexShape_34")
+shape = SubResource("ConvexShape_30")
 
 [node name="ManualGableCollision_001_max" type="CollisionShape3D" parent="ManualRoofCollision"]
 position = Vector3(6, 4.40042, 0)
 rotation = Vector3(0, 1.5708, 0)
-shape = SubResource("ConvexShape_35")
+shape = SubResource("ConvexShape_31")
 
 [node name="ManualRoof_001_GableFill" type="Node3D" parent="ManualRoofs"]
 
@@ -586,22 +552,22 @@ mesh = SubResource("ManualRoofGableMesh_001_EdgeFaces")
 metadata/building_part = "gable"
 
 [node name="ManualRoof_002_West" type="MeshInstance3D" parent="ManualRoofs"]
-mesh = SubResource("RoofMesh_36")
+mesh = SubResource("RoofMesh_32")
 metadata/building_part = "roof"
 
 [node name="ManualRoof_002_West_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
-shape = SubResource("RoofShape_37")
+shape = SubResource("RoofShape_33")
 
 [node name="ManualRoof_002_East" type="MeshInstance3D" parent="ManualRoofs"]
-mesh = SubResource("RoofMesh_38")
+mesh = SubResource("RoofMesh_34")
 metadata/building_part = "roof"
 
 [node name="ManualRoof_002_East_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
-shape = SubResource("RoofShape_39")
+shape = SubResource("RoofShape_35")
 
 [node name="ManualRoof_002_Ridge" type="MeshInstance3D" parent="ManualRoofs"]
-mesh = SubResource("RoofMesh_40")
+mesh = SubResource("RoofMesh_36")
 metadata/building_part = "ridge"
 
 [node name="ManualRoof_002_Ridge_Collision" type="CollisionShape3D" parent="ManualRoofCollision"]
-shape = SubResource("RoofShape_41")
+shape = SubResource("RoofShape_37")

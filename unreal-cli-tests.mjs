@@ -13,7 +13,7 @@ import {prepareDocument} from './src/diagnostics.js';
 import {exportGodotFiles} from './src/exporter.js';
 import {exportGltfFiles,parseSceneText} from './src/gltf-export.js';
 import {parseGameLayer} from './src/game-layer.js';
-import {autoViews,prepareGlbDirectory,resolveUnreal,unrealRenderAvailability} from './unreal-check.mjs';
+import {autoViews,importIntoProject,prepareGlbDirectory,resolveUnreal,unrealRenderAvailability} from './unreal-check.mjs';
 import {readGlb} from './qa/glb-reader.mjs';
 import {createEditorHarness} from './qa/editor-harness.mjs';
 const root=path.dirname(fileURLToPath(import.meta.url));
@@ -33,6 +33,20 @@ try{
   assert.equal(unrealRenderAvailability(undefined).available,false);
   fs.writeFileSync(path.join(temp,'empty','bad.glb'),'not a glb');assert.throws(()=>prepareGlbDirectory(path.join(temp,'empty')),/bad\.glb/);
   console.log('PASS unreal-check usage and dependency errors (exit 2 and 3, nothing downloaded), .glb preflight');
+
+  // unreal-import: usage errors (exit 2) before Unreal is needed (exit 3); the project and paths are checked before Unreal starts.
+  fs.writeFileSync(path.join(temp,'Game.uproject'),'{}');const glb=path.join('glb','farmhouse.glb');
+  assert.match(run(['unreal-import'],2).error,/requires an input file/);
+  assert.match(run(['unreal-import',glb,'--content','/Game/B'],2).error,/requires --project/);
+  assert.match(run(['unreal-import',glb,'--project','Game.uproject'],2).error,/--content/);
+  assert.match(run(['unreal-import',glb,'--project','Game.uproject','--content','/Game/B'],2).error,/--level \/Game/);
+  assert.match(run(['unreal-import',glb,'--project','Game.uproject','--content','/Game/B','--level','/Game/Maps/Town','--location','1,2'],2).error,/X,Y,Z/);
+  assert.match(run(['unreal-import',glb,'--project','Game.uproject','--content','/Game/B','--level','/Game/Maps/Town','--yaw','east'],2).error,/--yaw must be a number/);
+  assert.match(run(['unreal-import',glb,'--project','Game.uproject','--content','/Game/B','--level','/Game/Maps/Town'],3).error,/Set UNREAL_BIN/);
+  const fake={cmd:path.join(temp,'nope'),version:'5.8'},opts={unreal:fake,glb:path.join(temp,glb),project:path.join(temp,'Game.uproject'),content:'/Game/B'};
+  for(const [bad,message] of [[{project:path.join(temp,'missing.uproject')},/Not an Unreal project/],[{glb:path.join(temp,'empty','bad.glb')},/bad\.glb/],[{content:'C:/Game/B'},/--content must be a \/Game/],[{content:'/Game/B c'},/--content must be/],[{level:'Maps/Town'},/--level must be/]])
+    assert.throws(()=>importIntoProject({...opts,...bad}),e=>e.code===2&&message.test(e.message),JSON.stringify(bad));
+  console.log('PASS unreal-import usage and dependency errors (project, .glb, /Game paths, location, yaw, UNREAL_BIN)');
 
   // Default views: the godot-check --render set, computed from the .glb.
   const court=prepareDocument(JSON.parse(fs.readFileSync(path.join(root,'examples/courtyard_regions.building.json'),'utf8'))).building;

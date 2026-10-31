@@ -139,6 +139,30 @@ export function renderGlbBytes({unreal,glb,name='building',views=null,extraViews
   }finally{if(process.env.BUILDING_UNREAL_KEEP!=="1")fs.rmSync(temp,{recursive:true,force:true});}
 }
 
+// unreal-import: unreal/building_studio_import.py headless in an existing project
+// (closed in the editor). Places the building, sets it up and saves.
+export function importIntoProject({unreal,glb,project,content,level=null,location=null,yaw=0,replace=false,gameLayer=null,lightScale=null,timeoutSeconds=1800}){
+  const uproject=path.resolve(project);
+  if(!uproject.toLowerCase().endsWith('.uproject')||!fs.existsSync(uproject))throw new UnrealError(`Not an Unreal project file: ${project}`,2);
+  const file=path.resolve(glb);try{readGlb(fs.readFileSync(file));}catch(e){throw new UnrealError(`${glb}: ${e.message}`,2);}
+  if(!/^\/Game\/[A-Za-z0-9_/-]+$/.test(content))throw new UnrealError('--content must be a /Game/... folder (letters, digits, _, - and /)',2);
+  if(level!=null&&!/^\/Game\/[A-Za-z0-9_/-]+$/.test(level))throw new UnrealError('--level must be a /Game/... level path',2);
+  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'building-unreal-import-'));
+  try{
+    const report=path.join(temp,'report.json');
+    const args=['--glb',file,'--content',content,...(level?['--level',level]:[]),...(location?['--location',location.join(',')]:[]),'--yaw',String(yaw),...(replace?['--replace']:[]),...(gameLayer?['--game-layer',path.resolve(gameLayer)]:[]),...(lightScale!=null?['--light-scale',String(lightScale)]:[]),'--report',report];
+    const quote=a=>/[\s"]/.test(a)?`"${a.replace(/"/g,'\\"')}"`:a;
+    // Unreal's py command line treats backslashes as escapes: pass paths with forward slashes.
+    const script=[path.join(source,'unreal','building_studio_import.py'),...args].map(a=>a.split(path.sep).join('/')).map(quote).join(' ');
+    const r=spawnSync(unreal.cmd,[uproject,'-run=pythonscript',`-script=${script}`,'-unattended','-nop4','-nosplash','-stdout'],{encoding:'utf8',timeout:timeoutSeconds*1000,maxBuffer:256*1024*1024});
+    if(r.error||!fs.existsSync(report)){
+      const errors=(r.stdout||'').split('\n').filter(l=>/LogPython: Error|Fatal error/.test(l)).map(l=>l.replace(/^\[[^\]]*\]\[[^\]]*\]/,'').trim()).slice(-6).join(' | ');
+      throw new UnrealError(`Unreal import failed (exit ${r.status}): ${r.error?.message||errors||'no report written'}`);
+    }
+    return JSON.parse(fs.readFileSync(report,'utf8'));
+  }finally{if(process.env.BUILDING_UNREAL_KEEP!=="1")fs.rmSync(temp,{recursive:true,force:true});}
+}
+
 export function unrealRenderAvailability(executable){
   if(!executable)return {available:false,reason:'Start the local server with UNREAL_BIN=/path/to/UnrealEditor-Cmd to render in Unreal.'};
   try{const u=resolveUnreal(executable);return {available:true,engineVersion:u.version};}

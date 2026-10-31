@@ -33,7 +33,7 @@ const GROUP_TYPES=['wall','opening','light','marker','stair','railing','region',
 const fields={
   building:['name','sceneName','exportProfile','wallHeight','wallThickness','floorThickness','gridSize','roof','ceiling','doorMesh','windowMesh','slabsByRoom'],
   floor:['label','elevation','wallHeight','floorThickness','autoFloor','autoCeiling','boundaryMode'],
-  platform:['label',...rectKeys,'kind','height','covered','roofStyle','roofPitch','steps'],
+  platform:['label',...rectKeys,'kind','height','covered','roofStyle','roofPitch','roofHeight','steps'],
   elevator:['label','x','z','width','depth','doorSide','doorWidth','doorHeight','bottomFloorId','topFloorId','skipFloorIds'],
   stair:['label','x','z','width','run','direction','style','steps','blockBelow'],
   wall:['label','role','height','a','b','wallTypeId','inwardSide','inwardToward'],
@@ -75,6 +75,7 @@ function checkValue(kind,value,action,where){
       else if(key==='covered'){if(typeof v!=='boolean')fail('Expected a boolean',p);}
       else if(key==='roofStyle'){if(v!==null)choice(v,['extend','lean-to'],p);}
       else if(key==='roofPitch'){if(v!==null)number(v,p,3,45);}
+      else if(key==='roofHeight'){if(v!==null)number(v,p,.5,100);}
       else if(key==='steps'){if(v!==null){keys(v,['edge','at','width'],p);if(v.edge===undefined)fail('Missing required field: edge',p);choice(v.edge,['minX','maxX','minZ','maxZ'],`${p}/edge`);for(const k of ['at','width'])if(v[k]!==undefined)number(v[k],`${p}/${k}`);}}
       else number(v,p,key==='height'?-10000:-1e6,key==='height'?10000:1e6);
     }
@@ -627,7 +628,7 @@ export function applyTransaction(source,transaction,{warningsAsErrors=false,sour
         if(JSON.stringify(previous)===JSON.stringify(next))continue;
         // Conservative context inventory, not inferred ownership. These pieces
         // are retained, and may need a separate alignment edit after a change.
-        const geometryChanged=!previous||!next||['minX','maxX','minZ','maxZ','topY','bottomY','kind','covered','roofStyle','roofPitch'].some(k=>previous[k]!==next[k]);
+        const geometryChanged=!previous||!next||['minX','maxX','minZ','maxZ','topY','bottomY','kind','covered','roofStyle','roofPitch','roofHeight'].some(k=>previous[k]!==next[k]);
         const independentPieces=geometryChanged?[
           ...(nextFloor?.railings||[]).map(r=>({kind:'railing',id:r.id,floorId})),
           ...['manualFloors','manualCeilings','roofSections'].flatMap(kind=>building[kind].map(r=>({kind,id:r.id})))

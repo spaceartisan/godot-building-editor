@@ -18,6 +18,9 @@ export function proposePlatformUpdate(platform,patch){
   else if(next.roofStyle!=='lean-to')return {ok:false,reason:'Platform roofStyle must be extend or lean-to'};
   if(next.roofPitch==null)delete next.roofPitch;
   else if(typeof next.roofPitch!=='number'||!Number.isFinite(next.roofPitch)||next.roofPitch<3||next.roofPitch>45)return {ok:false,reason:'Platform roofPitch must be 3 to 45 degrees'};
+  // Lean-to high edge above the floor (null: just below the main eave).
+  if(next.roofHeight==null)delete next.roofHeight;
+  else if(typeof next.roofHeight!=='number'||!Number.isFinite(next.roofHeight)||next.roofHeight<.5||next.roofHeight>100)return {ok:false,reason:'Platform roofHeight must be 0.5 to 100 m above the floor'};
   if(next.steps==null)delete next.steps;
   {const problem=platformStepsProblem(next);if(problem)return {ok:false,reason:problem};}
   return {ok:true,platform:next};

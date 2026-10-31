@@ -110,4 +110,40 @@ try{
   editor.chooseSelection({type:'platform',id:'porch'});const covered=row('Covered by roof').querySelector('input');covered.checked=false;await covered.dispatch('change');assert.equal(row('Porch roof'),undefined);
   assert.deepEqual(editor.errors,[]);
   console.log('PASS lean-to CLI recipe/edit/export and web porch panel parity');
+
+  {// Party Palace (Clowning Around): a porch on a tall shop's front wall, over a 3.6 m double door.
+  const palaceOps=[
+    {op:'building.update',value:{roof:{type:'hip',pitch:40,overhang:.5}}},
+    {op:'floor.update',id:'floor_1',value:{wallHeight:7}},
+    {op:'room.add',floorId:'floor_1',id:'shell',value:{minX:-9.5,maxX:9.5,minZ:-12,maxZ:12}},
+    {op:'opening.add',floorId:'floor_1',id:'doors',value:{type:'door',wallId:'shell-east',at:{x:9.5,z:0},width:3.6,height:3.3,doorStyle:'exterior',leaves:2}},
+    {op:'platform.add',floorId:'floor_1',id:'porch',value:{minX:9.5,maxX:11.9,minZ:-3,maxZ:3,kind:'porch',covered:true,roofStyle:'lean-to'}}];
+  const palace=build(palaceOps),th=palace.wallThickness,pv=floorView(palace,0),support=coveredPlatformSupports(pv,pv.platforms[0]);
+  // No post inside the front wall; the side beams start at its outer face.
+  assert.ok(support.posts.every(p=>p.x>9.5+th/2+.05),`posts ${JSON.stringify(support.posts)}`);
+  for(const s of support.sides.filter(s=>s.axis==='x'))near(s.x0,9.5+th/2);
+  // Posts facing the door stay out of its width plus the clearance; the corners stay.
+  const front=support.posts.filter(p=>Math.abs(p.x-11.9)<1e-9).map(p=>p.z).sort((a,b)=>a-b);
+  assert.ok(front.every(z=>Math.abs(z)>=1.8+.3-1e-9),`front posts ${front}`);assert.deepEqual([front[0],front.at(-1)],[-3,3]);
+  // The same porch drawn from the wall's outer face gives the same posts and roof.
+  const face=build(palaceOps.map(o=>o.op==='platform.add'?{...o,value:{...o.value,minX:9.5+th/2}}:o)),fv=floorView(face,0);
+  assert.deepEqual(coveredPlatformSupports(fv,fv.platforms[0]).posts,support.posts);assert.deepEqual(lean(face).part,lean(palace).part);
+  // roofHeight: the canopy just above the door head; above the eave it is held there and flagged.
+  const low=build([...palaceOps,{op:'platform.update',floorId:'floor_1',id:'porch',value:{roofHeight:3.6}}]);
+  near(lean(low).highY,3.6);assert.ok(lean(low).headroom>=2&&lean(low).headroom<lean(palace).headroom);assert.deepEqual(validateBuilding(low,{roofDiagnostics:true}).warnings,[]);
+  const high=applyTransaction(palace,{version:1,operations:[{op:'platform.update',floorId:'floor_1',id:'porch',value:{roofHeight:20}}]});
+  assert.equal(high.ok,true);near(lean(high.building).highY,lean(palace).highY);assert.match(high.warnings.map(w=>w.message).join(' '),/roofHeight 20\.00 m is above the main roof's eave/);
+  assert.equal(applyTransaction(low,{version:1,operations:[{op:'platform.update',floorId:'floor_1',id:'porch',value:{roofHeight:null}}]}).building.floors[0].platforms[0].roofHeight,undefined,'null restores the eave height');
+  assert.equal(applyTransaction(palace,{version:1,operations:[{op:'platform.update',floorId:'floor_1',id:'porch',value:{roofHeight:.2}}]}).ok,false,'roofHeight below 0.5 m is rejected');
+  // CLI recipe and inspect; the web panel's Lean-to height field sets and clears it.
+  fs.writeFileSync(path.join(temp,'palace.edit.json'),JSON.stringify({version:1,operations:[...palaceOps,{op:'platform.update',floorId:'floor_1',id:'porch',value:{roofHeight:3.6}}]}));
+  run(['new','--ops','palace.edit.json','--out','palace.json','--warnings-as-errors']);
+  assert.equal(run(['inspect','palace.json','--entities']).results[0].inspection.floors[0].platforms[0].roofHeight,3.6);
+  const web=await createEditorHarness(),wrow=label=>web.$('#selection-form').children.find(c=>c.textContent.startsWith(label));
+  await web.loadBuildingData(structuredClone(palace));web.chooseSelection({type:'platform',id:'porch'});
+  const field=wrow('Lean-to height').querySelector('input');near(Number(field.value),Number(lean(palace).highY.toFixed(2)));
+  field.value='3.6';await field.dispatch('change');assert.deepEqual(web.snapshot(),JSON.parse(fs.readFileSync(path.join(temp,'palace.json'),'utf8')),'web Lean-to height equals the CLI roofHeight');
+  web.chooseSelection({type:'platform',id:'porch'});const cleared=wrow('Lean-to height').querySelector('input');cleared.value='';await cleared.dispatch('change');
+  assert.equal(web.snapshot().floors[0].platforms[0].roofHeight,undefined,'a blank field restores the eave height');assert.deepEqual(web.errors,[]);
+  console.log('PASS porch posts clear of the wall and its doorway, porch from centreline or wall face, lean-to roofHeight (CLI, inspect, web)');}
 }finally{fs.rmSync(temp,{recursive:true,force:true});}

@@ -83,7 +83,7 @@ if JOB_FILE and not getattr(unreal, "_building_render_registered", False):
         bs.setup(current["glb"], nodes[0]["label"])
         if job["colorMode"] == "surfaces":
             apply_surface_colors(nodes, bs.actors_under(nodes[0]["label"]))
-        sun = actors.spawn_actor_from_class(unreal.DirectionalLight, unreal.Vector(0, 0, 2000), unreal.Rotator(-40, -35, 0))
+        sun = actors.spawn_actor_from_class(unreal.DirectionalLight, unreal.Vector(0, 0, 2000), unreal.Rotator(roll=0, pitch=-40, yaw=-35))
         sun.light_component.set_editor_property("intensity", 6.0)
         sun.light_component.set_editor_property("atmosphere_sun_light", True)  # lights the sky, as Godot's sun and sky do
         sky =actors.spawn_actor_from_class(unreal.SkyLight, unreal.Vector(0, 0, 1000))

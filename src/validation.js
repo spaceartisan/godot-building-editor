@@ -94,6 +94,7 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
           if(obj.covered!=null&&typeof obj.covered!=='boolean')error(p,'platform roof coverage must be boolean');
           if(obj.roofStyle!=null&&!['extend','lean-to'].includes(obj.roofStyle))error(p,'platform roofStyle must be extend or lean-to');
           if(obj.roofPitch!=null&&!(typeof obj.roofPitch==='number'&&obj.roofPitch>=3&&obj.roofPitch<=45))error(p,'platform roofPitch must be 3 to 45 degrees');
+          if(obj.roofHeight!=null&&!(typeof obj.roofHeight==='number'&&obj.roofHeight>=.5&&obj.roofHeight<=100))error(p,'platform roofHeight must be 0.5 to 100 m above the floor');
         }
         if(name==='regions'){
           if(obj.kind!=null&&!REGION_KINDS.includes(obj.kind))error(p,'unknown region kind');

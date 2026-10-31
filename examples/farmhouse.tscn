@@ -1,4 +1,4 @@
-[gd_scene load_steps=160 format=3]
+[gd_scene load_steps=156 format=3]
 
 [ext_resource type="PackedScene" path="doors/farmhouse_f01_door_001_door.tscn" id="F01_DoorScene_001"]
 [ext_resource type="PackedScene" path="doors/farmhouse_f01_door_002_door.tscn" id="F01_DoorScene_002"]
@@ -795,33 +795,21 @@ size = Vector3(0.12, 4, 0.12)
 size = Vector3(0.12, 4, 0.12)
 
 [sub_resource type="BoxMesh" id="BoxMesh_97"]
-size = Vector3(0.12, 4, 0.12)
+size = Vector3(0.12, 0.16, 2.03)
 
 [sub_resource type="BoxShape3D" id="BoxShape_98"]
-size = Vector3(0.12, 4, 0.12)
+size = Vector3(0.12, 0.16, 2.03)
 
 [sub_resource type="BoxMesh" id="BoxMesh_99"]
-size = Vector3(0.12, 4, 0.12)
+size = Vector3(0.12, 0.16, 2.03)
 
 [sub_resource type="BoxShape3D" id="BoxShape_100"]
-size = Vector3(0.12, 4, 0.12)
+size = Vector3(0.12, 0.16, 2.03)
 
 [sub_resource type="BoxMesh" id="BoxMesh_101"]
-size = Vector3(0.12, 0.16, 2.12)
-
-[sub_resource type="BoxShape3D" id="BoxShape_102"]
-size = Vector3(0.12, 0.16, 2.12)
-
-[sub_resource type="BoxMesh" id="BoxMesh_103"]
-size = Vector3(0.12, 0.16, 2.12)
-
-[sub_resource type="BoxShape3D" id="BoxShape_104"]
-size = Vector3(0.12, 0.16, 2.12)
-
-[sub_resource type="BoxMesh" id="BoxMesh_105"]
 size = Vector3(12.12, 0.16, 0.12)
 
-[sub_resource type="BoxShape3D" id="BoxShape_106"]
+[sub_resource type="BoxShape3D" id="BoxShape_102"]
 size = Vector3(12.12, 0.16, 0.12)
 
 [sub_resource type="ArrayMesh" id="F01_RailingMesh_001"]
@@ -837,7 +825,7 @@ _surfaces = [{
 } ]
 blend_shape_mode = 0
 
-[sub_resource type="BoxShape3D" id="RailingShape_107"]
+[sub_resource type="BoxShape3D" id="RailingShape_103"]
 size = Vector3(2, 1, 0.12)
 
 [sub_resource type="ArrayMesh" id="F01_RailingMesh_002"]
@@ -853,7 +841,7 @@ _surfaces = [{
 } ]
 blend_shape_mode = 0
 
-[sub_resource type="BoxShape3D" id="RailingShape_108"]
+[sub_resource type="BoxShape3D" id="RailingShape_104"]
 size = Vector3(2, 1, 0.12)
 
 [sub_resource type="ArrayMesh" id="F01_RailingMesh_003"]
@@ -869,7 +857,7 @@ _surfaces = [{
 } ]
 blend_shape_mode = 0
 
-[sub_resource type="BoxShape3D" id="RailingShape_109"]
+[sub_resource type="BoxShape3D" id="RailingShape_105"]
 size = Vector3(5, 1, 0.12)
 
 [sub_resource type="ArrayMesh" id="F01_RailingMesh_004"]
@@ -885,40 +873,40 @@ _surfaces = [{
 } ]
 blend_shape_mode = 0
 
-[sub_resource type="BoxShape3D" id="RailingShape_110"]
+[sub_resource type="BoxShape3D" id="RailingShape_106"]
 size = Vector3(5, 1, 0.12)
 
-[sub_resource type="ConvexPolygonShape3D" id="ConvexShape_111"]
+[sub_resource type="ConvexPolygonShape3D" id="ConvexShape_107"]
 points = PackedVector3Array(-8, -2.80083, -0.09, 8, -2.80083, -0.09, 0, 2.80083, -0.09, -8, -2.80083, 0.09, 8, -2.80083, 0.09, 0, 2.80083, 0.09)
 
-[sub_resource type="ConvexPolygonShape3D" id="ConvexShape_112"]
+[sub_resource type="ConvexPolygonShape3D" id="ConvexShape_108"]
 points = PackedVector3Array(-8, -2.80083, -0.09, 8, -2.80083, -0.09, 0, 2.80083, -0.09, -8, -2.80083, 0.09, 8, -2.80083, 0.09, 0, 2.80083, 0.09)
+
+[sub_resource type="BoxMesh" id="BoxMesh_109"]
+size = Vector3(20.7, 0.12, 10.28347)
+
+[sub_resource type="BoxShape3D" id="BoxShape_110"]
+size = Vector3(20.7, 0.12, 10.28347)
+
+[sub_resource type="BoxMesh" id="BoxMesh_111"]
+size = Vector3(20.7, 0.12, 10.28347)
+
+[sub_resource type="BoxShape3D" id="BoxShape_112"]
+size = Vector3(20.7, 0.12, 10.28347)
 
 [sub_resource type="BoxMesh" id="BoxMesh_113"]
-size = Vector3(20.7, 0.12, 10.28347)
+size = Vector3(20.78, 0.102, 0.192)
 
 [sub_resource type="BoxShape3D" id="BoxShape_114"]
-size = Vector3(20.7, 0.12, 10.28347)
-
-[sub_resource type="BoxMesh" id="BoxMesh_115"]
-size = Vector3(20.7, 0.12, 10.28347)
-
-[sub_resource type="BoxShape3D" id="BoxShape_116"]
-size = Vector3(20.7, 0.12, 10.28347)
-
-[sub_resource type="BoxMesh" id="BoxMesh_117"]
 size = Vector3(20.78, 0.102, 0.192)
 
-[sub_resource type="BoxShape3D" id="BoxShape_118"]
-size = Vector3(20.78, 0.102, 0.192)
-
-[sub_resource type="ConvexPolygonShape3D" id="ConvexShape_119"]
+[sub_resource type="ConvexPolygonShape3D" id="ConvexShape_115"]
 points = PackedVector3Array(-1, -0.3501, -0.09, 1, -0.3501, -0.09, 0, 0.3501, -0.09, -1, -0.3501, 0.09, 1, -0.3501, 0.09, 0, 0.3501, 0.09)
 
-[sub_resource type="ConvexPolygonShape3D" id="ConvexShape_120"]
+[sub_resource type="ConvexPolygonShape3D" id="ConvexShape_116"]
 points = PackedVector3Array(-1, -0.3501, -0.09, 1, -0.3501, -0.09, 0, 0.3501, -0.09, -1, -0.3501, 0.09, 1, -0.3501, 0.09, 0, 0.3501, 0.09)
 
-[sub_resource type="ArrayMesh" id="RoofMesh_121"]
+[sub_resource type="ArrayMesh" id="RoofMesh_117"]
 _surfaces = [{
 "aabb": AABB(-6.35, 3.98837, 5.89539, 12.7, 0.7868, 1.17588),
 "attribute_data": PackedByteArray("j8J1vUh4Xj+PwnU9dQL3vo/CdT1IeF4/j8J1vUh4Xj+PwnW9okOfvo/CdT11Ave+j8J1veCkqb6Wvk69qzqmvo/Cdb2iQ5++j8J1PXUC976PwnW9SHheP4/CdT1IeF4/j8J1PXUC976PwnW9okOfvo/Cdb1IeF4/lr5Ovas6pr6PwnW94KSpvo/Cdb2iQ5++okOfvjMzy0BIeF4/MzPLwEh4Xj8zM8tAokOfvjMzy0CiQ5++MzPLwEh4Xj8zM8vA4KSpvjMzy0CiQ5++MzPLwKJDn74zM8tA4KSpvjMzy0DgpKm+MzPLwKJDn74zM8vAdQL3vjMzy8BIeF4/MzPLQEh4Xj8zM8vAdQL3vjMzy8B1Ave+MzPLQEh4Xj8zM8tAMzPLwI/Cdb0zM8tAj8J1PTMzy0CPwnW9MzPLwI/Cdb0zM8vAj8J1PTMzy0CPwnU9EKf8QDMzy8BzaAFBMzPLQBCn/EAzM8tAEKf8QDMzy8BzaAFBMzPLwHNoAUEzM8tAMzPLwAsEBUAzM8tAj8IFQDMzy8CPwgVAMzPLwAsEBUAzM8tACwQFQDMzy0CPwgVA"),
@@ -931,20 +919,20 @@ _surfaces = [{
 } ]
 blend_shape_mode = 0
 
-[sub_resource type="ConcavePolygonShape3D" id="RoofShape_122"]
+[sub_resource type="ConcavePolygonShape3D" id="RoofShape_118"]
 data = PackedVector3Array(-6.35, 4.67687, 7.07128, -6.35, 4, 5.89539, -6.35, 4.77517, 7.00245, -6.35, 4.67687, 7.07128, -6.35, 4, 6.10461, -6.35, 4, 5.89539, -6.35, 3.98837, 6.088, -6.35, 4, 6.088, -6.35, 4, 6.10461, 6.35, 4, 5.89539, 6.35, 4.67687, 7.07128, 6.35, 4.77517, 7.00245, 6.35, 4, 5.89539, 6.35, 4, 6.10461, 6.35, 4.67687, 7.07128, 6.35, 4, 6.088, 6.35, 3.98837, 6.088, 6.35, 4, 6.10461, 6.35, 4, 6.10461, -6.35, 4.67687, 7.07128, 6.35, 4.67687, 7.07128, 6.35, 4, 6.10461, -6.35, 4, 6.10461, -6.35, 4.67687, 7.07128, 6.35, 3.98837, 6.088, -6.35, 4, 6.10461, 6.35, 4, 6.10461, 6.35, 3.98837, 6.088, -6.35, 3.98837, 6.088, -6.35, 4, 6.10461, -6.35, 4, 5.89539, 6.35, 4.77517, 7.00245, -6.35, 4.77517, 7.00245, -6.35, 4, 5.89539, 6.35, 4, 5.89539, 6.35, 4.77517, 7.00245, -6.35, 4.67687, 7.07128, 6.35, 4.77517, 7.00245, 6.35, 4.67687, 7.07128, -6.35, 4.67687, 7.07128, -6.35, 4.77517, 7.00245, 6.35, 4.77517, 7.00245, -6.35, 4, 5.89539, 6.35, 4, 6.088, 6.35, 4, 5.89539, -6.35, 4, 5.89539, -6.35, 4, 6.088, 6.35, 4, 6.088, -6.35, 3.98837, 6.088, 6.35, 4, 6.088, -6.35, 4, 6.088, -6.35, 3.98837, 6.088, 6.35, 3.98837, 6.088, 6.35, 4, 6.088)
 backface_collision = true
 
-[sub_resource type="BoxMesh" id="BoxMesh_123"]
+[sub_resource type="BoxMesh" id="BoxMesh_119"]
 size = Vector3(12.7, 0.12, 1.73805)
 
-[sub_resource type="BoxShape3D" id="BoxShape_124"]
+[sub_resource type="BoxShape3D" id="BoxShape_120"]
 size = Vector3(12.7, 0.12, 1.73805)
 
-[sub_resource type="BoxMesh" id="BoxMesh_125"]
+[sub_resource type="BoxMesh" id="BoxMesh_121"]
 size = Vector3(12.78, 0.102, 0.192)
 
-[sub_resource type="BoxShape3D" id="BoxShape_126"]
+[sub_resource type="BoxShape3D" id="BoxShape_122"]
 size = Vector3(12.78, 0.102, 0.192)
 
 [node name="Farmhouse" type="Node3D"]
@@ -1582,125 +1570,103 @@ position = Vector3(0, -0.09, 7)
 shape = SubResource("PlatformShape_84")
 
 [node name="Porch_001_Porch_1_Post_001" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
-position = Vector3(-6, 2, 6)
+position = Vector3(-6, 2, 8)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_85")
 metadata/building_part = "post"
 
 [node name="Porch_001_Porch_1_Post_001_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(-6, 2, 6)
+position = Vector3(-6, 2, 8)
 rotation = Vector3(0, 0, 0)
 shape = SubResource("BoxShape_86")
 
 [node name="Porch_001_Porch_1_Post_002" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
-position = Vector3(-6, 2, 8)
+position = Vector3(6, 2, 8)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_87")
 metadata/building_part = "post"
 
 [node name="Porch_001_Porch_1_Post_002_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(-6, 2, 8)
+position = Vector3(6, 2, 8)
 rotation = Vector3(0, 0, 0)
 shape = SubResource("BoxShape_88")
 
 [node name="Porch_001_Porch_1_Post_003" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
-position = Vector3(6, 2, 6)
+position = Vector3(-3.6, 2, 8)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_89")
 metadata/building_part = "post"
 
 [node name="Porch_001_Porch_1_Post_003_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(6, 2, 6)
+position = Vector3(-3.6, 2, 8)
 rotation = Vector3(0, 0, 0)
 shape = SubResource("BoxShape_90")
 
 [node name="Porch_001_Porch_1_Post_004" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
-position = Vector3(6, 2, 8)
+position = Vector3(-1.2, 2, 8)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_91")
 metadata/building_part = "post"
 
 [node name="Porch_001_Porch_1_Post_004_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(6, 2, 8)
+position = Vector3(-1.2, 2, 8)
 rotation = Vector3(0, 0, 0)
 shape = SubResource("BoxShape_92")
 
 [node name="Porch_001_Porch_1_Post_005" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
-position = Vector3(-3.6, 2, 8)
+position = Vector3(1.2, 2, 8)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_93")
 metadata/building_part = "post"
 
 [node name="Porch_001_Porch_1_Post_005_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(-3.6, 2, 8)
+position = Vector3(1.2, 2, 8)
 rotation = Vector3(0, 0, 0)
 shape = SubResource("BoxShape_94")
 
 [node name="Porch_001_Porch_1_Post_006" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
-position = Vector3(-1.2, 2, 8)
+position = Vector3(3.6, 2, 8)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_95")
 metadata/building_part = "post"
 
 [node name="Porch_001_Porch_1_Post_006_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(-1.2, 2, 8)
+position = Vector3(3.6, 2, 8)
 rotation = Vector3(0, 0, 0)
 shape = SubResource("BoxShape_96")
 
-[node name="Porch_001_Porch_1_Post_007" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
-position = Vector3(1.2, 2, 8)
+[node name="Porch_001_Porch_1_Beam_001" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
+position = Vector3(-6, 3.92, 7.045)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_97")
-metadata/building_part = "post"
-
-[node name="Porch_001_Porch_1_Post_007_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(1.2, 2, 8)
-rotation = Vector3(0, 0, 0)
-shape = SubResource("BoxShape_98")
-
-[node name="Porch_001_Porch_1_Post_008" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
-position = Vector3(3.6, 2, 8)
-rotation = Vector3(0, 0, 0)
-mesh = SubResource("BoxMesh_99")
-metadata/building_part = "post"
-
-[node name="Porch_001_Porch_1_Post_008_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(3.6, 2, 8)
-rotation = Vector3(0, 0, 0)
-shape = SubResource("BoxShape_100")
-
-[node name="Porch_001_Porch_1_Beam_001" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
-position = Vector3(-6, 3.92, 7)
-rotation = Vector3(0, 0, 0)
-mesh = SubResource("BoxMesh_101")
 metadata/building_part = "beam"
 
 [node name="Porch_001_Porch_1_Beam_001_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(-6, 3.92, 7)
+position = Vector3(-6, 3.92, 7.045)
 rotation = Vector3(0, 0, 0)
-shape = SubResource("BoxShape_102")
+shape = SubResource("BoxShape_98")
 
 [node name="Porch_001_Porch_1_Beam_002" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
-position = Vector3(6, 3.92, 7)
+position = Vector3(6, 3.92, 7.045)
 rotation = Vector3(0, 0, 0)
-mesh = SubResource("BoxMesh_103")
+mesh = SubResource("BoxMesh_99")
 metadata/building_part = "beam"
 
 [node name="Porch_001_Porch_1_Beam_002_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(6, 3.92, 7)
+position = Vector3(6, 3.92, 7.045)
 rotation = Vector3(0, 0, 0)
-shape = SubResource("BoxShape_104")
+shape = SubResource("BoxShape_100")
 
 [node name="Porch_001_Porch_1_Beam_003" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
 position = Vector3(0, 3.92, 8)
 rotation = Vector3(0, 0, 0)
-mesh = SubResource("BoxMesh_105")
+mesh = SubResource("BoxMesh_101")
 metadata/building_part = "beam"
 
 [node name="Porch_001_Porch_1_Beam_003_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, 3.92, 8)
 rotation = Vector3(0, 0, 0)
-shape = SubResource("BoxShape_106")
+shape = SubResource("BoxShape_102")
 
 [node name="Railings" type="Node3D" parent="Floor_01/Geometry"]
 
@@ -1713,7 +1679,7 @@ metadata/building_part = "railing"
 [node name="Railing_001_Railing_1_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(-6, 0.5, 7)
 rotation = Vector3(0, -1.5708, 0)
-shape = SubResource("RailingShape_107")
+shape = SubResource("RailingShape_103")
 
 [node name="Railing_002_Railing_2" type="MeshInstance3D" parent="Floor_01/Geometry/Railings"]
 position = Vector3(6, 0, 7)
@@ -1724,7 +1690,7 @@ metadata/building_part = "railing"
 [node name="Railing_002_Railing_2_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(6, 0.5, 7)
 rotation = Vector3(0, -1.5708, 0)
-shape = SubResource("RailingShape_108")
+shape = SubResource("RailingShape_104")
 
 [node name="Railing_003_Railing_3" type="MeshInstance3D" parent="Floor_01/Geometry/Railings"]
 position = Vector3(3.5, 0, 8)
@@ -1735,7 +1701,7 @@ metadata/building_part = "railing"
 [node name="Railing_003_Railing_3_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(3.5, 0.5, 8)
 rotation = Vector3(0, -3.14159, 0)
-shape = SubResource("RailingShape_109")
+shape = SubResource("RailingShape_105")
 
 [node name="Railing_004_Railing_4" type="MeshInstance3D" parent="Floor_01/Geometry/Railings"]
 position = Vector3(-3.5, 0, 8)
@@ -1746,7 +1712,7 @@ metadata/building_part = "railing"
 [node name="Railing_004_Railing_4_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(-3.5, 0.5, 8)
 rotation = Vector3(0, 0, 0)
-shape = SubResource("RailingShape_110")
+shape = SubResource("RailingShape_106")
 
 [node name="Door_001_Door" type="Marker3D" parent="Floor_01/Openings"]
 position = Vector3(-0.00733, 1.05, 6)
@@ -1883,81 +1849,81 @@ metadata/building_opening_label = "Door"
 [node name="GableCollision_1_min" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(-10, 6.80083, -2)
 rotation = Vector3(0, 1.5708, 0)
-shape = SubResource("ConvexShape_111")
+shape = SubResource("ConvexShape_107")
 
 [node name="GableCollision_1_max" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(10, 6.80083, -2)
 rotation = Vector3(0, 1.5708, 0)
-shape = SubResource("ConvexShape_112")
+shape = SubResource("ConvexShape_108")
 
 [node name="Roof_001_North" type="MeshInstance3D" parent="Floor_01/Geometry/Roof"]
 position = Vector3(0, 6.67829, -6.175)
 rotation = Vector3(-0.61087, 0, 0)
-mesh = SubResource("BoxMesh_113")
+mesh = SubResource("BoxMesh_109")
 metadata/building_part = "roof"
 
 [node name="Roof_001_North_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, 6.67829, -6.175)
 rotation = Vector3(-0.61087, 0, 0)
-shape = SubResource("BoxShape_114")
+shape = SubResource("BoxShape_110")
 
 [node name="Roof_001_South" type="MeshInstance3D" parent="Floor_01/Geometry/Roof"]
 position = Vector3(0, 6.67829, 2.175)
 rotation = Vector3(0.61087, 0, 0)
-mesh = SubResource("BoxMesh_115")
+mesh = SubResource("BoxMesh_111")
 metadata/building_part = "roof"
 
 [node name="Roof_001_South_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, 6.67829, 2.175)
 rotation = Vector3(0.61087, 0, 0)
-shape = SubResource("BoxShape_116")
+shape = SubResource("BoxShape_112")
 
 [node name="RidgeCap_001" type="MeshInstance3D" parent="Floor_01/Geometry/Roof"]
 position = Vector3(0, 9.63166, -2)
 rotation = Vector3(0, 0, 0)
-mesh = SubResource("BoxMesh_117")
+mesh = SubResource("BoxMesh_113")
 metadata/building_part = "ridge"
 
 [node name="RidgeCap_001_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, 9.63166, -2)
 rotation = Vector3(0, 0, 0)
-shape = SubResource("BoxShape_118")
+shape = SubResource("BoxShape_114")
 
 [node name="GableCollision_2_min" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(-6, 4.3501, 7)
 rotation = Vector3(0, 1.5708, 0)
-shape = SubResource("ConvexShape_119")
+shape = SubResource("ConvexShape_115")
 
 [node name="GableCollision_2_max" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(6, 4.3501, 7)
 rotation = Vector3(0, 1.5708, 0)
-shape = SubResource("ConvexShape_120")
+shape = SubResource("ConvexShape_116")
 
 [node name="Roof_002_North" type="MeshInstance3D" parent="Floor_01/Geometry/Roof"]
-mesh = SubResource("RoofMesh_121")
+mesh = SubResource("RoofMesh_117")
 metadata/building_part = "roof"
 
 [node name="Roof_002_North_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
-shape = SubResource("RoofShape_122")
+shape = SubResource("RoofShape_118")
 
 [node name="Roof_002_South" type="MeshInstance3D" parent="Floor_01/Geometry/Roof"]
 position = Vector3(0, 4.22757, 7.675)
 rotation = Vector3(0.61087, 0, 0)
-mesh = SubResource("BoxMesh_123")
+mesh = SubResource("BoxMesh_119")
 metadata/building_part = "roof"
 
 [node name="Roof_002_South_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, 4.22757, 7.675)
 rotation = Vector3(0.61087, 0, 0)
-shape = SubResource("BoxShape_124")
+shape = SubResource("BoxShape_120")
 
 [node name="RidgeCap_002" type="MeshInstance3D" parent="Floor_01/Geometry/Roof"]
 position = Vector3(0, 4.73021, 7)
 rotation = Vector3(0, 0, 0)
-mesh = SubResource("BoxMesh_125")
+mesh = SubResource("BoxMesh_121")
 metadata/building_part = "ridge"
 
 [node name="RidgeCap_002_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
 position = Vector3(0, 4.73021, 7)
 rotation = Vector3(0, 0, 0)
-shape = SubResource("BoxShape_126")
+shape = SubResource("BoxShape_122")

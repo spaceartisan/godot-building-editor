@@ -75,6 +75,8 @@ export function proposeFloorStackEdit(source,index,action,{removeAffectedStairs=
     if(index===0)floors[0].elevation=heights[1];
     else for(let i=index;i<floors.length;i++)if(Number.isFinite(floors[i].elevation))floors[i].elevation-=distance;
   }
+  // Shifted explicit elevations are rounded like other edits (no 6.540000000000001).
+  for(const f of floors)if(Number.isFinite(f.elevation))f.elevation=Math.round(f.elevation*1e9)/1e9;
   const afterNext=new Map(floors.map((f,i)=>[f.id,floors[i+1]?.id??null]));
   const affected=[];
   for(let i=0;i<n;i++){

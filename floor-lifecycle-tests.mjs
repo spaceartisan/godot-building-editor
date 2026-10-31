@@ -77,6 +77,14 @@ const manual=structuredClone(source);manual.manualFloors=[{id:'independent',kind
 const kept=edit([add],manual);valid(kept);assert.deepEqual(kept.building.manualFloors,manual.manualFloors);assert.ok(kept.warnings.some(w=>/absolute heights/.test(w.message)));
 const strict=edit([add],manual,{warningsAsErrors:true});assert.equal(strict.ok,false);assert.equal(strict.building,null);assert.equal(strict.floorStackChanges[0].action,'added');
 assert.equal(edit([add,remove],manual,{warningsAsErrors:true}).ok,true,'Net-zero stack change needs no independent-height warning');
+{
+  // MegaCorp: stack shifts store rounded elevations (6.3, not 6.300000000000001), on the CLI and the web.
+  const anchored=structuredClone(added);anchored.wallHeight=3;anchored.floorThickness=0.2;anchored.floors.forEach((f,i)=>{f.elevation=[0,3.1,6.3][i];f.stairs=[];delete f.wallHeight;delete f.floorThickness;});
+  const cli=valid(edit([{op:'floor.insert',id:'mid',aboveFloorId:anchored.floors[0].id}],anchored));
+  assert.deepEqual(cli.floors.map(f=>f.elevation),[0,undefined,6.3,9.5]);
+  const web=await createEditorHarness();await web.loadBuildingData(structuredClone(anchored));
+  await web.$('#add-floor-btn').dispatch('click');assert.deepEqual(web.snapshot().floors.map(f=>f.elevation),cli.floors.map(f=>f.elevation),'web Add above equals floor.insert');assert.deepEqual(web.errors,[]);
+}
 console.log('PASS floor stack: shared web defaults/removal, identities, atomic validation, explicit content/stair guards, nullable reports, orphans and independent surfaces');
 
 const temp=fs.mkdtempSync(path.join(os.tmpdir(),'floor-lifecycle-'));let calls=0;

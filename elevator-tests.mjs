@@ -174,6 +174,9 @@ const shell=tx(elevatorRecipe.slice(0,-1),blank),lifted=tx(elevatorRecipe.slice(
     let r=run(['new','--ops','lift.edit.json','--out','lift.json','--warnings-as-errors']);assert.equal(r.status,0,r.stdout+r.stderr);
     r=run(['validate','lift.json','--reachability','--warnings-as-errors']);assert.equal(r.status,0,r.stdout+r.stderr);
     r=run(['inspect','lift.json','--entities','--json']);assert.equal(r.status,0,r.stderr);assert.equal(JSON.parse(r.stdout).results[0].entities.elevators[0].id,'lift','inspect --entities lists elevators');
+    // The plain summary lists elevators too (MegaCorp), in JSON and text.
+    r=run(['inspect','lift.json','--json']);assert.equal(r.status,0,r.stderr);{const i=JSON.parse(r.stdout).results[0].inspection;assert.equal(i.counts.elevators,1);assert.deepEqual(i.elevators[0],{id:'lift',label:'Main lift',x:3,z:2.5,width:2.4,depth:2.4,doorSide:'minZ',doorWidth:0.8,doorHeight:2.1,bottomFloorId:'floor_1',topFloorId:'f3',stops:['floor_1','f2','f3'],skipFloorIds:[]});}
+    r=run(['inspect','lift.json']);assert.equal(r.status,0,r.stderr);assert.match(r.stdout,/1 elevators/);assert.match(r.stdout,/Elevator Main lift \(lift\): 3 stops, floor_1 to f3$/m);
     r=run(['export','lift.json','--out','out']);assert.equal(r.status,0,r.stdout+r.stderr);
     const expected=exportGodotFiles(JSON.parse(fs.readFileSync(path.join(temp,'lift.json'),'utf8')),{collision:true,markers:true,placeholderMaterials:false,shareDoorScenes:false});
     for(const d of expected.doors)assert.equal(fs.readFileSync(path.join(temp,'out',d.filename),'utf8'),d.tscn,d.filename);

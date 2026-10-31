@@ -580,9 +580,10 @@ function human(result,verbose){
     for(const d of r.warnings||[])lines.push('  WARNING '+d.message);
     if(r.normalized)lines.push('  INFO In-memory defaults/migration applied; input unchanged.');
     if(r.inspection){
-      const i=r.inspection;lines.push(`  ${i.name} · schema ${i.schemaVersion} · ${i.profile}`,`  ${i.floors.length} floors · ${i.counts.walls} walls · ${i.counts.doors} doors · ${i.counts.windows} windows`);
+      const i=r.inspection;lines.push(`  ${i.name} · schema ${i.schemaVersion} · ${i.profile}`,`  ${i.floors.length} floors · ${i.counts.walls} walls · ${i.counts.doors} doors · ${i.counts.windows} windows${i.counts.elevators?` · ${i.counts.elevators} elevators`:''}`);
       for(const r of i.roofs.attachments)lines.push('  Attachment: '+attachmentSummary(r));
       for(const f of i.floors)lines.push(`  Floor ${f.index}: ${f.footprint.source}, ${f.footprint.area.toFixed(1)} m²${f.footprint.reason?' — '+f.footprint.reason:''}`);
+      for(const e of i.elevators)lines.push(`  Elevator ${e.label} (${e.id}): ${e.stops.length} stops, ${e.bottomFloorId} to ${e.topFloorId}${e.skipFloorIds.length?`, skips ${e.skipFloorIds.join(', ')}`:''}`);
       lines.push(`  ${i.roofs.manual.length} manual roofs · ${i.roofs.manual.filter(r=>r.hostRoofId).length} attachments`,
         `  Export: ${i.export.meshInstances} mesh instances · ${i.export.collisionShapes} collision shapes · ${i.export.doorScenes} door scenes`,
         '  Shell mesh instances: '+Object.entries(i.export.shells).map(([k,v])=>`${k}=${v.length}`).join(', '),`  ${i.export.verification}`);

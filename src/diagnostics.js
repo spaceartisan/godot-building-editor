@@ -5,6 +5,7 @@ import { validateBuilding } from './validation.js';
 import { roofSectionsForFloor, floorView, floorElevation, footprintInfo, stairFootprint, stairOpeningFootprint, manualFloorRectanglesAtLevel, subtractRectAreas } from './model.js';
 import { exportGodotFiles, isExteriorWall, floorRectanglesForView } from './exporter.js';
 import { roofAttachmentDiagnostics } from './roof-diagnostics.js';
+import { elevatorFloorRange, elevatorSize } from './elevators.js';
 
 // Browser-safe, non-mutating document preparation. Missing imported IDs are
 // deterministic and collision-free; newly drawn UI objects still use uid().
@@ -66,11 +67,15 @@ export function inspectBuilding(building,options={}){
         doors:f.openings.filter(o=>o.type==='door').length,windows:f.openings.filter(o=>o.type==='window').length,stairs:f.stairs.length,lights:f.lights.length,markers:(f.markers||[]).length,platforms:f.platforms.length,regions:f.regions.length}};
   });
   const counts=Object.fromEntries(Object.keys(floors[0].counts).map(k=>[k,floors.reduce((n,f)=>n+f.counts[k],0)]));
+  // Elevators are building-level, so they are summarised here rather than per floor.
+  const elevators=(building.elevators||[]).map(e=>{const {served}=elevatorFloorRange(building,e),{width,depth,doorSide,doorWidth,doorHeight}=elevatorSize(e);
+    return {id:e.id,label:e.label||e.id,x:e.x,z:e.z,width,depth,doorSide,doorWidth,doorHeight,bottomFloorId:e.bottomFloorId,topFloorId:e.topFloorId,stops:served.map(i=>building.floors[i].id),skipFloorIds:e.skipFloorIds||[]};});
+  counts.elevators=elevators.length;
   const count=pattern=>scenes.reduce((n,s)=>n+[...s.matchAll(pattern)].length,0);
   const shellNames=['OutsideFaces','InsideFaces','SideAFaces','SideBFaces','EdgeFaces'];
   const shells=Object.fromEntries(shellNames.map(name=>[name,[...files.tscn.matchAll(new RegExp(`\\[node name="${name}" type="MeshInstance3D" parent="([^"]+)"`,'g'))].map(m=>m[1]+'/'+name)]));
   return {name:building.name,schemaVersion:building.version,profile:options.profile||building.exportProfile,floors,counts,
-    manualFloors:building.manualFloors.length,manualCeilings:building.manualCeilings.length,
+    manualFloors:building.manualFloors.length,manualCeilings:building.manualCeilings.length,elevators,
     roofs:{automaticType:building.roof.type,ridgeAxis:building.roof.ridgeAxis||'auto',
       // Each automatic gable/shed section's ridge (slope) axis: slabs are Roof_NNN_North/_South for x, _West/_East for z.
       automatic:building.floors.flatMap((f,i)=>building.roof.type==='hip'?[]:roofSectionsForFloor(building,i).filter(r=>!r.polygon).map(r=>({floorId:f.id,type:r.type,ridgeAxis:r.direction,minX:r.minX,maxX:r.maxX,minZ:r.minZ,maxZ:r.maxZ}))),...(building.wallTypes?.length?{wallContacts:roofWallDiagnostics(building)}:{}),attachments:roofAttachmentDiagnostics(building),manual:building.roofSections.map(r=>({id:r.id,label:r.label,type:r.type,baseY:r.baseY,hostRoofId:r.hostRoofId||null,flushEdges:Object.entries(r.edgeModes||{}).filter(([,v])=>v==='flush').map(([k])=>k)}))},

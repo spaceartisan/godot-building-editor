@@ -675,7 +675,8 @@ function roofSectionsFromRectangles(building, sourceRects=[]) {
   const rects=bases.map((r,i)=>({
     ...r,
     type: building.roof?.type || 'gable',
-    direction: (r.maxX-r.minX) >= (r.maxZ-r.minZ) ? 'x' : 'z',
+    // The ridge (a shed's slope axis) runs along the longer side, X when square, unless roof.ridgeAxis sets it.
+    direction: building.roof?.ridgeAxis==='x'||building.roof?.ridgeAxis==='z' ? building.roof.ridgeAxis : (r.maxX-r.minX) >= (r.maxZ-r.minZ) ? 'x' : 'z',
     label: `Auto Roof ${i+1}`,
     suppressMin: false,
     suppressMax: false

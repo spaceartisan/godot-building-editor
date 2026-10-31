@@ -80,6 +80,8 @@ One game layer file can carry both engines' setup. Its optional `unreal` block i
 | `doorChildren` | `doorChildren` | An actor of that class attached to each door root, labelled `<door>_<name>` |
 | `layers` | (none) | Unreal has no render-layer bitmask on meshes; use `tags` |
 
+**Nanite.** Interchange builds every imported mesh as Nanite. The setup script turns Nanite off on any mesh that ends up with a translucent material (the `Glass` placeholder, or a translucent material you bind), because Nanite cannot draw translucency and a cooked build would show the default material. Opaque and masked materials you bind stay on Nanite meshes, so enable **Used with Nanite** on them (or their parent material); otherwise Unreal logs "missing usage flag Nanite" and a cooked build draws the default material. Godot has no Nanite, so nothing corresponds on that side.
+
 A game layer is not applied at glTF export: `export --format glb --game-layer` is refused and points here.
 
 ## Checking

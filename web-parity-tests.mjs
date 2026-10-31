@@ -350,6 +350,26 @@ const property=label=>$('#selection-form').children.find(c=>c.textContent.starts
   console.log('PASS web mansard roofs: Flat top height (manual and automatic) equals the CLI, cleared when leaving hip');
 }
 {
+  // Automatic ridge axis (Clowning Around cottage): along the longer side by default, X when square;
+  // the web Ridge axis equals building.update roof.ridgeAxis, and the slab names follow it.
+  const {exportGodotFiles}=await import('./src/exporter.js'),{inspectBuilding}=await import('./src/diagnostics.js');
+  const {validateBuilding}=await import('./src/validation.js');
+  const cottage=tx([{op:'room.add',floorId:'floor_1',id:'c',value:{minX:-4,maxX:4,minZ:-4.8,maxZ:4.8}}]);
+  const slabs=b=>[...exportGodotFiles(b,{}).tscn.matchAll(/name="(Roof_001_[A-Za-z]+)"/g)].map(m=>m[1]).sort();
+  assert.deepEqual(slabs(cottage),['Roof_001_East','Roof_001_West'],'8 m along X by 9.6 m along Z: ridge along Z');
+  assert.deepEqual(inspectBuilding(cottage).roofs.automatic.map(r=>r.ridgeAxis),['z']);assert.equal(inspectBuilding(cottage).roofs.ridgeAxis,'auto');
+  assert.deepEqual(slabs(tx([{op:'room.add',floorId:'floor_1',id:'s',value:{minX:-4,maxX:4,minZ:-4,maxZ:4}}])),['Roof_001_North','Roof_001_South'],'square: ridge along X');
+  const alongX=tx([{op:'building.update',value:{roof:{ridgeAxis:'x'}}}],cottage);
+  assert.deepEqual(slabs(alongX),['Roof_001_North','Roof_001_South']);assert.deepEqual(inspectBuilding(alongX).roofs.automatic.map(r=>r.ridgeAxis),['x']);
+  assert.equal('ridgeAxis' in tx([{op:'building.update',value:{roof:{ridgeAxis:null}}}],alongX).roof,false,'null restores automatic');
+  assert.equal(applyTransaction(cottage,{version:1,operations:[{op:'building.update',value:{roof:{ridgeAxis:'y'}}}]}).ok,false);
+  assert.ok(validateBuilding({...structuredClone(cottage),roof:{...cottage.roof,ridgeAxis:'north'}}).errors.some(x=>/ridgeAxis/.test(x.message)));
+  await e.loadBuildingData(structuredClone(cottage));assert.equal($('#roof-ridge-axis').value,'');
+  await change($('#roof-ridge-axis'),'x');assert.deepEqual(e.snapshot().roof,alongX.roof,'web Ridge axis equals building.update');
+  await change($('#roof-ridge-axis'),'');assert.equal('ridgeAxis' in e.snapshot().roof,false);assert.deepEqual(e.errors,[]);
+  console.log('PASS automatic ridge axis: longer side by default (X when square), roof.ridgeAxis in the CLI and web Ridge axis, slab names and inspect follow it');
+}
+{
   // Game layer: the Godot Export panel's Game layer file equals the CLI --game-layer;
   // Render in Godot keeps posting the plain export.
   const {parseGameLayer}=await import('./src/game-layer.js'),{exportGodotFiles}=await import('./src/exporter.js');

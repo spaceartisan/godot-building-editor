@@ -2,7 +2,7 @@ import {roofWallDiagnostics} from './roof-wall-diagnostics.js';
 import { areaSize } from './polygon-areas.js';
 import { normalizeBuilding } from './document.js';
 import { validateBuilding } from './validation.js';
-import { floorView, floorElevation, footprintInfo, stairFootprint, stairOpeningFootprint, manualFloorRectanglesAtLevel, subtractRectAreas } from './model.js';
+import { roofSectionsForFloor, floorView, floorElevation, footprintInfo, stairFootprint, stairOpeningFootprint, manualFloorRectanglesAtLevel, subtractRectAreas } from './model.js';
 import { exportGodotFiles, isExteriorWall, floorRectanglesForView } from './exporter.js';
 import { roofAttachmentDiagnostics } from './roof-diagnostics.js';
 
@@ -71,7 +71,9 @@ export function inspectBuilding(building,options={}){
   const shells=Object.fromEntries(shellNames.map(name=>[name,[...files.tscn.matchAll(new RegExp(`\\[node name="${name}" type="MeshInstance3D" parent="([^"]+)"`,'g'))].map(m=>m[1]+'/'+name)]));
   return {name:building.name,schemaVersion:building.version,profile:options.profile||building.exportProfile,floors,counts,
     manualFloors:building.manualFloors.length,manualCeilings:building.manualCeilings.length,
-    roofs:{automaticType:building.roof.type,...(building.wallTypes?.length?{wallContacts:roofWallDiagnostics(building)}:{}),attachments:roofAttachmentDiagnostics(building),manual:building.roofSections.map(r=>({id:r.id,label:r.label,type:r.type,baseY:r.baseY,hostRoofId:r.hostRoofId||null,flushEdges:Object.entries(r.edgeModes||{}).filter(([,v])=>v==='flush').map(([k])=>k)}))},
+    roofs:{automaticType:building.roof.type,ridgeAxis:building.roof.ridgeAxis||'auto',
+      // Each automatic gable/shed section's ridge (slope) axis: slabs are Roof_NNN_North/_South for x, _West/_East for z.
+      automatic:building.floors.flatMap((f,i)=>building.roof.type==='hip'?[]:roofSectionsForFloor(building,i).filter(r=>!r.polygon).map(r=>({floorId:f.id,type:r.type,ridgeAxis:r.direction,minX:r.minX,maxX:r.maxX,minZ:r.minZ,maxZ:r.maxZ}))),...(building.wallTypes?.length?{wallContacts:roofWallDiagnostics(building)}:{}),attachments:roofAttachmentDiagnostics(building),manual:building.roofSections.map(r=>({id:r.id,label:r.label,type:r.type,baseY:r.baseY,hostRoofId:r.hostRoofId||null,flushEdges:Object.entries(r.edgeModes||{}).filter(([,v])=>v==='flush').map(([k])=>k)}))},
     export:{buildingFile:files.tscnName,doorScenes:files.doors.length,collisionEnabled:options.collision!==false,
       meshInstances:count(/\[node [^\n]*type="MeshInstance3D"/g),collisionShapes:count(/\[node [^\n]*type="CollisionShape3D"/g),
       placeholderMaterialResources:count(/\[sub_resource type="StandardMaterial3D"/g),shells,

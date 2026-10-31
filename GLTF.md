@@ -86,7 +86,8 @@ Always, as the Godot export does:
 
 - moving parts (`Hinge`, `Hinge2`, `Panel`, `Curtain`, `Car`, `CarDoorLeft/Right`, `DoorLeft/Right`) and everything attached below them become **Movable**, so a game script can rotate a `Hinge` or move `Car` (they carry no logic, as in Godot);
 - Godot groups (`building_lights`, `sight_transparent`, profile groups, groups of carried collision shapes) become **actor tags**;
-- each GET PROBED door `InteractionArea` becomes a **`TriggerBox`** child actor of its size.
+- each GET PROBED door `InteractionArea` becomes a **`TriggerBox`** child actor of its size;
+- **Nanite is turned off on meshes with a translucent material** (window glass, or a translucent material from the game layer). Interchange imports every mesh as Nanite, and Nanite cannot draw translucency: Unreal logs "Invalid material [Glass] used on Nanite static mesh" and a cooked build shows the default material. Game-layer materials on the other meshes must have **Used with Nanite** enabled (GAME_LAYER.md). Godot has no Nanite: nothing to do there.
 
 From the game layer's `unreal` block ([GAME_LAYER.md](GAME_LAYER.md)): slot materials, `nodeMaterials` rules, `tags` rules, `collisionProfiles` rules (by node or by Godot collision layer), `scripts` (a component class added to the building, door and elevator roots) and `doorChildren` (actors attached to each door root). Each import otherwise creates its own grey placeholder materials. `--root LABEL` picks the imported root actor when the name is ambiguous; `--materials FILE` is a shorthand for `{"slot": "/Game/…"}`. `--light-scale K` multiplies point-light intensities: Unreal reads Godot's light energy as candelas and its own default point light is 8 cd, so `--light-scale 8` maps Godot's default energy to Unreal's default as a starting point. Running it again adds nothing twice. Validate the game layer with the CLI first (`node cli.mjs export FILE --out DIR --game-layer FILE`).
 
@@ -123,6 +124,7 @@ The Godot counterpart: `export --out PROJECT/buildings/NAME --replace` writes th
 - every mesh node became a static mesh actor with the same named slots, and `building_part` reached the mesh assets;
 - every `UBX_`/`UCX_` piece became simple collision on its carrier, with none left as an actor;
 - lights became point lights, moving parts are Movable, door trigger boxes exist;
+- no Nanite mesh has a translucent material;
 - elevator probes, as `godot-check` runs them: with the car moved to each stop a downward trace finds the car floor at the stop height; closed landing doors block the opening; with the landing and car doors slid open by `leaf_travel`, no door leaf blocks the way into the car.
 
 ```text

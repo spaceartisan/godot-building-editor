@@ -8,6 +8,7 @@
 # - every UBX_/UCX_ piece became simple collision on its carrier, and none was
 #   left as a stray actor;
 # - lights became point lights, moving parts are Movable, door trigger boxes exist;
+# - no Nanite mesh has a translucent material (glass meshes have Nanite off);
 # - elevator physics probes, as godot-check runs them: with the car moved to
 #   each stop a downward trace finds the car floor at the stop height; closed
 #   landing doors block the opening; with the landing and car doors slid open
@@ -39,7 +40,7 @@ def trace(world, start, end):
     return hit[0], hit[4], hit[9]
 
 def check_file(path, index):
-    report = {"file": os.path.basename(path), "meshes": 0, "collisionPieces": 0, "lights": 0, "elevators": 0, "stops": 0, "rays": 0, "failures": []}
+    report = {"file": os.path.basename(path), "meshes": 0, "collisionPieces": 0, "naniteOff": 0, "lights": 0, "elevators": 0, "stops": 0, "rays": 0, "failures": []}
     fail = lambda message: report["failures"].append(message)
     gltf = bs.read_glb(path)
     params = unreal.ImportAssetParameters()
@@ -90,6 +91,12 @@ def check_file(path, index):
         if got != (boxes, hulls):
             fail("%s: %d boxes and %d hulls of collision, expected %d and %d" % (node["name"], got[0], got[1], boxes, hulls))
         report["collisionPieces"] += boxes + hulls
+        if bs.nanite_enabled(mesh):
+            translucent = [m.get_name() for m in component.get_materials() if m and m.get_blend_mode() not in bs.OPAQUE]
+            if translucent:
+                fail("%s: Nanite mesh with translucent material %s" % (node["name"], ", ".join(translucent)))
+        else:
+            report["naniteOff"] += 1
     lights = sum(1 for n in raw if "KHR_lights_punctual" in n.get("extensions", {}))
     found = sum(1 for a in actors.values() if a.get_component_by_class(unreal.PointLightComponent))
     report["lights"] = found

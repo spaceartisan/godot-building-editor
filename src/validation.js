@@ -45,6 +45,7 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
     if(typeof cfg!=='object'||Array.isArray(cfg)){error(k,'must be an object');continue;}
     for(const dim of ['thickness','frameWidth','frameDepth','glassThickness','panelThickness','detailDepth'])number(cfg[dim],`${k}.${dim}`,.001,100);
     number(cfg.pitch,`${k}.pitch`,0,80);number(cfg.overhang,`${k}.overhang`,0,100);
+    if(k==='roof'&&cfg.ridgeAxis!=null&&!['x','z'].includes(cfg.ridgeAxis))error('roof.ridgeAxis','roof ridgeAxis must be x or z (or absent for the longer side)');
   }
   if(building.wallTypes!==undefined){
     if(!Array.isArray(building.wallTypes)||building.wallTypes.length>64)error('wallTypes','Use an array of at most 64 wall types.');

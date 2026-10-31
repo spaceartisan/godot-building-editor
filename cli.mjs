@@ -421,7 +421,7 @@ async function execute({command,options,files}){
       const unreal=resolveUnreal(options.unreal||process.env.UNREAL_BIN);
       const report=runUnrealChecks({unreal,prepared});
       const sum=k=>report.files.reduce((n,f)=>n+(f[k]||0),0);
-      const checks={files:report.files.length,meshes:sum('meshes'),collisionPieces:sum('collisionPieces'),lights:sum('lights'),elevators:sum('elevators'),elevatorStops:sum('stops'),physicsRays:sum('rays'),failures:sum('failures')||report.files.reduce((n,f)=>n+(f.failures?.length||0),0)};
+      const checks={files:report.files.length,meshes:sum('meshes'),collisionPieces:sum('collisionPieces'),naniteOff:sum('naniteOff'),lights:sum('lights'),elevators:sum('elevators'),elevatorStops:sum('stops'),physicsRays:sum('rays'),failures:sum('failures')||report.files.reduce((n,f)=>n+(f.failures?.length||0),0)};
       const failures=report.files.flatMap(f=>(f.failures||[]).map(m=>`${f.file}: ${m}`));checks.failures=failures.length;
       if(options['require-collision']&&!checks.collisionPieces)failures.push('No collision pieces in the asset set (--require-collision)');
       const ok=failures.length===0;let render=null;
@@ -584,8 +584,8 @@ function human(result,verbose){
   }
   if(result.engineVersion)lines.push('Godot '+result.engineVersion);
   if(result.unrealVersion)lines.push(`Unreal Engine ${result.unrealVersion}`);
-  if(result.unrealImport){const r=result.unrealImport;lines.push(`Imported ${r.root} into ${r.level||'the open level'} at (${r.location.join(', ')}) cm, yaw ${r.yaw}; ${r.actors} actors, ${r.removed} removed from an earlier import; meshes in ${r.content}${r.saved?'; saved':''}`);}
-  if(result.unrealChecks){const c=result.unrealChecks;lines.push(`${c.files} buildings · ${c.meshes} meshes · ${c.collisionPieces} collision pieces · ${c.lights} lights · ${c.elevators} elevators / ${c.elevatorStops} stops · ${c.physicsRays} physics rays · ${c.failures} failures`);for(const f of result.failures||[])lines.push('FAIL '+f);}
+  if(result.unrealImport){const r=result.unrealImport;lines.push(`Imported ${r.root} into ${r.level||'the open level'} at (${r.location.join(', ')}) cm, yaw ${r.yaw}; ${r.actors} actors, ${r.removed} removed from an earlier import; meshes in ${r.content}; ${r.setup.slots} material slots bound, ${r.setup.nanite_off??0} translucent meshes set to non-Nanite${r.saved?'; saved':''}`);}
+  if(result.unrealChecks){const c=result.unrealChecks;lines.push(`${c.files} buildings · ${c.meshes} meshes · ${c.collisionPieces} collision pieces · ${c.naniteOff??0} translucent meshes with Nanite off · ${c.lights} lights · ${c.elevators} elevators / ${c.elevatorStops} stops · ${c.physicsRays} physics rays · ${c.failures} failures`);for(const f of result.failures||[])lines.push('FAIL '+f);}
   if(result.preview?.renderer==='godot'){
     const p=result.preview;lines.push(`Preview: Godot aerial render · ${p.engineRenderer||'renderer unknown'}${p.virtualDisplay?' · virtual display':''}`,p.note);
   }else if(result.preview){

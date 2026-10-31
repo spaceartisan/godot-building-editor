@@ -1,6 +1,7 @@
 // Optional engine-unreal suite (needs UNREAL_BIN: Unreal Engine 5): the Unreal
 // counterpart of the Godot engine suites. unreal-check passes on good exports
-// (import, slots, collision, metadata, lights, elevator probes) and fails on a
+// (import, slots, collision, metadata, lights, no translucent Nanite meshes,
+// elevator probes) and fails on a
 // broken one; building_studio_setup.py applies a full game-layer unreal block
 // (qa/validate-unreal-setup.py); unreal-import places a building in a saved
 // level and --replace swaps it (qa/unreal-import-level.py); unreal-check
@@ -30,7 +31,8 @@ try{
   const c=ok.unrealChecks;
   assert.equal(ok.ok,true,JSON.stringify(ok.failures));assert.equal(c.files,4);assert.equal(c.elevators,1);assert.ok(c.elevatorStops>=2&&c.physicsRays===c.elevatorStops*3,'three probes per stop');
   assert.ok(c.collisionPieces>100&&c.lights>0&&c.meshes>50);
-  console.log(`PASS unreal-check (Unreal Engine ${ok.unrealVersion}): ${c.files} buildings, ${c.meshes} meshes, ${c.collisionPieces} collision pieces, ${c.lights} lights, ${c.elevatorStops} elevator stops / ${c.physicsRays} probes, 0 failures`);
+  assert.ok(c.naniteOff>0,'window glass meshes have Nanite off (Nanite cannot draw translucent materials)');
+  console.log(`PASS unreal-check (Unreal Engine ${ok.unrealVersion}): ${c.files} buildings, ${c.meshes} meshes, ${c.collisionPieces} collision pieces, ${c.lights} lights, ${c.naniteOff} glass meshes without Nanite, ${c.elevatorStops} elevator stops / ${c.physicsRays} probes, 0 failures`);
   cli(['export','lift.json','--format','glb','--no-collision','--out','broken']);
   const bad=cli(['unreal-check','--assets','broken'],1);
   assert.ok(bad.failures.some(f=>/car floor not found/.test(f))&&bad.failures.some(f=>/closed landing doors do not block/.test(f)),'a collision-less elevator fails its probes');
@@ -73,7 +75,7 @@ try{
   levelStep('make');
   const importArgs=['unreal-import',glbFile,'--project',townProject,'--content','/Game/Buildings/farmhouse','--level','/Game/Maps/Town','--location','5000,2000,0','--yaw','90'];
   const first=cli(importArgs).unrealImport;
-  assert.equal(first.removed,0);assert.ok(first.actors>20&&first.saved);
+  assert.equal(first.removed,0);assert.ok(first.actors>20&&first.saved);assert.ok(first.setup.nanite_off>0,'glass meshes set to non-Nanite');
   const again=cli([...importArgs,'--replace','--game-layer',path.join(temp,'layer.json')]).unrealImport;
   assert.ok(again.removed>=first.actors-1,'--replace removes the earlier copy');
   const levelReport=path.join(town,'level.json');levelStep('inspect',levelReport);

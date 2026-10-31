@@ -20,7 +20,11 @@
 #   leaves) and everything attached below them become Movable;
 # - Godot groups (building_lights, sight_transparent, ...) become actor tags,
 #   including groups of the collision shapes a mesh carries;
-# - each door InteractionArea (GET PROBED) becomes a TriggerBox child actor.
+# - each door InteractionArea (GET PROBED) becomes a TriggerBox child actor;
+# - Nanite is turned off on meshes that end up with a translucent material
+#   (the glTF Glass placeholder, or a translucent game-layer material):
+#   Interchange builds every mesh as Nanite, and Nanite cannot draw translucency
+#   (a cooked build shows the default material instead).
 # From the "unreal" block: materials by slot, nodeMaterials rules, tags rules,
 # collisionProfiles rules, scripts (a component class added to the building,
 # door and elevator roots) and doorChildren (actors attached to each door root).
@@ -147,13 +151,40 @@ def add_component(actor, class_path):
         raise ValueError("Could not add %s to %s: %s" % (class_path, actor.get_actor_label(), fail))
     return True
 
+OPAQUE = (unreal.BlendMode.BLEND_OPAQUE, unreal.BlendMode.BLEND_MASKED)
+
+def nanite_enabled(mesh):
+    return mesh.get_editor_property("nanite_settings").get_editor_property("enabled")
+
+def nanite_off_if_translucent(component, done):
+    # Returns 1 when this call turned Nanite off on the component's mesh.
+    mesh = component.static_mesh
+    if mesh is None or mesh.get_path_name() in done:
+        return 0
+    done.add(mesh.get_path_name())
+    if all(m is None or m.get_blend_mode() in OPAQUE for m in component.get_materials()):
+        return 0
+    if not nanite_enabled(mesh):
+        return 0
+    settings = mesh.get_editor_property("nanite_settings")
+    settings.set_editor_property("enabled", False)
+    meshes = unreal.get_editor_subsystem(unreal.StaticMeshEditorSubsystem)
+    if meshes:
+        meshes.set_nanite_settings(mesh, settings, apply_changes=True)
+    else:
+        # No editor subsystems under -run=pythonscript; the property change rebuilds the mesh.
+        mesh.modify()
+        mesh.set_editor_property("nanite_settings", settings)
+    return 1
+
 def setup(glb, root=None, layer=None, light_scale=None):
     gltf = read_glb(glb)
     nodes = glb_nodes(gltf)
     actors = actors_under(root or nodes[0]["label"])
     unreal_layer = (layer or {}).get("unreal", {})
-    report = {"movable": 0, "tags": 0, "slots": 0, "profiles": 0, "triggers": 0, "components": 0, "children": 0, "lights": 0, "missing": []}
+    report = {"movable": 0, "tags": 0, "slots": 0, "profiles": 0, "triggers": 0, "components": 0, "children": 0, "lights": 0, "nanite_off": 0, "missing": []}
     materials = {}
+    nanite_checked = set()
     actor_space = unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
     for node in nodes:
         actor = actors.get(node["label"])
@@ -191,6 +222,7 @@ def setup(glb, root=None, layer=None, light_scale=None):
                         component.set_collision_profile_name(rule["profile"])
                         report["profiles"] += 1
                         break
+            report["nanite_off"] += nanite_off_if_translucent(component, nanite_checked)
         if "trigger_size" in extras and attached_child(actor, node["label"] + "_Trigger") is None:
             trigger = actor_space.spawn_actor_from_class(unreal.TriggerBox, actor.get_actor_location())
             trigger.set_actor_label(node["label"] + "_Trigger")

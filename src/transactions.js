@@ -93,8 +93,9 @@ function checkValue(kind,value,action,where){
       else if(key==='exportProfile')choice(v,['generic','get_probed'],p);
       else if(key==='slabsByRoom'){if(typeof v!=='boolean')fail('Expected a boolean',p);}
       else if(key==='roof'){
-        keys(v,['type','pitch','overhang','flatTopHeight'],p);if(!Object.keys(v).length)fail('Provide at least one roof field',p);
+        keys(v,['type','pitch','overhang','flatTopHeight','ridgeAxis'],p);if(!Object.keys(v).length)fail('Provide at least one roof field',p);
         if(v.flatTopHeight!==undefined&&v.flatTopHeight!==null)number(v.flatTopHeight,`${p}/flatTopHeight`,0,100);
+        if(v.ridgeAxis!==undefined&&v.ridgeAxis!==null)choice(v.ridgeAxis,['x','z'],`${p}/ridgeAxis`);
         if(v.type!==undefined)choice(v.type,['gable','hip','flat','none'],`${p}/type`);
         if(v.pitch!==undefined)number(v.pitch,`${p}/pitch`,5,70);
         if(v.overhang!==undefined)number(v.overhang,`${p}/overhang`,0,100);
@@ -316,7 +317,7 @@ function applyOperation(building,op,index){
     // final validation (opening fit, stair rise, junction clearance).
     const before=structuredClone(building);
     for(const [key,value] of Object.entries(op.value)){
-      if(['roof','ceiling','doorMesh','windowMesh'].includes(key)){building[key]={...(building[key]||{}),...value};if(key==='roof'&&!building.roof.flatTopHeight)delete building.roof.flatTopHeight;}
+      if(['roof','ceiling','doorMesh','windowMesh'].includes(key)){building[key]={...(building[key]||{}),...value};if(key==='roof'&&!building.roof.flatTopHeight)delete building.roof.flatTopHeight;if(key==='roof'&&building.roof.ridgeAxis==null)delete building.roof.ridgeAxis;}
       else{
         // Profile stations at the old wall thickness follow the new one (shared with the web setting).
         if(key==='wallThickness')followWallThickness(building,building.wallThickness,value);

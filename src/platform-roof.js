@@ -31,7 +31,7 @@ export function platformTouching(view,plat){
 const OUTWARD={west:1,east:-1,north:1,south:-1};
 const outerFace=(touching,side,th)=>touching.lines[side]+OUTWARD[side]*th/2;
 
-export const PORCH_DOOR_CLEARANCE=.3;
+export const PORCH_DOOR_CLEARANCE=.3, PORCH_POST_MIN_SPACING=1;
 // Doors in the walls a platform touches, as intervals along that wall,
 // widened by PORCH_DOOR_CLEARANCE: posts facing them are kept out of the way.
 function doorIntervals(view,touching,th){
@@ -50,10 +50,12 @@ function doorIntervals(view,touching,th){
   return out;
 }
 
-// Posts at the open edges of a covered platform, at most 2.4 m apart, and a
-// beam along each open edge. An edge stops at the outer face of a wall it
-// meets, with no post there (the wall carries the beam), and posts facing a
-// door in the wall the platform touches move clear of the doorway.
+// Posts at the open edges of a covered platform and a beam along each open
+// edge. An edge stops at the outer face of a wall it meets, with no post there
+// (the wall carries the beam). A door in the wall the platform touches leaves
+// a gap in the posts facing it (its width plus PORCH_DOOR_CLEARANCE each side);
+// the stretches either side get posts at most 2.4 m apart, and a stretch
+// shorter than PORCH_POST_MIN_SPACING joins the gap instead of doubling a post.
 export function coveredPlatformSupports(view,plat){
   if(!rectValid(plat)||plat.covered===false)return {sides:[],posts:[]};
   const th=Math.max(0,Number(view.wallThickness)||0),touching=platformTouching(view,plat),sides=[];
@@ -66,19 +68,28 @@ export function coveredPlatformSupports(view,plat){
   const addPost=(x,z)=>{const k=`${x.toFixed(4)},${z.toFixed(4)}`;if(seen.has(k))return;seen.add(k);posts.push({x,z});};
   for(const s of sides){
     const [lo,hi]=s.axis==='x'?[s.x0,s.x1]:[s.z0,s.z1];if(hi-lo<=EPS)continue;
-    const count=Math.max(2,Math.ceil((hi-lo)/2.4)+1);
-    let values=[];
-    for(let i=0;i<count;i++){
-      if((i===0&&s.walls[0])||(i===count-1&&s.walls[1]))continue;
-      let v=lo+(hi-lo)*i/(count-1);
-      // Out of a doorway: to the nearer edge of its clearance, if that is still on this side.
-      for(const [d0,d1] of doors[s.axis])if(v>d0+EPS&&v<d1-EPS){const near=v-d0<=d1-v?d0:d1,other=near===d0?d1:d0;v=near>=lo-EPS&&near<=hi+EPS?near:other>=lo-EPS&&other<=hi+EPS?other:NaN;}
-      if(Number.isFinite(v))values.push(Math.min(hi,Math.max(lo,v)));
+    // Door gaps on this side (merged), then the solid stretches between them.
+    const gaps=[];
+    for(const [d0,d1] of doors[s.axis].map(([a,b])=>[Math.max(lo,a),Math.min(hi,b)]).filter(([a,b])=>b-a>EPS).sort((a,b)=>a[0]-b[0]))
+      if(gaps.length&&d0<=gaps.at(-1)[1]+EPS)gaps.at(-1)[1]=Math.max(gaps.at(-1)[1],d1);else gaps.push([d0,d1]);
+    const solids=[];let at=lo;
+    for(const [g0,g1] of gaps){if(g0-at>EPS)solids.push([at,g0]);at=g1;}
+    if(hi-at>EPS)solids.push([at,hi]);
+    const values=[];
+    for(const [a,b] of solids){
+      const atLo=Math.abs(a-lo)<EPS,atHi=Math.abs(b-hi)<EPS;
+      if(b-a<PORCH_POST_MIN_SPACING-EPS){
+        // Too short for two posts: at a corner the door gap runs on to the corner post; between doors, one post in the middle.
+        if(atLo&&!s.walls[0])values.push(lo);else if(atHi&&!s.walls[1])values.push(hi);else if(!atLo&&!atHi)values.push((a+b)/2);
+        continue;
+      }
+      const count=Math.max(2,Math.ceil((b-a)/2.4)+1);
+      for(let i=0;i<count;i++){
+        if((i===0&&atLo&&s.walls[0])||(i===count-1&&atHi&&s.walls[1]))continue;
+        values.push(a+(b-a)*i/(count-1));
+      }
     }
-    // Posts closer than the door clearance merge (ends are kept first).
-    values=[...new Set(values.map(v=>Math.round(v*1e6)/1e6))].sort((a,b)=>a-b);
-    const kept=[];for(const v of values)if(!kept.length||v-kept.at(-1)>=PORCH_DOOR_CLEARANCE-EPS)kept.push(v);else if(Math.abs(v-hi)<EPS)kept[kept.length-1]=v;
-    for(const v of kept){if(s.axis==='x')addPost(v,s.z);else addPost(s.x,v);}
+    for(const v of [...new Set(values.map(v=>Math.round(v*1e6)/1e6))].sort((a,b)=>a-b)){if(s.axis==='x')addPost(v,s.z);else addPost(s.x,v);}
   }
   return {sides,posts};
 }

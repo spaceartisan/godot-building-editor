@@ -124,7 +124,13 @@ try{
   for(const s of support.sides.filter(s=>s.axis==='x'))near(s.x0,9.5+th/2);
   // Posts facing the door stay out of its width plus the clearance; the corners stay.
   const front=support.posts.filter(p=>Math.abs(p.x-11.9)<1e-9).map(p=>p.z).sort((a,b)=>a-b);
-  assert.ok(front.every(z=>Math.abs(z)>=1.8+.3-1e-9),`front posts ${front}`);assert.deepEqual([front[0],front.at(-1)],[-3,3]);
+  // Only 0.9 m is left between the door's clearance and each corner: no second post beside the corner post.
+  assert.deepEqual(front,[-3,3],`front posts ${front}`);
+  // A wider porch: posts either side of the door gap, at most 2.4 m apart and never closer than 1 m.
+  const wide=build(palaceOps.map(o=>o.op==='platform.add'?{...o,value:{...o.value,minZ:-8,maxZ:8}}:o)),wv=floorView(wide,0);
+  const wfront=coveredPlatformSupports(wv,wv.platforms[0]).posts.filter(p=>Math.abs(p.x-11.9)<1e-9).map(p=>p.z).sort((a,b)=>a-b);
+  assert.ok(wfront.every(z=>Math.abs(z)>=2.1-1e-9)&&wfront.includes(-2.1)&&wfront.includes(2.1)&&wfront[0]===-8&&wfront.at(-1)===8,`wide front ${wfront}`);
+  for(let i=1;i<wfront.length;i++){const gap=wfront[i]-wfront[i-1];assert.ok(gap>=1-1e-9&&(gap<=2.4+1e-9||Math.abs(gap-4.2)<1e-9),`wide front ${wfront}`);}
   // The same porch drawn from the wall's outer face gives the same posts and roof.
   const face=build(palaceOps.map(o=>o.op==='platform.add'?{...o,value:{...o.value,minX:9.5+th/2}}:o)),fv=floorView(face,0);
   assert.deepEqual(coveredPlatformSupports(fv,fv.platforms[0]).posts,support.posts);assert.deepEqual(lean(face).part,lean(palace).part);

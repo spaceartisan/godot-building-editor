@@ -1838,46 +1838,46 @@ rotation = Vector3(0, 0, 0)
 shape = SubResource("BoxShape_67")
 
 [node name="Porch_001_Porch_1_Post_003" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
-position = Vector3(-3, 2, 9)
+position = Vector3(-2.90326, 2, 9)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_68")
 metadata/building_part = "post"
 
 [node name="Porch_001_Porch_1_Post_003_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(-3, 2, 9)
+position = Vector3(-2.90326, 2, 9)
 rotation = Vector3(0, 0, 0)
 shape = SubResource("BoxShape_69")
 
 [node name="Porch_001_Porch_1_Post_004" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
-position = Vector3(-1, 2, 9)
+position = Vector3(-0.80652, 2, 9)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_70")
 metadata/building_part = "post"
 
 [node name="Porch_001_Porch_1_Post_004_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(-1, 2, 9)
+position = Vector3(-0.80652, 2, 9)
 rotation = Vector3(0, 0, 0)
 shape = SubResource("BoxShape_71")
 
 [node name="Porch_001_Porch_1_Post_005" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
-position = Vector3(1, 2, 9)
+position = Vector3(0.79348, 2, 9)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_72")
 metadata/building_part = "post"
 
 [node name="Porch_001_Porch_1_Post_005_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(1, 2, 9)
+position = Vector3(0.79348, 2, 9)
 rotation = Vector3(0, 0, 0)
 shape = SubResource("BoxShape_73")
 
 [node name="Porch_001_Porch_1_Post_006" type="MeshInstance3D" parent="Floor_01/Geometry/Platforms"]
-position = Vector3(3, 2, 9)
+position = Vector3(2.89674, 2, 9)
 rotation = Vector3(0, 0, 0)
 mesh = SubResource("BoxMesh_74")
 metadata/building_part = "post"
 
 [node name="Porch_001_Porch_1_Post_006_Collision" type="CollisionShape3D" parent="Floor_01/Collision"]
-position = Vector3(3, 2, 9)
+position = Vector3(2.89674, 2, 9)
 rotation = Vector3(0, 0, 0)
 shape = SubResource("BoxShape_75")
 

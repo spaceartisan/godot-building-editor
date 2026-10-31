@@ -547,6 +547,8 @@ function applyFloorStack(building,op,action,p){
   const result=proposeFloorStackEdit(building,index,action==='move'?op.direction:'remove',{removeAffectedStairs,validateResult:false});if(!result.ok)fail(cliReason(result.reason),p);
   const removedEntities=action==='remove'?['walls','openings','lights','markers','stairs','regions','slabs','platforms','railings','roofSections'].flatMap(kind=>(building.floors[index][kind]||[]).map(item=>({kind,id:item.id,label:item.label||item.id}))):[];
   building.floors=result.building.floors;
+  // Removal also drops the floor from lifts' skipFloorIds.
+  if(result.building.elevators)building.elevators=result.building.elevators;
   return {action:action==='move'?`moved-${op.direction}`:'removed',floorId:op.id,removedEntities,removedIncomingStairs:result.affectedStairs};
 }
 

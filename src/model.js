@@ -344,9 +344,10 @@ export function makeFarmhousePreset() {
     O('door', hallR, 0.82, 0.9, 2.1, 0, 'Rest Room Door', 'room'),
     O('window', n, 0.20, 1.5, 1.15, 0.85, 'Living Window'),
     O('window', n, 0.80, 1.5, 1.15, 0.85, 'Bedroom Window'),
-    O('window', w, 0.28, 1.4, 1.0, 0.95, 'Living Side Window'),
-    O('window', e, 0.30, 1.2, 1.0, 0.95, 'Bedroom Side Window'),
-    O('window', e, 0.76, 1.0, 0.9, 1.05, 'Rest Side Window')
+    // Side windows sit inside their rooms, clear of the partitions' ends.
+    O('window', w, 0.80, 1.4, 1.0, 0.95, 'Living Side Window'),
+    O('window', e, 0.18, 1.2, 1.0, 0.95, 'Bedroom Side Window'),
+    O('window', e, 0.85, 1.0, 0.9, 1.05, 'Rest Side Window')
   );
   return b;
 }
@@ -445,16 +446,19 @@ export function findOpeningConflict(building, opening, ignoreId=opening.id) {
 }
 
 export function validateOpeningLayout(building) {
-  const issues=[];
-  for(const o of scopeOpenings(building)){
+  const issues=[],all=scopeOpenings(building),count=new Map();
+  for(const o of all){const n=o.label||o.type;count.set(n,(count.get(n)||0)+1);}
+  // Shared labels ("Office front" on every window) get the ID, so two overlaps never read the same.
+  const name=o=>{const n=o.label||o.type;return count.get(n)>1?`${n} (${o.id})`:n;};
+  for(const o of all){
     const wall=findWall(building,o.wallId);
-    if(!wall){issues.push({type:'missing_wall',opening:o,message:`${o.label||o.type} references a missing wall.`});continue;}
+    if(!wall){issues.push({type:'missing_wall',opening:o,message:`${name(o)} references a missing wall.`});continue;}
     const c=constrainedOpening(building,o);
     if(Math.abs((Number(o.width)||0)-c.width)>1e-5 || Math.abs((Number(o.height)||0)-c.height)>1e-5 || Math.abs((Number(o.t)||0)-c.t)>1e-5 || (o.type==='window'&&Math.abs((Number(o.sill)||0)-c.sill)>1e-5)){
-      issues.push({type:'out_of_bounds',opening:o,message:`${o.label||o.type} exceeds its host wall bounds.`});
+      issues.push({type:'out_of_bounds',opening:o,message:`${name(o)} exceeds its host wall bounds.`});
     }
     const conflict=findOpeningConflict(building,o,o.id);
-    if(conflict && String(o.id)<String(conflict.id)) issues.push({type:'overlap',opening:o,other:conflict,message:`${o.label||o.type} overlaps ${conflict.label||conflict.type}.`});
+    if(conflict && String(o.id)<String(conflict.id)) issues.push({type:'overlap',opening:o,other:conflict,message:`${name(o)} overlaps ${name(conflict)}.`});
   }
   return issues;
 }

@@ -37,7 +37,7 @@ Both call the same code (`src/gltf-export.js`). It reads the exporter's own buil
 
 ## Collision for Unreal
 
-Unreal does not read glTF physics extensions, but it does read its own collision naming from glTF: a mesh named `UBX_<node>_NN` becomes a box and `UCX_<node>_NN` a convex hull on the static mesh of node `<node>`. Each collision shape rides on a **carrier** mesh:
+Unreal does not read glTF physics extensions, but it does read its own collision naming from glTF: a mesh named `UBX_<node>_NN` becomes a box and `UCX_<node>_NN` a convex hull on the static mesh of node `<node>`. Unreal first looks for a mesh named exactly `<node>_NN` and only then strips `_NN`, so the export never names a node `<node>_NN` for one of its pieces: in a tall building the tenth copy of `FloorSlab_Stairwell` is `FloorSlab_Stairwell_11` when storey 1's slab carries a piece `_10`. Each collision shape rides on a **carrier** mesh:
 
 - A shape named after a mesh (`Window_001_Window_Collision`, `Porch_001_…_Post_002_Collision`, `Roof_001_North_Collision`, …) rides on that mesh, so a window, post or roof slab carries its own collision and groups.
 - Other shapes ride on the nearest mesh to their body: a door leaf's collision swings with its `Hinge`, an elevator car's rides on `CarMesh`, and a storey's remaining wall, floor and ceiling boxes ride on one of that storey's meshes, often its floor slab.
@@ -119,13 +119,13 @@ The Godot counterpart: `export --out PROJECT/buildings/NAME --replace` writes th
 
 ## Checking and rendering in Unreal
 
-`unreal-check` is the Unreal counterpart of `godot-check --assets`. It needs Unreal Engine 5 (`--unreal PATH` or `UNREAL_BIN`, either editor binary; nothing is downloaded) and imports each `.glb` of a folder into a disposable project, runs the setup script without a game layer, and checks:
+`unreal-check` is the Unreal counterpart of `godot-check --assets`. It needs Unreal Engine 5 (`--unreal PATH` or `UNREAL_BIN`, either editor binary; nothing is downloaded) and imports each `.glb` of a folder into a disposable project (each into its own level, probed through its own imported actors, so several buildings in one folder cannot stand in for each other), runs the setup script without a game layer, and checks:
 
 - every mesh node became a static mesh actor with the same named slots, and `building_part` reached the mesh assets;
 - every `UBX_`/`UCX_` piece became simple collision on its carrier, with none left as an actor;
 - lights became point lights, moving parts are Movable, door trigger boxes exist;
 - no Nanite mesh has a translucent material;
-- elevator probes, as `godot-check` runs them: with the car moved to each stop a downward trace finds the car floor at the stop height; closed landing doors block the opening; with the landing and car doors slid open by `leaf_travel`, no door leaf blocks the way into the car.
+- elevator probes, as `godot-check` runs them: with the car moved to each stop a downward trace finds the car floor at the stop height; each closed landing leaf blocks its half of the opening (one ray through each leaf's centre); with the landing and car doors slid open by `leaf_travel`, no door leaf blocks the way into the car.
 
 ```text
 node cli.mjs unreal-check --assets NEW_DIR --require-collision

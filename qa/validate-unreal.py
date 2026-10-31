@@ -39,6 +39,8 @@ def trace(world, start, end):
     hit = result.to_tuple()
     return hit[0], hit[4], hit[9]
 
+_imported = []
+
 def check_file(path, index):
     report = {"file": os.path.basename(path), "meshes": 0, "collisionPieces": 0, "naniteOff": 0, "lights": 0, "elevators": 0, "stops": 0, "rays": 0, "failures": []}
     fail = lambda message: report["failures"].append(message)
@@ -46,16 +48,29 @@ def check_file(path, index):
     params = unreal.ImportAssetParameters()
     params.is_automated = True
     content = "/Game/BuildingStudioCheck/%d" % index
-    # A fresh level per building, so equal root names in two files cannot meet.
-    unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).new_level("/Game/BuildingStudioCheck/Level_%d" % index)
+    # A fresh level per building, so two files' buildings (often the same root name,
+    # all at the origin) cannot meet; if no new level opens, remove the previous ones.
+    level_actors = unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
+    if not unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).new_level("/Game/BuildingStudioCheck/Level_%d" % index):
+        for actor in _imported:
+            if unreal.SystemLibrary.is_valid(actor):
+                level_actors.destroy_actor(actor)
+    before = set(level_actors.get_all_level_actors())
     if not unreal.InterchangeManager.get_interchange_manager_scripted().import_scene(content, unreal.InterchangeManager.create_source_data(path), params):
         fail("Interchange import failed")
         return report
     nodes = bs.glb_nodes(gltf)
-    setup = bs.setup(path, nodes[0]["label"])
+    new = [a for a in level_actors.get_all_level_actors() if a not in before]
+    _imported[:] = new
+    roots = [a for a in new if a.get_actor_label() == nodes[0]["label"]]
+    if not roots:
+        fail("No %s actor after import" % nodes[0]["label"])
+        return report
+    # This import's own root actor, never an earlier building with the same label.
+    setup = bs.setup(path, roots[0])
     if setup["missing"]:
         fail("Nodes without an actor: %s" % ", ".join(setup["missing"][:10]))
-    actors = bs.actors_under(nodes[0]["label"])
+    actors = bs.actors_under(roots[0])
     raw = gltf["nodes"]
     stray = [a.get_actor_label() for a in actors.values() if a.get_actor_label().startswith(COLLISION)]
     if stray:
@@ -148,10 +163,15 @@ def check_file(path, index):
             car.set_actor_location(unreal.Vector(home.x, home.y, spot.z + 100000), False, False)
             # A leaf's collision rides on the mesh actor under it: the whole subtree is the door.
             door_parts = [a for d in doors for a in leaves(d)]
-            hit, _, who = trace(world, mid - across, mid + across)
-            report["rays"] += 1
-            if not hit or who not in door_parts:
-                fail("%s: closed landing doors do not block the opening (hit %s)" % (landing["label"], who.get_actor_label() if who else "nothing"))
+            # One ray through each closed leaf's centre: a ray along the seam where the two
+            # leaves' boxes meet hits or misses by rounding (it missed with 2.2 m doors).
+            for d in doors:
+                c = d.get_actor_location()
+                c = unreal.Vector(c.x, c.y, spot.z + 100)
+                hit, _, who = trace(world, c - across, c + across)
+                report["rays"] += 1
+                if not hit or who not in leaves(d):
+                    fail("%s: closed landing door %s does not block its half of the opening (hit %s)" % (landing["label"], _godot(nodes, d), who.get_actor_label() if who else "nothing"))
             car.set_actor_location(unreal.Vector(home.x, home.y, spot.z), False, False)
             travel = float(landing["extras"].get("leaf_travel", 0)) * 100
             moved = []

@@ -128,6 +128,17 @@ const shell=tx(elevatorRecipe.slice(0,-1),blank),lifted=tx(elevatorRecipe.slice(
   const t=exportGodotFiles(express).doors.find(d=>d.kind==='elevator').tscn;
   assert.doesNotMatch(t,/Stop_03|Landing_03/);assert.match(t,/\[node name="Landing_02"[^\]]*\]\nposition = Vector3\(0, 5.96, 0\)/);
   console.log('PASS skipFloorIds: no landing or stop on skipped floors, shaft still passes, route check skips them');
+  // MegaCorp: removing a skipped floor drops it from the skip list (CLI floor.remove and web Delete floor).
+  const removed=tx([{op:'floor.remove',id:'f2',removeContents:true,removeAffectedStairs:true}],express);
+  assert.deepEqual(removed.floors.map(f=>f.id),['floor_1','f3']);assert.equal('skipFloorIds' in removed.elevators[0],false);
+  const {createEditorHarness}=await import('./qa/editor-harness.mjs'),web=await createEditorHarness();
+  await web.loadBuildingData(structuredClone(express));{const pick=web.$('#floor-select');pick.value='1';await pick.dispatch('change');}assert.equal(web.activeFloor(),1);
+  await web.$('#delete-floor-btn').dispatch('click');
+  assert.deepEqual(web.snapshot().elevators,removed.elevators,'web Delete floor equals floor.remove');assert.deepEqual(web.errors,[]);
+  // group.move works on any floor the shaft passes, skipped ones included, and stores rounded coordinates.
+  const moved=tx([{op:'group.move',floorId:'f2',items:[{type:'elevator',id:'lift'}],delta:{x:.1,z:-.4}}],express).elevators[0];
+  assert.deepEqual([moved.x,moved.z],[3.1,2.1]);
+  console.log('PASS removing a skipped floor drops it from skipFloorIds (CLI and web); group.move on a skipped floor, rounded');
 }
 {
   const plain=exportGodotFiles(shell),files=exportGodotFiles(lifted),elev=files.doors.filter(d=>d.kind==='elevator');

@@ -20,7 +20,8 @@
 //   carrier is the nearest mesh in its subtree, else in its parent's, so a
 //   door leaf's collision swings with its hinge. UE matches collision to the
 //   carrier by node name, so glTF node names are made unique (_2, _3, ...;
-//   the original name is kept in extras.godot_name).
+//   the original name is kept in extras.godot_name), and no node is named
+//   <carrier>_NN for a piece UBX_<carrier>_NN (UE would take that node first).
 // - OmniLight3D becomes a KHR_lights_punctual point light (placeholders, as
 //   in Godot: intensity is the Godot energy).
 import { exportGodotFiles, decodeOctNormal, decodeOctTangent } from './exporter.js';
@@ -420,10 +421,15 @@ export function buildGlb(sceneFiles,rootFile,options={}){
     if(Object.keys(extras).length)node.extras=extras;
     const children=n.children.map(emit).filter(i=>i!=null);
     if(collision){
-      collision.forEach((c,k)=>{
+      // UE first matches UBX_<name>_NN to a mesh named exactly "<name>_NN", and only then
+      // strips "_NN": skip numbers that are another node's name, and reserve "<name>_NN"
+      // so a later duplicate (FloorSlab_Stairwell_10 on storey 10) is numbered past it.
+      let k=0;
+      collision.forEach(c=>{
         const hull=c.kind==='UBX'?{points:c.points,triangles:[[0,2,3],[0,3,1],[4,5,7],[4,7,6],[0,1,5],[0,5,4],[2,6,7],[2,7,3],[0,4,6],[0,6,2],[1,3,7],[1,7,5]]}:convexHullTriangles(c.points);
         const pts=new Float32Array(hull.points.flat()),idx=new Uint16Array(hull.triangles.flat());
-        const cname=`${c.kind}_${name}_${String(k).padStart(2,'0')}`;usedNames.set(cname,1);
+        while(usedNames.has(`${name}_${String(k).padStart(2,'0')}`))k++;
+        const suffix=String(k++).padStart(2,'0'),cname=`${c.kind}_${name}_${suffix}`;usedNames.set(cname,1);usedNames.set(`${name}_${suffix}`,1);
         const mesh={name:cname,primitives:[{attributes:{POSITION:w.accessor(pts,'VEC3',5126,34962,true)},indices:w.accessor(idx,'SCALAR',5123,34963),mode:4}]};
         json.meshes.push(mesh);
         json.nodes.push({name:cname,mesh:json.meshes.length-1});children.push(json.nodes.length-1);

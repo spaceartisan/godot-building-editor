@@ -68,7 +68,10 @@ export function proposeFloorStackEdit(source,index,action,{removeAffectedStairs=
     }
   }else{
     const distance=floorWallHeight(source,index)+floorSlabThickness(source,index);
+    const gone=floors[index].id;
     floors.splice(index,1);activeIndex=Math.min(index,floors.length-1);
+    // A lift has no stop on a floor it skips, so the floor leaves the skip list with it.
+    for(const e of building.elevators||[])if(Array.isArray(e.skipFloorIds)&&e.skipFloorIds.includes(gone)){e.skipFloorIds=e.skipFloorIds.filter(id=>id!==gone);if(!e.skipFloorIds.length)delete e.skipFloorIds;}
     if(index===0)floors[0].elevation=heights[1];
     else for(let i=index;i<floors.length;i++)if(Number.isFinite(floors[i].elevation))floors[i].elevation-=distance;
   }

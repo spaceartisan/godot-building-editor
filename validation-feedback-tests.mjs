@@ -98,3 +98,23 @@ try{
 }
 console.log('PASS numeric rollback/history, live check counts, focus/scroll intent, warning export, error blocking and download failure feedback (DOM adapter, not browser layout)');
 console.log('PASS Save JSON feedback, exact serialized blueprint, shared download resource cleanup on success/failure and unchanged history');
+{
+  // MegaCorp (Clowning Around): a window across a T-junction is warned about in the CLI and the web
+  // Checks list; overlaps between openings with a shared label name their IDs.
+  const {applyTransaction}=await import('./src/transactions.js'),{prepareDocument}=await import('./src/diagnostics.js'),{makeEmptyBuilding}=await import('./src/model.js');
+  const b0=makeEmptyBuilding();b0.floors[0].id='floor_1';
+  const base=applyTransaction(prepareDocument(b0).building,{version:1,operations:[{op:'room.add',floorId:'floor_1',id:'r',value:{minX:-5,maxX:5,minZ:-4,maxZ:4}},
+    {op:'wall.add',floorId:'floor_1',id:'part',value:{label:'Partition',a:{x:0,z:-4},b:{x:0,z:4}}}]}).building;
+  const across=applyTransaction(base,{version:1,operations:[{op:'opening.add',floorId:'floor_1',id:'w',value:{type:'window',wallId:'r-north',at:{x:.2,z:-4},width:.8,height:1}}]});
+  assert.equal(across.ok,true);assert.match(across.warnings.map(w=>w.message).join('\n'),/Window w spans the junction where wall Partition meets/);
+  const clear=applyTransaction(base,{version:1,operations:[{op:'opening.add',floorId:'floor_1',id:'w',value:{type:'window',wallId:'r-north',at:{x:1,z:-4},width:.8,height:1}}]});
+  assert.deepEqual(clear.warnings,[],'0.51 m from the junction is clear');
+  const web=await createEditorHarness();await web.loadBuildingData(structuredClone(across.building));
+  assert.ok(web.$('#validation-results').children.some(li=>/spans the junction/.test(li.textContent)),'web Checks list shows the warning');
+  const pair=applyTransaction(base,{version:1,operations:[
+    {op:'opening.add',floorId:'floor_1',id:'a',value:{label:'Front',type:'window',wallId:'r-south',at:{x:-3,z:4},width:.8,height:1}},
+    {op:'opening.add',floorId:'floor_1',id:'b',value:{label:'Front',type:'window',wallId:'r-south',at:{x:-2,z:4},width:.8,height:1}},
+    {op:'opening.add',floorId:'floor_1',id:'c',value:{type:'window',wallId:'r-south',at:{x:-2.5,z:4},width:1.4,height:1}}]});
+  assert.deepEqual(pair.errors.map(e=>e.message).sort(),['Floor 1: Front (a) overlaps Window.','Floor 1: Front (b) overlaps Window.']);
+  console.log('PASS window across a T-junction warned (CLI and web Checks); overlaps of same-label openings name their IDs');
+}

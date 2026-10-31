@@ -442,6 +442,7 @@ async function execute({command,options,files}){
         writeRenders(renderOut,[...rendered.entries,{name:'renders.json',data:JSON.stringify({engine:`Unreal Engine ${unreal.version}`,colorMode:rendered.colorMode,views:rendered.manifest,note:'Buildings imported with Interchange and set up with building_studio_setup.py, no game layer; only a sun, sky light, atmosphere and a camera headlamp were added.'},null,2)+'\n'}]);
         render={output:renderOut,images:rendered.entries.length,files:rendered.manifest.map(v=>v.file)};
       }
+      if(renderOut&&!ok)render={skipped:'checks failed; nothing was rendered or written',output:renderOut};
       return {command,ok,unrealVersion:unreal.version,unrealEngine:report.engine,unrealChecks:checks,failures,...(render?{render}:{}),preflight:{root:prepared.root,files:prepared.files.length,bytes:prepared.bytes},exitCode:ok?0:1};
     }catch(e){if(e instanceof UnrealError)throw new CliError(e.message,e.code);throw e;}
   }
@@ -468,6 +469,7 @@ async function execute({command,options,files}){
         writeRenders(renderOut,[...rendered.entries,{name:'renders.json',data:JSON.stringify(manifest,null,2)+'\n'}]);
         render={output:renderOut,images:rendered.entries.length,renderer:rendered.renderer,virtualDisplay:rendered.virtualDisplay,files:rendered.manifest.map(v=>v.file)};
       }
+      if(renderOut&&!ok)render={skipped:'checks failed; nothing was rendered or written',output:renderOut};
       return {command,ok,engineVersion,checks,...(render?{render}:{}),mode:'assets',scope:'Exported asset resource checks only; no building-specific walking/headroom probes',preflight:{root:prepared.root,scenes:prepared.sceneCount,dependencies:prepared.dependencyCount,bytes:prepared.bytes},results:[result],exitCode:ok?0:1};
     }
     const counts=/RESULT: (\d+) scenes; (\d+) physics rays; (\d+) trimmed mesh\/collision comparisons; (\d+) failures/.exec(result.stdout);
@@ -612,7 +614,8 @@ function human(result,verbose){
   }
   if(result.mode==='assets')lines.push('Asset resource checks only; no building-specific walking/headroom probes.');
   if(result.mode==='assets'&&result.checks?.elevators)lines.push(`Elevator probes: ${result.checks.elevators} elevators, ${result.checks.elevatorStops} stops (car floor at each stop, closed and opened doors, clear shaft)`);
-  if(result.render)lines.push(`Rendered ${result.render.images} views${result.render.virtualDisplay?' (virtual display)':''}${result.render.renderer?' · '+result.render.renderer:''}: ${result.render.output}`);
+  if(result.render?.skipped)lines.push(`Renders skipped: ${result.render.skipped}`);
+  else if(result.render)lines.push(`Rendered ${result.render.images} views${result.render.virtualDisplay?' (virtual display)':''}${result.render.renderer?' · '+result.render.renderer:''}: ${result.render.output}`);
   if(result.checks)lines.push(`${result.checks.scenes} scenes · ${result.checks.physicsRays} physics rays · ${result.checks.trimmedMeshComparisons} trimmed mesh comparisons · ${result.checks.failures} failures`);
   if(result.output)lines.push('Output: '+result.output);
   for(const note of result.notes||[])lines.push('NOTE '+note);

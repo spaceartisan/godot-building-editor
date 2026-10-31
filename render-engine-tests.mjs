@@ -7,7 +7,9 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 const root=path.dirname(fileURLToPath(import.meta.url)),cli=path.join(root,'cli.mjs');
 if(!process.env.GODOT_BIN)throw new Error('Set GODOT_BIN for the engine suite');
-if(!process.env.DISPLAY&&spawnSync('xvfb-run',['--help']).error){console.log('SKIP render engine test: no DISPLAY and no xvfb-run');process.exit(0);}
+// The same display rule as godot-check --render: Windows and macOS render directly.
+const {displayRoute}=await import('./godot-render.mjs');
+if(!displayRoute()){console.log('SKIP render engine test: no DISPLAY, WAYLAND_DISPLAY or xvfb-run');process.exit(0);}
 const temp=fs.mkdtempSync(path.join(os.tmpdir(),'building-render-engine-'));
 const run=(args,expected=0)=>{const r=spawnSync(process.execPath,[cli,...args,'--json'],{cwd:temp,env:process.env,encoding:'utf8',timeout:600000,maxBuffer:32e6});assert.equal(r.status,expected,r.stdout+r.stderr);return JSON.parse(r.stdout);};
 const png=file=>{const b=fs.readFileSync(file);assert.equal(b.subarray(1,4).toString(),'PNG');return {width:b.readUInt32BE(16),height:b.readUInt32BE(20)};};
@@ -46,6 +48,10 @@ try{
     assert.notDeepEqual(fs.readFileSync(path.join(temp,'lone-colored/top.png')),fs.readFileSync(path.join(temp,'lone-plain/top.png')),'a BoxMesh manual roof gets the roof colour');
   }
   run(['godot-check','--assets','assets','--render','--out','custom'],3);
+  // Failed checks render nothing and say so.
+  run(['export',path.join(root,'examples/twostory.building.json'),'--placeholders','--out','colored-assets']);
+  const failed=run(['godot-check','--assets','colored-assets','--render','--out','never'],1);
+  assert.equal(failed.render.skipped,'checks failed; nothing was rendered or written');assert.equal(fs.existsSync(path.join(temp,'never')),false);
   // --replace re-renders into the previous render folder.
   const before=fs.readdirSync(path.join(temp,'custom')).sort();
   const again=run(['godot-check','--assets','assets','--render','--out','custom','--views','views.json','--replace']);

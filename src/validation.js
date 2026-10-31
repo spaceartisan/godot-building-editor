@@ -8,13 +8,16 @@ import {wallTypeProblem,wallTypeFor,wallTypeOpeningProblem,sampleWallType} from 
 import { regionPolygonProblem, regionBounds } from './regions.js';
 import { containsArea } from './polygon-areas.js';
 import { manualRoofOutlineProblem, roofPolygonBounds } from './roof-outline.js';
-import { REGION_KINDS, REGION_EFFECTS, sceneNameProblem, platformStepsProblem, floorElevation, floorWallHeight, floorSlabThickness, floorView, structuralFloorRectangles, exteriorFootprintIssue, stairFootprint, stairOpeningFootprint, wallLength, wallHeightFor, projectToWall, validateOpeningLayout, rectValid } from './model.js';
+import { REGION_KINDS, REGION_EFFECTS, sceneNameProblem, platformStepsProblem, floorElevation, floorWallHeight, floorSlabThickness, floorView, structuralFloorRectangles, exteriorFootprintIssue, stairFootprint, stairOpeningFootprint, wallLength, wallHeightFor, projectToWall, validateOpeningLayout, openingInterval, rectValid } from './model.js';
 import { roofAttachmentDiagnostics, attachmentWarnings } from './roof-diagnostics.js';
 import {markerProblem} from './markers.js';
 import {openingShapeProblem,shapedOpeningProblem,doorLeavesProblem,rollupDoorProblem} from './opening-shapes.js';
 
 // Non-mutating validation shared by JSON import, the editor and direct export.
 // Warnings leave incomplete/custom architecture editable; errors protect output.
+// Half the horizontal thickness of a wall (its wall type's thickest level, else the building's).
+const wallHalfThickness=(building,wall)=>{const type=wallTypeFor(building,wall);return (type?Math.max(...type.stations.map(s=>s.thickness)):Math.max(0,Number(building.wallThickness)||.18))/2;};
+
 export function validateBuilding(building,{roofDiagnostics=false}={}){
   const errors=[],warnings=[];
   const error=(path,message,targets)=>errors.push({path,message:`${path}: ${message}`,...(targets?{targets}: {})});
@@ -253,6 +256,20 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
       if(deck&&(Number(rail.elevation)||0)<(Number(deck.height)||0)-.05)warn(p,`railing ${rail.label||rail.id} lies on raised platform ${deck.label||deck.id} but stands on the floor; set its elevation to ${Number(deck.height)} m`,[{type:'railing',id:rail.id,floorId:f.id}]);
     }
     for(const issue of validateOpeningLayout(view))if(['overlap','missing_wall'].includes(issue.type))error(p,issue.message,[issue.opening,issue.other].filter(Boolean).map(q=>({type:'opening',id:q.id,floorId:f.id})));
+    // An opening across a T-junction: another wall ends on its host wall inside the opening's span,
+    // so that wall's end stands in the hole (MegaCorp: a window over a partition's end).
+    for(const o of f.openings||[]){
+      const host=(f.walls||[]).find(w=>w.id===o.wallId),span=host&&openingInterval(view,o);if(!span)continue;
+      const L=wallLength(host),hostHalf=wallHalfThickness(building,host);
+      for(const w of f.walls||[]){
+        if(w.id===host.id)continue;
+        for(const end of [w.a,w.b]){
+          const q=projectToWall(host,end),s=q.t*L,half=wallHalfThickness(building,w);
+          if(q.distance>hostHalf+.01||s<=1e-3||s>=L-1e-3||span.start>=s+half||span.end<=s-half)continue;
+          warn(p,`${o.label||o.type} ${o.id} spans the junction where wall ${w.label||w.id} meets ${host.label||host.id} (${s.toFixed(2)} m along it, ${(2*half).toFixed(2)} m wide): that wall's end stands in the opening; move one of them`,[{type:'opening',id:o.id,floorId:f.id},{type:'wall',id:w.id,floorId:f.id}]);
+        }
+      }
+    }
     const walls=f.walls||[];
     for(let a=0;a<walls.length;a++){
       const u=walls[a],dx=u.b.x-u.a.x,dz=u.b.z-u.a.z,L=wallLength(u);

@@ -46,14 +46,15 @@ export function proposeGroupMove(source,index,selection,delta,{connected=true}={
   const wallIds=new Set(items.filter(s=>s.type==='wall').map(s=>s.id)),changedWalls=new Set(wallIds);
   const afterWalls=new Map(after.walls.map(w=>[w.id,w])),selectedWalls=before.walls.filter(w=>wallIds.has(w.id));
   if(!delta.x&&!delta.z)return {ok:true,building,wallIds:[],changed:false};
-  const shift=p=>{p.x+=delta.x;p.z+=delta.z;};
+  // Rounded to a nanometre, so -0.4 + 0.5 stores 0.1 rather than 0.09999999999999998.
+  const nm=v=>Math.round(v*1e9)/1e9,shift=p=>{p.x=nm(p.x+delta.x);p.z=nm(p.z+delta.z);};
   for(const s of items){
     const o=groupEntity(building,index,s);
     if(s.type==='opening')continue;
     if(s.type==='wall'||s.type==='railing'){shift(o.a);shift(o.b);}
     else if((s.type==='light'||s.type==='marker'))shift(o.position);
     else if(s.type==='stair'||s.type==='elevator')shift(o);
-    else {if(o.polygon)for(const p of o.polygon)shift(p);o.minX+=delta.x;o.maxX+=delta.x;o.minZ+=delta.z;o.maxZ+=delta.z;}
+    else {if(o.polygon)for(const p of o.polygon)shift(p);o.minX=nm(o.minX+delta.x);o.maxX=nm(o.maxX+delta.x);o.minZ=nm(o.minZ+delta.z);o.maxZ=nm(o.maxZ+delta.z);}
   }
   if(connected)for(const wall of before.walls){
     if(wallIds.has(wall.id))continue;

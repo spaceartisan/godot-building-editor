@@ -27,16 +27,27 @@ try{
   cli(['export',path.join(root,'examples/stair_ramp_north.building.json'),'--format','glb','--out','good/ramp']);
   cli(['export',path.join(root,'examples/shaped_walls.building.json'),'--format','glb','--out','good/shaped']);
   cli(['export','lift.json','--format','glb','--out','good/lift']);
+  // 2.2 m landing doors: a probe along the seam between the leaves missed them (MegaCorp).
+  fs.writeFileSync(path.join(temp,'lift22.edit.json'),JSON.stringify({version:1,operations:elevatorRecipe.map(o=>o.op==='elevator.add'?{...o,value:{...o.value,doorHeight:2.2}}:o)}));
+  cli(['new','--ops','lift22.edit.json','--out','lift22.json']);cli(['export','lift22.json','--format','glb','--out','good/lift22']);
   const ok=cli(['unreal-check','--assets','good','--require-collision']);
   const c=ok.unrealChecks;
-  assert.equal(ok.ok,true,JSON.stringify(ok.failures));assert.equal(c.files,4);assert.equal(c.elevators,1);assert.ok(c.elevatorStops>=2&&c.physicsRays===c.elevatorStops*3,'three probes per stop');
+  assert.equal(ok.ok,true,JSON.stringify(ok.failures));assert.equal(c.files,5);assert.equal(c.elevators,2);assert.ok(c.elevatorStops>=2&&c.physicsRays===c.elevatorStops*4,'four probes per stop: car floor, each closed landing leaf, the open doorway');
   assert.ok(c.collisionPieces>100&&c.lights>0&&c.meshes>50);
   assert.ok(c.naniteOff>0,'window glass meshes have Nanite off (Nanite cannot draw translucent materials)');
   console.log(`PASS unreal-check (Unreal Engine ${ok.unrealVersion}): ${c.files} buildings, ${c.meshes} meshes, ${c.collisionPieces} collision pieces, ${c.lights} lights, ${c.naniteOff} glass meshes without Nanite, ${c.elevatorStops} elevator stops / ${c.physicsRays} probes, 0 failures`);
   cli(['export','lift.json','--format','glb','--no-collision','--out','broken']);
-  const bad=cli(['unreal-check','--assets','broken'],1);
-  assert.ok(bad.failures.some(f=>/car floor not found/.test(f))&&bad.failures.some(f=>/closed landing doors do not block/.test(f)),'a collision-less elevator fails its probes');
-  console.log(`PASS unreal-check fails a broken export (${bad.failures.length} probe failures without collision)`);
+  const bad=cli(['unreal-check','--assets','broken','--render','--out','broken-renders'],1);
+  assert.equal(bad.render.skipped,'checks failed; nothing was rendered or written');assert.equal(fs.existsSync(path.join(temp,'broken-renders')),false);
+  assert.ok(bad.failures.some(f=>/car floor not found/.test(f))&&bad.failures.some(f=>/closed landing door \w+ does not block/.test(f)),'a collision-less elevator fails its probes');
+  // One folder, a good and a broken copy of the same building (same root name, both at the origin):
+  // each is probed against its own import, so the broken one still fails and the good one passes.
+  fs.mkdirSync(path.join(temp,'mixed'));
+  fs.copyFileSync(path.join(temp,'good','lift','new_building.glb'),path.join(temp,'mixed','a_good.glb'));
+  fs.copyFileSync(path.join(temp,'broken','new_building.glb'),path.join(temp,'mixed','b_broken.glb'));
+  const mixed=cli(['unreal-check','--assets','mixed'],1);
+  assert.ok(mixed.failures.length>0&&mixed.failures.every(f=>f.startsWith('b_broken.glb:')),JSON.stringify(mixed.failures));
+  console.log(`PASS unreal-check fails a broken export (${bad.failures.length} probe failures without collision), also beside a good copy of the same building`);
 
   // building_studio_setup.py with a full unreal block, run twice.
   const layer={version:1,unreal:{materials:{OutsideFaces:'/Engine/BasicShapes/BasicShapeMaterial'},nodeMaterials:[{part:'door_leaf',material:'/Engine/EngineMaterials/WorldGridMaterial'}],tags:[{part:'roof',tags:['roofs']}],

@@ -20,7 +20,7 @@ import { checkExampleExpectation } from './src/example-check.js';
 import { applyTransaction } from './src/transactions.js';
 import { parseGameLayer, gameLayerSurfaceGaps } from './src/game-layer.js';
 import { makeEmptyBuilding, floorView, floorElevation, boundsOfBuilding } from './src/model.js';
-import { reachabilityWarnings, parseRouteStarts } from './src/reachability.js';
+import { reachabilityWarnings, parseRouteStarts, parseWalkerRadius } from './src/reachability.js';
 import { attachmentSummary } from './src/roof-diagnostics.js';
 import { runReleaseCheck, assertExternalReport } from './release-check.mjs';
 import { suites } from './test-suites.mjs';
@@ -33,8 +33,8 @@ function profileInward(building,floor){
   const i=building.floors.indexOf(floor),view=floorView(building,i);
   return (view.walls||[]).filter(w=>w.wallTypeId).map(w=>{const n=profileWallState(view,w,exteriorWallOutsideSign,isExteriorWall).n;return {wallId:w.id,inwardSide:w.inwardSide||'auto',inward:{x:Math.round(n.x*1e6)/1e6+0,z:Math.round(n.z*1e6)/1e6+0}};});
 }
-const specs={new:['out','name','ops','dry-run','warnings-as-errors','replace'],edit:['ops','out','dry-run','warnings-as-errors','replace'],validate:['warnings-as-errors','out','reachability','from'],inspect:['warnings-as-errors','entities','reachability','from'],export:['out','format','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors','replace'],package:['out','format','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors','include-json','replace'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','unreal','unreal-engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision','render','views','out','surface-colors','replace'],'unreal-check':['unreal','assets','require-collision','render','views','out','surface-colors','replace'],'unreal-import':['unreal','project','content','level','location','yaw','replace','game-layer','light-scale'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof','godot']};
-const values=new Set(['project','content','level','location','yaw','light-scale','unreal-engine','unreal','format','from','name','views','ops','out','profile','suite','godot','game-layer','assets','yaw','pitch','distance','floor','view','compare','overlay','roof','canvas','engine','timeout']);
+const specs={new:['out','name','ops','dry-run','warnings-as-errors','replace'],edit:['ops','out','dry-run','warnings-as-errors','replace'],validate:['warnings-as-errors','out','reachability','from','walker-radius'],inspect:['warnings-as-errors','entities','reachability','from','walker-radius'],export:['out','format','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors','replace'],package:['out','format','profile','no-collision','no-markers','placeholders','share-door-scenes','game-layer','warnings-as-errors','include-json','replace'],examples:['check'],test:['suite'],'release-check':['godot','canvas','engine','unreal','unreal-engine','timeout','out'], 'godot-check':['godot','assets','allow-materials','require-collision','render','views','out','surface-colors','replace'],'unreal-check':['unreal','assets','require-collision','render','views','out','surface-colors','replace'],'unreal-import':['unreal','project','content','level','location','yaw','replace','game-layer','light-scale'],preview:['out','yaw','pitch','distance','floor','view','compare','overlay','roof','godot']};
+const values=new Set(['walker-radius','project','content','level','location','yaw','light-scale','unreal-engine','unreal','format','from','name','views','ops','out','profile','suite','godot','game-layer','assets','yaw','pitch','distance','floor','view','compare','overlay','roof','canvas','engine','timeout']);
 class CliError extends Error{constructor(message,code=2){super(message);this.code=code;}}
 const help=`Building Studio ${version}
 Usage: node cli.mjs COMMAND [FILES...] [OPTIONS]
@@ -47,6 +47,8 @@ Usage: node cli.mjs COMMAND [FILES...] [OPTIONS]
                         cannot be reached from outside via doors and stairs
     --from "X,Z[,FLOOR_ID][;...]"  With --reachability: also start the route
                         from these interior points (sealed ships, bunkers)
+    --walker-radius M   With --reachability: walker radius in metres (0.1-1,
+                        default 0.25); use your game agent's radius
   edit FILE --ops JSON --dry-run   Validate a transaction and show its diff
   edit FILE --ops JSON --out FILE  Save the validated edit to a NEW building JSON
     --replace (new/edit) overwrite an existing building JSON output (never an input)
@@ -479,12 +481,14 @@ async function execute({command,options,files}){
   }
   let {loaded,exitCode}=documents(command==='preview'&&options.compare?[...files,path.resolve(options.compare)]:files,options['warnings-as-errors']);
   if(options.from&&!options.reachability)throw new CliError('--from requires --reachability');
+  if(options['walker-radius']!==undefined&&!options.reachability)throw new CliError('--walker-radius requires --reachability');
+  let radius;try{radius=parseWalkerRadius(options['walker-radius']);}catch(e){throw new CliError(e.message);}
   if(options.reachability){
     // Opt-in route check: its findings join the document warnings, so strict
     // mode and saved check reports treat them like any other warning.
     for(const doc of loaded)if(doc.building&&!doc.errors.length){
       let starts;try{starts=parseRouteStarts(options.from,doc.building);}catch(e){throw new CliError(e.message);}
-      const {result,warnings}=reachabilityWarnings(doc.building,{starts});
+      const {result,warnings}=reachabilityWarnings(doc.building,{starts,radius});
       doc.reachability=result;doc.warnings=[...doc.warnings,...warnings];
       doc.ok=!options['warnings-as-errors']||!doc.warnings.length;if(!doc.ok)exitCode=Math.max(exitCode,1);
     }

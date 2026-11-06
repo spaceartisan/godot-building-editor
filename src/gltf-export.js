@@ -24,7 +24,7 @@
 //   <carrier>_NN for a piece UBX_<carrier>_NN (UE would take that node first).
 // - OmniLight3D becomes a KHR_lights_punctual point light (placeholders, as
 //   in Godot: intensity is the Godot energy).
-import { exportGodotFiles, decodeOctNormal, decodeOctTangent } from './exporter.js';
+import { exportGodotFiles, decodeOctNormal, decodeOctTangent, sharedShapePart } from './exporter.js';
 
 export const GLB_PRISM_THICKNESS=0.02;
 
@@ -349,6 +349,16 @@ export function buildGlb(sceneFiles,rootFile,options={}){
     for(let p=parentOf.get(shape);p;p=parentOf.get(p)){const queue=[p];while(queue.length){const n=queue.shift();if(isMesh(n)&&n.name===want)return n;queue.push(...n.children);}}
     return null;
   };
+  // A floor Collision body holds walls, floor, ceiling and gables: each of those
+  // shapes rides on the floor's first mesh of the same part (OutsideFaces,
+  // FloorSlab, Ceiling, ...), so an engine can give each part its own collision
+  // profile and hiding a mesh hides its collision.
+  const partCarrier=(body,shape)=>{
+    const floor=parentOf.get(body),part=sharedShapePart(shape.name);
+    if(!part||body.name!=='Collision'||!/^Floor_\d+$/.test(floor?.name||'')||parentOf.get(floor)!==root)return null;
+    const queue=[floor];while(queue.length){const n=queue.shift();if(n!==floor&&BODY_TYPES.has(n.type))continue;if(isMesh(n)&&n.props['metadata/building_part']===part)return n;queue.push(...n.children);}
+    return null;
+  };
   const collisionByCarrier=new Map(),layersByCarrier=new Map(),dropped=new Set();
   if(options.collision!==false){
     const bodies=[];const find=n=>{if(BODY_TYPES.has(n.type))bodies.push(n);n.children.forEach(find);};find(root);
@@ -359,8 +369,9 @@ export function buildGlb(sceneFiles,rootFile,options={}){
       for(const shape of shapes){
         const res=shape.sub[shape.props.shape?.args[0]];if(!res)continue;
         // A shape named "<mesh>_Collision" (windows, posts, roof slabs, ...) rides on that mesh,
-        // so its collision, groups and lifetime follow it; other shapes ride on the body's carrier.
-        const carrier=namedCarrier(shape)||bodyCarrier;
+        // so its collision, groups and lifetime follow it; wall, floor, ceiling and gable shapes ride on
+        // a mesh of their part; anything else rides on the body's carrier.
+        const carrier=namedCarrier(shape)||partCarrier(body,shape)||bodyCarrier;
         if(!collisionByCarrier.has(carrier))collisionByCarrier.set(carrier,[]);
         const list=collisionByCarrier.get(carrier),inv=minv(world.get(carrier));
         if(!layersByCarrier.has(carrier))layersByCarrier.set(carrier,{layer:body.props.collision_layer??1,mask:body.props.collision_mask??1,groups:new Set()});

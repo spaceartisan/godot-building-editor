@@ -7,6 +7,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { nobodyCameRecipe, collisionLayerSpec } from './qa/nobody-came-fixture.mjs';
 const root=path.dirname(fileURLToPath(import.meta.url)),cli=path.join(root,'cli.mjs');
 if(!process.env.GODOT_BIN)throw new Error('Set GODOT_BIN for the engine suite');
 const temp=fs.mkdtempSync(path.join(os.tmpdir(),'building-game-layer-'));
@@ -95,4 +96,52 @@ func _initialize() -> void:
   assert.ok(report.roof_parts>0);assert.equal(report.roofs_in_group,report.roof_parts,'groups rules add Godot groups by part');assert.equal(report.ridges_in_group,0,'other parts are untouched');
   assert.ok(report.windows>0);assert.equal(report.windows_breakable_and_exported_group,report.windows,'groups rules by path keep the exported groups');
   console.log(`PASS game layer in Godot: materials by surface, render layers, groups, building/door scripts and door children on ${report.doors_with_script} doors (its unreal block is ignored by the Godot export)`);
+  {
+    // NOBODY CAME: walls on layer 2 and floors on layer 1, checked with physics rays;
+    // single and double doors get their own child scene through door filters.
+    write('scenes/parts.tscn','[gd_scene format=3]\n\n[node name="Parts" type="Node3D"]\nmetadata/kind = "single"\n');
+    write('scenes/parts_double.tscn','[gd_scene format=3]\n\n[node name="Parts" type="Node3D"]\nmetadata/kind = "double"\n');
+    fs.writeFileSync(path.join(temp,'collision.layer.json'),JSON.stringify({...collisionLayerSpec,doorChildren:[{name:'Parts',scene:'res://scenes/parts_double.tscn',door:{leaves:2}},{name:'Parts',scene:'res://scenes/parts.tscn'}]}));
+    fs.writeFileSync(path.join(temp,'house.edit.json'),JSON.stringify({version:1,operations:nobodyCameRecipe}));
+    run(['new','--ops',path.join(temp,'house.edit.json'),'--out',path.join(temp,'house.json')]);
+    run(['export',path.join(temp,'house.json'),'--out',path.join(temp,'project','house'),'--game-layer',path.join(temp,'collision.layer.json')]);
+    const houseScene=fs.readdirSync(path.join(temp,'project','house')).find(n=>n.endsWith('.tscn'));
+    write('collision_check.gd',`extends SceneTree
+func _initialize() -> void:
+	_run.call_deferred()
+func _hit(space: PhysicsDirectSpaceState3D, from: Vector3, to: Vector3, mask: int) -> String:
+	var query := PhysicsRayQueryParameters3D.create(from, to, mask)
+	var hit := space.intersect_ray(query)
+	return str(hit.collider.name) if hit else ""
+func _run() -> void:
+	var house: Node3D = (load("res://house/${houseScene}") as PackedScene).instantiate()
+	root.add_child(house)
+	await physics_frame
+	await physics_frame
+	var space := house.get_world_3d().direct_space_state
+	var report := {}
+	# Down onto the floor and across the east wall (x = 5), with each mask.
+	report["floor_mask1"] = _hit(space, Vector3(3, 1, -2), Vector3(3, -1, -2), 1)
+	report["floor_mask2"] = _hit(space, Vector3(3, 1, -2), Vector3(3, -1, -2), 2)
+	report["wall_mask2"] = _hit(space, Vector3(3, 1, 0), Vector3(7, 1, 0), 2)
+	report["wall_mask1"] = _hit(space, Vector3(3, 1, 0), Vector3(7, 1, 0), 1)
+	report["partition_mask2"] = _hit(space, Vector3(3, 1, -2), Vector3(-1, 1, -2), 2)
+	var ramp: StaticBody3D = house.find_children("WalkableRamp", "StaticBody3D", true, false)[0]
+	report["ramp_layer"] = ramp.collision_layer
+	var parts := house.find_children("Parts", "Node3D", true, false)
+	report["parts"] = parts.map(func(n): return str(n.get_meta("kind")) + ":" + str(n.get_parent().get_meta("door_leaves")))
+	print("COLLISION_LAYER " + JSON.stringify(report))
+	house.queue_free()
+	quit(0)
+`);
+    const r=spawnSync(process.env.GODOT_BIN,['--headless','--path',path.join(temp,'project'),'--script','collision_check.gd'],{encoding:'utf8',timeout:300000});
+    const out=(r.stdout||'').split('\n').find(l=>l.startsWith('COLLISION_LAYER '));assert.ok(out,r.stdout+r.stderr);
+    const errors=(r.stdout+r.stderr).split('\n').filter(l=>/ERROR/.test(l)&&!/leaked at exit|in use at exit|at exit in PagedAllocator/.test(l));assert.deepEqual(errors,[]);
+    const c=JSON.parse(out.slice('COLLISION_LAYER '.length));
+    assert.equal(c.floor_mask1,'Collision_Layer1','the floor is on layer 1');assert.equal(c.floor_mask2,'','a layer-2 ray passes through the floor');
+    assert.equal(c.wall_mask2,'Collision_Layer2','walls are on layer 2');assert.equal(c.wall_mask1,'','a layer-1 ray passes through the walls');
+    assert.equal(c.partition_mask2,'Collision_Layer2','partitions too');assert.equal(c.ramp_layer,8);
+    assert.deepEqual(c.parts.sort(),['double:2','single:1'],'each door gets the child scene for its leaf count');
+    console.log('PASS game layer collision in Godot: physics rays hit walls only on layer 2 and floors only on layer 1; stair ramp on layer 8; single and double doors get their own child');
+  }
 }finally{fs.rmSync(temp,{recursive:true,force:true});}

@@ -26,7 +26,8 @@
 #   Interchange builds every mesh as Nanite, and Nanite cannot draw translucency
 #   (a cooked build shows the default material instead).
 # From the "unreal" block: materials by slot, nodeMaterials rules, tags rules,
-# collisionProfiles rules, scripts (a component class added to the building,
+# collisionProfiles rules (a "layer" rule sees the layer the top-level
+# collision rules give the carrier's part, as in Godot), scripts (a component class added to the building,
 # door and elevator roots) and doorChildren (actors attached to each door root).
 # Running it again does not duplicate tags, triggers, components or children.
 import argparse, fnmatch, json, re, struct, sys
@@ -63,8 +64,11 @@ def glb_nodes(gltf):
             path = "."
         else:
             path = godot if scene_path == "." else scene_path + "/" + godot
+        # The door scene a node belongs to: its root's width, leaves and style, for door filters.
+        door = ({"width": float(extras.get("door_width", 0)), "leaves": int(extras.get("door_leaves", 1)), "style": extras.get("door_style")}
+                if kind == "door" and path == "." else (parent or {}).get("door") if kind == "door" else None)
         entry = {"label": node["name"], "godot": godot, "extras": extras, "kind": kind, "path": path,
-                 "root": path == ".", "mesh": "mesh" in node, "parent": parent}
+                 "root": path == ".", "mesh": "mesh" in node, "parent": parent, "door": door}
         out.append(entry)
         for child in node.get("children", []):
             if not nodes[child]["name"].startswith(("UBX_", "UCX_")):
@@ -72,7 +76,23 @@ def glb_nodes(gltf):
     walk(gltf["scenes"][0]["nodes"][0], "building", ".", None)
     return out
 
+def door_fits(rule, node):
+    # A rule or door child with a door filter applies only to doors that fit it.
+    want, door = rule.get("door"), node.get("door")
+    if not want:
+        return True
+    if not door:
+        return False
+    styles = want.get("style")
+    styles = [styles] if isinstance(styles, str) else styles
+    return ((want.get("leaves") is None or want["leaves"] == door["leaves"])
+            and (not styles or door["style"] in styles)
+            and (want.get("minWidth") is None or door["width"] >= want["minWidth"] - 1e-6)
+            and (want.get("maxWidth") is None or door["width"] <= want["maxWidth"] + 1e-6))
+
 def selects(rule, node):
+    if not door_fits(rule, node):
+        return False
     scope = rule.get("in")
     if scope and scope != ("doors" if node["kind"] == "door" else "building"):
         return False
@@ -81,6 +101,17 @@ def selects(rule, node):
     if "part" in rule and rule["part"] != node["extras"].get("building_part"):
         return False
     return True
+
+def carrier_layer(layer, node):
+    # The game layer's top-level collision rules (shared with the Godot export)
+    # set the layer of a collision carrier by its part; otherwise the layer the
+    # export carries. collisionProfiles rules with "layer" match this value.
+    for rule in (layer or {}).get("collision", []):
+        if rule.get("in") and rule["in"] != ("doors" if node["kind"] == "door" else "building"):
+            continue
+        if rule["part"] == node["extras"].get("building_part"):
+            return rule["layer"]
+    return int(node["extras"].get("collision_layer", 1))
 
 def actors_under(root):
     # root: the imported root actor itself (two copies of one building share a
@@ -216,7 +247,7 @@ def setup(glb, root=None, layer=None, light_scale=None):
                             report["slots"] += 1
             if "collision_pieces" in extras:
                 for rule in unreal_layer.get("collisionProfiles", []):
-                    by_layer = "layer" not in rule or (rule["layer"] & int(extras.get("collision_layer", 1)))
+                    by_layer = "layer" not in rule or (rule["layer"] & carrier_layer(layer, node))
                     by_node = ("match" not in rule and "part" not in rule) or selects(rule, node)
                     if by_layer and by_node:
                         component.set_collision_profile_name(rule["profile"])
@@ -238,7 +269,11 @@ def setup(glb, root=None, layer=None, light_scale=None):
             if script and add_component(actor, script):
                 report["components"] += 1
             if node["kind"] == "door":
+                added = set()
                 for child in unreal_layer.get("doorChildren", []):
+                    if child["name"] in added or not door_fits(child, node):
+                        continue
+                    added.add(child["name"])
                     label = node["label"] + "_" + child["name"]
                     if attached_child(actor, label) is None:
                         cls = unreal.load_class(None, child["actor"])

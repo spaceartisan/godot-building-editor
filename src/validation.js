@@ -59,7 +59,8 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
     else {const ids=new Set();for(const shape of building.openingShapes){const problem=openingShapeProblem(shape);if(problem)error('openingShapes',problem);else if(ids.has(shape.id))error('openingShapes','Duplicate doorway shape ID');else ids.add(shape.id);}}
   }
   const collections=(owner,names,path)=>{
-    const seen=new Set();
+    // One ID namespace across all of an owner's lists (a floor's walls, openings, markers, ...).
+    const seen=new Map();
     for(const name of names){
       const list=owner[name];if(list==null)continue;
       if(!Array.isArray(list)){error(`${path}.${name}`,'must be an array');continue;}
@@ -67,7 +68,7 @@ export function validateBuilding(building,{roofDiagnostics=false}={}){
         const p=`${path}.${name}[${i}]`;
         if(!obj||typeof obj!=='object'||Array.isArray(obj)){error(p,'must be an object');return;}
         // Missing IDs are migrated on import; export does not invent identity.
-        if(obj.id!=null){if(typeof obj.id!=='string'||!obj.id)error(p,'invalid ID');else if(seen.has(obj.id))error(p,`duplicate ID ${obj.id}`);seen.add(obj.id);}
+        if(obj.id!=null){if(typeof obj.id!=='string'||!obj.id)error(p,'invalid ID');else if(seen.has(obj.id))error(p,`duplicate ID ${obj.id}${seen.get(obj.id)!==name?` (already used in ${seen.get(obj.id)}; ${names.join(', ')} share one set of IDs here)`:''}`);else seen.set(obj.id,name);}
         else warn(p,'missing ID; JSON import will assign one');
         if(obj.label!=null&&typeof obj.label!=='string')error(p,'label must be text');
         if(name==='markers'){const problem=markerProblem(obj);if(problem)error(p,problem);}

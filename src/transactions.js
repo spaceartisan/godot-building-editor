@@ -32,7 +32,7 @@ const rectKeys=['minX','maxX','minZ','maxZ'];
 const GROUP_TYPES=['wall','opening','light','marker','stair','railing','region','slab','platform','manualFloor','manualCeiling','roofSection','elevator'];
 const fields={
   building:['name','sceneName','exportProfile','wallHeight','wallThickness','floorThickness','gridSize','roof','ceiling','doorMesh','windowMesh','slabsByRoom'],
-  floor:['label','elevation','wallHeight','floorThickness','autoFloor','autoCeiling','boundaryMode'],
+  floor:['label','elevation','wallHeight','floorThickness','autoFloor','autoCeiling','boundaryMode','unreachableOk'],
   platform:['label',...rectKeys,'kind','height','covered','roofStyle','roofPitch','roofHeight','steps'],
   elevator:['label','x','z','width','depth','doorSide','doorWidth','doorHeight','bottomFloorId','topFloorId','skipFloorIds'],
   stair:['label','x','z','width','run','direction','style','steps','blockBelow'],
@@ -110,6 +110,7 @@ function checkValue(kind,value,action,where){
     }
     else if(kind==='floor'){
       if(['autoFloor','autoCeiling'].includes(key)){if(typeof v!=='boolean')fail('Expected a boolean',p);}
+      else if(key==='unreachableOk'){if(v!==null&&typeof v!=='boolean')fail('Expected a boolean, or null to remove it',p);}
       else if(key==='boundaryMode')choice(v,['closed','intentional_open'],p);
       else if(v!==null)number(v,p,key==='elevation'?-1e6:key==='wallHeight'?.2:.001,key==='elevation'?1e6:key==='wallHeight'?1000:100);
     }
@@ -360,7 +361,8 @@ function applyOperation(building,op,index){
     for(const [key,value] of Object.entries(op.value)){
       if(['autoFloor','autoCeiling','boundaryMode'].includes(key)&&value===null)fail(`${key} does not accept null`,`${p}/value/${key}`);
       if(key==='elevation')continue;
-      if(value===null||(key==='boundaryMode'&&value==='closed'))delete floor[key];else floor[key]=value;
+      // unreachableOk is stored only when true (the web checkbox does the same).
+      if(value===null||(key==='boundaryMode'&&value==='closed')||(key==='unreachableOk'&&value===false))delete floor[key];else floor[key]=value;
     }
     if('wallHeight' in op.value||'floorThickness' in op.value)keepFloorContacts(before,building);
     if('elevation' in op.value){if(op.value.elevation===null)delete floor.elevation;else floor.elevation=op.value.elevation;}
@@ -406,7 +408,11 @@ function applyOperation(building,op,index){
   const floor=building.floors[fi],collection={marker:'markers',slab:'slabs',light:'lights',wall:'walls',railing:'railings',opening:'openings',roof:'roofSections',region:'regions',stair:'stairs',platform:'platforms'}[kind];
   const list=kind==='roof'?building.roofSections:(floor[collection] ||= []),item=list.find(v=>v.id===op.id);
   if(action==='add'&&item)fail(`ID already exists: ${op.id}`,p);
-  if(action!=='add'&&!item)fail(`Unknown ${kind} ID: ${op.id}`,p);
+  if(action!=='add'&&!item){
+    // Say where an entity with that ID does live: a stair belongs to its lower floor.
+    const elsewhere=kind==='roof'?null:building.floors.find(f=>(f[collection]||[]).some(v=>v.id===op.id));
+    fail(`Unknown ${kind} ID on floor ${op.floorId}: ${op.id}${elsewhere?` (it is on floor ${elsewhere.id}${kind==='stair'?'; a stair belongs to its lower floor':''})`:''}`,p);
+  }
   if(kind==='platform'){
     if(action==='remove'){list.splice(list.indexOf(item),1);return;}
     const value=op.value;
@@ -416,7 +422,7 @@ function applyOperation(building,op,index){
     if(action==='add')list.push(result.platform);else{for(const key of Object.keys(item))if(!(key in result.platform))delete item[key];Object.assign(item,result.platform);}
     return;
   }
-  if(kind==='stair'&&action!=='remove'&&!building.floors[fi+1])fail('Stair add/update requires an adjacent upper floor',p);
+  if(kind==='stair'&&action!=='remove'&&!building.floors[fi+1])fail('Stair add/update requires an adjacent upper floor: add the floor above first (floor.add-top or floor.insert), then the stair on the lower floor',p);
   if(action==='remove'){list.splice(list.indexOf(item),1);return;}
   if(action==='crenellate'){
     const result=proposeCrenellation(item,item.height??floorView(building,fi).wallHeight,floor.openings,op.value);

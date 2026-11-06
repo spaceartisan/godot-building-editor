@@ -214,6 +214,7 @@
               </details>
               <p id="floor-level-summary" class="muted compact-help"></p>
               <label class="checkbox"><input id="intentional-open-toggle" type="checkbox" /> Intentional exterior openings</label>
+              <label class="checkbox" title="The route check still measures this floor but lists its unreachable areas as expected, without warnings: a parapet roof slab or a sealed tower. Same as the CLI floor.update unreachableOk."><input id="unreachable-ok-toggle" type="checkbox" /> Unreachable areas expected</label>
               <p class="muted compact-help">For wall gaps such as a large barn entrance. Use Floor Footprint to define the slab outline. No wall or collision is added across the gap.</p>
               <label class="checkbox"><input id="show-floor-below" type="checkbox" checked /> Ghost floor below</label>
               <label class="checkbox" title="Generate the active story floor from its wall-derived or Floor Footprint area. Manual Floors at the same height replace overlapping portions."><input id="auto-floor-toggle" type="checkbox" checked /> Generate floor automatically</label>
@@ -412,7 +413,8 @@
           <label>Export profile<select id="export-profile"><option value="generic">Generic Godot</option><option value="get_probed">GET PROBED compatibility</option></select></label>
           <button id="validate-btn">Check building</button>
           <button id="download-check-report-btn" type="button" title="Download current errors, warnings and object references as JSON">Download check report</button>
-          <label class="checkbox" title="Also check that every floor area and stair can be reached from open ground through doors, empty passages, stairs and elevators (0.25 m walker clearance). Same check as the CLI validate --reachability."><input id="route-check-toggle" type="checkbox" /> Include route check</label>
+          <label class="checkbox" title="Also check that every floor area and stair can be reached from open ground through doors, empty passages, stairs and elevators (0.25 m walker clearance unless Walker radius says otherwise). Same check as the CLI validate --reachability."><input id="route-check-toggle" type="checkbox" /> Include route check</label>
+          <label title="Walker radius for the route check in metres (0.1 to 1). Blank is 0.25. Use your game agent's radius to catch doors and corridors it cannot pass. Same as the CLI --walker-radius option.">Walker radius (optional)<input id="route-radius" type="number" min="0.1" max="1" step="0.01" placeholder="0.25" /></label>
           <label title="Optional interior start points for the route check, for buildings with no opening to the outside (a sealed ship or bunker): x,z or x,z,floorId, several separated by ;. The floor defaults to the ground floor. Same as the CLI --from option.">Route start (optional)<input id="route-start" type="text" placeholder="x,z[,floorId]; …" autocomplete="off" spellcheck="false" /></label>
           <p class="muted compact-help">Reports describe the current checks. Save the building JSON separately for editing.</p>
           <p id="validation-summary" class="muted compact-help" role="status" aria-live="polite" aria-atomic="true" tabindex="-1"></p>

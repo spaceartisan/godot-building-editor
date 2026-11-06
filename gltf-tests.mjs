@@ -154,17 +154,18 @@ console.log(`PASS glTF export: ${totals.buildings} buildings (${totals.doors} do
   assert.equal(readGlb(exportGltfFiles(farm,{profile:'get_probed',collision:false}).glb).json.nodes.some(n=>n.extras?.trigger_size),false,'no trigger boxes without collision');
   console.log('PASS convex hulls point outward and skip interior points; placeholder colours, collision layers and GET PROBED trigger boxes carry over');
   {
-    // MegaCorp (Clowning Around): with 10+ storeys a duplicate slab is named FloorSlab_Stairwell_10,
-    // which is also what UE reads from storey 1's piece UBX_FloorSlab_Stairwell_10 (UE matches the
+    // MegaCorp (Clowning Around): with 10+ storeys a duplicate mesh is named SideAFaces_Stairwell_10,
+    // which is also what UE reads from storey 1's piece UBX_SideAFaces_Stairwell_10 (UE matches the
     // exact name before stripping "_NN"). No node may carry a piece's name without its prefix.
+    // (The tower's walls ride on their wall meshes; MegaCorp's pieces were on the slab before that.)
     const ops=[{op:'room.add',floorId:'floor_1',id:'well',value:{label:'Stairwell',minX:-3,maxX:3,minZ:-3,maxZ:3}},{op:'region.add',floorId:'floor_1',id:'r',value:{label:'Stairwell',minX:-3,maxX:3,minZ:-3,maxZ:3}}];
-    for(let j=0;j<5;j++)ops.push({op:'wall.add',floorId:'floor_1',id:`p${j}`,value:{a:{x:-2+j,z:-3},b:{x:-2+j,z:-1}}});
+    for(let j=0;j<12;j++)ops.push({op:'wall.add',floorId:'floor_1',id:`p${j}`,value:{a:{x:-2.75+j*.5,z:-3},b:{x:-2.75+j*.5,z:-1}}});
     for(let i=1;i<12;i++)ops.push({op:'floor.duplicate',id:`floor_${i+1}`,sourceFloorId:`floor_${i}`});
     const blank=makeEmptyBuilding();blank.floors[0].id='floor_1';
     const tower=applyTransaction(prepareDocument(blank).building,{version:1,operations:[{op:'building.update',value:{slabsByRoom:true}},...ops]});assert.equal(tower.ok,true,JSON.stringify(tower.errors));
     const g=readGlb(exportGltfFiles(tower.building,{}).glb).json,names=new Set(g.nodes.map(n=>n.name));
     const pieces=g.nodes.flatMap((n,i)=>(n.children||[]).map(c=>[n.name,g.nodes[c].name]).filter(([,c])=>COLLISION.test(c)));
-    assert.ok(pieces.filter(([p])=>p==='FloorSlab_Stairwell').length>=11&&names.has('FloorSlab_Stairwell_9')&&names.has('FloorSlab_Stairwell_12'),'the stairwell slab of storey 1 carries 11+ pieces and the storeys repeat its name');
+    assert.ok(pieces.filter(([p])=>p==='SideAFaces_Stairwell').length>=11&&names.has('SideAFaces_Stairwell_9')&&names.has('SideAFaces_Stairwell_12'),'the stairwell walls of storey 1 carry 11+ pieces and the storeys repeat their name');
     for(const [parent,piece] of pieces){
       const rest=piece.slice(4);assert.equal(names.has(rest),false,`${piece}: a node named ${rest} would take it in UE`);
       assert.equal(rest.slice(0,rest.lastIndexOf('_')),parent,`${piece} names its carrier`);

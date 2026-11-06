@@ -29,7 +29,8 @@ function routeCheckSummary(r){
   return {ok:r.ok,from:['open ground outside the ground floor',...(r.starts||[]).map(s=>`route start (${s.x}, ${s.z}) on ${s.floorId}${s.ok?'':' (not on walkable floor)'}`)],
     starts:structuredClone(r.starts||[]),settings:structuredClone(r.settings),
     floors:(r.floors||[]).map(f=>({floorId:f.floorId,walkableArea:f.walkableArea,reachedArea:f.reachedArea})),
-    unreachableAreas:(r.unreachable||[]).length,stairIssues:(r.stairIssues||[]).length,note:r.note};
+    // Areas on floors marked unreachableOk are counted apart, as expected.
+    unreachableAreas:(r.unreachable||[]).filter(u=>!u.expected).length,...((r.unreachable||[]).some(u=>u.expected)?{expectedUnreachableAreas:r.unreachable.filter(u=>u.expected).length}:{}),stairIssues:(r.stairIssues||[]).length,note:r.note};
 }
 
 export function checkReportFilename(name){

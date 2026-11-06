@@ -2332,6 +2332,44 @@ shape = SubResource("${shapeId}")`);}
   return finalizeScene(header+extBlock+resources.join('\n\n')+'\n\n'+nodes.join('\n\n')+'\n',options);
 }
 
+// Bodies that hold the collision of many parts: each floor's Collision and the
+// building-level manual surface bodies. Every other body belongs to one part.
+export const SHARED_COLLISION_BODY=/^(?:Floor_\d+\/Collision|ManualRoofCollision|ManualFloorCollision|ManualCeilingCollision)$/;
+const SHAPE_PARTS=[[/^ExteriorCollision_|^ShapedWallCollision$/,'exterior_wall'],[/^WallCollision_/,'interior_wall'],[/^(?:Manual)?FloorCollision_/,'floor'],[/^(?:Manual)?CeilingCollision_/,'ceiling'],[/^(?:Manual)?GableCollision_/,'gable']];
+// Part of a shared-body shape that is not named after a mesh.
+export const sharedShapePart=name=>SHAPE_PARTS.find(([re])=>re.test(name))?.[1]||null;
+const BODY_PARTS={WalkableRamp:'stair',UnderStairBlocker:'stair_blocker',FrameBody:'door_frame',ShaftBody:'elevator_shaft',Car:'elevator_car'};
+// The building part (metadata/building_part values) of every collision shape in
+// a shared body and of every other collision body in an exported scene, by node
+// path. Shapes and bodies carry no part metadata of their own, so exports are
+// unchanged; game-layer collision rules and the glTF collision carriers use this.
+// A "<mesh>_Collision" shape takes that mesh's part; shaped-wall collision is
+// one shape for all shaped walls on a floor and counts as exterior_wall.
+export function collisionParts(text){
+  const nodes=String(text).split('\n\n').flatMap(block=>{
+    const h=/^\[node name="([^"]+)"(?: type="([^"]+)")?(?: parent="([^"]+)")?/.exec(block);if(!h)return [];
+    const [,name,type,parent]=h;
+    return [{name,type,parent:parent??null,path:parent===undefined?'.':parent==='.'?name:`${parent}/${name}`,part:/^metadata\/building_part = "([^"]+)"$/m.exec(block)?.[1]||null}];
+  });
+  const meshes=nodes.filter(n=>n.type==='MeshInstance3D'&&n.part),parts={};
+  const isBody=n=>/^(?:StaticBody3D|AnimatableBody3D|RigidBody3D|CharacterBody3D)$/.test(n.type||'');
+  for(const body of nodes.filter(isBody)){
+    if(SHARED_COLLISION_BODY.test(body.path)){
+      const scope=body.path.startsWith('Floor_')?body.path.split('/')[0]+'/':null;
+      for(const shape of nodes.filter(n=>n.type==='CollisionShape3D'&&n.parent===body.path)){
+        const named=/^(.+)_Collision$/.exec(shape.name)?.[1];
+        const mesh=named&&meshes.find(m=>m.name===named&&(scope?m.path.startsWith(scope):!m.path.startsWith('Floor_')));
+        parts[shape.path]=mesh?.part||sharedShapePart(shape.name);
+      }
+      continue;
+    }
+    // A dedicated body: by name, else the part of a mesh beside or inside it (door leaf bodies sit next to DoorMesh).
+    const near=meshes.find(m=>m.parent===body.path)||meshes.find(m=>m.parent===body.parent);
+    parts[body.path]=BODY_PARTS[body.name]||near?.part||null;
+  }
+  return parts;
+}
+
 // Colors in the browser are an authoring aid. Named surfaces stay available
 // in Godot with empty slots by default; optional placeholders preserve old looks.
 function finalizeScene(text,options){

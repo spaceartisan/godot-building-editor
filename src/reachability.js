@@ -16,6 +16,18 @@ import { exteriorWallOutsideSign, isExteriorWall } from './exporter.js';
 // approximation for review, not a physics or headroom simulation.
 export const REACHABILITY_DEFAULTS={cell:.1,radius:.25,minArea:1,margin:2,bodyHeight:1.8};
 
+// Walker radius in metres for the route check: blank is the default (0.25).
+// A game can check with its own agent's radius (NOBODY CAME: a 0.32 m capsule
+// could not pass a door the 0.25 m walker did). Shared by the CLI
+// --walker-radius option and the web Walker radius field.
+export const WALKER_RADIUS_RANGE={min:.1,max:1};
+export function parseWalkerRadius(text){
+  const value=String(text??'').trim();if(!value)return REACHABILITY_DEFAULTS.radius;
+  const r=Number(value);
+  if(!Number.isFinite(r)||r<WALKER_RADIUS_RANGE.min||r>WALKER_RADIUS_RANGE.max)throw new Error(`Walker radius "${value}": expected metres from ${WALKER_RADIUS_RANGE.min} to ${WALKER_RADIUS_RANGE.max}`);
+  return r;
+}
+
 // Route start points for interiors with no opening to the outside (a sealed
 // ship, a bunker): "x,z" or "x,z,floorId", several separated by ";". The
 // floor defaults to the ground floor. Shared by the CLI --from option and the
@@ -200,13 +212,14 @@ export function analyzeReachability(building,options={}){
         const regionArea=Math.max(cellArea,(b.maxX-b.minX)*(b.maxZ-b.minZ));
         return {label:r.label,overlap,share:Math.max(overlap/regionArea,overlap/area)};
       }).filter(q=>q.share>=.5).sort((a,b)=>b.overlap-a.overlap).map(q=>q.label))].slice(0,6);
-      unreachable.push({floorId:f.id,floorLabel:f.label||`Floor ${fi+1}`,floorIndex:fi+1,area:Math.round(area*100)/100,
+      // A floor marked unreachableOk (a parapet roof slab, a sealed tower) still reports its areas, as expected ones.
+      unreachable.push({floorId:f.id,floorLabel:f.label||`Floor ${fi+1}`,floorIndex:fi+1,...(f.unreachableOk===true?{expected:true}:{}),area:Math.round(area*100)/100,
         centroid:{x:Math.round(centroid.x*100)/100,z:Math.round(centroid.z*100)/100},
         bounds:Object.fromEntries(Object.entries(box).map(([key,v])=>[key,Math.round(v*100)/100])),regionLabels:labels});
     }
     report.push({floorId:f.id,label:f.label||`Floor ${fi+1}`,index:fi+1,ground:fi===ground,walkableArea:Math.round(walkableCells*cellArea*100)/100,reachedArea:Math.round(reachedCells*cellArea*100)/100});
   });
-  return {ok:!unreachable.length&&startReport.every(s=>s.ok),settings:{cell,radius,minArea,bodyHeight},starts:startReport,floors:report,unreachable,stairIssues,
+  return {ok:!unreachable.some(u=>!u.expected)&&startReport.every(s=>s.ok),settings:{cell,radius,minArea,bodyHeight},starts:startReport,floors:report,unreachable,stairIssues,
     note:'Static connectivity from open ground (and any route start points) through doors, empty passages, stairs and elevators; walls/railings are inflated by the walker radius, shaped walls by their profile up to body height. Not a physics, headroom or door-swing check.'};
 }
 
@@ -215,7 +228,7 @@ export function reachabilityWarnings(building,options){
   const result=analyzeReachability(building,options),warnings=[];
   const from=result.starts.length?' or the route start':'';
   for(const s of result.starts.filter(s=>!s.ok))warnings.push({path:`Floor ${floorIndexOf(building,s.floorId)}`,message:`Floor ${floorIndexOf(building,s.floorId)}: route start (${s.x}, ${s.z}) is not on walkable floor (inside a wall, stair or railing clearance, or off the floor)`,targets:[{type:'floor',floorId:s.floorId}]});
-  for(const u of result.unreachable){
+  for(const u of result.unreachable.filter(u=>!u.expected)){
     const where=u.regionLabels.length?` (${u.regionLabels.join(', ')})`:'';
     warnings.push({path:`Floor ${u.floorIndex}`,message:`Floor ${u.floorIndex}: ${u.area.toFixed(1)} m² of floor near (${u.centroid.x}, ${u.centroid.z})${where} cannot be reached from outside${from} through doors, passages${building.elevators?.length?', stairs and elevators':' and stairs'}`,targets:[{type:'floor',floorId:u.floorId}]});
   }

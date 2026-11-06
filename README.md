@@ -163,7 +163,7 @@ Staircase_001
     └── CollisionShape3D
 ```
 
-`WalkableRamp` uses collision layer `1`; its mask is `1` in Generic and `2` in GET PROBED. Ramp style uses a thin sloped slab; stepped style uses visible treads and risers with smooth ramp walking collision. **Block below** optionally fills and collides with the under-stair volume. The upper automatic floor is split around the stair footprint, retaining side clearance while meeting the upper landing without a gap. Diagonal drags select a cardinal direction while keeping the clicked lower centerline.
+`WalkableRamp` uses collision layer `1`; its mask is `1` in Generic and `2` in GET PROBED. A game layer's `collision` rules set other layers by part, for stairs and for walls, floors and the rest ([GAME_LAYER.md](GAME_LAYER.md)). Ramp style uses a thin sloped slab; stepped style uses visible treads and risers with smooth ramp walking collision. **Block below** optionally fills and collides with the under-stair volume. The upper automatic floor is split around the stair footprint, retaining side clearance while meeting the upper landing without a gap. Diagonal drags select a cardinal direction while keeping the clicked lower centerline.
 
 Manual floors remain explicitly authored objects: arrange their rectangles around the stair opening yourself (see `examples/manual_upper_stairwell.building.json`).
 

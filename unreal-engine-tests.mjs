@@ -50,8 +50,11 @@ try{
   console.log(`PASS unreal-check fails a broken export (${bad.failures.length} probe failures without collision), also beside a good copy of the same building`);
 
   // building_studio_setup.py with a full unreal block, run twice.
-  const layer={version:1,unreal:{materials:{OutsideFaces:'/Engine/BasicShapes/BasicShapeMaterial'},nodeMaterials:[{part:'door_leaf',material:'/Engine/EngineMaterials/WorldGridMaterial'}],tags:[{part:'roof',tags:['roofs']}],
-    collisionProfiles:[{layer:4,profile:'BlockAllDynamic'}],scripts:{door:'/Script/Engine.ArrowComponent',elevator:'/Script/Engine.BillboardComponent'},doorChildren:[{name:'Use',actor:'/Script/Engine.TargetPoint'}]}};
+  // The top-level collision rules (NOBODY CAME) put exterior walls on layer 2 and floors on layer 8, which the
+  // collisionProfiles layer rules then see; a door filter adds a Pair child to double doors only.
+  const layer={version:1,collision:[{part:'exterior_wall',layer:2},{part:'floor',layer:8}],unreal:{materials:{OutsideFaces:'/Engine/BasicShapes/BasicShapeMaterial'},nodeMaterials:[{part:'door_leaf',material:'/Engine/EngineMaterials/WorldGridMaterial'}],tags:[{part:'roof',tags:['roofs']}],
+    collisionProfiles:[{layer:4,profile:'BlockAllDynamic'},{layer:2,profile:'InvisibleWall'},{layer:8,profile:'OverlapAllDynamic'}],scripts:{door:'/Script/Engine.ArrowComponent',elevator:'/Script/Engine.BillboardComponent'},
+    doorChildren:[{name:'Use',actor:'/Script/Engine.TargetPoint'},{name:'Pair',actor:'/Script/Engine.TargetPoint',door:{leaves:2}}]}};
   fs.writeFileSync(path.join(temp,'layer.json'),JSON.stringify(layer));
   cli(['export',path.join(root,'examples/farmhouse.building.json'),'--out','layer-check','--game-layer',path.join(temp,'layer.json')]);// the same file is valid for Godot too
   const work=path.join(temp,'setup');fs.mkdirSync(work);
@@ -70,11 +73,14 @@ try{
     assert.equal(x.roof_tagged,x.roofs,`${name}: tag rules`);assert.equal(x.door_components,x.door_roots,`${name}: door components`);assert.equal(x.door_children,x.door_roots,`${name}: door children`);
     assert.equal(x.elevator_components,x.elevator_roots,`${name}: elevator components`);assert.equal(x.triggers,x.trigger_nodes,`${name}: trigger boxes`);
     assert.equal(x.layer4_profiled,x.layer4_carriers,`${name}: collision profiles by layer`);
+    assert.equal(x.wall_profiled,x.wall_carriers,`${name}: exterior wall carriers profiled through the collision rules`);assert.equal(x.floor_profiled,x.floor_carriers,`${name}: floor carriers too`);
+    assert.equal(x.pair_children,x.double_roots,`${name}: double doors get the Pair child`);assert.equal(x.pair_on_single,0,`${name}: single doors do not`);
     assert.deepEqual([x.second.movable,x.second.tags,x.second.triggers,x.second.components,x.second.children],[0,0,0,0,0],`${name}: running again adds nothing`);
   }
   assert.ok(farm.group_nodes>=10&&farm.trigger_nodes>0&&farm.layer4_carriers>0&&farm.door_roots>0,'GET PROBED farmhouse: window groups, door triggers, door-layer carriers');
+  assert.ok(farm.wall_carriers>0&&farm.floor_carriers>0&&farm.double_roots>0,'the farmhouse has wall and floor carriers and a double door');
   assert.ok(ramp.first.lights>0&&lift.elevator_roots===1&&lift.moving>10);
-  console.log(`PASS building_studio_setup.py: tags, Movable parts, ${farm.triggers} trigger boxes, slot/part materials, collision profiles, ${farm.door_components} door components and children, elevator component; idempotent`);
+  console.log(`PASS building_studio_setup.py: tags, Movable parts, ${farm.triggers} trigger boxes, slot/part materials, collision profiles (also through the collision rules), ${farm.door_components} door components and children (Pair on ${farm.double_roots} double doors only), elevator component; idempotent`);
 
   // unreal-import into an existing project and saved level, then again with --replace.
   const town=path.join(temp,'town');fs.mkdirSync(town);

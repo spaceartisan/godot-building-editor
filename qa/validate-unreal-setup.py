@@ -24,7 +24,8 @@ for index, path in enumerate(job["files"]):
     actors = bs.actors_under(nodes[0]["label"])
     c = {"first": first, "second": second, "group_nodes": 0, "group_tagged": 0, "moving": 0, "moving_static": 0, "door_roots": 0, "door_components": 0,
          "door_children": 0, "elevator_roots": 0, "elevator_components": 0, "trigger_nodes": 0, "triggers": 0, "outside_slots": 0, "outside_bound": 0,
-         "door_leaves": 0, "door_leaves_bound": 0, "layer4_carriers": 0, "layer4_profiled": 0, "roof_tagged": 0, "roofs": 0}
+         "door_leaves": 0, "door_leaves_bound": 0, "layer4_carriers": 0, "layer4_profiled": 0, "roof_tagged": 0, "roofs": 0,
+         "wall_carriers": 0, "wall_profiled": 0, "floor_carriers": 0, "floor_profiled": 0, "double_roots": 0, "pair_children": 0, "pair_on_single": 0}
     material = lambda comp, i: comp.get_material(i).get_path_name() if comp.get_material(i) else ""
     for n in nodes:
         a = actors.get(n["label"])
@@ -47,6 +48,12 @@ for index, path in enumerate(job["files"]):
             c["door_roots"] += 1
             c["door_components"] += a.get_component_by_class(unreal.ArrowComponent) is not None
             c["door_children"] += sum(1 for ch in a.get_attached_actors() if ch.get_actor_label().endswith("_Use") and isinstance(ch, unreal.TargetPoint))
+            pairs = sum(1 for ch in a.get_attached_actors() if ch.get_actor_label().endswith("_Pair"))
+            if int(extras.get("door_leaves", 1)) == 2:
+                c["double_roots"] += 1
+                c["pair_children"] += pairs
+            else:
+                c["pair_on_single"] += pairs
         if n["root"] and n["kind"] == "elevator":
             c["elevator_roots"] += 1
             c["elevator_components"] += a.get_component_by_class(unreal.BillboardComponent) is not None
@@ -66,6 +73,12 @@ for index, path in enumerate(job["files"]):
             if extras.get("building_part") == "door_leaf":
                 c["door_leaves"] += 1
                 c["door_leaves_bound"] += all(material(comp, i).startswith("/Engine/EngineMaterials/WorldGridMaterial") for i in range(len(slots)))
+            # Exterior walls and floors (layers 2 and 8 from the top-level collision rules), unless a layer-4 door profile came first.
+            if "collision_pieces" in extras and not int(extras.get("collision_layer", 1)) & 4:
+                for part, profile, key in (("exterior_wall", "InvisibleWall", "wall"), ("floor", "OverlapAllDynamic", "floor")):
+                    if extras.get("building_part") == part:
+                        c[key + "_carriers"] += 1
+                        c[key + "_profiled"] += str(comp.get_collision_profile_name()) == profile
             if "collision_pieces" in extras and int(extras.get("collision_layer", 1)) & 4:
                 c["layer4_carriers"] += 1
                 c["layer4_profiled"] += str(comp.get_collision_profile_name()) == "BlockAllDynamic"

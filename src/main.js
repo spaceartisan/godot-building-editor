@@ -20,7 +20,7 @@ import {
 import { downloadGodotTscn, downloadText, downloadBinary, makeStoredZip, exportGodotFiles, isExteriorWall, exteriorWallOutsideSign } from './exporter.js';
 import { exportGltfFiles } from './gltf-export.js';
 import { createCheckReport, checkReportFilename } from './check-report.js';
-import { reachabilityWarnings, parseRouteStarts } from './reachability.js';
+import { reachabilityWarnings, parseRouteStarts, parseWalkerRadius } from './reachability.js';
 import { leanToRoof } from './platform-roof.js';
 import { snapPlanPoint, samePoint, wallSegmentProblem, wallJunctions, proposePlatformUpdate, proposeCrenellation, CRENELLATION_DEFAULTS } from './authoring.js';
 import { endpointMoveTargets, proposeEndpointMove, proposeWallSplit } from './wall-edit.js';
@@ -506,8 +506,9 @@ function drawRouteOverlay(){
   const id=floor().id;ctx.save();ctx.setLineDash([6,4]);ctx.lineWidth=2;ctx.font='11px ui-monospace, monospace';
   for(const u of routeResult.unreachable.filter(q=>q.floorId===id)){
     const a=worldToScreen({x:u.bounds.minX,z:u.bounds.minZ}),c=worldToScreen({x:u.bounds.maxX,z:u.bounds.maxZ});
-    ctx.fillStyle='rgba(255,107,107,.14)';ctx.fillRect(a.x,a.y,c.x-a.x,c.y-a.y);ctx.strokeStyle='#ff6b6b';ctx.strokeRect(a.x,a.y,c.x-a.x,c.y-a.y);
-    ctx.fillStyle='#ff8f8f';ctx.fillText(`Unreachable ${u.area.toFixed(1)} m²`,a.x+4,a.y+13);
+    // Expected areas (the floor's unreachableOk) are outlined in grey.
+    ctx.fillStyle=u.expected?'rgba(160,160,160,.10)':'rgba(255,107,107,.14)';ctx.fillRect(a.x,a.y,c.x-a.x,c.y-a.y);ctx.strokeStyle=u.expected?'#9a9a9a':'#ff6b6b';ctx.strokeRect(a.x,a.y,c.x-a.x,c.y-a.y);
+    ctx.fillStyle=u.expected?'#b0b0b0':'#ff8f8f';ctx.fillText(`${u.expected?'Expected unreachable':'Unreachable'} ${u.area.toFixed(1)} m²`,a.x+4,a.y+13);
   }
   // Route start points on this floor: green if on walkable floor, red if not.
   ctx.setLineDash([]);
@@ -802,7 +803,7 @@ $('#new-opening-shape').addEventListener('change',e=>newOpeningShapeId=e.target.
 $('#opening-shapes-btn').addEventListener('click',()=>openingShapeEditor.open(newOpeningShapeId));
 
 function updateSummary(){const b=fb(),bb=boundsOfBuilding(b),f=floor(),doors=f.openings.filter(o=>o.type==='door').length,windows=f.openings.filter(o=>o.type==='window').length,segments=f.walls.reduce((n,w)=>n+splitWallIntoSolidSegments(b,w).length,0),ex=f.walls.filter(w=>isExteriorWall(b,w)).length,half=f.walls.filter(w=>wallHeightFor(b,w)<b.wallHeight-1e-4).length,totalDoors=building.floors.reduce((n,q)=>n+q.openings.filter(o=>o.type==='door').length,0);$('#scene-summary').innerHTML=`<dt>Active floor</dt><dd>${activeFloorIndex+1} / ${building.floors.length}</dd><dt>Footprint</dt><dd>${bb.width.toFixed(1)} × ${bb.depth.toFixed(1)} m</dd><dt>Regions</dt><dd>${f.regions.length}</dd><dt>Markers</dt><dd>${(f.markers||[]).length}</dd><dt>Walls</dt><dd>${f.walls.length}</dd><dt>Half/custom</dt><dd>${half}</dd><dt>Exterior</dt><dd>${ex}</dd><dt>Interior</dt><dd>${f.walls.length-ex}</dd><dt>Solid segments</dt><dd>${segments}</dd><dt>Doors</dt><dd>${doors} (${totalDoors} total)</dd><dt>Windows</dt><dd>${windows}</dd><dt>Lights</dt><dd>${f.lights.length}</dd><dt>Stairs / ramps</dt><dd>${f.stairs.length}</dd><dt>Auto floor here</dt><dd>${f.autoFloor?'on':'off'}</dd><dt>Floor footprint</dt><dd>${f.slabs.length||'wall-derived'}</dd><dt>Auto ceiling here</dt><dd>${f.autoCeiling?'on':'off'}</dd><dt>Manual floors</dt><dd>${building.manualFloors.length}</dd><dt>Manual ceilings</dt><dd>${building.manualCeilings.length}</dd><dt>Platforms</dt><dd>${f.platforms.length}</dd><dt>Railings</dt><dd>${f.railings.length}</dd><dt>Manual roofs</dt><dd>${building.roofSections.length}</dd><dt>Auto roofs here</dt><dd>${roofSectionsForFloor(building,activeFloorIndex).length}</dd>`;}
-function syncFloorControls(){syncMarkerList();syncElevatorList();const info=footprintInfo(fb());$('#footprint-status').textContent=`${info.source} · ${info.area.toFixed(1)} m²${info.reason?' · '+info.reason:''}`;syncRegionList();const sel=$('#floor-select');sel.innerHTML='';building.floors.forEach((f,i)=>{const o=document.createElement('option');o.value=i;o.textContent=`${i+1}: ${f.label}`;o.selected=i===activeFloorIndex;sel.appendChild(o);});$('#delete-floor-btn').disabled=building.floors.length<=1;$('#move-floor-up-btn').disabled=activeFloorIndex===building.floors.length-1;$('#move-floor-down-btn').disabled=activeFloorIndex===0;$('#floor-label').value=floor().label;$('#floor-elevation').value=floor().elevation??'';$('#floor-wall-height').value=floor().wallHeight??'';$('#floor-slab-thickness').value=floor().floorThickness??'';$('#intentional-open-toggle').checked=floor().boundaryMode==='intentional_open';$('#floor-level-summary').textContent=`Base ${floorElevation(building,activeFloorIndex).toFixed(2)} m · wall top ${(floorElevation(building,activeFloorIndex)+fb().wallHeight).toFixed(2)} m. Blank fields use automatic/default values.`;$('#auto-floor-toggle').checked=floor().autoFloor!==false;$('#auto-ceiling-toggle').checked=floor().autoCeiling!==false;}
+function syncFloorControls(){syncMarkerList();syncElevatorList();const info=footprintInfo(fb());$('#footprint-status').textContent=`${info.source} · ${info.area.toFixed(1)} m²${info.reason?' · '+info.reason:''}`;syncRegionList();const sel=$('#floor-select');sel.innerHTML='';building.floors.forEach((f,i)=>{const o=document.createElement('option');o.value=i;o.textContent=`${i+1}: ${f.label}`;o.selected=i===activeFloorIndex;sel.appendChild(o);});$('#delete-floor-btn').disabled=building.floors.length<=1;$('#move-floor-up-btn').disabled=activeFloorIndex===building.floors.length-1;$('#move-floor-down-btn').disabled=activeFloorIndex===0;$('#floor-label').value=floor().label;$('#floor-elevation').value=floor().elevation??'';$('#floor-wall-height').value=floor().wallHeight??'';$('#floor-slab-thickness').value=floor().floorThickness??'';$('#intentional-open-toggle').checked=floor().boundaryMode==='intentional_open';$('#unreachable-ok-toggle').checked=floor().unreachableOk===true;$('#floor-level-summary').textContent=`Base ${floorElevation(building,activeFloorIndex).toFixed(2)} m · wall top ${(floorElevation(building,activeFloorIndex)+fb().wallHeight).toFixed(2)} m. Blank fields use automatic/default values.`;$('#auto-floor-toggle').checked=floor().autoFloor!==false;$('#auto-ceiling-toggle').checked=floor().autoCeiling!==false;}
 function syncWallTypeControls(){
   syncOpeningShapeControls();
   if(!(building.wallTypes||[]).some(t=>t.id===newWallTypeId))newWallTypeId='';
@@ -931,6 +932,7 @@ for(const [id,key] of [['floor-elevation','elevation'],['floor-wall-height','wal
 }
 $('#intentional-open-toggle').addEventListener('change',e=>{floor().boundaryMode=e.target.checked?'intentional_open':'closed';commit('Exterior boundary intent updated');});
 $('#floor-label').addEventListener('change',e=>{floor().label=e.target.value||`Floor ${activeFloorIndex+1}`;commit('Floor renamed');});
+$('#unreachable-ok-toggle').addEventListener('change',e=>{if(e.target.checked)floor().unreachableOk=true;else delete floor().unreachableOk;commit(e.target.checked?'Unreachable areas on this floor expected':'Unreachable areas on this floor warned about');});
 $('#auto-floor-toggle').addEventListener('change',e=>{floor().autoFloor=e.target.checked;commit(e.target.checked?'Automatic floor enabled':'Automatic floor disabled');});$('#auto-ceiling-toggle').addEventListener('change',e=>{floor().autoCeiling=e.target.checked;commit(e.target.checked?'Automatic ceiling enabled':'Automatic ceiling disabled');});
 $('#show-floor-below').addEventListener('change',e=>{showFloorBelow=e.target.checked;drawPlan();setStatus(showFloorBelow?'Ghosted lower floor enabled':'Ghosted lower floor hidden');});
 function editFloorStack(action){
@@ -1005,7 +1007,8 @@ function showValidation(){
   routeResult=null;
   if($('#route-check-toggle').checked&&!r.errors.length){
     let starts=[];try{starts=parseRouteStarts($('#route-start').value,building);}catch(e){r.warnings=[...r.warnings,{path:'Route start',message:e.message}];}
-    const route=reachabilityWarnings(building,{starts});routeResult=route.result;r.warnings=[...r.warnings,...route.warnings];
+    let radius;try{radius=parseWalkerRadius($('#route-radius').value);}catch(e){r.warnings=[...r.warnings,{path:'Walker radius',message:e.message}];}
+    const route=reachabilityWarnings(building,{starts,...(radius?{radius}:{})});routeResult=route.result;r.warnings=[...r.warnings,...route.warnings];
   }
   list.replaceChildren();
   for(const issue of [...r.errors,...r.warnings]){
@@ -1050,10 +1053,11 @@ function visitDiagnosticTarget(reference){
   setStatus(`${target.label.replace(/^Show /,'Reviewing ')}. Inspection only; no geometry changed.`);
 }
 function revealValidation(){const summary=$('#validation-summary');summary.focus({preventScroll:true});summary.scrollIntoView({block:'nearest'});}
-$('#route-start').addEventListener('change',()=>{if(!$('#route-check-toggle').checked)return;showValidation();drawPlan();setStatus(`Route check from ${routeResult?.starts?.length||0} start point(s): ${routeResult?`${routeResult.unreachable.length} unreachable areas`:'resolve errors first'}.`);});
+$('#route-radius').addEventListener('change',()=>{if(!$('#route-check-toggle').checked)return;showValidation();drawPlan();setStatus(`Route check with a ${routeResult?.settings?.radius??'0.25'} m walker radius: ${routeResult?`${routeResult.unreachable.filter(u=>!u.expected).length} unreachable areas`:'resolve errors first'}.`);});
+$('#route-start').addEventListener('change',()=>{if(!$('#route-check-toggle').checked)return;showValidation();drawPlan();setStatus(`Route check from ${routeResult?.starts?.length||0} start point(s): ${routeResult?`${routeResult.unreachable.filter(u=>!u.expected).length} unreachable areas`:'resolve errors first'}.`);});
 $('#route-check-toggle').addEventListener('change',e=>{
   const r=showValidation();drawPlan();
-  setStatus(e.target.checked?`Route check on: ${routeResult?`${routeResult.unreachable.length} unreachable areas, ${routeResult.stairIssues.length} stair issues`:'resolve errors first'}. Inspection only; no geometry changed.`:'Route check off');
+  setStatus(e.target.checked?`Route check on: ${routeResult?`${routeResult.unreachable.filter(u=>!u.expected).length} unreachable areas, ${routeResult.stairIssues.length} stair issues`:'resolve errors first'}. Inspection only; no geometry changed.`:'Route check off');
 });
 for(const id of ['#validate-btn','#review-checks-btn'])$(id).addEventListener('click',()=>{const r=showValidation();revealValidation();setStatus(`${r.errors.length} errors, ${r.warnings.length} warnings`);});
 $('#download-check-report-btn').addEventListener('click',()=>{
@@ -1073,7 +1077,7 @@ function setGameLayer(text,name,{remember=true}={}){
   if(text==null){gameLayer=null;gameLayerName='';try{localStorage.removeItem(GAME_LAYER_KEY);}catch{}}
   else{gameLayer=parseGameLayer(text);gameLayerName=name;if(remember)try{localStorage.setItem(GAME_LAYER_KEY,JSON.stringify({name,text}));}catch{}}
   const status=$('#game-layer-status');
-  status.textContent=gameLayer?`Game layer ${gameLayerName}: ${Object.keys(gameLayer.materials).length} surface materials, ${gameLayer.layers.length} layer rules, ${Object.keys(gameLayer.scripts).length} scripts, ${gameLayer.doorChildren.length} door children. Applied to exported packages.`:'No game layer: material slots stay empty. See GAME_LAYER.md.';
+  status.textContent=gameLayer?`Game layer ${gameLayerName}: ${Object.keys(gameLayer.materials).length} surface materials, ${gameLayer.layers.length} layer rules, ${gameLayer.collision.length?`${gameLayer.collision.length} collision rules, `:''}${Object.keys(gameLayer.scripts).length} scripts, ${gameLayer.doorChildren.length} door children. Applied to exported packages.`:'No game layer: material slots stay empty. See GAME_LAYER.md.';
   $('#game-layer-clear-btn').hidden=!gameLayer;
 }
 $('#game-layer-input').addEventListener('change',async e=>{
